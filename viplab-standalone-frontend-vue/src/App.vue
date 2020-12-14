@@ -1,45 +1,59 @@
 <template>
   <div id="app">
-    <h1>ViPLab Frontend</h1>
 
-    <span>I found the following templates in example folder:</span>
-    <div>
-      <ul id="templates" v-for="temp in templates" :key="temp.id"> 
-        <li><a :href="temp">{{ temp }}</a></li>  
-      </ul>
+    <div class="m-5">
+      <h1>ViPLab Frontend</h1>
+
+      <span>I found the following templates in example folder:</span>
+      <div>
+        <ul id="templates" v-for="temp in templates" :key="temp.id"> 
+          <li><a :href="temp">{{ temp }}</a></li>  
+        </ul>
+      </div>
+      <div>
+        <button type="button" id="submit" disabled="true">Submit</button>
+        digest
+      </div>
     </div>
-    <div><button type="button" id="submit" disabled="true">Submit</button>digest</div>
-    
+
     <transition name="fade">
       <div class="form-group m-5">
         <div v-for="(item, key, parent_index) in parsedJson" :key=parent_index>
           <!-- render after form_v_model[parent_index] is set, or else js error occurs (even though page looks perfectly fine) -->
           <div class="m-2" v-if="isCheckbox(item) && form_v_model[parent_index]">
-            <div class="form-check" v-for="(check, index) in item.values" :key=index>
+            <div class ="item-name">{{item.name}}:</div>
+            <div class="checkbox form-check" v-for="(check, index) in item.values" :key=index>
               <input class="form-check-input" type="checkbox" :value="check" checked v-model="form_v_model[parent_index][index]">
               <label class="form-check-label" for="index">{{ check }}</label>
             </div>
           </div>
           <div class="m-2" v-if="isRadio(item) && form_v_model[parent_index]">
-            <div class="form-check" v-for="(radio, index) in item.values" :key="'Radio' + parent_index + ' ' +index">
+            <div class ="item-name">{{item.name}}:</div>
+            <div class="radiobutton form-check" v-for="(radio, index) in itemWithoutDisabled(item)" :key="'Radio' + parent_index + ' ' +index">
               <input class="form-check-input" type="radio" :value="radio" v-model="form_v_model[parent_index]">
+              <label class="form-check-label" for="index">{{ radio }}</label>
+            </div>
+            <div class="radiobutton form-check" v-for="(radio, index) in item.disabled" :key="'RadioDis' + parent_index + ' ' +index">
+              <input class="form-check-input" type="radio" disabled :value="radio" v-model="form_v_model[parent_index]">
               <label class="form-check-label" for="index">{{ radio }}</label>
             </div>
           </div>
           <div class="m-2" v-if="isDropdown(item) && form_v_model[parent_index]">
-            <div class="form-check">
+            <div class ="item-name">{{item.name}}:</div>
+            <div class="dropdown">
               <select v-if="!item.multiple" v-model="form_v_model[parent_index]">
                 <option v-for="(disabled, index) in item.disabled" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
-                <option v-for="(drop, index) in dropdownWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
+                <option v-for="(drop, index) in itemWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
               </select>
               <select v-if="item.multiple" v-model="form_v_model[parent_index]" multiple>
                 <option v-for="(disabled, index) in item.disabled" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
-                <option v-for="(drop, index) in dropdownWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
+                <option v-for="(drop, index) in itemWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
               </select>
             </div>
           </div>
           <div class="m-2 toggle" v-if="isToggle(item) && form_v_model[parent_index]">
-            <div class="form-check" v-for="(toggle, index) in item.values" :key="'toggle'+parent_index + ' ' +index">
+            <div class ="item-name">{{item.name}}:</div>
+            <div v-for="(toggle, index) in item.values" :key="'toggle'+parent_index + ' ' +index">
               <label>
                 {{ toggle }}
                 <input type="checkbox" :value="toggle" v-model="form_v_model[parent_index][index]">
@@ -48,28 +62,28 @@
             </div>
           </div>
           <div class="m-2" v-if="isSlider(item)" :key="'slider'+parent_index">
-            <div class="form-check" v-if="!item.multiple">
+            <div class ="item-name">{{item.name}}:</div>
+            <div v-if="!item.multiple">
               <vue-slider v-model="form_v_model[parent_index]" :min="item.min" :max="item.max" :interval="item.step" :direction="sliderDirection(item)" :style="[item.vertical ? {'height': '300px'} : {}]"></vue-slider>
             </div>
-            <div class="form-check" v-if="item.multiple">
+            <div v-if="item.multiple">
               <vue-slider multiple v-model="form_v_model[parent_index]" :min="item.min" :max="item.max" :interval="item.step" :direction="sliderDirection(item)" style="height: 300px;[item.vertical ? {'height': '300px'} : {}]"></vue-slider>
             </div>
           </div>
           <div class="m-2" v-if="isInputField(item)">
-              <div class="form-check" v-if="item.type=='text'">
-                <label for="item.name">{{ item.name }}:
-                  <input type="text" id="item.name" name="item.name" :maxlength="item.maxlength" v-model="form_v_model[parent_index]">
-                </label>
+              <div v-if="item.type=='text'">
+                <label class="item-name mr-2" for="item.name">{{ item.name }}: </label>
+                <input type="text" id="item.name" name="item.name" :maxlength="item.maxlength" v-model="form_v_model[parent_index]">
               </div>
-              <div class="form-check" v-if="item.type=='number'">
-                <label for="item.name">{{ item.name }}:
-                  <input type="number" id="item.name" name="item.name" :max="item.max" :min="item.min" :step="item.step" v-model="form_v_model[parent_index]">
-                </label>
+              <div v-if="item.type=='number'">
+                <label class="item-name mr-2" for="item.name">{{ item.name }}: </label>
+                <input type="number" id="item.name" name="item.name" :max="item.max" :min="item.min" :step="item.step" v-model="form_v_model[parent_index]">
               </div>
             </div>
           <div class="m-2" v-if="!item.gui_type && form_v_model[parent_index]">
-            Editor:{{item.code}} <!--v-model="form_v_model[parent_index]" -->
-            <prism-editor class="my-editor"  :value="item.code" :highlight="highlighter" line-numbers></prism-editor>
+            <div class ="item-name">{{item.name}}:</div>
+            <!--v-model="form_v_model[parent_index]" -->
+            <prism-editor class="my-editor" v-model="form_v_model[parent_index]" :highlight="highlighter" line-numbers></prism-editor>
           </div>
         </div>
         <div class="m-5">
@@ -104,7 +118,8 @@ export default {
   }, 
   data () {
     return {
-      json: '{ "identifier"  : "11483f23-95bf-424a-98a5-ee5868c85c3e","metadata": { "display_name" : "Aufgabe 1", "description" : "Schreiben Sie eine C-Funktion..."},"environment" : "C","files" : [{ "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3e", "path"      : "code.c","metadata"  : {  "MIMEtype": "text/plain",  "syntaxHighlighting": "C" },"parts" :  [{ "identifier": "preamble","access"    : "visible",  "metadata"  : { "name"    : "Info: source before your code.","emphasis"  : "low"},"content"   : "I2luY2x1ZGUgPHN0ZGlvLmg-Cg" },{ "identifier": "codeFromStudent","access"    : "modifiable","metadata"  :{ "name"    : "Fill in your code!","emphasis"  : "medium"},"content" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"},{ "identifier": "postscript","access"    : "visible","metadata"  :{ "name"      : "Info: source after your code calling bar() in it.", "emphasis"  : "low"}, "content" : "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ" }] }],"parameters" : { "__checkbox__" : { "gui_type": "checkbox", "name": "options", "values": ["verbose", "debug", "make_plot"], "selected": ["verbose"]}, "__radioButton__" : { "gui_type": "radio", "name": "backend", "values": ["debug", "serial", "hpc", "test"], "selected": "serial", "disabled" : ["hpc"]}, "__dropdownSingle__" : { "gui_type": "dropdown", "name": "model", "values" : ["Please choose one", "1p", "1pnc", "1pncmin", "2p", "2p1c"], "selected" : "1p", "disabled" : ["Please choose one"], "multiple" : false }, "__dropdownMultiple__" : { "gui_type": "dropdown", "name": "model", "values" : ["Please choose multiple", "1p", "1pnc", "1pncmin", "2p", "2p1c"], "selected" : ["1p", "2p"], "disabled" : ["Please choose multiple", "2p1c"], "multiple" : true }, "__toggle__" : { "gui_type": "toggle", "name": "options", "values" : ["verbose", "debug", "make_plot"], "selected" : ["verbose"]}, "__sliderSingle__" : { "gui_type": "slider", "name": "temperature", "value" : 10, "min" : 0, "max" : 500, "step" : 10, "multiple" : false, "vertical" : false}, "__sliderMultiple__" : { "gui_type": "slider", "name": "temperature", "value" : [25, 50, 75], "min" : 0, "max" : 100, "step" : 5, "multiple" : true, "vertical" : true}, "__inputTextWMaxlength__" : { "gui_type": "input_field", "name": "file_name", "type" : "text", "maxlength" : 200}, "__inputTextWOMaxlangth__" : { "gui_type": "input_field", "name": "file_name", "type" : "text"}, "__inputNumber__" : { "gui_type": "input_field", "name": "time_delay", "type" : "number", "value" : 10, "min" : 0, "max" : 500, "step" : 0.1}, "__defaultJson__" : { "name": "time_delay", "type" : "number", "value" : 10, "min" : 0, "max" : 500, "step" : 0.1}, "__defaultJava__" : { "name": "time_delay", "code" : "int i = 0;"}, "__git__" :{ "gui_type" : "input_field","name"     : "stepwidth","type"     : "number","value"    : 0.001, "min"      : 0, "max"      : 1 ,"step"     : 0.001 ,"validation" : "range"}}, "configuration" : { "compiling.compiler" : "gcc", "compiling.flags"    : "-O2 -Wall" ,"checking.sources"   : ["codeFromStudent"], "checking.forbiddenCalls": "system execve" ,"linking.flags"      : "-lm" ,"running.commandLineArguments" : "--stepwidth {{ __STEPWIDTH__ }}"}}',
+      /* eslint-disable-next-line */
+      json: '{ "identifier"  : "11483f23-95bf-424a-98a5-ee5868c85c3e","metadata": { "display_name" : "Aufgabe 1", "description" : "Schreiben Sie eine C-Funktion..."},"environment" : "C","files" : [{ "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3e", "path"      : "code.c","metadata"  : {  "MIMEtype": "text/plain",  "syntaxHighlighting": "C" },"parts" :  [{ "identifier": "preamble","access"    : "visible",  "metadata"  : { "name"    : "Info: source before your code.","emphasis"  : "low"},"content"   : "I2luY2x1ZGUgPHN0ZGlvLmg-Cg" },{ "identifier": "codeFromStudent","access"    : "modifiable","metadata"  :{ "name"    : "Fill in your code!","emphasis"  : "medium"},"content" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"},{ "identifier": "postscript","access"    : "visible","metadata"  :{ "name"      : "Info: source after your code calling bar() in it.", "emphasis"  : "low"}, "content" : "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ" }] }],"parameters" : { "__checkbox__" : { "gui_type": "checkbox", "name": "options", "values": ["verbose", "debug", "make_plot"], "selected": ["verbose"]}, "__radioButton__" : { "gui_type": "radio", "name": "backend", "values": ["debug", "serial", "hpc", "test"], "selected": "serial", "disabled" : ["hpc"]}, "__dropdownSingle__" : { "gui_type": "dropdown", "name": "model", "values" : ["Please choose one", "1p", "1pnc", "1pncmin", "2p", "2p1c"], "selected" : "1p", "disabled" : ["Please choose one"], "multiple" : false }, "__dropdownMultiple__" : { "gui_type": "dropdown", "name": "model", "values" : ["Please choose multiple", "1p", "1pnc", "1pncmin", "2p", "2p1c"], "selected" : ["1p", "2p"], "disabled" : ["Please choose multiple", "2p1c"], "multiple" : true }, "__toggle__" : { "gui_type": "toggle", "name": "options", "values" : ["verbose", "debug", "make_plot"], "selected" : ["verbose"]}, "__sliderSingle__" : { "gui_type": "slider", "name": "temperature", "value" : 10, "min" : 0, "max" : 500, "step" : 10, "multiple" : false, "vertical" : false}, "__sliderMultiple__" : { "gui_type": "slider", "name": "temperature", "value" : [25, 50, 75], "min" : 0, "max" : 100, "step" : 5, "multiple" : true, "vertical" : true}, "__inputTextWMaxlength__" : { "gui_type": "input_field", "name": "file_name", "type" : "text", "maxlength" : 200}, "__inputTextWOMaxlangth__" : { "gui_type": "input_field", "name": "file_name", "type" : "text"}, "__inputNumber__" : { "gui_type": "input_field", "name": "time_delay", "type" : "number", "value" : 10, "min" : 0, "max" : 500, "step" : 0.1}, "__defaultJson__" : { "name": "code 1", "code" : "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"}, "__defaultJava__" : { "name": "code 2", "code" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"}, "__git__" :{ "gui_type" : "input_field","name"     : "stepwidth","type"     : "number","value"    : 0.001, "min"      : 0, "max"      : 1 ,"step"     : 0.001 ,"validation" : "range"}}, "configuration" : { "compiling.compiler" : "gcc", "compiling.flags"    : "-O2 -Wall" ,"checking.sources"   : ["codeFromStudent"], "checking.forbiddenCalls": "system execve" ,"linking.flags"      : "-lm" ,"running.commandLineArguments" : "--stepwidth {{ __STEPWIDTH__ }}"}}',
       templates: require.context('./input/', false, /^.*\.json$/).keys(),
       form_v_model: [],
       value: 10
@@ -140,8 +155,8 @@ export default {
         } else if(parsedJson[item].gui_type == "input_field" && parsedJson[item].type == "text"){
           this.form_v_model.push("");
         } else {
-          // wie sieht das JSON für den Editor aus?
-          this.form_v_model.push([parsedJson[item].code]);
+          // wie sieht das JSON fï¿½r den Editor aus?
+          this.form_v_model.push(this.decodeBase64(parsedJson[item].code));
         }
       }
     },
@@ -163,7 +178,7 @@ export default {
     isInputField: function(item) {
       return item.gui_type === 'input_field' ? true : false;
     }, 
-    dropdownWithoutDisabled: function(dropdownItem){
+    itemWithoutDisabled: function(dropdownItem){
       var array = dropdownItem.values;
       for(var i = 0; i < dropdownItem.disabled.length; i++){
         const indexOfItemToRemove = array.indexOf(dropdownItem.disabled[i]);
@@ -179,6 +194,29 @@ export default {
       }
     return "ltr";
     }, 
+    rewriteToBase64: function(base64urlEncodedString) {
+		// Replace base64 characters with base64url characters
+		base64urlEncodedString = base64urlEncodedString.replace(/-/g, '+').replace(/_/g, '/');
+
+		// Pad for base64
+		var padding = base64urlEncodedString.length % 4;
+		if(padding) {
+			if(padding === 1) {
+			
+				throw new Error('InvalidLengthError: Input base64url string is the wrong length to determine padding');
+			}
+			
+			base64urlEncodedString += new Array(5-padding).join('=');
+		}
+		
+		return base64urlEncodedString;
+  },
+  decodeBase64: function(base64urlEncodedString){
+		var encodedString = this.rewriteToBase64(base64urlEncodedString);
+
+		var decodedString = window.atob(encodedString);
+		return decodedString;
+	},
     highlighter(code) {
         return highlight(code, languages.js); // languages.<insert language> to return html with markup
     }
@@ -202,9 +240,13 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.item-name {
+  font-weight: bold;
+  font-size: 14pt;
 }
 
 .toggle label {
@@ -218,13 +260,13 @@ export default {
   display: none;
 }
  
-.toggle .slider { /* Grundfläche */
+.toggle .slider { /* Grundflï¿½che */
   position: absolute;
   cursor: pointer;
   top: 1.5em; 
   left: 2em;
-  width: 4em;
-  height: 2em;
+  width: 3.5em;
+  height: 1.5em;
   background-color: #c32e04; 
   border-radius: 1em; 
   transition: all .3s ease-in-out;
@@ -233,8 +275,8 @@ export default {
 .toggle  .slider::before {  /* verschiebbarer Button */
   position: absolute;
   content: "";
-  height: 1.6em;
-  width: 1.6em;
+  height: 1.1em;
+  width: 1.1em;
   left: .2em;
   bottom: .2em;
   background-color: white;
@@ -253,7 +295,7 @@ export default {
 /* required class */
 .my-editor {
   /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
-  background: beige;
+  background: white;
   color: #ccc;
   outline: 1px solid #2d2d2d;
 
