@@ -6,12 +6,15 @@
 
       <span>I found the following templates in example folder:</span>
       <div>
-        <ul id="templates" v-for="temp in templates" :key="temp.id"> 
-          <li><a :href="temp">{{ temp }}</a></li>  
+        <ul id="templates"> 
+          <li v-for="temp in templates" :key="temp.id">
+            <!-- :click="loadJsonFromFile(temp)" -->
+            <a :href="temp">{{ temp }}</a>
+          </li>  
         </ul>
       </div>
       <div>
-        <button type="button" id="submit" disabled="true">Submit</button>
+        <button type="button" id="submit" disabled>Submit</button>
         digest
       </div>
     </div>
@@ -127,7 +130,7 @@ export default {
   }, 
   computed: {
     parsedJson: function() {
-      var parsed = JSON.parse(this.json).parameters;
+      var parsed = this.json.parameters;
       return parsed;
     }
   },
@@ -216,13 +219,21 @@ export default {
 
 		var decodedString = window.atob(encodedString);
 		return decodedString;
-	},
-    highlighter(code) {
-        return highlight(code, languages.js); // languages.<insert language> to return html with markup
-    }
+  }, 
+  loadJsonFromFile: function() {
+    //temp = temp.substring(1);
+    //var container = require('./input' + temp);
+    var container = require("./input/container.computation-template2.json");
+    //console.log(temp);
+    this.json = container;
+  }, 
+  highlighter(code) {
+    return highlight(code, languages.js); // languages.<insert language> to return html with markup
+  }
   }, 
   mounted() {
     this.fillForm_v_model();
+    this.loadJsonFromFile();
   }
 }
 </script>
