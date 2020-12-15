@@ -1,0 +1,45 @@
+{
+  "identifier": "06fe1cab-0a1a-430a-91c5-badf539189a5",
+  "environment": "Container",
+  "files":   [
+    { "identifier": "22701b37-0a8f-405c-a89b-c31be7cd4b89",
+      "path": "params.input",
+      "metadata" :
+        { "syntaxHighlighting": "ini"
+        },
+      "parts": [
+        {
+          "identifier": "ceb051d8-b50c-4814-983a-b9d703cae0c6",
+          "access"    : "template",
+          "metadata"  :
+              { "name"      : "params.input file"
+              },
+          "parameters":
+              { "__CELL_X__" :
+                { "metadata" : 
+                   { "guiType" : "input_field",
+                     "name"    : "Number of cells in x-direction",
+                     "type"    : "number",
+                     "value"    : 10,
+                     "min"      : 1,
+                     "max"      : 1000,
+                     "step"     : 1
+                   },
+                  "validation" : 
+                   { "pattern" : ".*" } 
+                }
+              },
+            "content"   : ""
+         }
+       ] 
+    }
+  ],
+  "configuration" :
+    { "resources.image"  : "name://git.iws.uni-stuttgart.de:4567/dumux-repositories/dumux-docker/viplab/test", 
+      "resources.volume" : "/data/shared",
+      "resources.memory" : "1g",
+      "resources.numCPUs" : 1,
+      "running.entrypoint" : "/data/bin/run.sh",
+      "running.commandLineArguments" : "params.input"
+    }
+}
