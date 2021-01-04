@@ -22,14 +22,12 @@
     <form>
       <div class="form-group m-5">
         <div v-for="(item, key, parent_index) in parsedJson" :key=parent_index>
+          <!-- render checkbox elements -->
           <!-- render after form_v_model[parent_index] is set, or else js error occurs (even though page looks perfectly fine) -->
           <div class="m-2" v-if="isCheckbox(item) && form_v_model[parent_index]">
-            <div class ="item-name">{{item.name}}:</div>
-            <div class="checkbox form-check custom-control custom-checkbox" v-for="(check, index) in item.values" :key=index>
-              <input type="checkbox" class="form-check-input custom-control-input" :id="index" :value="check" checked v-model="form_v_model[parent_index][index]">
-              <label class="form-check-label custom-control-label" :for="index">{{ check }}</label>
-            </div>
+            <check-box :item="item" :parent_index="parent_index"></check-box>
           </div>
+          <!-- render radio button elements -->
           <div class="m-2" v-if="isRadio(item) && form_v_model[parent_index]">
             <div class ="item-name">{{item.name}}:</div>
             <div class="radiobutton form-check custom-control custom-radio" v-for="(radio, index) in itemWithoutDisabled(item)" :key="'Radio' + parent_index + ' ' +index">
@@ -41,6 +39,7 @@
               <label class="form-check-label custom-control-label" for="'RadioDis' + parent_index + ' ' +index">{{ radio }}</label>
             </div>
           </div>
+          <!-- render dropdown elements -->
           <div class="m-2" v-if="isDropdown(item) && form_v_model[parent_index]">
             <div class ="item-name">{{item.name}}:</div>
             <div class="dropdown form-group">
@@ -54,6 +53,7 @@
               </select>
             </div>
           </div>
+          <!-- render toggle button elements -->
           <div class="m-2 toggle" v-if="isToggle(item) && form_v_model[parent_index]">
             <div class ="item-name">{{item.name}}:</div>
             <div v-for="(toggle, index) in item.values" :key="'toggle'+parent_index + ' ' +index">
@@ -64,6 +64,7 @@
               </label>
             </div>
           </div>
+          <!-- render slider elements -->
           <div class="m-2" v-if="isSlider(item)" :key="'slider'+parent_index">
             <div class ="item-name">{{item.name}}:</div>
             <div v-if="!item.multiple">
@@ -73,16 +74,18 @@
               <vue-slider multiple v-model="form_v_model[parent_index]" :min="item.min" :max="item.max" :interval="item.step" :direction="sliderDirection(item)" style="height: 300px;[item.vertical ? {'height': '300px'} : {}]"></vue-slider>
             </div>
           </div>
+          <!-- render input field elements -->
           <div class="m-2" v-if="isInputField(item)">
-              <div v-if="item.type=='text'">
-                <label class="item-name mr-2" for="item.name">{{ item.name }}: </label>
-                <input type="text" class="form-control" id="item.name" name="item.name" :maxlength="item.maxlength" v-model="form_v_model[parent_index]">
-              </div>
-              <div v-if="item.type=='number'">
-                <label class="item-name mr-2" for="item.name">{{ item.name }}: </label>
-                <input type="number" class="form-control" id="item.name" name="item.name" :max="item.max" :min="item.min" :step="item.step" v-model="form_v_model[parent_index]">
-              </div>
+            <div v-if="item.type=='text'">
+              <label class="item-name mr-2" for="item.name">{{ item.name }}: </label>
+              <input type="text" class="form-control" id="item.name" name="item.name" :maxlength="item.maxlength" v-model="form_v_model[parent_index]">
             </div>
+            <div v-if="item.type=='number'">
+              <label class="item-name mr-2" for="item.name">{{ item.name }}: </label>
+              <input type="number" class="form-control" id="item.name" name="item.name" :max="item.max" :min="item.min" :step="item.step" v-model="form_v_model[parent_index]">
+            </div>
+          </div>
+          <!-- render items with no gui-type as editor elements -->
           <div class="m-2" v-if="!item.gui_type && form_v_model[parent_index]">
             <div class ="item-name">{{item.name}}:</div>
             <!--v-model="form_v_model[parent_index]" -->
@@ -113,33 +116,39 @@ import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-tomorrow.css'; // import syntax highlighting styles
 
+//own components
+import CheckBox from './components/Checkbox.vue';
+
 //import $ from 'jquery';
 
 export default {
   name: 'app',
   components: {
     VueSlider, 
-    PrismEditor
+    PrismEditor,
+    CheckBox
   }, 
   data () {
     return {
       json: '{}', //'{ "identifier"  : "11483f23-95bf-424a-98a5-ee5868c85c3e","metadata": { "display_name" : "Aufgabe 1", "description" : "Schreiben Sie eine C-Funktion..."},"environment" : "C","files" : [{ "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3e", "path"      : "code.c","metadata"  : {  "MIMEtype": "text/plain",  "syntaxHighlighting": "C" },"parts" :  [{ "identifier": "preamble","access"    : "visible",  "metadata"  : { "name"    : "Info: source before your code.","emphasis"  : "low"},"content"   : "I2luY2x1ZGUgPHN0ZGlvLmg-Cg" },{ "identifier": "codeFromStudent","access"    : "modifiable","metadata"  :{ "name"    : "Fill in your code!","emphasis"  : "medium"},"content" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"},{ "identifier": "postscript","access"    : "visible","metadata"  :{ "name"      : "Info: source after your code calling bar() in it.", "emphasis"  : "low"}, "content" : "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ" }] }],"parameters" : { "__checkbox__" : { "gui_type": "checkbox", "name": "options", "values": ["verbose", "debug", "make_plot"], "selected": ["verbose"]}, "__radioButton__" : { "gui_type": "radio", "name": "backend", "values": ["debug", "serial", "hpc", "test"], "selected": "serial", "disabled" : ["hpc"]}, "__dropdownSingle__" : { "gui_type": "dropdown", "name": "model", "values" : ["Please choose one", "1p", "1pnc", "1pncmin", "2p", "2p1c"], "selected" : "1p", "disabled" : ["Please choose one"], "multiple" : false }, "__dropdownMultiple__" : { "gui_type": "dropdown", "name": "model", "values" : ["Please choose multiple", "1p", "1pnc", "1pncmin", "2p", "2p1c"], "selected" : ["1p", "2p"], "disabled" : ["Please choose multiple", "2p1c"], "multiple" : true }, "__toggle__" : { "gui_type": "toggle", "name": "options", "values" : ["verbose", "debug", "make_plot"], "selected" : ["verbose"]}, "__sliderSingle__" : { "gui_type": "slider", "name": "temperature", "value" : 10, "min" : 0, "max" : 500, "step" : 10, "multiple" : false, "vertical" : false}, "__sliderMultiple__" : { "gui_type": "slider", "name": "temperature", "value" : [25, 50, 75], "min" : 0, "max" : 100, "step" : 5, "multiple" : true, "vertical" : true}, "__inputTextWMaxlength__" : { "gui_type": "input_field", "name": "file_name", "type" : "text", "maxlength" : 200}, "__inputTextWOMaxlangth__" : { "gui_type": "input_field", "name": "file_name", "type" : "text"}, "__inputNumber__" : { "gui_type": "input_field", "name": "time_delay", "type" : "number", "value" : 10, "min" : 0, "max" : 500, "step" : 0.1}, "__defaultJson__" : { "name": "code 1", "code" : "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"}, "__defaultJava__" : { "name": "code 2", "code" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"}, "__git__" :{ "gui_type" : "input_field","name"     : "stepwidth","type"     : "number","value"    : 0.001, "min"      : 0, "max"      : 1 ,"step"     : 0.001 ,"validation" : "range"}}, "configuration" : { "compiling.compiler" : "gcc", "compiling.flags"    : "-O2 -Wall" ,"checking.sources"   : ["codeFromStudent"], "checking.forbiddenCalls": "system execve" ,"linking.flags"      : "-lm" ,"running.commandLineArguments" : "--stepwidth {{ __STEPWIDTH__ }}"}}',
-      templates: require.context('./input/', false, /^.*\.json$/).keys(),
-      form_v_model: [],
+      templates: require.context('./input/', false, /^.*\.json$/).keys(), //get json file names from ./input folder
+      form_v_model: [], // array for v-model: for all form elements to be able to access the changes made by the user
       value: 10
     };
   }, 
   computed: {
+    /* return parameters section of json file */
     parsedJson: function() {
       var parsed = this.json.parameters;
       return parsed;
     }
   },
   methods: {
-    importAll (r) {
+    /*importAll (r) {
       const cache = {};
       r.keys().forEach(key => cache[key] = r(key));
-    }, 
+    },*/
+    /** pre-fill the array form_v_model with the values specified in the json file or if not specified add default values */
     fillForm_v_model: function() {
       var parsedJson = this.json.parameters;
       for (var item in parsedJson) {
@@ -164,6 +173,7 @@ export default {
         }
       }
     },
+    /** check gui-types of the items */
     isCheckbox: function(item) {
       return item.gui_type === 'checkbox' ? true : false;
     },
@@ -182,16 +192,18 @@ export default {
     isInputField: function(item) {
       return item.gui_type === 'input_field' ? true : false;
     }, 
-    itemWithoutDisabled: function(dropdownItem){
-      var array = dropdownItem.values;
-      for(var i = 0; i < dropdownItem.disabled.length; i++){
-        const indexOfItemToRemove = array.indexOf(dropdownItem.disabled[i]);
+    /** get all values of an item that are not disabled */
+    itemWithoutDisabled: function(item){
+      var array = item.values;
+      for(var i = 0; i < item.disabled.length; i++){
+        const indexOfItemToRemove = array.indexOf(item.disabled[i]);
         if(indexOfItemToRemove > -1){
           array.splice(indexOfItemToRemove, 1);
         }
       }
       return array;
     },
+    /** parse slider direction for the usage in the vue-slider */
     sliderDirection: function(sliderItem){
       if(sliderItem.vertical){
         return "ttb";
@@ -199,44 +211,41 @@ export default {
     return "ltr";
     }, 
     rewriteToBase64: function(base64urlEncodedString) {
-		// Replace base64 characters with base64url characters
-		base64urlEncodedString = base64urlEncodedString.replace(/-/g, '+').replace(/_/g, '/');
-
-		// Pad for base64
-		var padding = base64urlEncodedString.length % 4;
-		if(padding) {
-			if(padding === 1) {
-			
-				throw new Error('InvalidLengthError: Input base64url string is the wrong length to determine padding');
-			}
-			
-			base64urlEncodedString += new Array(5-padding).join('=');
-		}
-		
-		return base64urlEncodedString;
-  },
-  decodeBase64: function(base64urlEncodedString){
-		var encodedString = this.rewriteToBase64(base64urlEncodedString);
-
-		var decodedString = window.atob(encodedString);
-		return decodedString;
-  }, 
-  loadJsonFromFile: function(temp) {
-    temp = temp.substring(1);
-    var container = require('./input' + temp);
-    //var container = require("./input/container.computation-template2.json");
-    this.json = container;
-    console.log("load called");
-    /*$.getJSON('./input' + temp, function(json) {
-       console.log(json); // this will show the info in firebug console 
-      alert(json);
-    });*/
-    this.form_v_model = [];
-    this.fillForm_v_model();
-  }, 
-  highlighter(code) {
-    return highlight(code, languages.js); // languages.<insert language> to return html with markup
-  }
+      // Replace base64 characters with base64url characters
+      base64urlEncodedString = base64urlEncodedString.replace(/-/g, '+').replace(/_/g, '/');
+      // Pad for base64 
+      var padding = base64urlEncodedString.length % 4;
+      if(padding) {
+        if(padding === 1) {
+          throw new Error('InvalidLengthError: Input base64url string is the wrong length to determine padding');
+        }
+        base64urlEncodedString += new Array(5-padding).join('=');
+      }
+      return base64urlEncodedString;
+    },
+    decodeBase64: function(base64urlEncodedString){
+      var encodedString = this.rewriteToBase64(base64urlEncodedString);
+      var decodedString = window.atob(encodedString);
+      return decodedString;
+    }, 
+    /** load json from file with temp being the file name, set this.json to the content of the file and fill form_v_model */
+    loadJsonFromFile: function(temp) {
+      temp = temp.substring(1);
+      var container = require('./input' + temp);
+      //var container = require("./input/container.computation-template2.json");
+      this.json = container;
+      console.log("load called");
+      /*$.getJSON('./input' + temp, function(json) {
+        console.log(json); // this will show the info in firebug console 
+        alert(json);
+      });*/
+      this.form_v_model = [];
+      this.fillForm_v_model();
+    }, 
+    /** highlight the code in the editor */
+    highlighter(code) {
+      return highlight(code, languages.js); // languages.<insert language> to return html with markup
+    }
   }, 
   mounted() {
     //this.loadJsonFromFile();
@@ -259,7 +268,12 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-top: 60px;
+  background-color: #fff;
+  padding: 10px;
+  /*margin: 0 10px;
+  border-radius: 25px;*/
+  max-width: 1170px;
+  margin: 0 auto;
 }
 
 .item-name {
