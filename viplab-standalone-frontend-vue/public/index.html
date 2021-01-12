@@ -1,26 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>vue-hello-world</title>
-  </head>
-  <style>
-    html, body {
-      min-height: 100%;
-      overflow: auto;
-    }
-    body {
-      background-color: #ddd !important;
-    }
-  </style>
-  <body>
-    <noscript>
-      <strong>We're sorry but vue-hello-world doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <title>vue-hello-world</title>
+</head>
+<style>
+  html,
+  body {
+    min-height: 100%;
+    overflow: auto;
+  }
+
+  body {
+    background-color: #ddd !important;
+  }
+</style>
+
+<body>
+  <noscript>
+    <strong>We're sorry but vue-hello-world doesn't work properly without JavaScript enabled. Please enable it to
+      continue.</strong>
+  </noscript>
+  <div class="outer-div">
+    <div class="m-2">
+      <h1>Hello User</h1>
+      I found the following templates in example folder:
+      <div>
+        <ul id="templates">
+          {% for temp in templates %}
+          <a href="{{ url_for('explore_computation', filename=temp) }}">
+            <li>{{ temp }}</li>
+            {% endfor %}
+          </a>
+        </ul>
+      </div>
+      <div><button type="button" class="btn btn-outline-primary" id="submit" disabled="true">Submit</button> {{ digest
+        }}</div>
+    </div>
+    <div id="app" data-template='{{ data }}' data-token='{{ token }}'>
+    </div>
     <!-- built files will be auto injected -->
-  </body>
+  </div>
+</body>
+
 </html>
