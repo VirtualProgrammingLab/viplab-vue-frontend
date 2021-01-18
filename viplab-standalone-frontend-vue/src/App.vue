@@ -8,9 +8,9 @@
         <h2 v-if="parsedFilesJson">InputFiles</h2>
         <div class="item-name" v-if="json.metadata">{{ json.metadata.display_name }}</div>
         <div class="item-name" v-if="json.metadata">{{ json.metadata.description }}</div>
-        <div class="" v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
-          <div class="" v-for="(part, partParent_index) in file.parts" :key=part.identifier>
-            <div v-if="part.access !== 'template' && inputFiles_v_model.length > 0">
+        <div class="file" :id=file.identifier v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
+          <div class="part" v-for="(part, partParent_index) in file.parts" :key=part.identifier>
+            <div class="partcontent" :id=part.identifier v-if="part.access !== 'template' && inputFiles_v_model.length > 0">
               <div v-if="part.access == 'visible'">
                 <!-- v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" -->
                 <prism-editor class="my-editor editor-readonly" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" readonly="true" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
@@ -115,9 +115,12 @@ export default {
   data() {
     return {
       json: "{}", //'{ "identifier"  : "11483f23-95bf-424a-98a5-ee5868c85c3e","metadata": { "display_name" : "Aufgabe 1", "description" : "Schreiben Sie eine C-Funktion..."},"environment" : "C","files" : [{ "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3e", "path"      : "code.c","metadata"  : {  "MIMEtype": "text/plain",  "syntaxHighlighting": "C" },"parts" :  [{ "identifier": "preamble","access"    : "visible",  "metadata"  : { "name"    : "Info: source before your code.","emphasis"  : "low"},"content"   : "I2luY2x1ZGUgPHN0ZGlvLmg-Cg" },{ "identifier": "codeFromStudent","access"    : "modifiable","metadata"  :{ "name"    : "Fill in your code!","emphasis"  : "medium"},"content" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"},{ "identifier": "postscript","access"    : "visible","metadata"  :{ "name"      : "Info: source after your code calling bar() in it.", "emphasis"  : "low"}, "content" : "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ" }] }],"parameters" : { "__checkbox__" : { "gui_type": "checkbox", "name": "options", "values": ["verbose", "debug", "make_plot"], "selected": ["verbose"]}, "__radioButton__" : { "gui_type": "radio", "name": "backend", "values": ["debug", "serial", "hpc", "test"], "selected": "serial", "disabled" : ["hpc"]}, "__dropdownSingle__" : { "gui_type": "dropdown", "name": "model", "values" : ["Please choose one", "1p", "1pnc", "1pncmin", "2p", "2p1c"], "selected" : "1p", "disabled" : ["Please choose one"], "multiple" : false }, "__dropdownMultiple__" : { "gui_type": "dropdown", "name": "model", "values" : ["Please choose multiple", "1p", "1pnc", "1pncmin", "2p", "2p1c"], "selected" : ["1p", "2p"], "disabled" : ["Please choose multiple", "2p1c"], "multiple" : true }, "__toggle__" : { "gui_type": "toggle", "name": "options", "values" : ["verbose", "debug", "make_plot"], "selected" : ["verbose"]}, "__sliderSingle__" : { "gui_type": "slider", "name": "temperature", "value" : 10, "min" : 0, "max" : 500, "step" : 10, "multiple" : false, "vertical" : false}, "__sliderMultiple__" : { "gui_type": "slider", "name": "temperature", "value" : [25, 50, 75], "min" : 0, "max" : 100, "step" : 5, "multiple" : true, "vertical" : true}, "__inputTextWMaxlength__" : { "gui_type": "input_field", "name": "file_name", "type" : "text", "maxlength" : 200}, "__inputTextWOMaxlangth__" : { "gui_type": "input_field", "name": "file_name", "type" : "text"}, "__inputNumber__" : { "gui_type": "input_field", "name": "time_delay", "type" : "number", "value" : 10, "min" : 0, "max" : 500, "step" : 0.1}, "__defaultJson__" : { "name": "code 1", "code" : "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"}, "__defaultJava__" : { "name": "code 2", "code" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"}, "__git__" :{ "gui_type" : "input_field","name"     : "stepwidth","type"     : "number","value"    : 0.001, "min"      : 0, "max"      : 1 ,"step"     : 0.001 ,"validation" : "range"}}, "configuration" : { "compiling.compiler" : "gcc", "compiling.flags"    : "-O2 -Wall" ,"checking.sources"   : ["codeFromStudent"], "checking.forbiddenCalls": "system execve" ,"linking.flags"      : "-lm" ,"running.commandLineArguments" : "--stepwidth {{ __STEPWIDTH__ }}"}}',
+      token: "",
       templates: require.context("./input/", false, /^.*\.json$/).keys(), //get json file names from ./input folder
       form_v_model: [], // array for v-model: for all form elements to be able to access the changes made by the user
       inputFiles_v_model: [],
+      ws: "",
+      outputFiles: [],
     };
   },
   computed: {
@@ -252,6 +255,7 @@ export default {
       var appDiv = document.getElementById("app");
       var data = appDiv.getAttribute("data-template");
       this.json = JSON.parse(this.decodeBase64(data));
+      this.token = appDiv.getAttribute("data-token");
       this.form_v_model = [];
       this.fillForm_v_model();
       this.fillInputFiles_v_model();
@@ -259,13 +263,87 @@ export default {
     /** highlight the code in the editor */
     highlighter(code) {
       return highlight(code, languages.js); // languages.<insert language> to return html with markup
+    }, 
+    executeAfterDomLoaded: function(){
+      this.ws = new WebSocket("ws://localhost:8083/computations");
+      this.ws.onopen = () => {
+        this.ws.send(JSON.stringify({"type":"authenticate","content":{"jwt":this.token}}));
+          document.getElementById("submit").disabled = false;
+      };
+      this.ws.onmessage = function(event) {
+        var data = JSON.parse(event.data);
+        switch  (data.type) {
+            case "computation":
+                console.log("computation: " + data.content);
+                this.displayComputation(data.content);
+                break;
+            case "result":
+                console.log("result: " + data.content);
+                this.displayResult(data.content);
+                break;
+            default:
+                console.error(data);
+        }
+      }
+      document.getElementById("submit").onclick = this.sendData;
     },
+    uuid: function() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+      }
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' + 
+        s4() + '-' + s4() + s4() + s4();
+    },
+    sendData: function() {
+      document.getElementById("submit").disabled = true;
+      var task = {
+        "type":"create-computation",
+        "content":{
+            "template": this.json,
+            "task":{
+                "template": this.json.identifier,
+                "identifier": this.uuid(),
+                "files": []
+            }
+            
+        }
+      };
+      var i = 0;
+      document.querySelectorAll('.file').forEach(function(filediv){
+        let file = { 'identifier': filediv.id, 'parts': []};
+        var j = 0;
+        filediv.querySelectorAll('.partcontent').forEach(function(partcontent){
+          file.parts.push({'identifier':partcontent.id, 'content':btoa(this.inputFiles_v_model[i][j])});
+          j++;
+        });
+        task.content.task.files.push(file);
+        i++;
+      });
+      document.querySelector('#stdout').value = '';
+      document.querySelector('#stderr').value = '';
+      document.getElementById("fileList").innerHTML = '';
+      this.outputFiles = new Map();
+      this.ws.send(JSON.stringify(task));
+      return false;
+    },
+    displayComputation: function(computation){
+      console.log(computation);
+    },
+    displayResult: function(result){
+      console.log(result);
+    },
+    save: function(filename, identifier, mimetype){
+      console.log("some day you can save stuff with this function" + filename + " " + identifier + " " + mimetype);
+    }
   },
   created() {
     this.loadJsonFromFile();
     console.log(this.inputFiles_v_model);
   },
   mounted() {
+    this.executeAfterDomLoaded();
     //this.loadJsonFromFile();
     //this.loadJsonFromFile("./container.computation-template2.json");
   },
