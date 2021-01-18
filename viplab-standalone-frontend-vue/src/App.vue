@@ -297,6 +297,7 @@ export default {
         s4() + '-' + s4() + s4() + s4();
     },
     sendData: function() {
+      console.log("this is a test, to see if the method is called");
       document.getElementById("submit").disabled = true;
       var task = {
         "type":"create-computation",
@@ -311,19 +312,19 @@ export default {
         }
       };
       var i = 0;
-      document.querySelectorAll('.file').forEach(function(filediv){
+      document.querySelectorAll('.file').forEach((filediv) => {
         let file = { 'identifier': filediv.id, 'parts': []};
         var j = 0;
-        filediv.querySelectorAll('.partcontent').forEach(function(partcontent){
-          file.parts.push({'identifier':partcontent.id, 'content':btoa(this.inputFiles_v_model[i][j])});
+        filediv.querySelectorAll('.partcontent').forEach((partcontent) => {
+          file.parts.push({'identifier': partcontent.id, 'content':btoa(this.inputFiles_v_model[i][j])});
           j++;
         });
         task.content.task.files.push(file);
         i++;
       });
-      document.querySelector('#stdout').value = '';
-      document.querySelector('#stderr').value = '';
-      document.getElementById("fileList").innerHTML = '';
+      //document.querySelector('#stdout').value = '';
+      //document.querySelector('#stderr').value = '';
+      //document.getElementById("fileList").innerHTML = '';
       this.outputFiles = new Map();
       this.ws.send(JSON.stringify(task));
       return false;
