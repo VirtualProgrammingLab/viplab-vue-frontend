@@ -8,25 +8,23 @@
         <h2 v-if="parsedFilesJson">InputFiles</h2>
         <div class="item-name" v-if="json.metadata">{{ json.metadata.display_name }}</div>
         <div class="item-name" v-if="json.metadata">{{ json.metadata.description }}</div>
-        <div class="file" v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
+        <div class="" v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
           <div class="" v-for="(part, partParent_index) in file.parts" :key=part.identifier>
             <div v-if="part.access !== 'template' && inputFiles_v_model.length > 0">
               <div v-if="part.access == 'visible'">
                 <!-- v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" -->
-                <prism-editor class="my-editor editor-readonly" readonly="true" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
+                <prism-editor class="my-editor editor-readonly" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" readonly="true" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
               </div>
               <div v-else>
-                <prism-editor class="my-editor" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
+                <prism-editor class="my-editor" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
               </div>
-            </div>
-            
+            </div>  
           </div>
         </div>
         <div class="m-5">
           <div v-for='m in inputFiles_v_model.length' :key=m>
             test: {{ inputFiles_v_model[m-1] }}
           </div>
-          {{ inputFiles_v_model[0][0] }}
         </div>
       </div>
     </form>
@@ -185,7 +183,9 @@ export default {
         var parts = files[file].parts;
         var array = [];
         for (var part in parts) {
-          array.push(this.decodeBase64(parts[part].content));
+          if(parts[part].access !== "template") {
+            array.push(this.decodeBase64(parts[part].content));
+          }
         }
         this.inputFiles_v_model.push(array);
       }
@@ -373,19 +373,21 @@ export default {
   transform: translateX(1.9em);
 }
 
+/* for class surrounding editors to surround them with border, but if files empty, displays line
 .file {
   border: 1px solid #ddd;
   border-radius: 25px;
   overflow: hidden;
 }
+*/
 
 /* required class */
 .my-editor {
   /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
   background: white;
   color: #ccc;
-  /*border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;*/
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 
   /* you must provide font-family font-size line-height. Example: */
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
@@ -394,20 +396,22 @@ export default {
   padding: 5px;
 }
 
-/*.top-editor {
+.top-editor {
   border-top-right-radius: 25px;
   border-top-left-radius: 25px;
+  border-top: 1px solid #ddd;
 }
 
 .bottom-editor {
   border-bottom-right-radius: 25px;
   border-bottom-left-radius: 25px;
-}*/
+  border-bottom: 1px solid #ddd;
+}
 
 .editor-readonly {
   background: #ddd;
   /*border-left: 1px solid #888;
-  border-right: 1px solid #888;*/
-  opacity: 0.3;
+  border-right: 1px solid #888;
+  opacity: 0.3;*/
 }
 </style>
