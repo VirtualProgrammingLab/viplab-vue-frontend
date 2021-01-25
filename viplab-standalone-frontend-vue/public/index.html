@@ -20,7 +20,7 @@
   }
 </style>
 
-<body>
+<body data-template='{{ data }}' data-token='{{ token }}'>
   <noscript>
     <strong>We're sorry but vue-hello-world doesn't work properly without JavaScript enabled. Please enable it to
       continue.</strong>
@@ -41,7 +41,7 @@
       <div><button type="button" class="btn btn-outline-primary" id="submit" disabled="true">Submit</button> {{ digest
         }}</div>
     </div>
-    <div id="app" data-template='{{ data }}' data-token='{{ token }}'>
+    <div id="app">
     </div>
     <!-- built files will be auto injected -->
   </div>

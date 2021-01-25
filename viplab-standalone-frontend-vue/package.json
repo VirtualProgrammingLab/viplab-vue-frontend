@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "bootstrap": "^4.5.3",
+    "bootstrap-vue": "^2.21.2",
+    "epic-spinners": "^1.1.0",
     "eslint": "^7.14.0",
     "eslint-plugin-vue": "^7.1.0",
     "jquery": "^3.5.1",
@@ -16,7 +18,8 @@
     "prismjs": "^1.22.0",
     "vue": "^2.5.17",
     "vue-prism-editor": "^1.2.2",
-    "vue-slider-component": "^3.2.11"
+    "vue-slider-component": "^3.2.11",
+    "vue-wait": "^1.4.8"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.4",

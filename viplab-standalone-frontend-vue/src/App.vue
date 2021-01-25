@@ -8,19 +8,25 @@
         <h2 v-if="parsedFilesJson">InputFiles</h2>
         <div class="item-name" v-if="json.metadata">{{ json.metadata.display_name }}</div>
         <div class="item-name" v-if="json.metadata">{{ json.metadata.description }}</div>
-        <div class="file" :id=file.identifier v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
-          <div class="part" v-for="(part, partParent_index) in file.parts" :key=part.identifier>
-            <div class="partcontent" :id=part.identifier v-if="part.access !== 'template' && inputFiles_v_model.length > 0">
-              <div v-if="part.access == 'visible'">
-                <!-- v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" -->
-                <prism-editor class="my-editor editor-readonly" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" readonly="true" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
+        
+        <b-card no-body v-if="inputFiles_v_model.length > 0">
+          <b-tabs card class="files" content-class="m-2">
+            <b-tab :title="'File ' + fileParent_index" ref="file" class="file" v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
+              <div class="part" v-for="(part, partParent_index) in file.parts" :key=part.identifier>
+                <div ref="partcontent" class="partcontent" :id=part.identifier v-if="part.access !== 'template' && inputFiles_v_model.length > 0">
+                  <div v-if="part.access == 'visible'">
+                    <!-- v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" -->
+                    <prism-editor class="my-editor editor-readonly" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" readonly="true" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
+                  </div>
+                  <div v-else>
+                    <prism-editor class="my-editor" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
+                  </div>
+                </div>  
               </div>
-              <div v-else>
-                <prism-editor class="my-editor" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
-              </div>
-            </div>  
-          </div>
-        </div>
+            </b-tab>
+          </b-tabs>
+        </b-card>
+
         <div class="m-5">
           <div v-for='m in inputFiles_v_model.length' :key=m>
             test: {{ inputFiles_v_model[m-1] }}
@@ -62,7 +68,7 @@
           <!-- render items with no gui-type as editor elements -->
           <div class="form-item" v-if="!item.gui_type && form_v_model[parent_index]">
             <div class ="item-name">{{item.name}}:</div>
-            <prism-editor class="my-editor" v-model="form_v_model[parent_index]" :highlight="highlighter" line-numbers></prism-editor>
+            <prism-editor class="my-editor top-editor bottom-editor" v-model="form_v_model[parent_index]" :highlight="highlighter" line-numbers></prism-editor>
           </div>
         </div>
         <div class="m-5">
@@ -76,6 +82,22 @@
   <div class="flex-right m-2 p-2">
     <div class="form-group mb-5 ml-5 mr-5">
       <h2>OutputFiles</h2>
+
+      <div class="my-2">
+        <v-wait for="wait for ws response">
+          <circles-to-rhombuses-spinner
+            slot='waiting'
+            :animation-duration="1200"
+            :circles-num="3"
+            :circle-size="15"
+            color="#5bc0de"
+          />
+          <div id="stdout" v-if="outputFiles !== ''">
+            <prism-editor class="my-editor output-editor" readonly="true" v-model="outputFiles" :highlight="highlighter" line-numbers></prism-editor>
+          </div>
+        </v-wait>
+      </div>
+
     </div>
   </div>
 </template>
@@ -99,12 +121,15 @@ import ToggleButton from "./components/ToggleButton.vue";
 import SliderElement from "./components/SliderElement.vue";
 import InputField from "./components/InputField.vue";
 
+import { CirclesToRhombusesSpinner } from 'epic-spinners'
+
 //import $ from 'jquery';
 
 export default {
   name: "app",
   components: {
     PrismEditor,
+    CirclesToRhombusesSpinner,
     CheckBox,
     RadioButton,
     DropDown,
@@ -120,9 +145,9 @@ export default {
       form_v_model: [], // array for v-model: for all form elements to be able to access the changes made by the user
       inputFiles_v_model: [],
       ws: "",
-      outputFiles: [],
+      outputFiles: "",
     };
-  },
+  }, 
   computed: {
     /* return parameters section of json file */
     parsedParametersJson: function () {
@@ -190,7 +215,9 @@ export default {
             array.push(this.decodeBase64(parts[part].content));
           }
         }
-        this.inputFiles_v_model.push(array);
+        if (array.length > 0) {
+          this.inputFiles_v_model.push(array);
+        }
       }
     },
     /** check gui-types of the items */
@@ -252,7 +279,7 @@ export default {
       //var container = require("./input/container.computation-template2.json");
       this.json = container;
       console.log("load called");*/
-      var appDiv = document.getElementById("app");
+      var appDiv = document.body;
       var data = appDiv.getAttribute("data-template");
       this.json = JSON.parse(this.decodeBase64(data));
       this.token = appDiv.getAttribute("data-token");
@@ -265,25 +292,27 @@ export default {
       return highlight(code, languages.js); // languages.<insert language> to return html with markup
     }, 
     executeAfterDomLoaded: function(){
-      this.ws = new WebSocket("ws://localhost:8083/computations");
+      this.ws = new WebSocket("ws://192.168.195.128:8083/computations");
       this.ws.onopen = () => {
         this.ws.send(JSON.stringify({"type":"authenticate","content":{"jwt":this.token}}));
           document.getElementById("submit").disabled = false;
       };
-      this.ws.onmessage = function(event) {
+      this.ws.onmessage = (event) => {
         var data = JSON.parse(event.data);
         switch  (data.type) {
             case "computation":
-                console.log("computation: " + data.content);
                 this.displayComputation(data.content);
                 break;
             case "result":
-                console.log("result: " + data.content);
                 this.displayResult(data.content);
                 break;
             default:
                 console.error(data);
         }
+        if(this.outputFiles !== "") {
+          // stop waiting
+          this.$wait.end('wait for ws response');
+        } 
       }
       document.getElementById("submit").onclick = this.sendData;
     },
@@ -297,12 +326,16 @@ export default {
         s4() + '-' + s4() + s4() + s4();
     },
     sendData: function() {
-      console.log("this is a test, to see if the method is called");
+      console.log("send data");
+      
+      // start waiting
+      this.$wait.start('wait for ws response');
+
       document.getElementById("submit").disabled = true;
       var task = {
         "type":"create-computation",
         "content":{
-            "template": this.json,
+            "template": document.body.getAttribute("data-template"),
             "task":{
                 "template": this.json.identifier,
                 "identifier": this.uuid(),
@@ -312,10 +345,10 @@ export default {
         }
       };
       var i = 0;
-      document.querySelectorAll('.file').forEach((filediv) => {
+      this.$refs.file.forEach((filediv) => {
         let file = { 'identifier': filediv.id, 'parts': []};
         var j = 0;
-        filediv.querySelectorAll('.partcontent').forEach((partcontent) => {
+        this.$refs.partcontent.forEach((partcontent) => {
           file.parts.push({'identifier': partcontent.id, 'content':btoa(this.inputFiles_v_model[i][j])});
           j++;
         });
@@ -325,15 +358,21 @@ export default {
       //document.querySelector('#stdout').value = '';
       //document.querySelector('#stderr').value = '';
       //document.getElementById("fileList").innerHTML = '';
-      this.outputFiles = new Map();
+      //this.outputFiles = new Map();
       this.ws.send(JSON.stringify(task));
+      
       return false;
     },
     displayComputation: function(computation){
       console.log(computation);
     },
     displayResult: function(result){
-      console.log(result);
+      if (result.result.status == "final") {
+        document.getElementById("submit").disabled = false;
+      }
+      this.outputFiles = this.decodeBase64(result.result.output.stdout);
+      //console.log(this.outputFiles);
+      
     },
     save: function(filename, identifier, mimetype){
       console.log("some day you can save stuff with this function" + filename + " " + identifier + " " + mimetype);
@@ -341,7 +380,7 @@ export default {
   },
   created() {
     this.loadJsonFromFile();
-    console.log(this.inputFiles_v_model);
+    //console.log(this.inputFiles_v_model);
   },
   mounted() {
     this.executeAfterDomLoaded();
@@ -487,10 +526,27 @@ export default {
   border-bottom: 1px solid #ddd;
 }
 
+.output-editor {
+  border-radius: 25px;
+  border: 1px solid #ddd;
+}
+
 .editor-readonly {
   background: #ddd;
   /*border-left: 1px solid #888;
   border-right: 1px solid #888;
   opacity: 0.3;*/
 }
+
+.card-header:nth-child(1) {
+  background-color: white;
+  border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0 !important;
+}
+
+.nav-link {
+  background-color: #ddd;
+  margin-left: 2px;
+  text-decoration: none !important;
+}
+
 </style>
