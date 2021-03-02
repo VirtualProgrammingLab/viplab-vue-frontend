@@ -10,10 +10,15 @@
   "dependencies": {
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.21.2",
+    "crypto-js": "^4.0.0",
     "epic-spinners": "^1.1.0",
     "eslint": "^7.14.0",
     "eslint-plugin-vue": "^7.1.0",
+    "fs": "0.0.1-security",
     "jquery": "^3.5.1",
+    "js-base64": "^3.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.4",
     "popper.js": "^1.16.1",
     "prismjs": "^1.22.0",
     "vue": "^2.5.17",
@@ -25,7 +30,9 @@
     "@vue/cli-plugin-babel": "^3.0.4",
     "@vue/cli-plugin-eslint": "^3.0.4",
     "@vue/cli-service": "^4.5.9",
-    "vue-template-compiler": "^2.5.17"
+    "html-webpack-plugin": "^4.5.2",
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.4.0"
   },
   "eslintConfig": {
     "root": true,

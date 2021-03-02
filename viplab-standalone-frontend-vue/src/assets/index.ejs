@@ -20,7 +20,7 @@
   }
 </style>
 
-<body data-template='{{ data }}' data-token='{{ token }}'>
+<body data-template='<%= test %>' data-token='<%= token %>'>
   <noscript>
     <strong>We're sorry but vue-hello-world doesn't work properly without JavaScript enabled. Please enable it to
       continue.</strong>
@@ -31,15 +31,14 @@
       I found the following templates in example folder:
       <div>
         <ul id="templates">
-          {% for temp in templates %}
-          <a href="{{ url_for('explore_computation', filename=temp) }}">
-            <li>{{ temp }}</li>
-            {% endfor %}
-          </a>
+          <% templates.forEach( temp => { %>
+            <a href=<%= temp %>>
+              <li><%= temp %></li>
+            </a>
+          <% }) %>
         </ul>
       </div>
-      <div><button type="button" class="btn btn-outline-primary" id="submit" disabled="true">Submit</button> {{ digest
-        }}</div>
+      <div><button type="button" class="btn btn-outline-primary" id="submit" disabled="true">Submit</button> <%= digest %> </div>
     </div>
     <div id="app">
     </div>

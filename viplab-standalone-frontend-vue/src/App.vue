@@ -1,103 +1,115 @@
 <template>
   <div id="app" class="flex-container">
+    
+    <!--<div class="m-2">
+      <h1>Hello User</h1>
+      I found the following templates in example folder: 
+      
+      <ul>
+        <li v-for="temp in templates" :key=temp>
+          <a type="button" :href=temp>{{temp}}</a>
+        </li>
+      </ul>
+    </div>-->
 
     <div class="flex-left m-2 p-2">
       
-    <form>
-      <div class="form-group mb-5 ml-5 mr-5">
-        <h2 v-if="parsedFilesJson">InputFiles</h2>
-        <div class="item-name" v-if="json.metadata">{{ json.metadata.display_name }}</div>
-        <div class="item-name" v-if="json.metadata">{{ json.metadata.description }}</div>
+      <form>
+        <div class="form-group mb-5 ml-5 mr-5">
+          <h2 v-if="parsedFilesJson">InputFiles</h2>
+          <div class="item-name" v-if="json.metadata">{{ json.metadata.display_name }}</div>
+          <div class="item-name" v-if="json.metadata">{{ json.metadata.description }}</div>
         
-        <b-card no-body v-if="inputFiles_v_model.length > 0">
-          <b-tabs card class="files" content-class="m-2">
-            <b-tab :title="'File ' + fileParent_index" ref="file" class="file" v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
-              <div class="part" v-for="(part, partParent_index) in file.parts" :key=part.identifier>
-                <div ref="partcontent" class="partcontent" :id=part.identifier v-if="part.access !== 'template' && inputFiles_v_model.length > 0">
-                  <div v-if="part.access == 'visible'">
-                    <!-- v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" -->
-                    <prism-editor class="my-editor editor-readonly" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" readonly="true" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
-                  </div>
-                  <div v-else>
-                    <prism-editor class="my-editor" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
-                  </div>
-                </div>  
-              </div>
-            </b-tab>
-          </b-tabs>
-        </b-card>
+          <b-card no-body v-if="inputFiles_v_model.length > 0">
+            <b-tabs card class="files" content-class="m-2">
+              <b-tab :title="'File ' + fileParent_index" ref="file" class="file" v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
+                <div class="part" v-for="(part, partParent_index) in file.parts" :key=part.identifier>
+                  <div ref="partcontent" class="partcontent" :id=part.identifier v-if="part.access !== 'template' && inputFiles_v_model.length > 0">
+                    <div v-if="part.access == 'visible'">
+                      <!-- v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" -->
+                      <prism-editor class="my-editor editor-readonly" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" :readonly="true" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
+                    </div>
+                    <div v-else>
+                      <prism-editor class="my-editor" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
+                    </div>
+                  </div>  
+                </div>
+              </b-tab>
+            </b-tabs>
+          </b-card>
 
-        <div class="m-5">
-          <div v-for='m in inputFiles_v_model.length' :key=m>
-            test: {{ inputFiles_v_model[m-1] }}
+          <div class="m-5">
+            <div v-for='m in inputFiles_v_model.length' :key=m>
+              test: {{ inputFiles_v_model[m-1] }}
+            </div>
           </div>
         </div>
-      </div>
-    </form>
+      </form>
 
-    <!-- render parameters section of the json -->
-    <form>
+      <!-- render parameters section of the json -->
+      <form>
+        <div class="form-group mb-5 ml-5 mr-5">
+          <h2 v-if="parsedParametersJson">Parameters</h2>
+          <div v-for="(item, key, parent_index) in parsedParametersJson" :key=parent_index>
+            <!-- render checkbox elements -->
+            <!-- render after form_v_model[parent_index] is set, or else js error occurs (even though page looks perfectly fine) -->
+            <div class="form-item" v-if="isCheckbox(item) && form_v_model[parent_index]">
+              <check-box :item="item" :parent_index="parent_index"></check-box>
+            </div>
+            <!-- render radio button elements -->
+            <div class="form-item" v-if="isRadio(item) && form_v_model[parent_index]">
+              <radio-button :item="item" :parent_index="parent_index"></radio-button>
+            </div>
+            <!-- render dropdown elements -->
+            <div class="form-item" v-if="isDropdown(item) && form_v_model[parent_index]">
+              <drop-down :item="item" :parent_index="parent_index"></drop-down>
+            </div>
+            <!-- render toggle button elements -->
+            <div class="form-item toggle" v-if="isToggle(item) && form_v_model[parent_index]">
+              <toggle-button :item="item" :parent_index="parent_index"></toggle-button>
+            </div>
+            <!-- render slider elements -->
+            <div class="form-item" v-if="isSlider(item)" :key="'slider'+parent_index">
+              <slider-element :item="item" :parent_index="parent_index"></slider-element>
+            </div>
+            <!-- render input field elements -->
+            <div class="form-item" v-if="isInputField(item)">
+              <input-field :item="item" :parent_index="parent_index"></input-field>
+            </div>
+            <!-- render items with no gui-type as editor elements -->
+            <div class="form-item" v-if="!item.gui_type && form_v_model[parent_index]">
+              <div class ="item-name">{{item.name}}:</div>
+              <prism-editor class="my-editor top-editor bottom-editor" v-model="form_v_model[parent_index]" :highlight="highlighter" line-numbers></prism-editor>
+            </div>
+          </div>
+          <div class="m-5">
+            <div v-for='n in form_v_model.length' :key=n>
+              test: {{ form_v_model[n-1] }}
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="flex-right m-2 p-2">
       <div class="form-group mb-5 ml-5 mr-5">
-        <h2 v-if="parsedParametersJson">Parameters</h2>
-        <div v-for="(item, key, parent_index) in parsedParametersJson" :key=parent_index>
-          <!-- render checkbox elements -->
-          <!-- render after form_v_model[parent_index] is set, or else js error occurs (even though page looks perfectly fine) -->
-          <div class="form-item" v-if="isCheckbox(item) && form_v_model[parent_index]">
-            <check-box :item="item" :parent_index="parent_index"></check-box>
-          </div>
-          <!-- render radio button elements -->
-          <div class="form-item" v-if="isRadio(item) && form_v_model[parent_index]">
-            <radio-button :item="item" :parent_index="parent_index"></radio-button>
-          </div>
-          <!-- render dropdown elements -->
-          <div class="form-item" v-if="isDropdown(item) && form_v_model[parent_index]">
-            <drop-down :item="item" :parent_index="parent_index"></drop-down>
-          </div>
-          <!-- render toggle button elements -->
-          <div class="form-item toggle" v-if="isToggle(item) && form_v_model[parent_index]">
-            <toggle-button :item="item" :parent_index="parent_index"></toggle-button>
-          </div>
-          <!-- render slider elements -->
-          <div class="form-item" v-if="isSlider(item)" :key="'slider'+parent_index">
-            <slider-element :item="item" :parent_index="parent_index"></slider-element>
-          </div>
-          <!-- render input field elements -->
-          <div class="form-item" v-if="isInputField(item)">
-            <input-field :item="item" :parent_index="parent_index"></input-field>
-          </div>
-          <!-- render items with no gui-type as editor elements -->
-          <div class="form-item" v-if="!item.gui_type && form_v_model[parent_index]">
-            <div class ="item-name">{{item.name}}:</div>
-            <prism-editor class="my-editor top-editor bottom-editor" v-model="form_v_model[parent_index]" :highlight="highlighter" line-numbers></prism-editor>
-          </div>
-        </div>
-        <div class="m-5">
-          <div v-for='n in form_v_model.length' :key=n>
-            test: {{ form_v_model[n-1] }}
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div class="flex-right m-2 p-2">
-    <div class="form-group mb-5 ml-5 mr-5">
-      <h2>OutputFiles</h2>
+        <h2>OutputFiles</h2>
 
-      <div class="my-2">
-        <v-wait for="wait for ws response">
-          <circles-to-rhombuses-spinner
-            slot='waiting'
-            :animation-duration="1200"
-            :circles-num="3"
-            :circle-size="15"
-            color="#5bc0de"
-          />
-          <div id="stdout" v-if="outputFiles !== ''">
-            <prism-editor class="my-editor output-editor" readonly="true" v-model="outputFiles" :highlight="highlighter" line-numbers></prism-editor>
-          </div>
-        </v-wait>
-      </div>
+        <div class="my-2">
+          <v-wait for="wait for ws response">
+            <circles-to-rhombuses-spinner
+              slot='waiting'
+              :animation-duration="1200"
+              :circles-num="3"
+              :circle-size="15"
+              color="#5bc0de"
+            />
+            <div id="stdout" v-if="outputFiles !== ''">
+              <prism-editor class="my-editor output-editor" readonly="true" v-model="outputFiles" :highlight="highlighter" line-numbers></prism-editor>
+            </div>
+          </v-wait>
+        </div>
 
+      </div>
     </div>
   </div>
 </template>
@@ -121,7 +133,7 @@ import ToggleButton from "./components/ToggleButton.vue";
 import SliderElement from "./components/SliderElement.vue";
 import InputField from "./components/InputField.vue";
 
-import { CirclesToRhombusesSpinner } from 'epic-spinners'
+import { CirclesToRhombusesSpinner } from 'epic-spinners';
 
 //import $ from 'jquery';
 
@@ -274,15 +286,13 @@ export default {
     },
     /** load json from file with temp being the file name, set this.json to the content of the file and fill form_v_model */
     loadJsonFromFile: function () {
-      /**temp = temp.substring(1);
-      var container = require('./input' + temp);
-      //var container = require("./input/container.computation-template2.json");
-      this.json = container;
-      console.log("load called");*/
       var appDiv = document.body;
       var data = appDiv.getAttribute("data-template");
       this.json = JSON.parse(this.decodeBase64(data));
       this.token = appDiv.getAttribute("data-token");
+
+      console.log(this.json);
+
       this.form_v_model = [];
       this.fillForm_v_model();
       this.fillInputFiles_v_model();
@@ -292,9 +302,11 @@ export default {
       return highlight(code, languages.js); // languages.<insert language> to return html with markup
     }, 
     executeAfterDomLoaded: function(){
-      this.ws = new WebSocket("ws://192.168.195.128:8083/computations");
+      //this.ws = new WebSocket("ws://192.168.195.128:8083/computations");
+      this.ws = new WebSocket("ws://localhost:8083/computations");
+      console.log("connect to ws");
       this.ws.onopen = () => {
-        this.ws.send(JSON.stringify({"type":"authenticate","content":{"jwt":this.token}}));
+        this.ws.send(JSON.stringify({"type":"authenticate","content":{"jwt": this.token}}));
           document.getElementById("submit").disabled = false;
       };
       this.ws.onmessage = (event) => {
@@ -349,7 +361,7 @@ export default {
         let file = { 'identifier': filediv.id, 'parts': []};
         var j = 0;
         this.$refs.partcontent.forEach((partcontent) => {
-          file.parts.push({'identifier': partcontent.id, 'content':btoa(this.inputFiles_v_model[i][j])});
+          file.parts.push({'identifier': partcontent.id, 'content': btoa(this.inputFiles_v_model[i][j])});
           j++;
         });
         task.content.task.files.push(file);
@@ -359,6 +371,7 @@ export default {
       //document.querySelector('#stderr').value = '';
       //document.getElementById("fileList").innerHTML = '';
       //this.outputFiles = new Map();
+      console.log(JSON.stringify(task));
       this.ws.send(JSON.stringify(task));
       
       return false;
