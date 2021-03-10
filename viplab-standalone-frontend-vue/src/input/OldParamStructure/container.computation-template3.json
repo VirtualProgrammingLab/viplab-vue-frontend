@@ -40,19 +40,12 @@
             "emphasis": "low"
           },
           "parameters":
-              { "__CELL_X__" :
-                { "metadata" : 
-                   { "guiType" : "input_field",
-                     "name"    : "Number of cells in x-direction",
-                     "type"    : "number",
-                     "value"    : 10,
-                     "min"      : 1,
-                     "max"      : 1000,
-                     "step"     : 1
-                   },
-                  "validation" : 
-                   { "pattern" : ".*" } 
-                }
+              { "__PART_PARAM__" : {
+                "gui_type": "input_field",
+                "name": "file_name",
+                "type": "text",
+                "maxlength": 200
+              }
               },
           "content": "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ"
         }

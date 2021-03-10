@@ -2,11 +2,11 @@
   <div class="radiobutton-component">
     <div class ="item-name">{{item.name}}:</div>
     <div class="radiobutton form-check custom-control custom-radio" v-for="(radio, index) in itemWithoutDisabled(item)" :key="'Radio' + parent_index + ' ' +index">
-        <input class="form-check-input custom-control-input" type="radio" :id="'Radio' + parent_index + ' ' +index" :value="radio" v-model="$parent.form_v_model[parent_index]">
+        <input class="form-check-input custom-control-input" type="radio" :id="'Radio' + parent_index + ' ' +index" :value="radio" v-model="vModel[parent_index]">
         <label class="form-check-label custom-control-label" :for="'Radio' + parent_index + ' ' +index">{{ radio }}</label>        
     </div>
     <div class="radiobutton form-check custom-control custom-radio" v-for="(radio, index) in item.disabled" :key="'RadioDis' + parent_index + ' ' +index">
-        <input class="form-check-input custom-control-input" type="radio" :id="'RadioDis' + parent_index + ' ' +index" disabled :value="radio" v-model="$parent.form_v_model[parent_index]">
+        <input class="form-check-input custom-control-input" type="radio" :id="'RadioDis' + parent_index + ' ' +index" disabled :value="radio" v-model="vModel[parent_index]">
         <label class="form-check-label custom-control-label" for="'RadioDis' + parent_index + ' ' +index">{{ radio }}</label>
     </div>
   </div>
@@ -17,7 +17,13 @@ export default {
   name: 'RadioButton',
   props: {
     item: Object,
-    parent_index: Number
+    parent_index: Number, 
+    v_model_var: Array
+  }, 
+  data() {
+    return {
+      vModel: this.v_model_var  
+    }
   }, 
   methods: {
     /** get all values of an item that are not disabled */

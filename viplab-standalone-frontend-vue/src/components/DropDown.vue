@@ -2,11 +2,11 @@
   <div class="dropdown-component">
     <div class ="item-name">{{item.name}}:</div>
     <div class="dropdown form-group">
-        <select class="form-control" v-if="!item.multiple" v-model="$parent.form_v_model[parent_index]">
+        <select class="form-control" v-if="!item.multiple" v-model="vModel[parent_index]">
             <option v-for="(disabled, index) in item.disabled" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
             <option v-for="(drop, index) in itemWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
         </select>
-        <select class="form-control" v-if="item.multiple" v-model="$parent.form_v_model[parent_index]" multiple>
+        <select class="form-control" v-if="item.multiple" v-model="vModel[parent_index]" multiple>
             <option v-for="(disabled, index) in item.disabled" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
             <option v-for="(drop, index) in itemWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
         </select>
@@ -19,8 +19,14 @@ export default {
   name: 'DropDown',
   props: {
     item: Object,
-    parent_index: Number
-  }, 
+    parent_index: Number, 
+    v_model_var: Array
+  },
+  data() {
+    return {
+      vModel: this.v_model_var  
+    }
+  },
   methods: {
     /** get all values of an item that are not disabled */
     itemWithoutDisabled: function(item){

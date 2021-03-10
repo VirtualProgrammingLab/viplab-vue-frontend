@@ -5,6 +5,7 @@ module.exports = {
     //the next 2 lines are needed, if you want to use the files in a flask app:
     //assetsDir: './static',
     //indexPath: './templates/main.html',
+    runtimeCompiler: true,
     pwa: {
         iconPaths: {
            favicon32: './favicon.png',
@@ -61,23 +62,33 @@ var dataTemplate;
 var token;
 
 var setParameters = function(filename) {
+    
+    console.log(process.argv[3]);
+    console.log(process.env.VUE_APP_FILENAME);
 
     inputTemplates = fs.readdirSync('./src/input/');
     
-    if (filename === "" || filename === null) {
+    if (filename === "" || filename === null || filename === undefined) {
         filename = inputTemplates[0].slice(0, -5);
-    } 
+    }
 
     var jwks = JSON.parse(fs.readFileSync('./src/assets/jwks.private.json'));
     var key = decodeURIComponent(jwkToPem(jwks['keys'][0], {private: true}));
     
-    var dataBase64 = Base64.encode(Buffer.from((fs.readFileSync("./src/input/"+ filename +".json")).toString(), "utf-8"));
+    //check is file exists, else use first file in input folder
+    var file = null;
+    try {
+        file = fs.readFileSync("./src/input/"+ filename +".json")
+    } catch (err) {
+        file = fs.readFileSync("./src/input/"+ inputTemplates[0].slice(0, -5) +".json")
+    }
+    var dataBase64 = Base64.encode(Buffer.from(file).toString(), "utf-8");
     var codeSha256 = CryptoJS.SHA256(dataBase64).toString(CryptoJS.enc.Hex);
     
     token = decodeURIComponent(jwt.sign({'viplab.computation-template.digest': codeSha256, 'iss':'test'}, key, {algorithm:'RS512', header: {"kid": "mykeyid"}}));
     
     digest = codeSha256;
-    dataTemplate = dataBase64; 
+    dataTemplate = dataBase64;
     
     //console.log(codeSha256);
     //console.log(dataBase64);
@@ -87,4 +98,5 @@ var setParameters = function(filename) {
     //console.log("codeSha256: " + codeSha256);
     //console.log("token: " + token);
 }
-setParameters("");
+
+setParameters(process.env.VUE_APP_FILENAME);

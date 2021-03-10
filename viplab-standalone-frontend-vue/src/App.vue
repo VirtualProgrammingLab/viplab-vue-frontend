@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="flex-container">
+  <div id="app" class="flex-container" :style="[maximized? {'flex-direction': 'column !important'} : null]">
     
     <!--<div class="m-2">
       <h1>Hello User</h1>
@@ -13,13 +13,16 @@
     </div>-->
 
     <div class="flex-left m-2 p-2">
-      
+
       <form>
         <div class="form-group mb-5 ml-5 mr-5">
           <h2 v-if="parsedFilesJson">InputFiles</h2>
           <div class="item-name" v-if="json.metadata">{{ json.metadata.display_name }}</div>
           <div class="item-name" v-if="json.metadata">{{ json.metadata.description }}</div>
         
+          <!-- 
+            Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
+          -->
           <b-card no-body v-if="inputFiles_v_model.length > 0">
             <b-tabs card class="files" content-class="m-2">
               <b-tab :title="'File ' + fileParent_index" ref="file" class="file" v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
@@ -32,12 +35,15 @@
                     <div v-else>
                       <prism-editor class="my-editor" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
                     </div>
-                  </div>  
+                  </div>
+                  <div class="part-parameters" v-if="part.parameters && part.access == 'template'">
+                      <h2>Parameters</h2>
+                      <parameters :parameters="part.parameters" :v_model_var="inputFilesPartsParameters_v_model"></parameters>
+                  </div>
                 </div>
               </b-tab>
             </b-tabs>
           </b-card>
-
           <div class="m-5">
             <div v-for='m in inputFiles_v_model.length' :key=m>
               test: {{ inputFiles_v_model[m-1] }}
@@ -50,38 +56,7 @@
       <form>
         <div class="form-group mb-5 ml-5 mr-5">
           <h2 v-if="parsedParametersJson">Parameters</h2>
-          <div v-for="(item, key, parent_index) in parsedParametersJson" :key=parent_index>
-            <!-- render checkbox elements -->
-            <!-- render after form_v_model[parent_index] is set, or else js error occurs (even though page looks perfectly fine) -->
-            <div class="form-item" v-if="isCheckbox(item) && form_v_model[parent_index]">
-              <check-box :item="item" :parent_index="parent_index"></check-box>
-            </div>
-            <!-- render radio button elements -->
-            <div class="form-item" v-if="isRadio(item) && form_v_model[parent_index]">
-              <radio-button :item="item" :parent_index="parent_index"></radio-button>
-            </div>
-            <!-- render dropdown elements -->
-            <div class="form-item" v-if="isDropdown(item) && form_v_model[parent_index]">
-              <drop-down :item="item" :parent_index="parent_index"></drop-down>
-            </div>
-            <!-- render toggle button elements -->
-            <div class="form-item toggle" v-if="isToggle(item) && form_v_model[parent_index]">
-              <toggle-button :item="item" :parent_index="parent_index"></toggle-button>
-            </div>
-            <!-- render slider elements -->
-            <div class="form-item" v-if="isSlider(item)" :key="'slider'+parent_index">
-              <slider-element :item="item" :parent_index="parent_index"></slider-element>
-            </div>
-            <!-- render input field elements -->
-            <div class="form-item" v-if="isInputField(item)">
-              <input-field :item="item" :parent_index="parent_index"></input-field>
-            </div>
-            <!-- render items with no gui-type as editor elements -->
-            <div class="form-item" v-if="!item.gui_type && form_v_model[parent_index]">
-              <div class ="item-name">{{item.name}}:</div>
-              <prism-editor class="my-editor top-editor bottom-editor" v-model="form_v_model[parent_index]" :highlight="highlighter" line-numbers></prism-editor>
-            </div>
-          </div>
+          <parameters :parameters="parsedParametersJson" :v_model_var="form_v_model"></parameters>
           <div class="m-5">
             <div v-for='n in form_v_model.length' :key=n>
               test: {{ form_v_model[n-1] }}
@@ -89,7 +64,29 @@
           </div>
         </div>
       </form>
+      <div class="d-flex flex-row mb-5 ml-5 mr-5">
+        <div class="mr-auto">
+          <b-button class="btn mr-2">
+            <b-icon icon="download" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button class="btn mr-2">
+            <b-icon icon="upload" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button class="btn" variant="primary">
+            <b-icon icon="play" aria-hidden="true"></b-icon>
+          </b-button>
+        </div>
+        <div class="">
+          <b-button class="btn mr-2" @click="maximize">
+            <b-icon icon="fullscreen" aria-hidden="true"></b-icon>
+          </b-button>
+          <b-button class="btn" variant="success">
+            <b-icon icon="cloud-arrow-down-fill" aria-hidden="true"></b-icon>
+          </b-button>
+        </div>
+      </div>
     </div>
+
     <div class="flex-right m-2 p-2">
       <div class="form-group mb-5 ml-5 mr-5">
         <h2>OutputFiles</h2>
@@ -104,7 +101,34 @@
               color="#5bc0de"
             />
             <div id="stdout" v-if="outputFiles !== ''">
-              <prism-editor class="my-editor output-editor" readonly="true" v-model="outputFiles" :highlight="highlighter" line-numbers></prism-editor>
+              <h3>Stdout</h3>
+              <prism-editor class="my-editor output-editor" :readonly="true" v-model="outputFiles" :highlight="highlighter" line-numbers></prism-editor>
+            </div>
+            <div id="stderr" class="mt-2" v-if="outputFiles !== ''">
+              <h3>Stderr</h3>
+              <prism-editor class="my-editor output-editor" :readonly="true" v-model="errorFiles" :highlight="highlighter" line-numbers></prism-editor>
+            </div>
+            <div id="fileList" class="mt-2" v-if="outputFiles !== ''">
+              <h3>Files to Download</h3>
+              <div class="fileViewer">
+                <b-card no-body v-if="returnedOutputJson.artifacts.length > 0">
+                  <b-tabs card class="files" content-class="m-2">
+                    <b-tab :title="'OutputFile ' + artifactParent_index" ref="artifact" class="artifact" v-for="(artifact, artifactParent_index) in returnedOutputJson.artifacts" :key=artifact.identifier>
+                      <div v-if="artifact.MIMEtype !== 'image/png'" ref="outPartcontent" class="outPartcontent">
+                        <prism-editor class="my-editor editor-readonly top-editor bottom-editor" :readonly="true" :value="decodeBase64(artifact.content)" :highlight="highlighter" line-numbers></prism-editor>   
+                      </div>
+                      <div v-if="artifact.MIMEtype === 'image/png'" ref="outPartcontent" class="outPartcontent">
+                        <img :src="imagesrc(artifact.content)"/>   
+                      </div>
+                    </b-tab>
+                  </b-tabs>
+                </b-card>
+              </div>
+              <ul>
+                <li v-for="artifact in returnedOutputJson.artifacts" :key=artifact.identifier>
+                  <a href="#" @click="save(artifact.path, artifact.identifier, artifact.MIMEtype)">{{ artifact.path }}</a>
+                </li>
+              </ul>
             </div>
           </v-wait>
         </div>
@@ -126,12 +150,7 @@ import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
 
 //own components
-import CheckBox from "./components/CheckBox.vue";
-import RadioButton from "./components/RadioButton.vue";
-import DropDown from "./components/DropDown.vue";
-import ToggleButton from "./components/ToggleButton.vue";
-import SliderElement from "./components/SliderElement.vue";
-import InputField from "./components/InputField.vue";
+import Parameters from "./components/Parameters.vue";
 
 import { CirclesToRhombusesSpinner } from 'epic-spinners';
 
@@ -142,12 +161,7 @@ export default {
   components: {
     PrismEditor,
     CirclesToRhombusesSpinner,
-    CheckBox,
-    RadioButton,
-    DropDown,
-    ToggleButton,
-    SliderElement,
-    InputField,
+    Parameters
   },
   data() {
     return {
@@ -156,8 +170,12 @@ export default {
       templates: require.context("./input/", false, /^.*\.json$/).keys(), //get json file names from ./input folder
       form_v_model: [], // array for v-model: for all form elements to be able to access the changes made by the user
       inputFiles_v_model: [],
+      inputFilesPartsParameters_v_model: [],
       ws: "",
+      returnedOutputJson: "",
       outputFiles: "",
+      errorFiles: "", 
+      maximized: false,
     };
   }, 
   computed: {
@@ -170,7 +188,7 @@ export default {
     parsedFilesJson: function () {
       var parsed = this.json.files;
       return parsed;
-    },
+    }
   },
   methods: {
     /** pre-fill the array form_v_model with the values specified in the json file or if not specified add default values */
@@ -217,51 +235,82 @@ export default {
         }
       }
     },
+    /** pre-fill the array fillPartsParameters_v_model with the values specified in the json file or if not specified add default values */
+    fillPartsParameters_v_model: function () {
+      var parsedParametersJson = [];
+      for(var f in this.json.files){
+        for(var p in this.json.files[f].parts){
+          if(this.json.files[f].parts[p].parameters){
+            parsedParametersJson.push(this.json.files[f].parts[p].parameters);
+          }
+        }
+      }
+      for (var item in parsedParametersJson) {
+        for (var param in parsedParametersJson[item]){
+        if (
+          parsedParametersJson[item][param].gui_type == "checkbox" ||
+          parsedParametersJson[item][param].gui_type == "toggle"
+        ) {
+          this.inputFilesPartsParameters_v_model.push([]);
+          for (var i = 0; i < parsedParametersJson[item][param].values.length; i++) {
+            var isChecked = false;
+            if (
+              parsedParametersJson[item][param].selected.includes(
+                parsedParametersJson[item][param].values[i]
+              )
+            ) {
+              isChecked = true;
+            }
+            this.inputFilesPartsParameters_v_model[this.form_v_model.length - 1].push(isChecked);
+          }
+        } else if (
+          parsedParametersJson[item][param].gui_type == "radio" ||
+          parsedParametersJson[item][param].gui_type == "dropdown"
+        ) {
+          this.inputFilesPartsParameters_v_model.push(parsedParametersJson[item].selected);
+        } else if (
+          parsedParametersJson[item][param].gui_type == "slider" ||
+          (parsedParametersJson[item][param].gui_type == "input_field" &&
+            parsedParametersJson[item][param].type == "number")
+        ) {
+          this.inputFilesPartsParameters_v_model.push(parsedParametersJson[item].value);
+        } else if (
+          parsedParametersJson[item][param].gui_type == "input_field" &&
+          parsedParametersJson[item][param].type == "text"
+        ) {
+          this.inputFilesPartsParameters_v_model.push("");
+        } else {
+          // wie sieht das JSON f�r den Editor aus?
+          if(parsedParametersJson[item][param].code){
+            this.inputFilesPartsParameters_v_model.push(
+              this.decodeBase64(parsedParametersJson[item][param].code)
+            );
+          }
+          console.log("Fehler");
+        }
+      }
+      }
+    },
     fillInputFiles_v_model: function () {
       var files = this.json.files;
       for (var file in files) {
         var parts = files[file].parts;
         var array = [];
         for (var part in parts) {
-          if(parts[part].access !== "template") {
+          //if(parts[part].access !== "template") {
             array.push(this.decodeBase64(parts[part].content));
-          }
+
+            //var parametersArray = [];
+            //if(parts[part].parameters){
+            //  parametersArray.push(); //see above: the same as in fillFormModel
+            //}
+          //}
         }
         if (array.length > 0) {
           this.inputFiles_v_model.push(array);
         }
       }
-    },
-    /** check gui-types of the items */
-    isCheckbox: function (item) {
-      return item.gui_type === "checkbox" ? true : false;
-    },
-    isRadio: function (item) {
-      return item.gui_type === "radio" ? true : false;
-    },
-    isDropdown: function (item) {
-      return item.gui_type === "dropdown" ? true : false;
-    },
-    isToggle: function (item) {
-      return item.gui_type === "toggle" ? true : false;
-    },
-    isSlider: function (item) {
-      return item.gui_type === "slider" ? true : false;
-    },
-    isInputField: function (item) {
-      return item.gui_type === "input_field" ? true : false;
-    },
-    /** get all values of an item that are not disabled */
-    itemWithoutDisabled: function (item) {
-      var array = item.values;
-      for (var i = 0; i < item.disabled.length; i++) {
-        const indexOfItemToRemove = array.indexOf(item.disabled[i]);
-        if (indexOfItemToRemove > -1) {
-          array.splice(indexOfItemToRemove, 1);
-        }
-      }
-      return array;
-    },
+    }, 
     rewriteToBase64: function (base64urlEncodedString) {
       // Replace base64 characters with base64url characters
       base64urlEncodedString = base64urlEncodedString
@@ -296,6 +345,7 @@ export default {
       this.form_v_model = [];
       this.fillForm_v_model();
       this.fillInputFiles_v_model();
+      this.fillPartsParameters_v_model();
     },
     /** highlight the code in the editor */
     highlighter(code) {
@@ -356,39 +406,81 @@ export default {
             
         }
       };
-      var i = 0;
-      this.$refs.file.forEach((filediv) => {
-        let file = { 'identifier': filediv.id, 'parts': []};
-        var j = 0;
-        this.$refs.partcontent.forEach((partcontent) => {
-          file.parts.push({'identifier': partcontent.id, 'content': btoa(this.inputFiles_v_model[i][j])});
-          j++;
+      if(this.$refs.file != null){
+        var i = 0;
+        this.$refs.file.forEach((filediv) => {
+          let file = { 'identifier': filediv.id, 'parts': []};
+          var j = 0;
+          this.$refs.partcontent.forEach((partcontent) => {
+            file.parts.push({'identifier': partcontent.id, 'content': btoa(this.inputFiles_v_model[i][j])});
+            j++;
+          });
+          task.content.task.files.push(file);
+          i++;
         });
-        task.content.task.files.push(file);
-        i++;
-      });
+      }
       //document.querySelector('#stdout').value = '';
       //document.querySelector('#stderr').value = '';
       //document.getElementById("fileList").innerHTML = '';
       //this.outputFiles = new Map();
-      console.log(JSON.stringify(task));
+      
       this.ws.send(JSON.stringify(task));
       
       return false;
     },
     displayComputation: function(computation){
-      console.log(computation);
+      console.log("computation: " + computation);
     },
     displayResult: function(result){
+      console.log(result);
       if (result.result.status == "final") {
         document.getElementById("submit").disabled = false;
       }
+      this.returnedOutputJson = result.result;
+      //for testing add image to json:
+      this.returnedOutputJson.artifacts.push({ "type" : "file", "identifier" : "de762095-6cd2-439f-80eb-313e85d3386a", "MIMEtype": "image/png", "path" : "/images/img.png", "content": "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAH0lEQVR42mOcx/C/noGKgHHUwFEDRw0cNXDUwJFqIAAJpipFpDW1EwAAAABJRU5ErkJggg=="});
+
       this.outputFiles = this.decodeBase64(result.result.output.stdout);
+      this.errorFiles = this.decodeBase64(result.result.output.stderr);
       //console.log(this.outputFiles);
       
-    },
+    }, 
+    imagesrc: function(base64Image) {
+      return "data:image/png;base64," + base64Image;
+    }, 
     save: function(filename, identifier, mimetype){
-      console.log("some day you can save stuff with this function" + filename + " " + identifier + " " + mimetype);
+      console.log("save the following file: " + filename + " " + identifier + " " + mimetype);
+      var content = "";
+      this.returnedOutputJson.artifacts.forEach(item => {
+        if(item.identifier == identifier) {
+          content = this.decodeBase64(item.content);
+        }
+      });
+      var blob = "";
+      if(mimetype === "image/png") {
+          const byteNumbers = new Array(content.length);
+          for (let i = 0; i < content.length; i++) {
+            byteNumbers[i] = content.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          blob = new Blob([byteArray], {type: mimetype});
+      } else {
+        blob = new Blob([content], {mimetype: mimetype});
+      }
+      if(window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+      } else {
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
+      }
+      return false;
+    }, 
+    maximize: function() {
+      this.maximized = !this.maximized;
     }
   },
   created() {
@@ -397,6 +489,7 @@ export default {
   },
   mounted() {
     this.executeAfterDomLoaded();
+    console.log(process.env.NODE_ENV);
     //this.loadJsonFromFile();
     //this.loadJsonFromFile("./container.computation-template2.json");
   },
@@ -404,16 +497,6 @@ export default {
 </script>
 
 <style>
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 1s ease-in-out;
-}
-
 .outer-div {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -429,7 +512,7 @@ export default {
 
 .flex-container {
   display: flex;
-  flex-direction: row;
+  /*flex-direction: row;*/
   justify-content: center;
 }
 
@@ -560,6 +643,14 @@ export default {
   background-color: #ddd;
   margin-left: 2px;
   text-decoration: none !important;
+  /*negative margin, so that there is no line under the currently selected tab*/
+  margin-bottom: -.05rem !important;
+}
+
+.btn {
+  border-radius: 25px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
 }
 
 </style>

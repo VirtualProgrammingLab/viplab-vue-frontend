@@ -15,20 +15,20 @@
               { "name"      : "params.input file"
               },
           "parameters":
-              { "__CELL_X__" :
-                { "metadata" : 
-                   { "guiType" : "input_field",
-                     "name"    : "Number of cells in x-direction",
-                     "type"    : "number",
-                     "value"    : 10,
-                     "min"      : 1,
-                     "max"      : 1000,
-                     "step"     : 1
-                   },
-                  "validation" : 
-                   { "pattern" : ".*" } 
-                }
-              },
+          { 
+            "__PART_PARAM_1__" : {
+            "gui_type": "input_field",
+            "name": "file_name",
+            "type": "text",
+            "maxlength": 200
+            },
+            "__PART_PARAM_2__" : {
+              "gui_type": "input_field",
+              "name": "file_name",
+              "type": "text",
+              "maxlength": 200
+              }
+          },
             "content"   : ""
          }
        ] 
