@@ -192,103 +192,75 @@ export default {
   },
   methods: {
     /** pre-fill the array form_v_model with the values specified in the json file or if not specified add default values */
-    fillForm_v_model: function () {
-      var parsedParametersJson = this.json.parameters;
+    fillForm_v_model: function (toBeFilled) {
+      var parsedParametersJson = [];
+      if (toBeFilled === "form") {
+        parsedParametersJson = this.json.parameters;
+      } else {
+        var array = [];
+        for (var file in this.json.files) {
+          for (var part in this.json.files[file].parts) {
+            if (this.json.files[file].parts[part].parameters) {
+              for (var param in this.json.files[file].parts[part].parameters) {
+                array.push(this.json.files[file].parts[part].parameters[param]);
+              }
+            }
+          }
+        }
+        parsedParametersJson = array;
+      }
+      console.log(parsedParametersJson);
+
+      var vModel = [];
       for (var item in parsedParametersJson) {
         if (
-          parsedParametersJson[item].gui_type == "checkbox" ||
-          parsedParametersJson[item].gui_type == "toggle"
+          parsedParametersJson[item].metadata.guiType == "checkbox" ||
+          parsedParametersJson[item].metadata.guiType == "toggle"
         ) {
-          this.form_v_model.push([]);
+          vModel.push([]);
           for (var i = 0; i < parsedParametersJson[item].values.length; i++) {
             var isChecked = false;
-            if (
-              parsedParametersJson[item].selected.includes(
-                parsedParametersJson[item].values[i]
-              )
-            ) {
+            if (parsedParametersJson[item].values[i].selected) {
               isChecked = true;
             }
-            this.form_v_model[this.form_v_model.length - 1].push(isChecked);
+            vModel[vModel.length - 1].push(isChecked);
           }
         } else if (
-          parsedParametersJson[item].gui_type == "radio" ||
-          parsedParametersJson[item].gui_type == "dropdown"
+          parsedParametersJson[item].metadata.guiType == "radio" ||
+          parsedParametersJson[item].metadata.guiType == "dropdown"
         ) {
-          this.form_v_model.push(parsedParametersJson[item].selected);
+          var a = [];
+          for (i = 0; i < parsedParametersJson[item].values.length; i++) {
+            if (parsedParametersJson[item].values[i].selected) {
+              a.push(parsedParametersJson[item].values[i].value);
+            }
+          }
+          if (a.length > 1) {
+            vModel.push(a);
+          } else {
+            vModel.push(a[0]);
+          }
         } else if (
-          parsedParametersJson[item].gui_type == "slider" ||
-          (parsedParametersJson[item].gui_type == "input_field" &&
-            parsedParametersJson[item].type == "number")
+          parsedParametersJson[item].metadata.display == "slider" ||
+          (parsedParametersJson[item].metadata.display == "input_field" &&
+            parsedParametersJson[item].metadata.type == "number")
         ) {
-          this.form_v_model.push(parsedParametersJson[item].value);
+          vModel.push(parsedParametersJson[item].value);
         } else if (
-          parsedParametersJson[item].gui_type == "input_field" &&
-          parsedParametersJson[item].type == "text"
+          parsedParametersJson[item].metadata.display == "input_field" &&
+          parsedParametersJson[item].metadata.type == "text"
         ) {
-          this.form_v_model.push("");
+          vModel.push("");
         } else {
-          // wie sieht das JSON f�r den Editor aus?
-          this.form_v_model.push(
-            this.decodeBase64(parsedParametersJson[item].code)
+          vModel.push(
+            this.decodeBase64(parsedParametersJson[item].value)
           );
         }
       }
-    },
-    /** pre-fill the array fillPartsParameters_v_model with the values specified in the json file or if not specified add default values */
-    fillPartsParameters_v_model: function () {
-      var parsedParametersJson = [];
-      for(var f in this.json.files){
-        for(var p in this.json.files[f].parts){
-          if(this.json.files[f].parts[p].parameters){
-            parsedParametersJson.push(this.json.files[f].parts[p].parameters);
-          }
-        }
-      }
-      for (var item in parsedParametersJson) {
-        for (var param in parsedParametersJson[item]){
-        if (
-          parsedParametersJson[item][param].gui_type == "checkbox" ||
-          parsedParametersJson[item][param].gui_type == "toggle"
-        ) {
-          this.inputFilesPartsParameters_v_model.push([]);
-          for (var i = 0; i < parsedParametersJson[item][param].values.length; i++) {
-            var isChecked = false;
-            if (
-              parsedParametersJson[item][param].selected.includes(
-                parsedParametersJson[item][param].values[i]
-              )
-            ) {
-              isChecked = true;
-            }
-            this.inputFilesPartsParameters_v_model[this.form_v_model.length - 1].push(isChecked);
-          }
-        } else if (
-          parsedParametersJson[item][param].gui_type == "radio" ||
-          parsedParametersJson[item][param].gui_type == "dropdown"
-        ) {
-          this.inputFilesPartsParameters_v_model.push(parsedParametersJson[item].selected);
-        } else if (
-          parsedParametersJson[item][param].gui_type == "slider" ||
-          (parsedParametersJson[item][param].gui_type == "input_field" &&
-            parsedParametersJson[item][param].type == "number")
-        ) {
-          this.inputFilesPartsParameters_v_model.push(parsedParametersJson[item].value);
-        } else if (
-          parsedParametersJson[item][param].gui_type == "input_field" &&
-          parsedParametersJson[item][param].type == "text"
-        ) {
-          this.inputFilesPartsParameters_v_model.push("");
-        } else {
-          // wie sieht das JSON f�r den Editor aus?
-          if(parsedParametersJson[item][param].code){
-            this.inputFilesPartsParameters_v_model.push(
-              this.decodeBase64(parsedParametersJson[item][param].code)
-            );
-          }
-          console.log("Fehler");
-        }
-      }
+      if (toBeFilled === "form") {
+        this.form_v_model = vModel;
+      } else {
+        this.inputFilesPartsParameters_v_model = vModel;
       }
     },
     fillInputFiles_v_model: function () {
@@ -343,9 +315,9 @@ export default {
       console.log(this.json);
 
       this.form_v_model = [];
-      this.fillForm_v_model();
+      this.fillForm_v_model("form");
       this.fillInputFiles_v_model();
-      this.fillPartsParameters_v_model();
+      this.fillForm_v_model("parts");
     },
     /** highlight the code in the editor */
     highlighter(code) {

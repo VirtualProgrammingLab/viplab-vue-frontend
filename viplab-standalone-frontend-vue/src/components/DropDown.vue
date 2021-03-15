@@ -1,13 +1,13 @@
 <template>
   <div class="dropdown-component">
-    <div class ="item-name">{{item.name}}:</div>
+    <div class ="item-name">{{item.metadata.name}}:</div>
     <div class="dropdown form-group">
-        <select class="form-control" v-if="!item.multiple" v-model="vModel[parent_index]">
-            <option v-for="(disabled, index) in item.disabled" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
+        <select class="form-control" v-if="vModel[parent_index].constructor.name === 'Array'" v-model="vModel[parent_index]" multiple>
+            <option v-for="(disabled, index) in itemsDisabled(item)" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
             <option v-for="(drop, index) in itemWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
         </select>
-        <select class="form-control" v-if="item.multiple" v-model="vModel[parent_index]" multiple>
-            <option v-for="(disabled, index) in item.disabled" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
+        <select class="form-control" v-else v-model="vModel[parent_index]">
+            <option v-for="(disabled, index) in itemsDisabled(item)" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
             <option v-for="(drop, index) in itemWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
         </select>
     </div>
@@ -30,15 +30,23 @@ export default {
   methods: {
     /** get all values of an item that are not disabled */
     itemWithoutDisabled: function(item){
-      var array = item.values;
-      for(var i = 0; i < item.disabled.length; i++){
-        const indexOfItemToRemove = array.indexOf(item.disabled[i]);
-        if(indexOfItemToRemove > -1){
-          array.splice(indexOfItemToRemove, 1);
+      var array = [];
+      for(var i = 0; i < item.values.length; i++){
+        if(!item.values[i].disabled){
+          array.push(item.values[i].value);
         }
       }
       return array;
     },
+    itemsDisabled: function(item){
+      var array = [];
+      for(var i = 0; i < item.values.length; i++){
+        if(item.values[i].disabled){
+          array.push(item.values[i].value);
+        }
+      }
+      return array;
+    }
   }
 }
 </script>

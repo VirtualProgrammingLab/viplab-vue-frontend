@@ -1,10 +1,10 @@
 <template>
   <div class="togglebutton-component">
-    <div class ="item-name">{{item.name}}:</div>
+    <div class ="item-name">{{item.metadata.name}}:</div>
         <div v-for="(toggle, index) in item.values" :key="'toggle'+parent_index + ' ' +index">
         <label>
-            {{ toggle }}
-            <input type="checkbox" :value="toggle" v-model="vModel[parent_index][index]">
+            {{ toggle.value }}
+            <input type="checkbox" :value="toggle.value" v-model="vModel[parent_index][index]">
             <span class="slider"></span>
         </label>
     </div>

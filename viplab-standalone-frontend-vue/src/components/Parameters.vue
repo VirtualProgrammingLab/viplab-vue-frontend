@@ -1,6 +1,6 @@
 <template>
   <div class="parameters-component">
-    <div v-for="(item, key, parent_index) in parameters" :key=parent_index>
+    <div v-for="(item, parent_index) in parameters" :key=parent_index>
         <!-- render checkbox elements -->
         <!-- render after form_v_model[parent_index] is set, or else js error occurs (even though page looks perfectly fine) -->
         <div class="form-item" v-if="isCheckbox(item) && v_model_var[parent_index]">
@@ -27,8 +27,8 @@
             <input-field :item="item" :parent_index="parent_index" :v_model_var="v_model_var"></input-field>
         </div>
         <!-- render items with no gui-type as editor elements -->
-        <div class="form-item" v-if="!item.gui_type && v_model_var[parent_index]">
-            <div class ="item-name">{{item.name}}:</div>
+        <div class="form-item" v-if="isEditor(item) && v_model_var[parent_index]">
+            <div class ="item-name">{{item.metadata.name}}:</div>
             <prism-editor class="my-editor top-editor bottom-editor" v-model="vModel[parent_index]" :highlight="highlighter" line-numbers></prism-editor>
         </div>
     </div>
@@ -66,7 +66,7 @@ export default {
   },
   name: 'Parameters',
   props: {
-    parameters: Object,
+    parameters: Array,
     v_model_var: Array
   },
   data() {
@@ -77,22 +77,25 @@ export default {
   methods: {
     /** check gui-types of the items */
     isCheckbox: function (item) {
-      return item.gui_type === "checkbox" ? true : false;
+      return item.metadata.guiType === "checkbox" ? true : false;
     },
     isRadio: function (item) {
-      return item.gui_type === "radio" ? true : false;
+      return item.metadata.guiType === "radio" ? true : false;
     },
     isDropdown: function (item) {
-      return item.gui_type === "dropdown" ? true : false;
+      return item.metadata.guiType === "dropdown" ? true : false;
     },
     isToggle: function (item) {
-      return item.gui_type === "toggle" ? true : false;
+      return item.metadata.guiType === "toggle" ? true : false;
     },
     isSlider: function (item) {
-      return item.gui_type === "slider" ? true : false;
+      return item.metadata.display === "slider" ? true : false;
     },
     isInputField: function (item) {
-      return item.gui_type === "input_field" ? true : false;
+      return item.metadata.display === "input_field" ? true : false;
+    },
+    isEditor: function (item) {
+      return item.metadata.display === "editor" ? true : false;
     },
     /** highlight the code in the editor */
     highlighter(code) {

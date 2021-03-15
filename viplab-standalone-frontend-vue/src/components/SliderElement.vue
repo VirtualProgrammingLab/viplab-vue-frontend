@@ -1,11 +1,11 @@
 <template>
   <div class="slider-component">
-    <div class ="item-name">{{item.name}}:</div>
-    <div v-if="!item.multiple">
-        <vue-slider v-model="vModel[parent_index]" :min="item.min" :max="item.max" :interval="item.step" :direction="sliderDirection(item)" :style="[item.vertical ? {'height': '300px'} : {}]"></vue-slider>
+    <div class ="item-name">{{item.metadata.name}}:</div>
+    <div v-if="vModel[parent_index].length > 1">
+        <vue-slider multiple v-model="vModel[parent_index]" :min="item.min" :max="item.max" :interval="item.step" :direction="sliderDirection(item)" style="height: 300px;[item.metadata.vertical ? {'height': '300px'} : {}]"></vue-slider>
     </div>
-    <div v-if="item.multiple">
-        <vue-slider multiple v-model="vModel[parent_index]" :min="item.min" :max="item.max" :interval="item.step" :direction="sliderDirection(item)" style="height: 300px;[item.vertical ? {'height': '300px'} : {}]"></vue-slider>
+    <div v-else>
+        <vue-slider v-model="vModel[parent_index]" :min="item.min" :max="item.max" :interval="item.step" :direction="sliderDirection(item)" :style="[item.metadata.vertical ? {'height': '300px'} : {}]"></vue-slider>
     </div>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
   methods: {
     /** parse slider direction for the usage in the vue-slider */
     sliderDirection: function(sliderItem){
-      if(sliderItem.vertical){
+      if(sliderItem.metadata.vertical){
         return "ttb";
       }
     return "ltr";

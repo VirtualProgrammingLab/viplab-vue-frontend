@@ -1,12 +1,12 @@
 <template>
   <div class="inputfield-component">
-    <div v-if="item.type=='text'">
-        <label class="item-name mr-2" for="item.name">{{ item.name }}: </label>
-        <input type="text" class="form-control" id="item.name" name="item.name" :maxlength="item.maxlength" v-model="vModel[parent_index]">
+    <div v-if="item.metadata.type=='text'">
+        <label class="item-name mr-2" for="item.metadata.name">{{ item.metadata.name }}: </label>
+        <input type="text" class="form-control" id="item.metadata.name" name="item.metadata.name" :maxlength="item.maxlength" v-model="vModel[parent_index]">
     </div>
-    <div v-if="item.type=='number'">
-        <label class="item-name mr-2" for="item.name">{{ item.name }}: </label>
-        <input type="number" class="form-control" id="item.name" name="item.name" :max="item.max" :min="item.min" :step="item.step" v-model="vModel[parent_index]">
+    <div v-if="item.metadata.type=='number'">
+        <label class="item-name mr-2" for="item.metadata.name">{{ item.metadata.name }}: </label>
+        <input type="number" class="form-control" id="item.metadata.name" name="item.metadata.name" :max="item.max" :min="item.min" :step="item.step" v-model="vModel[parent_index]">
     </div>
   </div>
 </template>

@@ -1,9 +1,9 @@
 <template>
   <div class="checkbox-component">
-    <div class ="item-name">{{item.name}}:</div>
+    <div class ="item-name">{{item.metadata.name}}:</div>
     <div class="checkbox form-check custom-control custom-checkbox" v-for="(check, index) in item.values" :key=index>
-        <input type="checkbox" class="form-check-input custom-control-input" :id="index" :value="check" checked v-model="vModel[parent_index][index]">
-        <label class="form-check-label custom-control-label" :for="index">{{ check }}</label>
+        <input type="checkbox" class="form-check-input custom-control-input" :id="index" :value="check.value" checked v-model="vModel[parent_index][index]">
+        <label class="form-check-label custom-control-label" :for="index">{{ check.value }}</label>
     </div>
   </div>
 </template>
