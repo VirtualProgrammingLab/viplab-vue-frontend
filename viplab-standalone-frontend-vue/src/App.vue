@@ -17,6 +17,9 @@
       <form>
         <div class="form-group mb-5 ml-5 mr-5">
           <h2 v-if="parsedFilesJson">InputFiles</h2>
+
+          <grid-plot class="border"/>
+
           <div class="item-name" v-if="json.metadata">{{ json.metadata.display_name }}</div>
           <div class="item-name" v-if="json.metadata">{{ json.metadata.description }}</div>
         
@@ -154,6 +157,8 @@ import Parameters from "./components/Parameters.vue";
 
 import { CirclesToRhombusesSpinner } from 'epic-spinners';
 
+import GridPlot from "./components/viplab-plots/gridplot/GridPlot.vue";
+
 //import $ from 'jquery';
 
 export default {
@@ -161,7 +166,8 @@ export default {
   components: {
     PrismEditor,
     CirclesToRhombusesSpinner,
-    Parameters
+    Parameters,
+    GridPlot
   },
   data() {
     return {
