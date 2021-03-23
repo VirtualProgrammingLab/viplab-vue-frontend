@@ -6,6 +6,7 @@
 
 <script>
 import * as dataset from "./DataSet.js";
+import * as Parser from "../parse.js";
 
 /* Beispiel:
   
@@ -31,50 +32,36 @@ export default {
     //test
     this.message = new dataset.DataSet(10, 10, 0, 20, 0, 20, 10.00, "label");
     this.message.getLabel();
-
-    //parse data
-    this.parsedFileArray = this.parseFile(this.example);
-    this.parsedValues = this.parseValues();
+    var parseTest = new Parser.Parse(this.example);
+    var testJson = parseTest.parseFileToJson();
+    var datasetList = parseTest.parseValues(testJson)
+    //console.log(parseTest.parseValues(testJson));
+    //console.log(parseTest.min[0]);
 
     //create ColorMap
-    this.colorMap = this.createColorMap("rgb(255,0,0)", "rgb(0,0,255)", [-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+    this.colorMap = this.createColorMap(parseTest.min[0], parseTest.max[0], [-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
 
-    //calculate width and height for graph and call the method th draw graph
-    var xCount = this.parsedFileArray[3].replace("# x-count ", "");
-    var yCount = this.parsedFileArray[4].replace("# y-count ", "");
-    this.drawGrid(xCount * 10, yCount * 10);
+    //draw graph of first item in datasetList
+    this.drawGrid(datasetList[0]);
   },
-  methods: {
-    parseFile: function(json) {
-      return (JSON.parse(json.replace(/\n/g, "\\n")).value.split("\n"));
-    },
-    parseValues: function() {
-      var valueArray = [];
-      //get all values (starting at i = 10) and convert them to array of array
-      for (var i = 10; i < this.parsedFileArray.length; i++) {
-        if (this.parsedFileArray[i].length > 0) {
-          valueArray.push(JSON.parse("[" + this.parsedFileArray[i].trim().replace(/ /g, ", ") + "]"));
-        }
-      }
-      return valueArray;
-    }, 
-    drawGrid: function(w , h) {
+  methods: { 
+    drawGrid: function(dataset) {
       //add space around the diagram for descriptions
+      var w = dataset.getWidth() * 10;
+      var h = dataset.getHeight() * 10;
       this.vueCanvas.canvas.width = w + 100;
       this.vueCanvas.canvas.height = h + 100;
 
-      var xRange = (this.parsedFileArray[1]).replace("# x-range ", "").split(" ");
-      var minX = xRange[0];
-      var maxX = xRange[1];
-      var yRange = (this.parsedFileArray[2]).replace("# y-range ", "").split(" ");
-      var minY = yRange[0];
-      var maxY = yRange[1];
-      console.log(minX + " " + maxX + " " + minY + " " + maxY);
+      /*var minX = dataset.getXMin();
+      var maxX = dataset.getXMax();
+      var minY = dataset.getYMin();
+      var maxY = dataset.getYMax();*/
 
-      for (var i = 0; i < this.parsedValues.length; i++) {
+      var data = dataset.getData();
+      for (var i = 0; i < data.length; i++) {
         var a = 0.5 + 50;
-        for (var j = 0; j < this.parsedValues[i].length; j++) {
-            this.vueCanvas.fillStyle = "rgb(" + this.colorMap.get(Math.round(this.parsedValues[i][j] * 10) / 10) + ")";
+        for (var j = 0; j < data[i].length; j++) {
+            this.vueCanvas.fillStyle = "rgb(" + this.colorMap.get(Math.round(data[i][j] * 10) / 10) + ")";
             this.vueCanvas.fillRect(a, (i*10 + 50), 10, 10);
             a += 10;
           
