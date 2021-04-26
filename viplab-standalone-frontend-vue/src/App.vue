@@ -380,8 +380,7 @@ export default {
                 "template": this.json.identifier,
                 "identifier": this.uuid(),
                 "files": []
-            }
-            
+            } 
         }
       };
       if(this.$refs.file != null){
@@ -418,6 +417,7 @@ export default {
       //for testing add image to json:
       this.returnedOutputJson.artifacts.push({ "type" : "file", "identifier" : "de762095-6cd2-439f-80eb-313e85d3386a", "MIMEtype": "image/png", "path" : "/images/img.png", "content": "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAH0lEQVR42mOcx/C/noGKgHHUwFEDRw0cNXDUwJFqIAAJpipFpDW1EwAAAABJRU5ErkJggg=="});
 
+      //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.decodeBase64(result.result.output.stdout);
       this.errorFiles = this.decodeBase64(result.result.output.stderr);
       //console.log(this.outputFiles);

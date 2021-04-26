@@ -38,13 +38,45 @@ export default {
     //console.log(parseTest.parseValues(testJson));
     //console.log(parseTest.min[0]);
 
+    // range of values
+    var rounded = this.rangeOfRoundedValues(datasetList[0]);
+    console.log(rounded);
+
+
     //create ColorMap
-    this.colorMap = this.createColorMap(parseTest.min[0], parseTest.max[0], [-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+    //this.colorMap = this.createColorMap(parseTest.min[0], parseTest.max[0], [-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
+    this.colorMap = this.createColorMap(parseTest.min[0], parseTest.max[0], rounded);
 
     //draw graph of first item in datasetList
     this.drawGrid(datasetList[0]);
   },
   methods: { 
+    rangeOfRoundedValues: function(dataset) {
+      var data = dataset.getData();
+      var roundedData = [];
+
+      for(var r = 0; r < data.length; r++) {
+        for(var s = 0; s < data[r].length; s++){
+          var rounded = Math.round(data[r][s] * 10) / 10;
+          roundedData.push(rounded);
+        }
+      }
+
+      /*var seen = {};
+      var out = [];
+      var len = roundedData.length;
+      var j = 0;
+      for(var i = 0; i < len; i++) {
+        var item = roundedData[i];
+        if(seen[item] !== 1) {
+          seen[item] = 1;
+          out[j++] = item;
+        }
+        return out;
+      }*/
+      //return Array only of unique values
+      return Array.from(new Set(roundedData)).sort((a, b) => a - b);
+    },
     drawGrid: function(dataset) {
       //add space around the diagram for descriptions
       var w = dataset.getWidth() * 10;
@@ -58,6 +90,8 @@ export default {
       var maxY = dataset.getYMax();*/
 
       var data = dataset.getData();
+
+      //draw the colored rectangles
       for (var i = 0; i < data.length; i++) {
         var a = 0.5 + 50;
         for (var j = 0; j < data[i].length; j++) {
