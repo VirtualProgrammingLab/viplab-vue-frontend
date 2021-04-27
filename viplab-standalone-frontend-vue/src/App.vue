@@ -94,6 +94,8 @@
       <div class="form-group mb-5 ml-5 mr-5">
         <h2>OutputFiles</h2>
 
+        <vtk-test></vtk-test>
+
         <div class="my-2">
           <v-wait for="wait for ws response">
             <circles-to-rhombuses-spinner
@@ -160,6 +162,7 @@ import { CirclesToRhombusesSpinner } from 'epic-spinners';
 import GridPlot from "./components/viplab-plots/gridplot/GridPlot.vue";
 
 //import $ from 'jquery';
+import VtkTest from "./components/VtkTest.vue";
 
 export default {
   name: "app",
@@ -167,7 +170,8 @@ export default {
     PrismEditor,
     CirclesToRhombusesSpinner,
     Parameters,
-    GridPlot
+    GridPlot,
+    VtkTest
   },
   data() {
     return {

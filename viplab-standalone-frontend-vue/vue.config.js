@@ -1,6 +1,11 @@
 // vue.config.js
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const vtkChainWebpack = require("vtk.js/Utilities/config/chainWebpack");
+
 module.exports = {
+    chainWebpack: config => {
+        vtkChainWebpack(config);
+      },
     // options...
     //the next 2 lines are needed, if you want to use the files in a flask app:
     //assetsDir: './static',
