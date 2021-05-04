@@ -83,7 +83,7 @@ export function Parse(viplabFile) {
                             time = splitLine[2];
                             break;
                         case "label":
-                            label = splitLine[2];
+                            label = splitLine.splice(2, splitLine.length).join(" ");
                             break;
                         default: 
                             console.log("default case");

@@ -39,9 +39,9 @@ export default {
 
     // Add the grid points to a polydata object
     var inputPolyData = vtkPolyData.newInstance().setPoints(pointsArray);
-
+    vtkPolyData.newInstance().
     // Triangulate the grid points 
-    
+
   }
 }
 </script>
