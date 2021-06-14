@@ -21,7 +21,7 @@
               "type" : "any-value",
               "identifier" : "__sliderSingle__", 
               "metadata" : {
-                "display" : "slider",
+                "guiType" : "slider",
                 "name": "temperature",
                 "vertical": false
               },
@@ -47,7 +47,7 @@
               "type" : "any-value",
               "identifier" : "__inputTextWOMaxlangth__", 
               "metadata" : {
-                "display" : "input_field",
+                "guiType" : "input_field",
                 "type": "text",
                 "name": "file_name"
               }
@@ -56,7 +56,7 @@
               "type" : "any-value",
               "identifier" : "__inputNumber__", 
               "metadata" : {
-                "display" : "input_field",
+                "guiType" : "input_field",
                 "type": "number",
                 "name": "time_delay"
               },

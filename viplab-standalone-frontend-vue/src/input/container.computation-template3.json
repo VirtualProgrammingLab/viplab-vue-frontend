@@ -16,7 +16,7 @@
       "parts": [
         {
           "identifier": "preamble",
-          "access": "visible",
+          "access": "template",
           "metadata": {
             "name": "Info: source before your code.",
             "emphasis": "low"
@@ -27,7 +27,7 @@
               "type" : "any-value",
               "identifier" : "__sliderSingle__", 
               "metadata" : {
-                "display" : "slider",
+                "guiType" : "slider",
                 "name": "temperature",
                 "vertical": false
               },
@@ -39,7 +39,7 @@
               "step": 10
             }
           ],
-          "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
+          "content": "VGhpcyBpcyBhIFRleHQ6Ont7X19zbGlkZXJTaW5nbGVfX319OjpUaGlzIGlzIGEgVGV4dA=="
         },
         {
           "identifier": "codeFromStudent",
@@ -51,8 +51,17 @@
           "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
         },
         {
-          "identifier": "postscript",
+          "identifier": "codeFromStudent2",
           "access": "visible",
+          "metadata": {
+            "name": "Fill in your code!",
+            "emphasis": "medium"
+          },
+          "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
+        },
+        {
+          "identifier": "postscript",
+          "access": "template",
           "metadata": {
             "name": "Info: source after your code calling bar() in it.",
             "emphasis": "low"
@@ -80,7 +89,7 @@
                 ]
               }
             ],
-          "content": "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ"
+          "content": "VGhpcyBpcyBhIFRleHQ6Ont7X19jaGVja2JveF9ffX06OlRoaXMgaXMgYSBUZXh0"
         }
       ]
     }

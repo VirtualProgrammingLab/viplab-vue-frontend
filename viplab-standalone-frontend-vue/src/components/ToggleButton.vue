@@ -4,7 +4,7 @@
         <div v-for="(toggle, index) in item.values" :key="'toggle'+parent_index + ' ' +index">
         <label>
             {{ toggle.value }}
-            <input type="checkbox" :value="toggle.value" v-model="vModel[parent_index][index]">
+            <input type="checkbox" :value="toggle.value" v-model="vModel[parent_index]">
             <span class="slider"></span>
         </label>
     </div>

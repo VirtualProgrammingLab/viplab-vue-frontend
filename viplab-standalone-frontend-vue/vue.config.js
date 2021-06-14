@@ -1,11 +1,13 @@
 // vue.config.js
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const vtkChainWebpack = require("vtk.js/Utilities/config/chainWebpack");
+const path = require('path')
+const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = {
     chainWebpack: config => {
         vtkChainWebpack(config);
-      },
+    },
     // options...
     //the next 2 lines are needed, if you want to use the files in a flask app:
     //assetsDir: './static',
@@ -13,16 +15,16 @@ module.exports = {
     runtimeCompiler: true,
     pwa: {
         iconPaths: {
-           favicon32: './favicon.png',
+            favicon32: './favicon.png',
         }
-    }, 
+    },
     configureWebpack: {
         devServer: {
-          port: 8080,
-          // https://github.com/vuejs-templates/webpack/issues/378
-          watchOptions: {
-            poll: true,
-          },
+            port: 8080,
+            // https://github.com/vuejs-templates/webpack/issues/378
+            watchOptions: {
+                poll: true,
+            },
         },
         plugins: [
             new HtmlWebpackPlugin({
@@ -42,7 +44,28 @@ module.exports = {
                     };
                 },
                 template: 'src/assets/index.ejs'
-            })
+            }),
+            new CopyPlugin(
+                {
+                    patterns: [
+                        {
+                            from: path.join(__dirname, 'node_modules', 'itk', 'WebWorkers'),
+                            to: path.join(__dirname, 'dist', 'itk', 'WebWorkers'),
+                        },
+                        {
+                            from: path.join(__dirname, 'node_modules', 'itk', 'ImageIOs'),
+                            to: path.join(__dirname, 'dist', 'itk', 'ImageIOs'),
+                        },
+                        {
+                            from: path.join(__dirname, 'node_modules', 'itk', 'PolyDataIOs'),
+                            to: path.join(__dirname, 'dist', 'itk', 'PolyDataIOs'),
+                        },
+                        {
+                            from: path.join(__dirname, 'node_modules', 'itk', 'MeshIOs'),
+                            to: path.join(__dirname, 'dist', 'itk', 'MeshIOs'),
+                        },
+                    ]
+                }),
         ]
     },
 }
@@ -66,35 +89,35 @@ var digest;
 var dataTemplate;
 var token;
 
-var setParameters = function(filename) {
-    
+var setParameters = function (filename) {
+
     console.log(process.argv[3]);
     console.log(process.env.VUE_APP_FILENAME);
 
     inputTemplates = fs.readdirSync('./src/input/');
-    
+
     if (filename === "" || filename === null || filename === undefined) {
         filename = inputTemplates[0].slice(0, -5);
     }
 
     var jwks = JSON.parse(fs.readFileSync('./src/assets/jwks.private.json'));
-    var key = decodeURIComponent(jwkToPem(jwks['keys'][0], {private: true}));
-    
+    var key = decodeURIComponent(jwkToPem(jwks['keys'][0], { private: true }));
+
     //check is file exists, else use first file in input folder
     var file = null;
     try {
-        file = fs.readFileSync("./src/input/"+ filename +".json")
+        file = fs.readFileSync("./src/input/" + filename + ".json")
     } catch (err) {
-        file = fs.readFileSync("./src/input/"+ inputTemplates[0].slice(0, -5) +".json")
+        file = fs.readFileSync("./src/input/" + inputTemplates[0].slice(0, -5) + ".json")
     }
     var dataBase64 = Base64.encode(Buffer.from(file).toString(), "utf-8");
     var codeSha256 = CryptoJS.SHA256(dataBase64).toString(CryptoJS.enc.Hex);
-    
-    token = decodeURIComponent(jwt.sign({'viplab.computation-template.digest': codeSha256, 'iss':'test'}, key, {algorithm:'RS512', header: {"kid": "mykeyid"}}));
-    
+
+    token = decodeURIComponent(jwt.sign({ 'viplab.computation-template.digest': codeSha256, 'iss': 'test' }, key, { algorithm: 'RS512', header: { "kid": "mykeyid" } }));
+
     digest = codeSha256;
     dataTemplate = dataBase64;
-    
+
     //console.log(codeSha256);
     //console.log(dataBase64);
     //console.log("jwks: " + jwks);

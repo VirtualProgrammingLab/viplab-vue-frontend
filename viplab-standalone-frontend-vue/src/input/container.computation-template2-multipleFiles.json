@@ -42,6 +42,43 @@
           "content": "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ"
         }
       ]
+    }, 
+    {
+      "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3f",
+      "path": "code.c",
+      "metadata": {
+        "MIMEtype": "text/plain",
+        "syntaxHighlighting": "C"
+      },
+      "parts": [
+        {
+          "identifier": "preamble",
+          "access": "visible",
+          "metadata": {
+            "name": "Info: source before your code.",
+            "emphasis": "low"
+          },
+          "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
+        },
+        {
+          "identifier": "codeFromStudent",
+          "access": "modifiable",
+          "metadata": {
+            "name": "Fill in your code!",
+            "emphasis": "medium"
+          },
+          "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
+        },
+        {
+          "identifier": "postscript",
+          "access": "visible",
+          "metadata": {
+            "name": "Info: source after your code calling bar() in it.",
+            "emphasis": "low"
+          },
+          "content": "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ"
+        }
+      ]
     }
   ],
   "parameters": [

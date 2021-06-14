@@ -1,6 +1,9 @@
 <template>
-  <div id="app" class="flex-container" :style="[maximized? {'flex-direction': 'column !important'} : null]">
-    
+  <div
+    id="app"
+    class="flex-container"
+    :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
+  >
     <!--<div class="m-2">
       <h1>Hello User</h1>
       I found the following templates in example folder: 
@@ -13,93 +16,152 @@
     </div>-->
 
     <div class="flex-left m-2 p-2">
-
       <form>
         <div class="form-group mb-5 ml-5 mr-5">
           <h2 v-if="parsedFilesJson">InputFiles</h2>
 
-          <grid-plot class="border"/>
+          <div class="item-name" v-if="json.metadata">
+            {{ json.metadata.display_name }}
+          </div>
+          <div class="item-name" v-if="json.metadata">
+            {{ json.metadata.description }}
+          </div>
 
-          <div class="item-name" v-if="json.metadata">{{ json.metadata.display_name }}</div>
-          <div class="item-name" v-if="json.metadata">{{ json.metadata.description }}</div>
-        
           <!-- 
             Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
           -->
           <b-card no-body v-if="inputFiles_v_model.length > 0">
-            <b-tabs card class="files" content-class="m-2">
-              <b-tab :title="'File ' + fileParent_index" ref="file" class="file" v-for="(file, fileParent_index) in parsedFilesJson" :key=file.identifier>
-                <div class="part" v-for="(part, partParent_index) in file.parts" :key=part.identifier>
-                  <div ref="partcontent" class="partcontent" :id=part.identifier v-if="part.access !== 'template' && inputFiles_v_model.length > 0">
+            <b-tabs card class="files" content-class="m-2" fill>
+              <b-tab
+                :title="'File ' + fileParent_index"
+                ref="file"
+                class="file"
+                v-for="(file, fileParent_index) in parsedFilesJson"
+                :key="file.identifier"
+              >
+                <div
+                  class="part"
+                  v-for="(part, partParent_index) in file.parts"
+                  :key="part.identifier"
+                >
+                  <div
+                    ref="partcontent"
+                    class="partcontent"
+                    :id="part.identifier"
+                    v-if="
+                      part.access !== 'template' &&
+                      inputFiles_v_model.length > 0
+                    "
+                  >
                     <div v-if="part.access == 'visible'">
                       <!-- v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" -->
-                      <prism-editor class="my-editor editor-readonly" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" :readonly="true" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
+                      <prism-editor
+                        class="my-editor editor-readonly"
+                        v-bind:class="{
+                          'top-editor': partParent_index == 0,
+                          'bottom-editor':
+                            partParent_index == file.parts.length - 1,
+                        }"
+                        :readonly="true"
+                        v-model="
+                          inputFiles_v_model[fileParent_index][partParent_index]
+                        "
+                        :highlight="highlighter"
+                        line-numbers
+                      ></prism-editor>
                     </div>
                     <div v-else>
-                      <prism-editor class="my-editor" v-bind:class="{ 'top-editor': (partParent_index==0), 'bottom-editor': (partParent_index==file.parts.length-1)}" v-model="inputFiles_v_model[fileParent_index][partParent_index]" :highlight="highlighter" line-numbers></prism-editor>
+                      <prism-editor
+                        class="my-editor"
+                        v-bind:class="{
+                          'top-editor': partParent_index == 0,
+                          'bottom-editor':
+                            partParent_index == file.parts.length - 1,
+                        }"
+                        v-model="
+                          inputFiles_v_model[fileParent_index][partParent_index]
+                        "
+                        :highlight="highlighter"
+                        line-numbers
+                      ></prism-editor>
                     </div>
                   </div>
-                  <div class="part-parameters" v-if="part.parameters && part.access == 'template'">
-                      <h2>Parameters</h2>
-                      <parameters :parameters="part.parameters" :v_model_var="inputFilesPartsParameters_v_model"></parameters>
+                  <div
+                    class="part-parameters"
+                    v-if="part.parameters && part.access == 'template'"
+                  >
+                    <h2>Parameters</h2>
+                    <parameters
+                      :parameters="part.parameters"
+                      :v_model_var="
+                        inputFilesPartsParameters_v_model[partParent_index]
+                      "
+                    ></parameters>
+                    {{decodeBase64(part.content)}} {{ inputFilesPartsParameters_v_model[partParent_index]}}
                   </div>
                 </div>
               </b-tab>
+              <b-tab v-if="parsedParametersJson" title="Parameters">
+                <!-- render parameters section of the json -->
+                <form>
+                  <div class="form-group mb-5 ml-5 mr-5">
+                    <h2 v-if="parsedParametersJson">Parameters</h2>
+                      <parameters
+                        :parameters="parsedParametersJson"
+                        :v_model_var="form_v_model"
+                      ></parameters>
+                      <!--<div class="m-5">
+                        <div v-for='n in form_v_model.length' :key=n>
+                          test: {{ form_v_model[n-1] }}
+                        </div>
+                      </div> -->
+                  </div>
+                </form>
+              </b-tab>
             </b-tabs>
           </b-card>
-          <div class="m-5">
+          <!--<div class="m-5">
             <div v-for='m in inputFiles_v_model.length' :key=m>
               test: {{ inputFiles_v_model[m-1] }}
-            </div>
-          </div>
+            </div> 
+          </div> -->
         </div>
       </form>
 
-      <!-- render parameters section of the json -->
-      <form>
-        <div class="form-group mb-5 ml-5 mr-5">
-          <h2 v-if="parsedParametersJson">Parameters</h2>
-          <parameters :parameters="parsedParametersJson" :v_model_var="form_v_model"></parameters>
-          <div class="m-5">
-            <div v-for='n in form_v_model.length' :key=n>
-              test: {{ form_v_model[n-1] }}
-            </div>
-          </div>
-        </div>
-      </form>
       <div class="d-flex flex-row mb-5 ml-5 mr-5">
-        <div class="mr-auto">
-          <b-button class="btn mr-2">
-            <b-icon icon="download" aria-hidden="true"></b-icon>
-          </b-button>
-          <b-button class="btn mr-2">
-            <b-icon icon="upload" aria-hidden="true"></b-icon>
-          </b-button>
-          <b-button class="btn" variant="primary">
-            <b-icon icon="play" aria-hidden="true"></b-icon>
-          </b-button>
-        </div>
-        <div class="">
-          <b-button class="btn mr-2" @click="maximize">
-            <b-icon icon="fullscreen" aria-hidden="true"></b-icon>
-          </b-button>
-          <b-button class="btn" variant="success">
-            <b-icon icon="cloud-arrow-down-fill" aria-hidden="true"></b-icon>
-          </b-button>
-        </div>
+      <div class="mr-auto">
+        <b-button class="btn mr-2">
+          <b-icon icon="download" aria-hidden="true"></b-icon>
+        </b-button>
+        <b-button class="btn mr-2">
+          <b-icon icon="upload" aria-hidden="true"></b-icon>
+        </b-button>
+        <b-button class="btn" variant="primary">
+          <b-icon icon="play" aria-hidden="true"></b-icon>
+        </b-button>
       </div>
+      <div class="">
+        <b-button class="btn mr-2" @click="maximize">
+          <b-icon icon="fullscreen" aria-hidden="true"></b-icon>
+        </b-button>
+        <b-button class="btn" variant="success">
+          <b-icon icon="cloud-arrow-down-fill" aria-hidden="true"></b-icon>
+        </b-button>
+      </div>
+    </div>
     </div>
 
     <div class="flex-right m-2 p-2">
       <div class="form-group mb-5 ml-5 mr-5">
         <h2>OutputFiles</h2>
-
-        <vtk-test></vtk-test>
+        
+        <vtk-component></vtk-component>
+        <grid-plot class="border"></grid-plot>
 
         <div class="my-2">
           <v-wait for="wait for ws response">
             <circles-to-rhombuses-spinner
-              slot='waiting'
+              slot="waiting"
               :animation-duration="1200"
               :circles-num="3"
               :circle-size="15"
@@ -107,37 +169,83 @@
             />
             <div id="stdout" v-if="outputFiles !== ''">
               <h3>Stdout</h3>
-              <prism-editor class="my-editor output-editor" :readonly="true" v-model="outputFiles" :highlight="highlighter" line-numbers></prism-editor>
+              <prism-editor
+                class="my-editor output-editor"
+                :readonly="true"
+                v-model="outputFiles"
+                :highlight="highlighter"
+                line-numbers
+              ></prism-editor>
             </div>
             <div id="stderr" class="mt-2" v-if="outputFiles !== ''">
               <h3>Stderr</h3>
-              <prism-editor class="my-editor output-editor" :readonly="true" v-model="errorFiles" :highlight="highlighter" line-numbers></prism-editor>
+              <prism-editor
+                class="my-editor output-editor"
+                :readonly="true"
+                v-model="errorFiles"
+                :highlight="highlighter"
+                line-numbers
+              ></prism-editor>
             </div>
             <div id="fileList" class="mt-2" v-if="outputFiles !== ''">
               <h3>Files to Download</h3>
               <div class="fileViewer">
-                <b-card no-body v-if="returnedOutputJson.artifacts.length > 0">
+                <b-card no-body v-if="returnedOutputJson.artifacts.length > 0" fill>
                   <b-tabs card class="files" content-class="m-2">
-                    <b-tab :title="'OutputFile ' + artifactParent_index" ref="artifact" class="artifact" v-for="(artifact, artifactParent_index) in returnedOutputJson.artifacts" :key=artifact.identifier>
-                      <div v-if="artifact.MIMEtype !== 'image/png'" ref="outPartcontent" class="outPartcontent">
-                        <prism-editor class="my-editor editor-readonly top-editor bottom-editor" :readonly="true" :value="decodeBase64(artifact.content)" :highlight="highlighter" line-numbers></prism-editor>   
+                    <b-tab
+                      :title="'OutputFile ' + artifactParent_index"
+                      ref="artifact"
+                      class="artifact"
+                      v-for="(
+                        artifact, artifactParent_index
+                      ) in returnedOutputJson.artifacts"
+                      :key="artifact.identifier"
+                    >
+                      <div
+                        v-if="artifact.MIMEtype !== 'image/png'"
+                        ref="outPartcontent"
+                        class="outPartcontent"
+                      >
+                        <prism-editor
+                          class="my-editor editor-readonly top-editor bottom-editor"
+                          :readonly="true"
+                          :value="decodeBase64(artifact.content)"
+                          :highlight="highlighter"
+                          line-numbers
+                        ></prism-editor>
                       </div>
-                      <div v-if="artifact.MIMEtype === 'image/png'" ref="outPartcontent" class="outPartcontent">
-                        <img :src="imagesrc(artifact.content)"/>   
+                      <div
+                        v-if="artifact.MIMEtype === 'image/png'"
+                        ref="outPartcontent"
+                        class="outPartcontent"
+                      >
+                        <img :src="imagesrc(artifact.content)" />
                       </div>
                     </b-tab>
                   </b-tabs>
                 </b-card>
               </div>
               <ul>
-                <li v-for="artifact in returnedOutputJson.artifacts" :key=artifact.identifier>
-                  <a href="#" @click="save(artifact.path, artifact.identifier, artifact.MIMEtype)">{{ artifact.path }}</a>
+                <li
+                  v-for="artifact in returnedOutputJson.artifacts"
+                  :key="artifact.identifier"
+                >
+                  <a
+                    href="#"
+                    @click="
+                      save(
+                        artifact.path,
+                        artifact.identifier,
+                        artifact.MIMEtype
+                      )
+                    "
+                    >{{ artifact.path }}</a
+                  >
                 </li>
               </ul>
             </div>
           </v-wait>
         </div>
-
       </div>
     </div>
   </div>
@@ -157,12 +265,13 @@ import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
 //own components
 import Parameters from "./components/Parameters.vue";
 
-import { CirclesToRhombusesSpinner } from 'epic-spinners';
+import { CirclesToRhombusesSpinner } from "epic-spinners";
 
 import GridPlot from "./components/viplab-plots/gridplot/GridPlot.vue";
 
 //import $ from 'jquery';
-import VtkTest from "./components/VtkTest.vue";
+
+import VtkComponent from "./components/vtk-plots/VtkComponent.vue";
 
 export default {
   name: "app",
@@ -171,7 +280,7 @@ export default {
     CirclesToRhombusesSpinner,
     Parameters,
     GridPlot,
-    VtkTest
+    VtkComponent,
   },
   data() {
     return {
@@ -184,10 +293,10 @@ export default {
       ws: "",
       returnedOutputJson: "",
       outputFiles: "",
-      errorFiles: "", 
+      errorFiles: "",
       maximized: false,
     };
-  }, 
+  },
   computed: {
     /* return parameters section of json file */
     parsedParametersJson: function () {
@@ -198,7 +307,7 @@ export default {
     parsedFilesJson: function () {
       var parsed = this.json.files;
       return parsed;
-    }
+    },
   },
   methods: {
     /** pre-fill the array form_v_model with the values specified in the json file or if not specified add default values */
@@ -211,16 +320,36 @@ export default {
         for (var file in this.json.files) {
           for (var part in this.json.files[file].parts) {
             if (this.json.files[file].parts[part].parameters) {
-              for (var param in this.json.files[file].parts[part].parameters) {
+              array.push(this.json.files[file].parts[part].parameters);
+              /*for (var param in this.json.files[file].parts[part].parameters) {
                 array.push(this.json.files[file].parts[part].parameters[param]);
-              }
+              }*/
+            } else {
+              array.push([]);
             }
           }
         }
         parsedParametersJson = array;
       }
-      console.log(parsedParametersJson);
+      //console.log(parsedParametersJson);
 
+      var vModel = [];
+      if (toBeFilled === "form") {
+        vModel = this.fillVModel(parsedParametersJson);
+      } else {
+        for (var param in parsedParametersJson) {
+          vModel.push(this.fillVModel(parsedParametersJson[param]));
+        }
+      }
+
+      if (toBeFilled === "form") {
+        this.form_v_model = vModel;
+      } else {
+        this.inputFilesPartsParameters_v_model = vModel;
+        console.log(this.inputFilesPartsParameters_v_model);
+      }
+    },
+    fillVModel: function (parsedParametersJson) {
       var vModel = [];
       for (var item in parsedParametersJson) {
         if (
@@ -229,11 +358,13 @@ export default {
         ) {
           vModel.push([]);
           for (var i = 0; i < parsedParametersJson[item].values.length; i++) {
-            var isChecked = false;
+            //var isChecked = false;
             if (parsedParametersJson[item].values[i].selected) {
-              isChecked = true;
+              //isChecked = true;
+              vModel[vModel.length - 1].push(parsedParametersJson[item].values[i].value);
             }
-            vModel[vModel.length - 1].push(isChecked);
+            //vModel[vModel.length - 1].push(isChecked);
+            //console.log("checkbox " + isChecked);
           }
         } else if (
           parsedParametersJson[item].metadata.guiType == "radio" ||
@@ -251,27 +382,21 @@ export default {
             vModel.push(a[0]);
           }
         } else if (
-          parsedParametersJson[item].metadata.display == "slider" ||
-          (parsedParametersJson[item].metadata.display == "input_field" &&
+          parsedParametersJson[item].metadata.guiType == "slider" ||
+          (parsedParametersJson[item].metadata.guiType == "input_field" &&
             parsedParametersJson[item].metadata.type == "number")
         ) {
           vModel.push(parsedParametersJson[item].value);
         } else if (
-          parsedParametersJson[item].metadata.display == "input_field" &&
+          parsedParametersJson[item].metadata.guiType == "input_field" &&
           parsedParametersJson[item].metadata.type == "text"
         ) {
           vModel.push("");
         } else {
-          vModel.push(
-            this.decodeBase64(parsedParametersJson[item].value)
-          );
+          vModel.push(this.decodeBase64(parsedParametersJson[item].value));
         }
       }
-      if (toBeFilled === "form") {
-        this.form_v_model = vModel;
-      } else {
-        this.inputFilesPartsParameters_v_model = vModel;
-      }
+      return vModel;
     },
     fillInputFiles_v_model: function () {
       var files = this.json.files;
@@ -280,19 +405,19 @@ export default {
         var array = [];
         for (var part in parts) {
           //if(parts[part].access !== "template") {
-            array.push(this.decodeBase64(parts[part].content));
+          array.push(this.decodeBase64(parts[part].content));
 
-            //var parametersArray = [];
-            //if(parts[part].parameters){
-            //  parametersArray.push(); //see above: the same as in fillFormModel
-            //}
+          //var parametersArray = [];
+          //if(parts[part].parameters){
+          //  parametersArray.push(); //see above: the same as in fillFormModel
+          //}
           //}
         }
         if (array.length > 0) {
           this.inputFiles_v_model.push(array);
         }
       }
-    }, 
+    },
     rewriteToBase64: function (base64urlEncodedString) {
       // Replace base64 characters with base64url characters
       base64urlEncodedString = base64urlEncodedString
@@ -312,6 +437,7 @@ export default {
     },
     decodeBase64: function (base64urlEncodedString) {
       var encodedString = this.rewriteToBase64(base64urlEncodedString);
+
       var decodedString = window.atob(encodedString);
       return decodedString;
     },
@@ -332,68 +458,85 @@ export default {
     /** highlight the code in the editor */
     highlighter(code) {
       return highlight(code, languages.js); // languages.<insert language> to return html with markup
-    }, 
-    executeAfterDomLoaded: function(){
+    },
+    executeAfterDomLoaded: function () {
       //this.ws = new WebSocket("ws://192.168.195.128:8083/computations");
       this.ws = new WebSocket("ws://localhost:8083/computations");
       console.log("connect to ws");
       this.ws.onopen = () => {
-        this.ws.send(JSON.stringify({"type":"authenticate","content":{"jwt": this.token}}));
-          document.getElementById("submit").disabled = false;
+        this.ws.send(
+          JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
+        );
+        document.getElementById("submit").disabled = false;
       };
       this.ws.onmessage = (event) => {
         var data = JSON.parse(event.data);
-        switch  (data.type) {
-            case "computation":
-                this.displayComputation(data.content);
-                break;
-            case "result":
-                this.displayResult(data.content);
-                break;
-            default:
-                console.error(data);
+        switch (data.type) {
+          case "computation":
+            this.displayComputation(data.content);
+            break;
+          case "result":
+            this.displayResult(data.content);
+            break;
+          default:
+            console.error(data);
         }
-        if(this.outputFiles !== "") {
+        if (this.outputFiles !== "") {
           // stop waiting
-          this.$wait.end('wait for ws response');
-        } 
-      }
+          this.$wait.end("wait for ws response");
+        }
+      };
       document.getElementById("submit").onclick = this.sendData;
     },
-    uuid: function() {
+    uuid: function () {
       function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
+          .toString(16)
+          .substring(1);
       }
-      return s4() + s4() + '-' + s4() + '-' + s4() + '-' + 
-        s4() + '-' + s4() + s4() + s4();
+      return (
+        s4() +
+        s4() +
+        "-" +
+        s4() +
+        "-" +
+        s4() +
+        "-" +
+        s4() +
+        "-" +
+        s4() +
+        s4() +
+        s4()
+      );
     },
-    sendData: function() {
+    sendData: function () {
       console.log("send data");
-      
+
       // start waiting
-      this.$wait.start('wait for ws response');
+      this.$wait.start("wait for ws response");
 
       document.getElementById("submit").disabled = true;
       var task = {
-        "type":"create-computation",
-        "content":{
-            "template": document.body.getAttribute("data-template"),
-            "task":{
-                "template": this.json.identifier,
-                "identifier": this.uuid(),
-                "files": []
-            } 
-        }
+        type: "create-computation",
+        content: {
+          template: document.body.getAttribute("data-template"),
+          task: {
+            template: this.json.identifier,
+            identifier: this.uuid(),
+            files: [],
+          },
+        },
       };
-      if(this.$refs.file != null){
+      if (this.$refs.file != null) {
         var i = 0;
         this.$refs.file.forEach((filediv) => {
-          let file = { 'identifier': filediv.id, 'parts': []};
+          let file = { identifier: filediv.id, parts: [] };
           var j = 0;
           this.$refs.partcontent.forEach((partcontent) => {
-            file.parts.push({'identifier': partcontent.id, 'content': btoa(this.inputFiles_v_model[i][j])});
+            file.parts.push({
+              identifier: partcontent.id,
+              content: btoa(this.inputFiles_v_model[i][j]),
+            });
             j++;
           });
           task.content.task.files.push(file);
@@ -404,55 +547,68 @@ export default {
       //document.querySelector('#stderr').value = '';
       //document.getElementById("fileList").innerHTML = '';
       //this.outputFiles = new Map();
-      
+
       this.ws.send(JSON.stringify(task));
-      
+
       return false;
     },
-    displayComputation: function(computation){
+    displayComputation: function (computation) {
       console.log("computation: " + computation);
     },
-    displayResult: function(result){
+    displayResult: function (result) {
       console.log(result);
       if (result.result.status == "final") {
         document.getElementById("submit").disabled = false;
       }
       this.returnedOutputJson = result.result;
       //for testing add image to json:
-      this.returnedOutputJson.artifacts.push({ "type" : "file", "identifier" : "de762095-6cd2-439f-80eb-313e85d3386a", "MIMEtype": "image/png", "path" : "/images/img.png", "content": "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAH0lEQVR42mOcx/C/noGKgHHUwFEDRw0cNXDUwJFqIAAJpipFpDW1EwAAAABJRU5ErkJggg=="});
+      this.returnedOutputJson.artifacts.push({
+        type: "file",
+        identifier: "de762095-6cd2-439f-80eb-313e85d3386a",
+        MIMEtype: "image/png",
+        path: "/images/img.png",
+        content:
+          "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAH0lEQVR42mOcx/C/noGKgHHUwFEDRw0cNXDUwJFqIAAJpipFpDW1EwAAAABJRU5ErkJggg==",
+      });
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.decodeBase64(result.result.output.stdout);
       this.errorFiles = this.decodeBase64(result.result.output.stderr);
       //console.log(this.outputFiles);
-      
-    }, 
-    imagesrc: function(base64Image) {
+    },
+    imagesrc: function (base64Image) {
       return "data:image/png;base64," + base64Image;
-    }, 
-    save: function(filename, identifier, mimetype){
-      console.log("save the following file: " + filename + " " + identifier + " " + mimetype);
+    },
+    save: function (filename, identifier, mimetype) {
+      console.log(
+        "save the following file: " +
+          filename +
+          " " +
+          identifier +
+          " " +
+          mimetype
+      );
       var content = "";
-      this.returnedOutputJson.artifacts.forEach(item => {
-        if(item.identifier == identifier) {
+      this.returnedOutputJson.artifacts.forEach((item) => {
+        if (item.identifier == identifier) {
           content = this.decodeBase64(item.content);
         }
       });
       var blob = "";
-      if(mimetype === "image/png") {
-          const byteNumbers = new Array(content.length);
-          for (let i = 0; i < content.length; i++) {
-            byteNumbers[i] = content.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNumbers);
-          blob = new Blob([byteArray], {type: mimetype});
+      if (mimetype === "image/png") {
+        const byteNumbers = new Array(content.length);
+        for (let i = 0; i < content.length; i++) {
+          byteNumbers[i] = content.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        blob = new Blob([byteArray], { type: mimetype });
       } else {
-        blob = new Blob([content], {mimetype: mimetype});
+        blob = new Blob([content], { mimetype: mimetype });
       }
-      if(window.navigator.msSaveOrOpenBlob) {
+      if (window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveBlob(blob, filename);
       } else {
-        var elem = window.document.createElement('a');
+        var elem = window.document.createElement("a");
         elem.href = window.URL.createObjectURL(blob);
         elem.download = filename;
         document.body.appendChild(elem);
@@ -460,10 +616,10 @@ export default {
         document.body.removeChild(elem);
       }
       return false;
-    }, 
-    maximize: function() {
+    },
+    maximize: function () {
       this.maximized = !this.maximized;
-    }
+    },
   },
   created() {
     this.loadJsonFromFile();
@@ -472,6 +628,7 @@ export default {
   mounted() {
     this.executeAfterDomLoaded();
     console.log(process.env.NODE_ENV);
+    console.log(__dirname);
     //this.loadJsonFromFile();
     //this.loadJsonFromFile("./container.computation-template2.json");
   },
@@ -479,6 +636,12 @@ export default {
 </script>
 
 <style>
+#submit {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+}
+
 .outer-div {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -618,7 +781,7 @@ export default {
 
 .card-header:nth-child(1) {
   background-color: white;
-  border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0 !important;
+  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0 !important;
 }
 
 .nav-link {
@@ -626,7 +789,7 @@ export default {
   margin-left: 2px;
   text-decoration: none !important;
   /*negative margin, so that there is no line under the currently selected tab*/
-  margin-bottom: -.05rem !important;
+  margin-bottom: -0.05rem !important;
 }
 
 .btn {
@@ -634,5 +797,4 @@ export default {
   padding-left: 20px !important;
   padding-right: 20px !important;
 }
-
 </style>

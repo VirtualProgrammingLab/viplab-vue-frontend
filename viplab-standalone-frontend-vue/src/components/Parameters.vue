@@ -89,13 +89,13 @@ export default {
       return item.metadata.guiType === "toggle" ? true : false;
     },
     isSlider: function (item) {
-      return item.metadata.display === "slider" ? true : false;
+      return item.metadata.guiType === "slider" ? true : false;
     },
     isInputField: function (item) {
-      return item.metadata.display === "input_field" ? true : false;
+      return item.metadata.guiType === "input_field" ? true : false;
     },
     isEditor: function (item) {
-      return item.metadata.display === "editor" ? true : false;
+      return item.metadata.guiType === "editor" ? true : false;
     },
     /** highlight the code in the editor */
     highlighter(code) {
