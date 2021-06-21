@@ -1,10 +1,10 @@
 <template>
-  <div class="togglebutton-component">
-    <div class ="item-name">{{item.metadata.name}}:</div>
-        <div v-for="(toggle, index) in item.values" :key="'toggle'+parent_index + ' ' +index">
+  <div class="togglebutton-component form-item toggle">
+    <div class ="item-name">{{toggl.metadata.name}}:</div>
+        <div v-for="(toggle, index) in toggl.values" :key="'toggle'+ ' ' +index">
         <label>
             {{ toggle.value }}
-            <input type="checkbox" :value="toggle.value" v-model="vModel[parent_index]">
+            <input type="checkbox" :value="toggle.value" v-model="toggl.selected">
             <span class="slider"></span>
         </label>
     </div>
@@ -16,12 +16,11 @@ export default {
   name: 'ToggleButton',
   props: {
     item: Object,
-    parent_index: Number,
-    v_model_var: Array
+    parent_index: Number
   }, 
   data() {
     return {
-      vModel: this.v_model_var  
+      toggl: this.item
     }
   }
 }

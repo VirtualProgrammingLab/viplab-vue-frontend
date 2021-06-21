@@ -86,7 +86,8 @@
                   {
                     "value" : "make_plot"
                   }
-                ]
+                ],
+                "selected" : ["verbose"]
               }
             ],
           "content": "VGhpcyBpcyBhIFRleHQ6Ont7X19jaGVja2JveF9ffX06OlRoaXMgaXMgYSBUZXh0"

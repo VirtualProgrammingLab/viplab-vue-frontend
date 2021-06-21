@@ -1,17 +1,45 @@
 <template>
   <div class="dropdown-component">
-    <div class ="item-name">{{item.metadata.name}}:</div>
-    <div class="dropdown form-group">
-        <select class="form-control" v-if="vModel[parent_index].constructor.name === 'Array'" v-model="vModel[parent_index]" multiple>
-            <option v-for="(disabled, index) in itemsDisabled(item)" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
-            <option v-for="(drop, index) in itemWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
+      <div class="item-name">{{ dropitem.metadata.name }}:</div>
+      {{dropitem.selected}}
+      <div class="dropdown form-group">
+        <select
+          class="form-control"
+          v-if="dropitem.selected.constructor.name === 'Array'"
+          v-model="dropitem.selected"
+          multiple
+        >
+          <option
+            v-for="(disabled, index) in itemsDisabled(dropitem)"
+            disabled
+            :key="'dropdis' + ' ' + index"
+          >
+            {{ disabled }}
+          </option>
+          <option
+            v-for="(drop, index) in itemWithoutDisabled(dropitem)"
+            :key="'drop' + ' ' + index"
+          >
+            {{ drop }}
+          </option>
         </select>
-        <select class="form-control" v-else v-model="vModel[parent_index]">
-            <option v-for="(disabled, index) in itemsDisabled(item)" disabled :key="'dropdis'+parent_index + ' ' +index">{{ disabled }}</option>
-            <option v-for="(drop, index) in itemWithoutDisabled(item)" :key="'drop'+parent_index + ' ' +index">{{ drop }}</option>
+        <select class="form-control" v-else v-model="dropitem.selected">
+          <option
+            v-for="(disabled, index) in itemsDisabled(dropitem)"
+            disabled
+            :key="'dropdis' + ' ' + index"
+          >
+            {{ disabled }}
+          </option>
+          <option
+            v-for="(drop, index) in itemWithoutDisabled(dropitem)"
+            :key="'drop' + ' ' + index"
+          >
+            {{ drop }}
+          </option>
         </select>
+      </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -20,11 +48,10 @@ export default {
   props: {
     item: Object,
     parent_index: Number, 
-    v_model_var: Array
   },
   data() {
     return {
-      vModel: this.v_model_var  
+      dropitem: this.item  
     }
   },
   methods: {

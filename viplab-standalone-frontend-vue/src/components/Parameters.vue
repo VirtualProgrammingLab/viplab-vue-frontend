@@ -3,49 +3,38 @@
     <div v-for="(item, parent_index) in parameters" :key=parent_index>
         <!-- render checkbox elements -->
         <!-- render after form_v_model[parent_index] is set, or else js error occurs (even though page looks perfectly fine) -->
-        <div class="form-item" v-if="isCheckbox(item) && v_model_var[parent_index]">
-            <check-box :item="item" :parent_index="parent_index" :v_model_var="v_model_var"></check-box>
+        <div class="form-item" v-if="isCheckbox(item)">
+            <check-box :item="item" :parent_index="parent_index" ></check-box>
         </div>
         <!-- render radio button elements -->
-        <div class="form-item" v-if="isRadio(item) && v_model_var[parent_index]">
-            <radio-button :item="item" :parent_index="parent_index" :v_model_var="v_model_var"></radio-button>
+        <div class="form-item" v-if="isRadio(item)">
+            <radio-button :item="item" :parent_index="parent_index"></radio-button>
         </div>
         <!-- render dropdown elements -->
-        <div class="form-item" v-if="isDropdown(item) && v_model_var[parent_index]">
-            <drop-down :item="item" :parent_index="parent_index" :v_model_var="v_model_var"></drop-down>
+        <div class="form-item" v-if="isDropdown(item)">
+            <drop-down :item="item" :parent_index="parent_index"></drop-down>
         </div>
         <!-- render toggle button elements -->
-        <div class="form-item toggle" v-if="isToggle(item) && v_model_var[parent_index]">
-            <toggle-button :item="item" :parent_index="parent_index" :v_model_var="v_model_var"></toggle-button>
+        <div class="form-item toggle" v-if="isToggle(item)">
+            <toggle-button :item="item" :parent_index="parent_index"></toggle-button>
         </div>
         <!-- render slider elements -->
         <div class="form-item" v-if="isSlider(item)" :key="'slider'+parent_index">
-            <slider-element :item="item" :parent_index="parent_index" :v_model_var="v_model_var"></slider-element>
+            <slider-element :item="item" :parent_index="parent_index"></slider-element>
         </div>
         <!-- render input field elements -->
         <div class="form-item" v-if="isInputField(item)">
-            <input-field :item="item" :parent_index="parent_index" :v_model_var="v_model_var"></input-field>
+            <input-field :item="item" :parent_index="parent_index"></input-field>
         </div>
         <!-- render items with no gui-type as editor elements -->
-        <div class="form-item" v-if="isEditor(item) && v_model_var[parent_index]">
-            <div class ="item-name">{{item.metadata.name}}:</div>
-            <prism-editor class="my-editor top-editor bottom-editor" v-model="vModel[parent_index]" :highlight="highlighter" line-numbers></prism-editor>
+        <div class="form-item" v-if="isEditor(item) && item.value">
+          <editor-component :item="item" :readonly=false :isParameter=true></editor-component>
         </div>
     </div>
   </div>
 </template>
 
 <script>
-// import Prism Editor
-import { PrismEditor } from "vue-prism-editor";
-import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhere
-
-// import highlighting library (you can use any library you want just return html string)
-import { highlight, languages } from "prismjs/components/prism-core";
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
-
 //own components
 import CheckBox from "../components/CheckBox.vue";
 import RadioButton from "../components/RadioButton.vue";
@@ -53,25 +42,24 @@ import DropDown from "../components/DropDown.vue";
 import ToggleButton from "../components/ToggleButton.vue";
 import SliderElement from "../components/SliderElement.vue";
 import InputField from "../components/InputField.vue";
+import EditorComponent from "../components/EditorComponent.vue";
 
 export default {
   components: {
-    PrismEditor,
     CheckBox,
     RadioButton,
     DropDown,
     ToggleButton,
     SliderElement,
-    InputField
+    InputField,
+    EditorComponent,
   },
   name: 'Parameters',
   props: {
-    parameters: Array,
-    v_model_var: Array
+    parameters: Array
   },
   data() {
     return {
-      vModel: this.v_model_var  
     }
   }, 
   methods: {
@@ -96,10 +84,6 @@ export default {
     },
     isEditor: function (item) {
       return item.metadata.guiType === "editor" ? true : false;
-    },
-    /** highlight the code in the editor */
-    highlighter(code) {
-      return highlight(code, languages.js); // languages.<insert language> to return html with markup
     },
   }
 }

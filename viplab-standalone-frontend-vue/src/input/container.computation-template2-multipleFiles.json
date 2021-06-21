@@ -100,7 +100,8 @@
         {
           "value" : "make_plot"
         }
-      ]
+      ],
+      "selected" : ["verbose"]
     }, 
     {
       "type" : "fixed-value",
@@ -124,7 +125,8 @@
         {
           "value" : "test"
         }
-      ]
+      ],
+      "selected" : "serial"
     },
     {
       "type" : "fixed-value",
@@ -154,7 +156,8 @@
         {
           "value" : "2p1c"
         }
-      ]
+      ],
+      "selected" : "1p"
     }, 
     {
       "type" : "fixed-value",
@@ -186,7 +189,8 @@
           "value" : "2p1c", 
           "disabled" : true
         }
-      ]
+      ], 
+      "selected" : ["1p", "2p"]
     }, 
     {
       "type" : "fixed-value",
@@ -206,7 +210,8 @@
         {
           "value" : "make_plot"
         }
-      ]
+      ], 
+      "selected" : ["verbose"]
     }, 
     {
       "type" : "any-value",
@@ -248,7 +253,8 @@
         "type": "text",
         "name": "file_name"
       },
-      "maxlength": 200 
+      "maxlength": 200,
+      "value" : ""
     },
     {
       "type" : "any-value",
@@ -257,7 +263,8 @@
         "guiType" : "input_field",
         "type": "text",
         "name": "file_name"
-      }
+      },
+      "value" : ""
     },
     {
       "type" : "any-value",

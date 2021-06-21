@@ -63,7 +63,8 @@
         {
           "value" : "make_plot"
         }
-      ]
+      ],
+      "selected" : ["verbose"]
     }, 
     {
       "type" : "fixed-value",
@@ -87,7 +88,8 @@
         {
           "value" : "test"
         }
-      ]
+      ],
+      "selected" : "serial"
     },
     {
       "type" : "fixed-value",
@@ -117,7 +119,8 @@
         {
           "value" : "2p1c"
         }
-      ]
+      ],
+      "selected" : "1p"
     }, 
     {
       "type" : "fixed-value",
@@ -149,7 +152,8 @@
           "value" : "2p1c", 
           "disabled" : true
         }
-      ]
+      ], 
+      "selected" : ["1p", "2p"]
     }, 
     {
       "type" : "fixed-value",
@@ -169,7 +173,8 @@
         {
           "value" : "make_plot"
         }
-      ]
+      ], 
+      "selected" : ["verbose"]
     }, 
     {
       "type" : "any-value",

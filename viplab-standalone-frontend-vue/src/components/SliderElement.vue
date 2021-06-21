@@ -1,11 +1,11 @@
 <template>
   <div class="slider-component">
-    <div class ="item-name">{{item.metadata.name}}:</div>
-    <div v-if="vModel[parent_index].length > 1">
-        <vue-slider multiple v-model="vModel[parent_index]" :min="item.min" :max="item.max" :interval="item.step" :direction="sliderDirection(item)" style="height: 300px;[item.metadata.vertical ? {'height': '300px'} : {}]"></vue-slider>
+    <div class ="item-name">{{slider.metadata.name}}:</div>
+    <div v-if="slider.value.length > 1">
+        <vue-slider multiple v-model="slider.value" :min="slider.min" :max="slider.max" :interval="slider.step" :direction="sliderDirection(slider)" style="height: 300px;[slider.metadata.vertical ? {'height': '300px'} : {}]"></vue-slider>
     </div>
     <div v-else>
-        <vue-slider v-model="vModel[parent_index]" :min="item.min" :max="item.max" :interval="item.step" :direction="sliderDirection(item)" :style="[item.metadata.vertical ? {'height': '300px'} : {}]"></vue-slider>
+        <vue-slider v-model="slider.value" :min="slider.min" :max="slider.max" :interval="slider.step" :direction="sliderDirection(slider)" :style="[slider.metadata.vertical ? {'height': '300px'} : {}]"></vue-slider>
     </div>
   </div>
 </template>
@@ -22,11 +22,10 @@ export default {
   props: {
     item: Object,
     parent_index: Number,
-    v_model_var: Array
   }, 
   data() {
     return {
-      vModel: this.v_model_var  
+      slider: this.item 
     }
   },
   methods: {
