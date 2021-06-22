@@ -52,7 +52,7 @@
       },
       "parts": [
         {
-          "identifier": "preamble",
+          "identifier": "preamble2",
           "access": "visible",
           "metadata": {
             "name": "Info: source before your code.",
@@ -61,7 +61,7 @@
           "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
         },
         {
-          "identifier": "codeFromStudent",
+          "identifier": "codeFromStudent2",
           "access": "modifiable",
           "metadata": {
             "name": "Fill in your code!",
@@ -70,7 +70,7 @@
           "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
         },
         {
-          "identifier": "postscript",
+          "identifier": "postscript2",
           "access": "visible",
           "metadata": {
             "name": "Info: source after your code calling bar() in it.",

@@ -44,7 +44,7 @@
                 >
                   <div
                     class="part"
-                    v-for="(part) in file.parts"
+                    v-for="part in file.parts"
                     :key="part.identifier"
                   >
                     <div
@@ -52,15 +52,22 @@
                       class="partcontent"
                       :id="part.identifier"
                       v-if="
-                        part.access !== 'template' &&
-                        numberOfInputFiles > 0
+                        part.access !== 'template' && numberOfInputFiles > 0
                       "
                     >
                       <div v-if="part.access == 'visible'">
-                        <editor-component :item="part" :readonly=true :isParameter=false></editor-component>
+                        <editor-component
+                          :item="part"
+                          :readonly="true"
+                          :isParameter="false"
+                        ></editor-component>
                       </div>
                       <div v-else>
-                        <editor-component :item="part" :readonly=false :isParameter=false></editor-component>
+                        <editor-component
+                          :item="part"
+                          :readonly="false"
+                          :isParameter="false"
+                        ></editor-component>
                       </div>
                     </div>
                     <div
@@ -68,12 +75,13 @@
                       v-if="part.parameters && part.access == 'template'"
                     >
                       <h2>Parameters</h2>
-                      <parameters
-                        :parameters="part.parameters"
-                      ></parameters>
+                      <parameters :parameters="part.parameters"></parameters>
                       {{ decodeBase64(part.content) }}
-                      <div v-for="(item, parent_index) in part.parameters" :key=parent_index>
-                        {{ item.selected || item.value}}
+                      <div
+                        v-for="(item, parent_index) in part.parameters"
+                        :key="parent_index"
+                      >
+                        {{ item.selected || item.value }}
                       </div>
                     </div>
                   </div>
@@ -103,9 +111,23 @@
       <div class="d-flex flex-row mb-5 ml-5 mr-5">
         <div class="mr-auto">
           <b-button class="btn mr-2">
-            <b-icon icon="download" aria-hidden="true" @click="download"></b-icon>
+            <b-icon
+              icon="download"
+              aria-hidden="true"
+              @click="download"
+            ></b-icon>
           </b-button>
-          <b-button class="btn mr-2">
+          <input
+            type="file"
+            ref="upload"
+            style="display: none"
+            @change="upload"
+            accept="application/JSON"
+          />
+          <b-button
+            class="btn btn-secondary mr-2 file"
+            @click="$refs.upload.click()"
+          >
             <b-icon icon="upload" aria-hidden="true"></b-icon>
           </b-button>
           <!--
@@ -266,7 +288,7 @@ export default {
     Parameters,
     GridPlot,
     VtkComponent,
-    EditorComponent
+    EditorComponent,
     //JsonVModelTest,
   },
   data() {
@@ -499,14 +521,13 @@ export default {
       }
       return false;
     },
-    downloadTaskJson: function() {
-
-    },
+    downloadTaskJson: function () {},
     maximize: function () {
       this.maximized = !this.maximized;
-    }, 
+    },
     /*download Computation Task JSON Message */
     download: function () {
+      // first, generate the computation task json message
       var taskJson = new Object();
       taskJson.template = this.json.identifier;
       var args = [];
@@ -536,13 +557,67 @@ export default {
         }
       }
       taskJson.parts = parts;
-      console.log(taskJson);
+
+      // now download json
+      var dataStr =
+        "data:text/json;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(taskJson));
+      let exportName = this.json.identifier;
+      var downloadAnchorNode = document.createElement("a");
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", exportName + ".json");
+      document.body.appendChild(downloadAnchorNode); // required for firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    },
+    /*upload Computation Task JSON Message */
+    upload: function (event) {
+      var reader = new FileReader();
+      reader.onload = this.onReaderLoad;
+      reader.readAsText(event.target.files[0]);
+    },
+    /*get json from uploaded file und update DOM */
+    onReaderLoad: function (event) {
+      var obj = JSON.parse(event.target.result);
+
+      // apply changes to current json
+      let templateId = obj.template;
+      if (templateId == this.json.identifier) {
+        
+        // parse parameters/arguments
+        for (let a in obj.arguments) {
+          let currentArg = obj.arguments[a];
+          let argId = currentArg.identifier;
+          let argValue = currentArg.value;
+          let currentParam = this.json.parameters[a];
+          if (argId == currentParam.identifier) {
+            if (currentParam.selected) {
+              currentParam.selected = argValue;
+            } else {
+              currentParam.value = argValue;
+            }
+          }
+        }
+
+        // parse parts
+        for (let p in obj.parts) {
+          let currentPart = obj.parts[p];
+          let partId = currentPart.identifier;
+          for (let f in this.json.files) {
+            for (let oldp in this.json.files[f].parts) {
+              if (this.json.files[p].parts[oldp].identifier == partId) {
+                this.json.files[p].parts[oldp].content = obj.parts[p].content;
+              }
+            }
+          }
+        }
+      }
     },
     /**For the sticky play button: emit a scroll event when files tab is changed, so that the sticky-button is reloaded in the right place */
     tabClicked: function () {
       window.scrollTo(window.scrollX, window.scrollY - 1);
       window.scrollTo(window.scrollX, window.scrollY + 1);
-    }
+    },
   },
   created() {
     this.loadJsonFromFile();
