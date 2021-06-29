@@ -250,7 +250,8 @@
         </div>
 
         <vtk-component></vtk-component>
-        <grid-plot class="border"></grid-plot>
+        <grid-plot></grid-plot>
+        <plot-2d></plot-2d>
       </div>
     </div>
   </div>
@@ -278,6 +279,7 @@ import GridPlot from "./components/viplab-plots/gridplot/GridPlot.vue";
 //import $ from 'jquery';
 
 import VtkComponent from "./components/vtk-plots/VtkComponent.vue";
+import Plot2d from './components/viplab-plots/plot2d/plot2d.vue';
 //import JsonVModelTest from './components/JsonAsVModelTest.vue';
 
 export default {
@@ -289,6 +291,7 @@ export default {
     GridPlot,
     VtkComponent,
     EditorComponent,
+    Plot2d,
     //JsonVModelTest,
   },
   data() {

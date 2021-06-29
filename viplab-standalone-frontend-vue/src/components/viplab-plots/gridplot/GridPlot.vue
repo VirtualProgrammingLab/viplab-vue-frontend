@@ -1,5 +1,5 @@
 <template>
-  <div class="gridplot-component">
+  <div class="gridplot-component border">
     <select name="GraphType" @change="onChange($event)" class="form-control" v-model="dropdownVModel">
       <option value="2DGitterplot">2D Gitterplot</option>
       <option value="3DKaestchen">3D Kästchen</option>

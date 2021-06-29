@@ -367,7 +367,6 @@ export default {
     watchAutoPlayOrPause: function () {
       if (this.enableAutoPlay) {
         this.interval = setInterval(function() {
-          console.log("3: interval: " + this.interval)
           this.increaseFileIndex();
         }.bind(this), 1000);
       } else {
@@ -424,7 +423,7 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 66px;
+  min-height: 66px;
   padding: 12px;
   background: rgba(0, 0, 0, 0.15);
   display: flex;
@@ -444,9 +443,9 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  height: 66px;
+  min-height: 66px;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 1.5rem;
@@ -458,6 +457,13 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+div.btn-group {
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+  display: inline-block;
 }
 
 .geometry-control-group .form-group {
