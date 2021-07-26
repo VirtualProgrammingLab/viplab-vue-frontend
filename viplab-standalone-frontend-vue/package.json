@@ -17,7 +17,6 @@
     "epic-spinners": "^1.1.0",
     "eslint": "^7.14.0",
     "eslint-plugin-vue": "^7.1.0",
-    "fs": "0.0.1-security",
     "itk": "^14.1.0",
     "jquery": "^3.5.1",
     "js-base64": "^3.6.0",
@@ -33,6 +32,8 @@
     "vue-position-sticky": "^0.2.1",
     "vue-prism-editor": "^1.2.2",
     "vue-slider-component": "^3.2.11",
+    "vue-sticky-directive": "0.0.10",
+    "vue-sticky-element": "^1.1.2",
     "vue-wait": "^1.4.8",
     "worker-loader": "^2.0.0"
   },

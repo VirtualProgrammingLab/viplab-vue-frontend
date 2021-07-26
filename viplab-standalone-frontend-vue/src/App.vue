@@ -28,7 +28,7 @@
             {{ json.metadata.description }}
           </div>
 
-          <div class="cards">
+          <div class="cards" >
             <!-- 
             Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
           -->
@@ -282,6 +282,8 @@ import VtkComponent from "./components/vtk-plots/VtkComponent.vue";
 import Plot2d from './components/viplab-plots/plot2d/plot2d.vue';
 //import JsonVModelTest from './components/JsonAsVModelTest.vue';
 
+//import StickyElement from 'vue-sticky-element';
+
 export default {
   name: "app",
   components: {
@@ -292,6 +294,7 @@ export default {
     VtkComponent,
     EditorComponent,
     Plot2d,
+    //StickyElement
     //JsonVModelTest,
   },
   data() {

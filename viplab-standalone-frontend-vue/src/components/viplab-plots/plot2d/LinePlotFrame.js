@@ -1,24 +1,24 @@
 export function LinePlotFrame() {
-    let graphs = []; //LinePlotGraphs
-    let texts = []; //LinePlotTexts
+    this.graphs = []; //LinePlotGraphs
+    this.texts = []; //LinePlotTexts
 
-    let title = "";
+    this.title = "";
 
     // labels for x and y
-    let labelX = "";
-    let labelY = "";
+    this.labelX = "";
+    this.labelY = "";
 
     // ranges set by user?
-    let rangeXsetByUser = false;
-    let rangeYsetByUser = false;
+    this.rangeXsetByUser = false;
+    this.rangeYsetByUser = false;
 
     // Ranges as currently avaiable.
-    let rangeXmin = Number.POSITIVE_INFINITY;
-    let rangeXpositiveMin = Number.POSITIVE_INFINITY;
-    let rangeXmax = Number.NEGATIVE_INFINITY;
-    let rangeYmin = Number.POSITIVE_INFINITY;
-    let rangeYpositiveMin = Number.POSITIVE_INFINITY;
-    let rangeYmax = Number.NEGATIVE_INFINITY;
+    this.rangeXmin = Number.POSITIVE_INFINITY;
+    this.rangeXpositiveMin = Number.POSITIVE_INFINITY;
+    this.rangeXmax = Number.NEGATIVE_INFINITY;
+    this.rangeYmin = Number.POSITIVE_INFINITY;
+    this.rangeYpositiveMin = Number.POSITIVE_INFINITY;
+    this.rangeYmax = Number.NEGATIVE_INFINITY;
 
     // constants to indicate how the axsis should be scaled
     const SCALE_LIN_LIN = 0;
@@ -27,10 +27,10 @@ export function LinePlotFrame() {
     const SCALE_LOG_LOG = 3;
 
     // Scaling type (see below)
-    let scale = SCALE_LIN_LIN;
+    this.scale = SCALE_LIN_LIN;
 
     // Duration in milliseconds when animated.
-    let duration = 250;
+    this.duration = 250;
 
     // The number format for nicely formatting numbers.
     // #.###
@@ -39,37 +39,37 @@ export function LinePlotFrame() {
 
     // Add a graph to the frame.
     this.addGraph = function(addedGraph) {
-        graphs.push(addedGraph);
+        this.graphs.push(addedGraph);
     }
 
     // return the ith graph of the frame.
     this.getGraph = function(index) {
-        return graphs[index];
+        return this.graphs[index];
     }
 
     // return number of graphs
     this.getGraphsCount = function() {
-        return graphs.length;
+        return this.graphs.length;
     }
 
     // return all graphs
     this.getAllGraphs = function() {
-        return graphs;
+        return this.graphs;
     }
 
     // add text
     this.addText = function(text) {
-        texts.push(text);
+        this.texts.push(text);
     }
 
     // Return the complete list of texts.
     this.getAllTexts = function() {
-        return texts;
+        return this.texts;
     }
 
     // Return the label for the X axis.
     this.getLabelX = function() {
-        return labelX;
+        return this.labelX;
     }
 
     // Set the label for the X axis.
@@ -79,7 +79,7 @@ export function LinePlotFrame() {
 
     // Return the label for the Y axis.
     this.getLabelY = function() {
-        return labelY;
+        return this.labelY;
     }
 
     // Set the label for the Y axis.
@@ -89,7 +89,7 @@ export function LinePlotFrame() {
 
     // Return the title.
     this.getTitle = function() {
-        return title;
+        return this.title;
     }
 
     // Set the title of the graph.
@@ -99,39 +99,39 @@ export function LinePlotFrame() {
 
     // Install a custom X range.
     this.setRangeX = function(min, max) {
-        rangeXmin = Math.min(min, rangeXmin);
-        rangeXmax = Math.max(max, rangeXmax);
+        this.rangeXmin = Math.min(min, this.rangeXmin);
+        this.rangeXmax = Math.max(max, this.rangeXmax);
         
         if (min > 0.0) {
-            rangeXpositiveMin = Math.min(min, rangeXpositiveMin);
+            this.rangeXpositiveMin = Math.min(min, this.rangeXpositiveMin);
         }
     }
 
     // Install a custom X range, overriding the default one.
     this.setRangeXByUser = function(min, max) {
         if (max > min) {
-            rangeXmin = min;
-            rangeXmax = max;
-            rangeXsetByUser = true;
+            this.rangeXmin = min;
+            this.rangeXmax = max;
+            this.rangeXsetByUser = true;
         }
     }
 
     // Install a custom Y range.
     this.setRangeY = function(min, max) {
-        rangeYmin = Math.min(min, rangeYmin);
-        rangeYmax = Math.max(max, rangeYmax);
+        this.rangeYmin = Math.min(min, this.rangeYmin);
+        this.rangeYmax = Math.max(max, this.rangeYmax);
         
         if (min > 0.0) {
-            rangeYpositiveMin = Math.min(min, rangeYpositiveMin);
+            this.rangeYpositiveMin = Math.min(min, this.rangeYpositiveMin);
         }
     }
 
     // Install a custom Y range, overriding the one provided by the user.
     this.setRangeYByUser = function(min, max) {
         if (max > min) {
-            rangeYmin       = min;
-            rangeYmax       = max;
-            rangeYsetByUser = true;
+            this.rangeYmin       = min;
+            this.rangeYmax       = max;
+            this.rangeYsetByUser = true;
         }
     }
 
@@ -145,7 +145,7 @@ export function LinePlotFrame() {
 
     // Return the current frame duration.
     this.getDuration = function() {
-        return duration;
+        return this.duration;
     }
 
     // Set the current frame duration
@@ -157,56 +157,56 @@ export function LinePlotFrame() {
 
     // Return a flag whether the X range is customized.
     this.getRangeXsetByUser = function() {
-        return rangeXsetByUser;
+        return this.rangeXsetByUser;
     }
 
     // Return a flag whether the Y range is customized.
     this.getRangeYsetByUser = function() {
-        return rangeYsetByUser;
+        return this.rangeYsetByUser;
     }
 
     // Return frame dimensions, X maximum.
     this.getRangeXmax = function() {
-        return rangeXmax;
+        return this.rangeXmax;
     }
     //
     // Return frame dimensions, X minimum.
     this.getRangeXmin = function() {
-        return rangeXmin;
+        return this.rangeXmin;
     }
 
     // Return frame dimensions, X minimum clamped to zero for logarithmic plots.
     this.getRangeXpositiveMin = function() {
-        return rangeXpositiveMin;
+        return this.rangeXpositiveMin;
     }
 
     // Return frame dimensions, Y maximum.
     this.getRangeYmax = function() {
-        return rangeYmax;
+        return this.rangeYmax;
     }
 
     // Return frame dimensions, Y minimum.
     this.getRangeYmin = function() {
-        return rangeYmin;
+        return this.rangeYmin;
     }
 
     // Return frame dimensions, Y minimum clamped to zero for logarithmic plots.
     this.getRangeYpositiveMin = function() {
-        return rangeYpositiveMin;
+        return this.rangeYpositiveMin;
     }
 
      // Return the current type of scaling.
     this.getScale = function() {
-        return scale;
+        return this.scale;
     }
 
     // Check wehter the scaling in X direction is logarithmic.
     this.isXScaleLogarithmic = function() {
-        return (scale == SCALE_LOG_LIN) || (scale == SCALE_LOG_LOG);
+        return (this.scale == SCALE_LOG_LIN) || (this.scale == SCALE_LOG_LOG);
     }
 
     // Check whether the scaling in Y direction is logarithmic.
     this.isYScaleLogarithmic = function() {
-        return (scale == SCALE_LIN_LOG) || (scale == SCALE_LOG_LOG);
+        return (this.scale == SCALE_LIN_LOG) || (this.scale == SCALE_LOG_LOG);
     }
 }

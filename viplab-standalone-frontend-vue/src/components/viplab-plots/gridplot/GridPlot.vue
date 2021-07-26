@@ -5,7 +5,16 @@
       <option value="3DKaestchen">3D Kästchen</option>
       <option value="3DInterpoliert">3D Interpoliert</option>
     </select>
-    <Plotly :data="data" :layout="layout" :display-mode-bar="false"></Plotly>
+    <div>
+      <Plotly ref="plot" :data="data" :layout="layout" :display-mode-bar="false"></Plotly>
+    </div>
+    <div class="file-controller text-center center-controller">
+        <div class="fixed-row-70 display-flex-center">
+          <b-button btn-variant="white" @click="download()">
+            <font-awesome-icon icon="download" />
+          </b-button>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -14,6 +23,7 @@
 import * as Parser from "../parse.js";
 
 import { Plotly } from 'vue-plotly';
+import plotlyjs from "plotly.js";
 
 export default {
   name: 'GridPlot',
@@ -57,7 +67,7 @@ export default {
 
     this.create2dGitterplot();
 
-    console.log((this.datasetList[0].getYMax() - this.datasetList[0].getYMin()) * 10);
+    //console.log((this.datasetList[0].getYMax() - this.datasetList[0].getYMin()) * 10);
 
     /*
     autosize: false,
@@ -172,7 +182,15 @@ export default {
           },
           showscale: false
         }];
-    }
+    },
+    download: function () {
+      let plot = this.$refs.plot;
+      return plotlyjs.downloadImage(plot,
+          {
+            format: 'png', width: 800, height: 600
+          }
+        )
+    },
   } 
 }
 </script>
@@ -185,4 +203,24 @@ export default {
     height: 100%;
     border: 1px solid black;
   }
+
+  .file-controller {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 66px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #6c757d;
+  flex-direction: row-reverse;
+}
+
+.fixed-row-70 {
+  flex-basis: 90px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
 </style>
