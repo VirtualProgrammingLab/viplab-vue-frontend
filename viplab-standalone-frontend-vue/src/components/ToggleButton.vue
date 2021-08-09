@@ -1,10 +1,10 @@
 <template>
   <div class="togglebutton-component form-item toggle">
     <div class ="item-name">{{toggl.metadata.name}}:</div>
-        <div v-for="(toggle, index) in toggl.values" :key="'toggle'+ ' ' +index">
+        <div v-for="(toggle, index) in toggl.options" :key="'toggle'+ ' ' +index">
         <label>
             {{ toggle.value }}
-            <input type="checkbox" :value="toggle.value" v-model="toggl.selected">
+            <input type="checkbox" :value="toggle.value" v-model="vModel">
             <span class="slider"></span>
         </label>
     </div>
@@ -18,9 +18,16 @@ export default {
     item: Object,
     parent_index: Number
   }, 
+  watch: {
+    /* Make the json change with the clicks of the user */
+    vModel() {
+      this.toggl.selected = this.vModel;
+    },
+  },
   data() {
     return {
-      toggl: this.item
+      toggl: this.item,
+      vModel: this.item.selected
     }
   }
 }

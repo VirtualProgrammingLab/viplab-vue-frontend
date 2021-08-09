@@ -627,6 +627,36 @@ export default {
   },
   created() {
     this.loadJsonFromFile();
+    for (var file in this.json.files) {
+      for (var part in this.json.files[file].parts) {
+        for (var param in this.json.files[file].parts[part].parameters) {
+          var currentParam = this.json.files[file].parts[part].parameters[param];
+          console.log("test" + JSON.parse(currentParam).mode);
+        }
+      }
+    }
+    for (var parameter in this.json.parameters) {
+      var curr = this.json.parameters[parameter];
+      var mode = curr.mode;
+      if (mode === "any") {
+        //create reactive object value in curr with curr.default as content
+        this.$set(curr, "value", curr.default);
+      } else {
+        var arr = [];
+        var options = curr.options;
+        for (var i in options) {
+          if (options[i].selected) {
+            arr.push(options[i].value);
+          }
+        }
+        if (curr.metadata.guiType === "radio" || (curr.metadata.guiType === "dropdown" && !curr.multiple) || (curr.metadata.guiType === "input_field")) {
+          curr.selected = arr[0];
+        } else {
+          curr.selected = arr;
+        }
+        
+      }
+    }
   },
   mounted() {
     this.executeAfterDomLoaded();

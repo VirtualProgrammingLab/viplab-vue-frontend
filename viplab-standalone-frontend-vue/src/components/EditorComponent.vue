@@ -52,7 +52,8 @@ export default {
   computed: {
     vModel: {
       get: function () {
-        if (this.isParameter) {
+        if (this.isParameter === true) {
+          console.log("get: " + this.decodeBase64(this.editor.value));
           return this.decodeBase64(this.editor.value);
         } else {
           return this.decodeBase64(this.editor.content);
@@ -60,11 +61,14 @@ export default {
       },
       set: function (val) {
         if (this.isParameter) {
+          this.$set(this.editor , "value", val);
           this.editor.value = btoa(val);
         } else {
           this.editor.content = btoa(val);
         }
-      },
+        this.$forceUpdate();
+        return this.vModel;
+      }
     },
   },
   data() {
@@ -101,7 +105,7 @@ export default {
       return decodedString;
     },
   },
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

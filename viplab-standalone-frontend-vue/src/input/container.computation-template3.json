@@ -24,19 +24,20 @@
           "parameters" : 
           [
             {
-              "type" : "any-value",
+              "mode" : "any",
               "identifier" : "__sliderSingle__", 
               "metadata" : {
                 "guiType" : "slider",
                 "name": "temperature",
                 "vertical": false
               },
-              "value": [
+              "default": [
                 10
               ],
               "min": 0,
               "max": 500,
-              "step": 10
+              "step": 10,
+              "validation": "range"
             }
           ],
           "content": "VGhpcyBpcyBhIFRleHQ6Ont7X19zbGlkZXJTaW5nbGVfX319OjpUaGlzIGlzIGEgVGV4dA=="
@@ -69,13 +70,13 @@
           "parameters":
             [
               {
-                "type" : "fixed-value",
+                "mode" : "fixed",
                 "identifier" : "__checkbox__", 
                 "metadata" : {
                   "guiType": "checkbox",
                   "name": "options"
                 },
-                "values": [
+                "options": [
                   {
                     "value" : "verbose",
                     "selected" : "true"
@@ -87,7 +88,7 @@
                     "value" : "make_plot"
                   }
                 ],
-                "selected" : ["verbose"]
+                "validation": "anyof"
               }
             ],
           "content": "VGhpcyBpcyBhIFRleHQ6Ont7X19jaGVja2JveF9ffX06OlRoaXMgaXMgYSBUZXh0"

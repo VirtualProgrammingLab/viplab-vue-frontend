@@ -3,7 +3,7 @@
     <div class="item-name">{{ checkbox.metadata.name }}:</div>
     <div
       class="checkbox form-check custom-control custom-checkbox"
-      v-for="(check, index) in checkbox.values"
+      v-for="(check, index) in checkbox.options"
       :key="index"
     >
       <input
@@ -11,7 +11,7 @@
         class="form-check-input custom-control-input"
         :id="index"
         :value="check.value"
-        v-model="checkbox.selected"
+        v-model="vModel"
       />
       <label class="form-check-label custom-control-label" :for="index">{{
         check.value
@@ -27,9 +27,16 @@ export default {
     item: Object,
     parent_index: Number,
   },
+  watch: {
+    /* Make the json change with the clicks of the user */
+    vModel() {
+      this.checkbox.selected = this.vModel;
+    },
+  },
   data() {
     return {
-      checkbox: this.item
+      checkbox: this.item,
+      vModel: this.item.selected
     }
   }
 };

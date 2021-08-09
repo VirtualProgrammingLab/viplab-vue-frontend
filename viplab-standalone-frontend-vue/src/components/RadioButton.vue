@@ -3,7 +3,7 @@
       <div class="item-name">{{ rad.metadata.name }}:</div>
       <div
         class="radiobutton form-check custom-control custom-radio"
-        v-for="(radio, index) in rad.values"
+        v-for="(radio, index) in rad.options"
         :key="'Radio' + ' ' + index"
       >
         <div v-if="radio.disabled">
@@ -12,8 +12,9 @@
             type="radio"
             :id="'RadioDis' + ' ' + index"
             disabled
+            :name="rad.identifier"
             :value="radio.value"
-            v-model="rad.selected"
+            v-model="vModel"
           />
           <label
             class="form-check-label custom-control-label"
@@ -26,8 +27,9 @@
             class="form-check-input custom-control-input"
             type="radio"
             :id="'Radio' + ' ' + index"
+            :name="rad.identifier"
             :value="radio.value"
-            v-model="rad.selected"
+            v-model="vModel"
           />
           <label
             class="form-check-label custom-control-label"
@@ -46,9 +48,16 @@ export default {
     item: Object,
     parent_index: Number,
   }, 
+  watch: {
+    /* Make the json change with the clicks of the user */
+    vModel() {
+      this.rad.selected = this.vModel;
+    },
+  },
   data() {
     return {
-      rad: this.item  
+      rad: this.item,
+      vModel: this.item.selected
     }
   }, 
 }

@@ -18,19 +18,20 @@
           "parameters" : 
           [
             {
-              "type" : "any-value",
+              "mode" : "any",
               "identifier" : "__sliderSingle__", 
               "metadata" : {
                 "guiType" : "slider",
                 "name": "temperature",
                 "vertical": false
               },
-              "value": [
+              "default": [
                 10
               ],
               "min": 0,
               "max": 500,
-              "step": 10
+              "step": 10,
+              "validation": "range"
             }
           ],
           "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
@@ -44,31 +45,33 @@
           "parameters":
           [
             {
-              "type" : "any-value",
+              "mode" : "any",
               "identifier" : "__inputTextWOMaxlangth__", 
               "metadata" : {
                 "guiType" : "input_field",
                 "type": "text",
                 "name": "file_name"
-              }
+              },
+              "validation": "pattern"
             },
             {
-              "type" : "any-value",
+              "mode" : "any",
               "identifier" : "__inputNumber__", 
               "metadata" : {
                 "guiType" : "input_field",
                 "type": "number",
                 "name": "time_delay"
               },
-              "value": 10,
+              "default": [10],
               "min": 0,
               "max": 500,
-              "step": 0.1
+              "step": 0.1,
+              "validation": "range"
             }
           ],
             "content"   : ""
-         }
-       ] 
+        }
+      ] 
     }
   ],
   "configuration" :

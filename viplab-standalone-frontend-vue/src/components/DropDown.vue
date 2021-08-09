@@ -1,12 +1,11 @@
 <template>
   <div class="dropdown-component">
       <div class="item-name">{{ dropitem.metadata.name }}:</div>
-      {{dropitem.selected}}
       <div class="dropdown form-group">
         <select
           class="form-control"
-          v-if="dropitem.selected.constructor.name === 'Array'"
-          v-model="dropitem.selected"
+          v-if="dropitem.multiple == true"
+          v-model="vModel"
           multiple
         >
           <option
@@ -23,7 +22,7 @@
             {{ drop }}
           </option>
         </select>
-        <select class="form-control" v-else v-model="dropitem.selected">
+        <select class="form-control" v-else v-model="vModel">
           <option
             v-for="(disabled, index) in itemsDisabled(dropitem)"
             disabled
@@ -49,27 +48,34 @@ export default {
     item: Object,
     parent_index: Number, 
   },
+  watch: {
+    /* Make the json change with the clicks of the user */
+    vModel() {
+      this.dropitem.selected = this.vModel;
+    },
+  },
   data() {
     return {
-      dropitem: this.item  
+      dropitem: this.item,
+      vModel: this.item.selected  
     }
   },
   methods: {
     /** get all values of an item that are not disabled */
     itemWithoutDisabled: function(item){
       var array = [];
-      for(var i = 0; i < item.values.length; i++){
-        if(!item.values[i].disabled){
-          array.push(item.values[i].value);
+      for(var i = 0; i < item.options.length; i++){
+        if(!item.options[i].disabled){
+          array.push(item.options[i].value);
         }
       }
       return array;
     },
     itemsDisabled: function(item){
       var array = [];
-      for(var i = 0; i < item.values.length; i++){
-        if(item.values[i].disabled){
-          array.push(item.values[i].value);
+      for(var i = 0; i < item.options.length; i++){
+        if(item.options[i].disabled){
+          array.push(item.options[i].value);
         }
       }
       return array;

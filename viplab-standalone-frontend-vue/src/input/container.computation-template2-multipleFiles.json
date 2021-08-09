@@ -83,13 +83,13 @@
   ],
   "parameters": [
     {
-      "type" : "fixed-value",
+      "mode" : "fixed",
       "identifier" : "__checkbox__", 
       "metadata" : {
         "guiType": "checkbox",
         "name": "options"
       },
-      "values": [
+      "options": [
         {
           "value" : "verbose",
           "selected" : true
@@ -101,16 +101,16 @@
           "value" : "make_plot"
         }
       ],
-      "selected" : ["verbose"]
+      "validation": "anyof"
     }, 
     {
-      "type" : "fixed-value",
+      "mode" : "fixed",
       "identifier" : "__radioButton__", 
       "metadata" : {
         "guiType": "radio",
         "name": "backend"
       },
-      "values": [
+      "options": [
         {
           "value" : "debug"
         },
@@ -126,16 +126,16 @@
           "value" : "test"
         }
       ],
-      "selected" : "serial"
+      "validation": "oneof"
     },
     {
-      "type" : "fixed-value",
+      "mode" : "fixed",
       "identifier" : "__dropdownSingle__", 
       "metadata" : {
         "guiType": "dropdown",
         "name": "model"
       },
-      "values": [
+      "options": [
         {
           "value" : "Please choose one",
           "disabled" : true
@@ -157,16 +157,16 @@
           "value" : "2p1c"
         }
       ],
-      "selected" : "1p"
+      "validation": "oneof"
     }, 
     {
-      "type" : "fixed-value",
+      "mode" : "fixed",
       "identifier" : "__dropdownMultiple__", 
       "metadata" : {
         "guiType": "dropdown",
         "name": "model"
       },
-      "values": [
+      "options": [
         {
           "value" : "Please choose multiple",
           "disabled" : true
@@ -190,16 +190,17 @@
           "disabled" : true
         }
       ], 
-      "selected" : ["1p", "2p"]
+      "multiple": true,
+      "validation": "anyof"
     }, 
     {
-      "type" : "fixed-value",
+      "mode" : "fixed",
       "identifier" : "__toggle__", 
       "metadata" : {
         "guiType": "toggle",
         "name": "options"
       },
-      "values": [
+      "options": [
         {
           "value" : "verbose",
           "selected" : true
@@ -211,42 +212,44 @@
           "value" : "make_plot"
         }
       ], 
-      "selected" : ["verbose"]
+      "validation": "anyof"
     }, 
     {
-      "type" : "any-value",
+      "mode" : "any",
       "identifier" : "__sliderSingle__", 
       "metadata" : {
         "guiType" : "slider",
         "name": "temperature",
         "vertical": false
       },
-      "value": [
+      "default": [
         10
       ],
       "min": 0,
       "max": 500,
-      "step": 10
+      "step": 10,
+      "validation": "range"
     },
     {
-      "type" : "any-value",
+      "mode" : "any",
       "identifier" : "__sliderMultiple__", 
       "metadata" : {
         "guiType" : "slider",
         "name": "temperature",
         "vertical": true
       },
-      "value": [
+      "default": [
         25,
         50,
         75
       ],
       "min": 0,
       "max": 100,
-      "step": 5
+      "step": 5,
+      "validation": "range"
     },
     {
-      "type" : "any-value",
+      "mode" : "any",
       "identifier" : "__inputTextWMaxlength__", 
       "metadata" : {
         "guiType" : "input_field",
@@ -254,48 +257,53 @@
         "name": "file_name"
       },
       "maxlength": 200,
-      "value" : ""
+      "default" : [""],
+      "validation": "pattern"
     },
     {
-      "type" : "any-value",
+      "mode" : "any",
       "identifier" : "__inputTextWOMaxlangth__", 
       "metadata" : {
         "guiType" : "input_field",
         "type": "text",
         "name": "file_name"
       },
-      "value" : ""
+      "default" : [""],
+      "validation": "pattern"
     },
     {
-      "type" : "any-value",
+      "mode" : "any",
       "identifier" : "__inputNumber__", 
       "metadata" : {
         "guiType" : "input_field",
         "type": "number",
         "name": "time_delay"
       },
-      "value": 10,
+      "default": [10],
       "min": 0,
       "max": 500,
-      "step": 0.1
+      "step": 0.1,
+      "validation": "range"
     },
     {
-      "type" : "any-value",
+      "mode" : "any",
       "identifier" : "__defaultJson__", 
       "metadata" : {
         "guiType" : "editor", 
         "name": "code 1"
       },
-      "value": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
+      "default": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg",
+      "validation": "pattern"
     },
     {
-      "type" : "any-value",
+      "mode" : "any",
       "identifier" : "__defaultJava__", 
       "metadata" : {
         "guiType" : "editor",
         "name": "code 2"
       },
-      "value": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
+      "default": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K",
+      "validation": "pattern"
     }
   ],
   "configuration": {
