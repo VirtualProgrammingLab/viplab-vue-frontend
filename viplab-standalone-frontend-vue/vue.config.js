@@ -52,21 +52,24 @@ module.exports = {
                             from: path.join(__dirname, 'node_modules', 'itk', 'WebWorkers'),
                             to: path.join(__dirname, 'dist', 'itk', 'WebWorkers'),
                         },
-                        {
+                        /*{
                             from: path.join(__dirname, 'node_modules', 'itk', 'ImageIOs'),
                             to: path.join(__dirname, 'dist', 'itk', 'ImageIOs'),
-                        },
+                        },*/
                         {
                             from: path.join(__dirname, 'node_modules', 'itk', 'PolyDataIOs'),
                             to: path.join(__dirname, 'dist', 'itk', 'PolyDataIOs'),
                         },
-                        {
+                        /*{
                             from: path.join(__dirname, 'node_modules', 'itk', 'MeshIOs'),
                             to: path.join(__dirname, 'dist', 'itk', 'MeshIOs'),
-                        },
+                        },*/
                     ]
                 }),
-        ]
+        ],
+        performance: {
+            maxAssetSize: 10000000
+        },
     },
 }
 

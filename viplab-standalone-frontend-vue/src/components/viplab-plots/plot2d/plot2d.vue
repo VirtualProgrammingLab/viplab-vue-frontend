@@ -1,7 +1,7 @@
 <template>
   <div class="2dplot-component border">
     <div class="plot-div" >
-      <Plotly ref="plot" :data="data" :layout="layout" :display-mode-bar="false"></Plotly>
+      <Plotly ref="plot" :data="data" :layout="layout" :display-mode-bar="true" :to-image-button-options="imageConfig"></Plotly>
     </div>
     <div>
       <div class="file-controller text-center center-controller">
@@ -26,11 +26,11 @@
             <font-awesome-icon icon="fast-forward" />
           </b-button>
         </b-button-group>
-        <div class="fixed-row-70 display-flex-center">
+        <!--<div class="fixed-row-70 display-flex-center">
           <b-button btn-variant="white" @click="download()">
             <font-awesome-icon icon="download" />
           </b-button>
-        </div>
+        </div>-->
       </div>
     </div>
   </div>
@@ -40,7 +40,7 @@
 import * as LinePlotParser from "./LinePlotParser.js";
 
 import { Plotly } from "vue-plotly";
-import plotlyjs from "plotly.js";
+//import plotlyjs from "plotly.js";
 
 export default {
   name: "Plot2d",
@@ -59,6 +59,10 @@ export default {
       datasetList: [],
       currentIndex: 1,
       enableAutoPlay: false,
+      imageConfig: {
+        format: 'svg',
+        filename: 'graph'
+      }
       // dropdownVModel: "2DGitterplot",
       // xArray: [],
       // yArray: [],
@@ -169,14 +173,14 @@ export default {
         clearInterval(this.interval);
       }
     },
-    download: function () {
+    /*download: function () {
       let plot = this.$refs.plot;
       return plotlyjs.downloadImage(plot,
           {
             format: 'png', width: 800, height: 600
           }
         )
-    },
+    },*/
   },
 };
 </script>

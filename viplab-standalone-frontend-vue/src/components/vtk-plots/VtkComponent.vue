@@ -103,7 +103,7 @@ import vtkColorMaps from "vtk.js/Sources/Rendering/Core/ColorTransferFunction/Co
 
 // IO
 import vtkITKPolyDataReader from "vtk.js/Sources/IO/Misc/ITKPolyDataReader";
-import readPolyDataArrayBuffer from "itk/readPolyDataArrayBuffer";
+import readPolyDataArrayBuffer from "itk/readPolyDataArrayBuffer.js";
 
 export default {
   name: "VtkComponent",

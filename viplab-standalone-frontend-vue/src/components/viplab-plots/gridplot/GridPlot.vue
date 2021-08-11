@@ -6,15 +6,20 @@
       <option value="3DInterpoliert">3D Interpoliert</option>
     </select>
     <div>
-      <Plotly ref="plot" :data="data" :layout="layout" :display-mode-bar="false"></Plotly>
+      <Plotly ref="plot" :data="data" :layout="layout" :display-mode-bar="true" :to-image-button-options="imageConfig"></Plotly>
     </div>
-    <div class="file-controller text-center center-controller">
+    <!--<div>
+      <div class="file-controller text-center center-controller">
         <div class="fixed-row-70 display-flex-center">
           <b-button btn-variant="white" @click="download()">
             <font-awesome-icon icon="download" />
           </b-button>
+          <b-button btn-variant="white" @click="Plotly.downloadImage()">
+            <font-awesome-icon icon="download" />
+          </b-button>
         </div>
       </div>
+    </div>-->
   </div>
 </template>
 
@@ -23,7 +28,7 @@
 import * as Parser from "../parse.js";
 
 import { Plotly } from 'vue-plotly';
-import plotlyjs from "plotly.js";
+//import plotlyjs from "plotly.js";
 
 export default {
   name: 'GridPlot',
@@ -47,6 +52,10 @@ export default {
       yArray: [],
       minColor: "",
       maxColor: "",
+      imageConfig: {
+        format: 'svg',
+        filename: 'graph'
+      }
     }
   },
   mounted() {
@@ -183,14 +192,16 @@ export default {
           showscale: false
         }];
     },
-    download: function () {
+    /*download: function () {
       let plot = this.$refs.plot;
+      console.log(plot);
+      console.log(this.data);
       return plotlyjs.downloadImage(plot,
           {
             format: 'png', width: 800, height: 600
           }
         )
-    },
+    },*/
   } 
 }
 </script>

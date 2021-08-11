@@ -13,9 +13,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFastBackward, faBackward, faPause, faPlay, faForward, faFastForward, faDownload } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import vuePositionSticky from 'vue-position-sticky'
-Vue.use(vuePositionSticky)
-
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin

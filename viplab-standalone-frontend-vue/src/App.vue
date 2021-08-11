@@ -99,11 +99,11 @@
                 </b-tab>
               </b-tabs>
             </b-card>
-            <vue-position-sticky :offsetBottom="30">
-              <b-button class="btn" variant="primary" id="submit" disabled>
+            <div class="sticky-button">
+              <b-button class="btn" id="submit" variant="primary" disabled>
                 <b-icon icon="play" aria-hidden="true"></b-icon>
               </b-button>
-            </vue-position-sticky>
+            </div>
           </div>
         </div>
       </form>
@@ -252,6 +252,7 @@
         <vtk-component></vtk-component>
         <grid-plot></grid-plot>
         <plot-2d></plot-2d>
+        <csv-plot></csv-plot>
       </div>
     </div>
   </div>
@@ -280,9 +281,7 @@ import GridPlot from "./components/viplab-plots/gridplot/GridPlot.vue";
 
 import VtkComponent from "./components/vtk-plots/VtkComponent.vue";
 import Plot2d from './components/viplab-plots/plot2d/plot2d.vue';
-//import JsonVModelTest from './components/JsonAsVModelTest.vue';
-
-//import StickyElement from 'vue-sticky-element';
+import CsvPlot from './components/csv-plots/CsvPlot.vue';
 
 export default {
   name: "app",
@@ -294,8 +293,7 @@ export default {
     VtkComponent,
     EditorComponent,
     Plot2d,
-    //StickyElement
-    //JsonVModelTest,
+    CsvPlot,
   },
   data() {
     return {
@@ -445,6 +443,7 @@ export default {
           this.$refs.partcontent.forEach((partcontent) => {
             file.parts.push({
               identifier: partcontent.id,
+              // TODO
               content: btoa(this.inputFiles_v_model[i][j]),
             });
             j++;
@@ -480,6 +479,16 @@ export default {
         content:
           "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAH0lEQVR42mOcx/C/noGKgHHUwFEDRw0cNXDUwJFqIAAJpipFpDW1EwAAAABJRU5ErkJggg==",
       });
+      // s3 file example: https://s3.amazonaws.com/havecamerawilltravel.developer/test.txt
+      this.returnedOutputJson.artifacts.push({
+          "type" : "s3file",
+          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c51",
+          "MIMEtype": "text/plain",
+          "path" : "/largefile/result.tar.gz",
+          "url": "https://s3.amazonaws.com/havecamerawilltravel.developer/test.txt",
+          "size" : 123456789,
+          "hash" : "sha512:hashcode_of_file"
+        });
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.decodeBase64(result.result.output.stdout);
@@ -669,10 +678,20 @@ export default {
 </script>
 
 <style>
-#submit {
-  position: -webkit-sticky; /* Safari */
+body {
+  /* Needed for the position sticky to work */
+  overflow: unset;
+}
+
+.sticky-button {
+  position: -webkit-sticky;
   position: sticky;
-  bottom: 0;
+  bottom: 50px;
+  left: 74px;
+  text-align: right;
+}
+
+#submit {
   float: right;
   margin-top: 5px;
 }
