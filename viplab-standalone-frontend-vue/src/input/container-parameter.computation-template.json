@@ -56,7 +56,7 @@
             },
             {
               "mode" : "any",
-              "identifier" : "__inputNumber__", 
+              "identifier" : "__CELL_X__", 
               "metadata" : {
                 "guiType" : "input_field",
                 "type": "number",

@@ -28,6 +28,17 @@
             {{ json.metadata.description }}
           </div>
 
+          <div style="border-style:solid">
+            <input type="file" ref="doc" @change="displayMustacheTemplate()" />
+            <prism-editor v-if="mustacheContent"
+                class="my-editor output-editor"
+                :readonly="true"
+                v-model="mustacheContent"
+                :highlight="highlighter"
+                line-numbers
+              ></prism-editor>
+          </div>
+
           <div class="cards" >
             <!-- 
             Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
@@ -198,31 +209,78 @@
                       ) in returnedOutputJson.artifacts"
                       :key="artifact.identifier"
                     >
-                      <div
-                        v-if="artifact.MIMEtype !== 'image/png'"
-                        ref="outPartcontent"
-                        class="outPartcontent"
-                      >
-                        <prism-editor
-                          class="
-                            my-editor
-                            editor-readonly
-                            top-editor
-                            bottom-editor
-                          "
-                          :readonly="true"
-                          :value="decodeBase64(artifact.content)"
-                          :highlight="highlighter"
-                          line-numbers
-                        ></prism-editor>
+                      <div v-if="artifact.type !== 's3file'">
+                        <div
+                          v-if="artifact.MIMEtype !== 'image/png'"
+                          ref="outPartcontent"
+                          class="outPartcontent"
+                        >
+                          <prism-editor
+                            class="
+                              my-editor
+                              editor-readonly
+                              top-editor
+                              bottom-editor
+                            "
+                            :readonly="true"
+                            :value="decodeBase64(artifact.content)"
+                            :highlight="highlighter"
+                            line-numbers
+                          ></prism-editor>
+                        </div>
+                        <div
+                          v-if="artifact.MIMEtype === 'image/png'"
+                          ref="outPartcontent"
+                          class="outPartcontent"
+                        >
+                          <img :src="imagesrc(artifact.content)" />
+                        </div>
                       </div>
-                      <div
-                        v-if="artifact.MIMEtype === 'image/png'"
-                        ref="outPartcontent"
-                        class="outPartcontent"
-                      >
-                        <img :src="imagesrc(artifact.content)" />
-                      </div>
+                      <!-- Render s3 files that have no content-element-->
+                      <div v-else>
+                        <div
+                          v-if="artifact.MIMEtype !== 'image/png'"
+                          ref="outPartcontent"
+                          class="outPartcontent"
+                        >
+                          <Promised :promise="getContentFromS3(artifact.url)">
+                            <!-- Use the "pending" slot to display a loading message -->
+                            <template v-slot:pending>
+                              <p>Loading...</p>
+                            </template>
+                            <!-- The default scoped slot will be used as the result -->
+                            <template v-slot="data">
+                              <prism-editor
+                                class="
+                                  my-editor
+                                  editor-readonly
+                                  top-editor
+                                  bottom-editor
+                                "
+                                :readonly="true"
+                                :value="data"
+                                :highlight="highlighter"
+                                line-numbers
+                                :ref="artifact.path"
+                              ></prism-editor>
+                            </template>
+                          </Promised>
+                        </div>
+                        <div v-else>
+                          <Promised :promise="getImageFromS3(artifact.url)">
+                            <!-- Use the "pending" slot to display a loading message -->
+                            <template v-slot:pending>
+                              <p>Loading...</p>
+                            </template>
+                            <!-- The default scoped slot will be used as the result -->
+                            <template v-slot="data">
+                              <img 
+                                :src="imagesrc(encodeToBase64(data))" 
+                                :ref="artifact.path"/>
+                            </template>
+                          </Promised>
+                        </div>
+                      </div>  
                     </b-tab>
                   </b-tabs>
                 </b-card>
@@ -283,6 +341,8 @@ import VtkComponent from "./components/vtk-plots/VtkComponent.vue";
 import Plot2d from './components/viplab-plots/plot2d/plot2d.vue';
 import CsvPlot from './components/csv-plots/CsvPlot.vue';
 
+import {Promised} from "vue-promised";
+
 export default {
   name: "app",
   components: {
@@ -294,6 +354,7 @@ export default {
     EditorComponent,
     Plot2d,
     CsvPlot,
+    Promised
   },
   data() {
     return {
@@ -306,6 +367,8 @@ export default {
       outputFiles: "",
       errorFiles: "",
       maximized: false,
+      mustacheContent: null,
+      file: null
     };
   },
   computed: {
@@ -321,6 +384,47 @@ export default {
     },
   },
   methods: {
+    displayMustacheTemplate() {
+      var paramsToInsertInTemplate = [];
+      for(var f in this.json.files){
+        for(var p in this.json.files[f].parts) {
+          for(var param in this.json.files[f].parts[p].parameters) {
+            var currentParam = this.json.files[f].parts[p].parameters[param];
+            var id = currentParam.identifier;
+            var value = (currentParam.value) ? currentParam.value : currentParam.selected;
+            var object = JSON.parse('{ "id" : "' + id + '" , "val" : "' + value +'" }');
+            paramsToInsertInTemplate.push(object);
+          }
+        }
+      }
+      console.log(paramsToInsertInTemplate);
+      this.file = this.$refs.doc.files[0];
+      const reader = new FileReader();
+      if (this.file.name.includes(".txt")) {
+        reader.onload = (res) => {
+          this.mustacheContent = res.target.result;
+          for (var i = 0; i < paramsToInsertInTemplate.length; i++) {
+          var parameter = paramsToInsertInTemplate[i];
+          this.mustacheContent = this.mustacheContent.replace('{{'+ parameter.id +'}}', parameter.val)
+      }
+        };
+        reader.onerror = (err) => console.log(err);
+        reader.readAsText(this.file);
+      } else {
+        this.mustacheContent = "check the console for file output";
+        reader.onload = (res) => {
+          console.log(res.target.result);
+          for (var i = 0; i < paramsToInsertInTemplate.length; i++) {
+            var parameter = paramsToInsertInTemplate[i];
+            this.mustacheContent = this.mustacheContent.replace("{{"+parameter.id+"}}", parameter.val)
+          }
+        };
+        reader.onerror = (err) => console.log(err);
+        reader.readAsText(this.file);
+      }
+
+      
+    },
     setNumberOfInputFiles: function () {
       var files = this.json.files;
       for (var file in files) {
@@ -436,6 +540,20 @@ export default {
         },
       };
       if (this.$refs.file != null) {
+        for (var fileIndex in this.json.files) {
+          let file = { identifier: this.json.files[fileIndex].identifier, parts: [] };
+          for (var part in this.json.files[fileIndex].parts) {
+            file.parts.push({
+              identifier: this.json.files[fileIndex].parts[part].identifier,
+              // TODO
+              content: btoa(this.json.files[fileIndex].parts[part].content),
+            });
+          }
+          task.content.task.files.push(file);
+          console.log(task);
+        }
+        
+        /*
         var i = 0;
         this.$refs.file.forEach((filediv) => {
           let file = { identifier: filediv.id, parts: [] };
@@ -444,13 +562,14 @@ export default {
             file.parts.push({
               identifier: partcontent.id,
               // TODO
-              content: btoa(this.inputFiles_v_model[i][j]),
+              content: btoa(this.json.files[i][j].content),
             });
+            console.log(file.parts.content);
             j++;
           });
           task.content.task.files.push(file);
           i++;
-        });
+        });*/
       }
       //document.querySelector('#stdout').value = '';
       //document.querySelector('#stderr').value = '';
@@ -465,11 +584,18 @@ export default {
       console.log("computation: " + computation);
     },
     displayResult: function (result) {
-      console.log(result);
+      console.log(result.result.output.stdout);
       if (result.result.status == "final") {
         document.getElementById("submit").disabled = false;
       }
-      this.returnedOutputJson = result.result;
+
+      // if the first result came back, set the whole object, else, only add the new artifacts to the existing object
+      if (this.returnedOutputJson === "") {
+        this.returnedOutputJson = result.result;
+      } else {
+        this.returnedOutputJson.artifacts.push(result.result.artifacts);
+      }
+      
       //for testing add image to json:
       this.returnedOutputJson.artifacts.push({
         type: "file",
@@ -481,24 +607,82 @@ export default {
       });
       // s3 file example: https://s3.amazonaws.com/havecamerawilltravel.developer/test.txt
       this.returnedOutputJson.artifacts.push({
-          "type" : "s3file",
-          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c51",
-          "MIMEtype": "text/plain",
-          "path" : "/largefile/result.tar.gz",
-          "url": "https://s3.amazonaws.com/havecamerawilltravel.developer/test.txt",
-          "size" : 123456789,
-          "hash" : "sha512:hashcode_of_file"
+          type : "s3file",
+          identifier : "cc3c1cf9-c02d-4694-902c-93c298d68c51",
+          MIMEtype: "text/plain",
+          path: "/largefile/test.txt",
+          url: "http://localhost:8080/test.txt",
+          size: "123456789",
+          hash: "sha512:hashcode_of_file"
+        });
+        this.returnedOutputJson.artifacts.push({
+          type : "s3file",
+          identifier : "cc3c1cf9-c02d-4694-902c-93c298d68c52",
+          MIMEtype: "image/png",
+          path: "/largefile/voyager.png",
+          url: "http://localhost:8080/voyager.png",
+          size: "123456789",
+          hash: "sha512:hashcode_of_file"
         });
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.decodeBase64(result.result.output.stdout);
       this.errorFiles = this.decodeBase64(result.result.output.stderr);
       //console.log(this.outputFiles);
+    }, 
+    async getContentFromS3(url) {
+      
+      return new Promise(resolve => {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() { 
+          if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+            resolve(xmlHttp.response);
+          }
+        }
+        xmlHttp.open("GET", url, false); // true for asynchronous 
+        //xmlHttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+        //xmlHttp.setRequestHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        xmlHttp.send(null);
+      });
+      /*
+      promise.then(function(result) {
+        console.log(result)
+        return result;
+      })*/
+    },
+    async getImageFromS3(url) {
+      
+      return new Promise(resolve => {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() { 
+          if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+            var res = xmlHttp.response;
+            var binary = ""
+            for(var i=0;i<res.length;i++){
+              binary += String.fromCharCode(res.charCodeAt(i) & 0xff);
+            }
+            resolve(binary);
+          }
+        }
+        xmlHttp.open("GET", url, false); // true for asynchronous 
+        xmlHttp.overrideMimeType('text/plain; charset=x-user-defined');
+        //xmlHttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+        //xmlHttp.setRequestHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+        xmlHttp.send(null);
+      });
+      /*
+      promise.then(function(result) {
+        console.log(result)
+        return result;
+      })*/
+    },
+    encodeToBase64: function(string) {
+      return window.btoa(string);
     },
     imagesrc: function (base64Image) {
       return "data:image/png;base64," + base64Image;
     },
-    save: function (filename, identifier, mimetype) {
+    save(filename, identifier, mimetype) {
       console.log(
         "save the following file: " +
           filename +
@@ -509,8 +693,19 @@ export default {
       );
       var content = "";
       this.returnedOutputJson.artifacts.forEach((item) => {
-        if (item.identifier == identifier) {
+        if (item.identifier == identifier && item.content) {
           content = this.decodeBase64(item.content);
+        } else if (item.identifier == identifier) {
+          // handle files that were downloaded from s3
+          var itemContent = "";
+          if(item.mimetype === "text/plain") {
+            itemContent = this.$refs[item.path][0].$el.lastElementChild.textContent;
+          } else {
+            var image = this.$refs[item.path][0].src;
+            var encodedImage = image.substring(image.indexOf(",") + 1);
+            itemContent = this.decodeBase64(encodedImage);
+          }
+          content = itemContent;
         }
       });
       var blob = "";
@@ -633,6 +828,31 @@ export default {
       window.scrollTo(window.scrollX, window.scrollY - 1);
       window.scrollTo(window.scrollX, window.scrollY + 1);
     },
+    parseParametersForGuiGeneration: function(currentParameter) {
+      var mode = currentParameter.mode;
+      // add value-item to parameters with mode == any
+      if (mode === "any") {
+        //create reactive object value in curr with curr.default as content
+        this.$set(currentParameter, "value", currentParameter.default);
+      } else {
+        // add selected-item to parameters with mode == fixed
+        var arr = [];
+        var options = currentParameter.options;
+        for (var i in options) {
+          if (options[i].selected) {
+            arr.push(options[i].value);
+          }
+        }
+        if (currentParameter.metadata.guiType === "radio" || (currentParameter.metadata.guiType === "dropdown" && !currentParameter.multiple) || (currentParameter.metadata.guiType === "input_field")) {
+          //curr.selected = arr[0];
+          this.$set(currentParameter, "selected", arr[0]);
+        } else {
+          //curr.selected = arr;
+          this.$set(currentParameter, "selected", arr);
+        }
+        
+      }
+    }
   },
   created() {
     this.loadJsonFromFile();
@@ -640,30 +860,24 @@ export default {
       for (var part in this.json.files[file].parts) {
         for (var param in this.json.files[file].parts[part].parameters) {
           var currentParam = this.json.files[file].parts[part].parameters[param];
-          console.log("test" + JSON.parse(currentParam).mode);
+          console.log(currentParam);
+          //console.log("test" + JSON.parse(currentParam).mode);
         }
       }
     }
+    // parse the parameters and add items for generating the gui and modifing the content
+    // first: modify parameters section
     for (var parameter in this.json.parameters) {
       var curr = this.json.parameters[parameter];
-      var mode = curr.mode;
-      if (mode === "any") {
-        //create reactive object value in curr with curr.default as content
-        this.$set(curr, "value", curr.default);
-      } else {
-        var arr = [];
-        var options = curr.options;
-        for (var i in options) {
-          if (options[i].selected) {
-            arr.push(options[i].value);
-          }
+      this.parseParametersForGuiGeneration(curr);
+    }
+    // then: modify the parameters inside the parts
+    for (var fileInd in this.json.files) {
+      for (var partInd in this.json.files[fileInd].parts) {
+        for (var paramInd in this.json.files[fileInd].parts[partInd].parameters) {
+          curr = this.json.files[fileInd].parts[partInd].parameters[paramInd];
+          this.parseParametersForGuiGeneration(curr);
         }
-        if (curr.metadata.guiType === "radio" || (curr.metadata.guiType === "dropdown" && !curr.multiple) || (curr.metadata.guiType === "input_field")) {
-          curr.selected = arr[0];
-        } else {
-          curr.selected = arr;
-        }
-        
       }
     }
   },

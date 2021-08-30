@@ -41,30 +41,38 @@ export default {
   methods: {
     //"http://localhost:8080/" + inputFile
     loadData: function(context) {
-        plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){ 
-            context.processData(data);
+        //plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){ 
+        plotlyjs.d3.csv("http://localhost:8080/plotly-test.csv", function(data){ 
+          context.processData(data);
         });
     },
     processData: function(data) {
-        console.log(data);
-        var x = [], y = [];
+        var traces = [];
 
-        // TODO: Wie heißen die Spalten und sind es immer nur zwei?
+        // create an object, where there is an array for each column name
+        var obj = []
+        var keys = Object.keys(data[0]);
+        keys.forEach(element => obj[element] = []);
+
+        // fill the object with the data depending on the keys (column names)
         for (var i=0; i<data.length; i++) {
-            let row = data[i];
-            x.push( row['AAPL_x'] );
-            y.push( row['AAPL_y'] );
+          let row = data[i];
+          keys.forEach(element => obj[element].push(row[element]));
         }
-        //console.log('X',x, 'Y',y);
-        this.fillPlotWithData(x, y);
+
+        // create traces to be rendered later; the first column is always x; the others are ys
+        for (var k = 1; k < keys.length; k++) {
+          var trace = {
+            x: obj[(keys[0])],
+            y: obj[(keys[k])]
+          }
+          traces.push(trace);
+        }
+
+        this.fillPlotWithData(traces);
     },
-    fillPlotWithData: function(x, y) {
-        this.data = [
-            {
-                x: x,
-                y: y
-            }
-        ];
+    fillPlotWithData: function(traces) {
+        this.data = traces;
     },
   },
 };
