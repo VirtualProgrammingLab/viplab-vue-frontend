@@ -18,16 +18,21 @@ export default {
     item: Object,
     parent_index: Number
   }, 
-  watch: {
-    /* Make the json change with the clicks of the user */
-    vModel() {
-      this.input.value = this.vModel;
+  computed: {
+    vModel: {
+      get: function () {
+        return this.item.value;
+      },
+      set: function (val) {
+        this.$set(this.item , "value", val);
+        this.$forceUpdate();
+        return this.vModel;
+      }
     },
   },
   data() {
     return {
-      input: this.item,
-      vModel: this.item.value
+      input: this.item
     }
   }
 }

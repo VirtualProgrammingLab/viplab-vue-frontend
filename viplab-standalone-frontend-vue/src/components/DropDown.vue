@@ -48,16 +48,21 @@ export default {
     item: Object,
     parent_index: Number, 
   },
-  watch: {
-    /* Make the json change with the clicks of the user */
-    vModel() {
-      this.dropitem.selected = this.vModel;
+  computed: {
+    vModel: {
+      get: function () {
+        return this.item.selected;
+      },
+      set: function (val) {
+        this.$set(this.item , "selected", val);
+        this.$forceUpdate();
+        return this.vModel;
+      }
     },
   },
   data() {
     return {
-      dropitem: this.item,
-      vModel: this.item.selected  
+      dropitem: this.item
     }
   },
   methods: {

@@ -16,7 +16,7 @@
     </div>-->
     <!--<json-v-model-test/>-->
 
-    <div class="flex-left m-2 p-2">
+    <div class="side-to-side-div flex-left m-2 p-2">
       <form>
         <div class="form-group mb-5 ml-5 mr-5">
           <h2 v-if="parsedFilesJson">InputFiles</h2>
@@ -136,7 +136,7 @@
             accept="application/JSON"
           />
           <b-button
-            class="btn btn-secondary mr-2 file"
+            class="btn btn-secondary file"
             @click="$refs.upload.click()"
           >
             <b-icon icon="upload" aria-hidden="true"></b-icon>
@@ -148,17 +148,17 @@
           -->
         </div>
         <div class="">
-          <b-button class="btn mr-2" @click="maximize">
+          <b-button class="btn mr-2" id="maximize-button" @click="maximize">
             <b-icon icon="fullscreen" aria-hidden="true"></b-icon>
           </b-button>
-          <b-button class="btn" variant="success">
-            <b-icon icon="cloud-arrow-down-fill" aria-hidden="true"></b-icon>
+          <b-button class="btn" style="width:62.5px" variant="success" btn-variant="white">
+            <font-awesome-icon icon="save" />
           </b-button>
         </div>
       </div>
     </div>
 
-    <div class="flex-right m-2 p-2">
+    <div class="side-to-side-div flex-right m-2 p-2">
       <div class="form-group mb-5 ml-5 mr-5">
         <h2>OutputFiles</h2>
 
@@ -243,7 +243,7 @@
                           ref="outPartcontent"
                           class="outPartcontent"
                         >
-                          <Promised :promise="getContentFromS3(artifact.url)">
+                          <Promised :promise="getContentFromS3(artifact.url, false)">
                             <!-- Use the "pending" slot to display a loading message -->
                             <template v-slot:pending>
                               <p>Loading...</p>
@@ -264,10 +264,13 @@
                                 :ref="artifact.path"
                               ></prism-editor>
                             </template>
+                            <template v-slot:rejected="error">
+                              <p>Error: {{ error.message }}</p>
+                            </template>
                           </Promised>
                         </div>
                         <div v-else>
-                          <Promised :promise="getImageFromS3(artifact.url)">
+                          <Promised :promise="getContentFromS3(artifact.url, true)">
                             <!-- Use the "pending" slot to display a loading message -->
                             <template v-slot:pending>
                               <p>Loading...</p>
@@ -275,8 +278,11 @@
                             <!-- The default scoped slot will be used as the result -->
                             <template v-slot="data">
                               <img 
-                                :src="imagesrc(encodeToBase64(data))" 
+                                :src="data" 
                                 :ref="artifact.path"/>
+                            </template>
+                            <template v-slot:rejected="error">
+                              <p>Error: {{ error.message }}</p>
                             </template>
                           </Promised>
                         </div>
@@ -611,7 +617,7 @@ export default {
           identifier : "cc3c1cf9-c02d-4694-902c-93c298d68c51",
           MIMEtype: "text/plain",
           path: "/largefile/test.txt",
-          url: "http://localhost:8080/test.txt",
+          url: "http://localhost:4040/test.txt",
           size: "123456789",
           hash: "sha512:hashcode_of_file"
         });
@@ -620,7 +626,7 @@ export default {
           identifier : "cc3c1cf9-c02d-4694-902c-93c298d68c52",
           MIMEtype: "image/png",
           path: "/largefile/voyager.png",
-          url: "http://localhost:8080/voyager.png",
+          url: "http://localhost:4040/voyager.png",
           size: "123456789",
           hash: "sha512:hashcode_of_file"
         });
@@ -630,59 +636,33 @@ export default {
       this.errorFiles = this.decodeBase64(result.result.output.stderr);
       //console.log(this.outputFiles);
     }, 
-    async getContentFromS3(url) {
-      
-      return new Promise(resolve => {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function() { 
-          if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
-            resolve(xmlHttp.response);
-          }
-        }
-        xmlHttp.open("GET", url, false); // true for asynchronous 
-        //xmlHttp.setRequestHeader('Access-Control-Allow-Headers', '*');
-        //xmlHttp.setRequestHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-        xmlHttp.send(null);
+    async getContentFromS3(url, image) {
+      const response = await fetch(url, {
+        method: 'GET',
       });
-      /*
-      promise.then(function(result) {
-        console.log(result)
-        return result;
-      })*/
-    },
-    async getImageFromS3(url) {
+      var test = null;
+      if (image) {
+        test = await response.blob().then(imageBlob => {
+          let imagesrc = URL.createObjectURL(imageBlob);
+          return imagesrc;
+        });
+      } else {
+        test = await response.text();
+      }
       
-      return new Promise(resolve => {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function() { 
-          if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
-            var res = xmlHttp.response;
-            var binary = ""
-            for(var i=0;i<res.length;i++){
-              binary += String.fromCharCode(res.charCodeAt(i) & 0xff);
-            }
-            resolve(binary);
-          }
-        }
-        xmlHttp.open("GET", url, false); // true for asynchronous 
-        xmlHttp.overrideMimeType('text/plain; charset=x-user-defined');
-        //xmlHttp.setRequestHeader('Access-Control-Allow-Headers', '*');
-        //xmlHttp.setRequestHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-        xmlHttp.send(null);
-      });
-      /*
-      promise.then(function(result) {
-        console.log(result)
-        return result;
-      })*/
-    },
-    encodeToBase64: function(string) {
-      return window.btoa(string);
+      console.log("Response from the fetch: ", test);
+
+      if (response.status >= 200 && response.status < 300) {
+          return Promise.resolve(test);
+      } else {
+          return Promise.reject(new Error("Unable to complete request for: " + url));
+      }   
+      
     },
     imagesrc: function (base64Image) {
       return "data:image/png;base64," + base64Image;
     },
-    save(filename, identifier, mimetype) {
+    async save(filename, identifier, mimetype) {
       console.log(
         "save the following file: " +
           filename +
@@ -698,24 +678,28 @@ export default {
         } else if (item.identifier == identifier) {
           // handle files that were downloaded from s3
           var itemContent = "";
-          if(item.mimetype === "text/plain") {
+          if(item.MIMEtype === "text/plain") {
             itemContent = this.$refs[item.path][0].$el.lastElementChild.textContent;
           } else {
             var image = this.$refs[item.path][0].src;
-            var encodedImage = image.substring(image.indexOf(",") + 1);
-            itemContent = this.decodeBase64(encodedImage);
+            itemContent = image;
           }
           content = itemContent;
         }
       });
       var blob = "";
-      if (mimetype === "image/png") {
+      if (mimetype === "image/png" && !(content.includes("blob:http"))) {
+        // handle images that were not downloaded
         const byteNumbers = new Array(content.length);
         for (let i = 0; i < content.length; i++) {
           byteNumbers[i] = content.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
         blob = new Blob([byteArray], { type: mimetype });
+        console.log(blob);
+      } else if (mimetype === "image/png" && content.includes("blob:http")) {
+        // handle files that were downloaded from s3
+        blob = await fetch(content).then(r => r.blob());
       } else {
         blob = new Blob([content], { mimetype: mimetype });
       }
@@ -789,7 +773,7 @@ export default {
     /*get json from uploaded file und update DOM */
     onReaderLoad: function (event) {
       var obj = JSON.parse(event.target.result);
-
+      console.log(obj);
       // apply changes to current json
       let templateId = obj.template;
       if (templateId == this.json.identifier) {
@@ -815,8 +799,24 @@ export default {
           let partId = currentPart.identifier;
           for (let f in this.json.files) {
             for (let oldp in this.json.files[f].parts) {
-              if (this.json.files[p].parts[oldp].identifier == partId) {
-                this.json.files[p].parts[oldp].content = obj.parts[p].content;
+              if (this.json.files[f].parts[oldp].identifier == partId) {
+                // set content of parts
+                this.json.files[f].parts[oldp].content = obj.parts[p].content;
+                // set parameters of parts
+                for(let oldPara in this.json.files[f].parts[oldp].parameters) {
+                  let currentParamJson = this.json.files[f].parts[oldp].parameters[oldPara];
+                  for(let newPara in obj.parts[p].parameters) {
+                    let currentParamObj = obj.parts[p].parameters[newPara];
+                    if (currentParamObj.identifier == currentParamJson.identifier) {
+                      if (currentParamJson.selected) {
+                        this.$set(currentParamJson, "selected", currentParamObj.selected);
+                      } else {
+                        this.$set(currentParamJson, "value", currentParamObj.value);
+                        
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -936,10 +936,25 @@ body {
   border-radius: 25px;
 }
 
+.side-to-side-div {
+  /* make columns equal size when using minimize/maximize */
+  flex: 1 1 0px;
+  min-width: 0;
+}
+
+img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
 /* Responsive layout - makes a one column-layout instead of two-column layout */
 @media (max-width: 1170px) {
   .flex-container {
     flex-direction: column;
+  }
+  #maximize-button {
+    /* hide Maximizing-button if the screen is too small to shwo two columns */
+    display:none;
   }
 }
 
