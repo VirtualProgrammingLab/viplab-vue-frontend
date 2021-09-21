@@ -25,7 +25,7 @@
       <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
     </validation-provider>
     <!-- if validation is set to range -->
-    <validation-provider v-if="editor.validation === 'range'" :rules="{required: true, editorRange: [editor.min, editor.max]}" v-slot="{ errors, valid }">
+    <validation-provider v-else-if="editor.validation === 'range'" :rules="{required: true, editorRange: [editor.min, editor.max]}" v-slot="{ errors, valid }">
       <div v-if="readonly == true">
         <prism-editor
           class="my-editor editor-readonly"
@@ -46,7 +46,7 @@
       <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
     </validation-provider>
     <!-- if validation is set to none -->
-    <div v-else-if="editor.pattern === 'none'">
+    <div v-else>
       <div v-if="readonly == true">
         <prism-editor
           class="my-editor editor-readonly"
@@ -88,7 +88,7 @@ extend('required', {
 });
 
 extend('editorRegex', (value, arg) => {
-  console.log("editor oneof " + value + " arg: " + arg);
+  //console.log("editor oneof " + value + " arg: " + arg);
   const regex = new RegExp(arg);
   if (regex.test(value)) {
     return true;
@@ -97,7 +97,7 @@ extend('editorRegex', (value, arg) => {
 });
 
 extend('editorRange', (value, [min, max]) => {
-  console.log("editor oneof " + value + " min: " + min + " max: " + max);
+  //console.log("editor oneof " + value + " min: " + min + " max: " + max);
   if (value >= min && value <= max) {
     return true;
   }
@@ -119,7 +119,7 @@ export default {
     vModel: {
       get: function () {
         if (this.isParameter === true) {
-          console.log("get: " + this.decodeBase64(this.editor.value));
+          //console.log("get: " + this.decodeBase64(this.editor.value));
           return this.decodeBase64(this.editor.value);
         } else {
           return this.decodeBase64(this.editor.content);

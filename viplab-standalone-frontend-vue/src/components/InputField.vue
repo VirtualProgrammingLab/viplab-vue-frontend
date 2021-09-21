@@ -48,7 +48,7 @@ extend('required', {
 });
 
 extend('inputFieldRegex', (value, arg) => {
-  console.log("inputfield oneof " + value + " arg: " + arg);
+  //console.log("inputfield oneof " + value + " arg: " + arg);
   const regex = new RegExp(arg);
   if (regex.test(value)) {
     return true;
@@ -57,7 +57,7 @@ extend('inputFieldRegex', (value, arg) => {
 });
 
 extend('inputFieldRange', (value, [min, max]) => {
-  console.log("inputfield oneof " + value + " min: " + min + " max: " + max);
+  //console.log("inputfield oneof " + value + " min: " + min + " max: " + max);
   if (value >= min && value <= max) {
     return true;
   }

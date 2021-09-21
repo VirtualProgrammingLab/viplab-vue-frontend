@@ -24,7 +24,7 @@ extend('required', {
 });
 
 extend('toggleOneOf', value => {
-  console.log("toggle oneof " + value);
+  //console.log("toggle oneof " + value);
   if (value.length > 0 && value.length == 1) {
     return true;
   }
@@ -32,7 +32,7 @@ extend('toggleOneOf', value => {
 });
 
 extend('toggleMinOne', value => {
-  console.log("toggle minone " + value);
+  //console.log("toggle minone " + value);
   if (value.length >= 1) {
     return true;
   }

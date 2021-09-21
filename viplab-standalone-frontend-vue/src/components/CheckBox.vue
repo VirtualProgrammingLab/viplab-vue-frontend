@@ -33,7 +33,7 @@ extend('required', {
 });
 
 extend('checkboxOneOf', value => {
-  console.log("checkbox oneof " + value);
+  //console.log("checkbox oneof " + value);
   if (value.length > 0 && value.length == 1) {
     return true;
   }
@@ -87,7 +87,6 @@ export default {
       checkbox: this.item
     }
   },
-  // validation: onlyone, minone, any
 };
 </script>
 

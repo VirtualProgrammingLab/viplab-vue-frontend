@@ -54,7 +54,7 @@ extend('required', {
 });
 
 extend('dropdownOneOf', value => {
-  console.log("dropdown oneof " + value);
+  //console.log("dropdown oneof " + value);
   if (!Array.isArray(value)) {
     return true;
   }
@@ -62,7 +62,7 @@ extend('dropdownOneOf', value => {
 });
 
 extend('dropdownMinOne', value => {
-  console.log("dropdown minone  " + value);
+  //console.log("dropdown minone  " + value);
   if (value.length >= 1) {
     return true;
   }
