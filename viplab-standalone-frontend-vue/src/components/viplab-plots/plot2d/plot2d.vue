@@ -202,7 +202,6 @@ export default {
 }
 
 .fixed-row-70 {
-  flex-basis: 90px;
   flex-grow: 0;
   flex-shrink: 0;
 }

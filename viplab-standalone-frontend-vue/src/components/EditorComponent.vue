@@ -3,27 +3,67 @@
     <div v-if="isParameter == true">
       <div class="item-name">{{ editor.metadata.name }}:</div>
     </div>
-    <div v-if="readonly == true">
-      <!--v-bind:class="{
-                            'top-editor': partParent_index == 0,
-                            'bottom-editor':
-                              partParent_index == file.parts.length - 1,
-                          }"-->
-      <prism-editor
-        class="my-editor editor-readonly"
-        :readonly="true"
-        v-model="vModel"
-        :highlight="highlighter"
-        line-numbers
-      ></prism-editor>
-    </div>
-    <div v-else>
-      <prism-editor
-        class="my-editor"
-        v-model="vModel"
-        :highlight="highlighter"
-        line-numbers
-      ></prism-editor>
+    <!-- if validation is set to pattern -->
+    <validation-provider v-if="pattern" :rules="{required: true, editorRegex: editor.pattern}" v-slot="{ errors, valid }">
+      <div v-if="readonly == true">
+        <prism-editor
+          class="my-editor editor-readonly"
+          :readonly="true"
+          v-model="vModel"
+          :highlight="highlighter"
+          line-numbers
+        ></prism-editor>
+      </div>
+      <div v-else>
+        <prism-editor
+          class="my-editor"
+          v-model="vModel"
+          :highlight="highlighter"
+          line-numbers
+        ></prism-editor>
+      </div>
+      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+    </validation-provider>
+    <!-- if validation is set to range -->
+    <validation-provider v-if="editor.validation === 'range'" :rules="{required: true, editorRange: [editor.min, editor.max]}" v-slot="{ errors, valid }">
+      <div v-if="readonly == true">
+        <prism-editor
+          class="my-editor editor-readonly"
+          :readonly="true"
+          v-model="vModel"
+          :highlight="highlighter"
+          line-numbers
+        ></prism-editor>
+      </div>
+      <div v-else>
+        <prism-editor
+          class="my-editor"
+          v-model="vModel"
+          :highlight="highlighter"
+          line-numbers
+        ></prism-editor>
+      </div>
+      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+    </validation-provider>
+    <!-- if validation is set to none -->
+    <div v-else-if="editor.pattern === 'none'">
+      <div v-if="readonly == true">
+        <prism-editor
+          class="my-editor editor-readonly"
+          :readonly="true"
+          v-model="vModel"
+          :highlight="highlighter"
+          line-numbers
+        ></prism-editor>
+      </div>
+      <div v-else>
+        <prism-editor
+          class="my-editor"
+          v-model="vModel"
+          :highlight="highlighter"
+          line-numbers
+        ></prism-editor>
+      </div>
     </div>
   </div>
 </template>
@@ -39,10 +79,36 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
 
+import { ValidationProvider, extend } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
+
+extend('required', {
+  ...required,
+  message: 'This field is required'
+});
+
+extend('editorRegex', (value, arg) => {
+  console.log("editor oneof " + value + " arg: " + arg);
+  const regex = new RegExp(arg);
+  if (regex.test(value)) {
+    return true;
+  }
+  return 'Field format invalid! Has to be: ' + arg;
+});
+
+extend('editorRange', (value, [min, max]) => {
+  console.log("editor oneof " + value + " min: " + min + " max: " + max);
+  if (value >= min && value <= max) {
+    return true;
+  }
+  return 'Value has to be between ' + min + ' and ' + max + '!'
+});
+
 export default {
   name: "EditorComponent",
   components: {
     PrismEditor,
+    ValidationProvider
   },
   props: {
     item: Object,
@@ -68,6 +134,13 @@ export default {
         }
         this.$forceUpdate();
         return this.vModel;
+      }
+    },
+    pattern: function() {
+      if(this.editor.validation === "pattern") {
+        return true;
+      } else {
+        return false;
       }
     },
   },
@@ -110,4 +183,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.my-editor{
+  border: 1px solid #ddd;
+}
+.error{
+  color: red;
+}
 </style>

@@ -13,6 +13,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFastBackward, faBackward, faPause, faPlay, faForward, faFastForward, faDownload, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+import VTooltip from 'v-tooltip'
+
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
@@ -21,6 +23,8 @@ Vue.use(IconsPlugin)
 library.add( faFastBackward, faBackward, faPause, faPlay, faForward, faFastForward, faDownload, faSave)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+Vue.use(VTooltip)
 
 Vue.config.productionTip = false
 

@@ -1,19 +1,49 @@
 <template>
   <div class="togglebutton-component form-item toggle">
     <div class ="item-name">{{toggl.metadata.name}}:</div>
-        <div v-for="(toggle, index) in toggl.options" :key="'toggle'+ ' ' +index">
+    <validation-provider :rules="`${onlyone ? 'toggleOneOf|required' : (minone ? 'toggleMinOne|required' : '')}`" v-slot="{ errors, valid }">
+      <div v-for="(toggle, index) in toggl.options" :key="'toggle'+ ' ' +index">
         <label>
-            {{ toggle.value }}
-            <input type="checkbox" :value="toggle.value" v-model="vModel">
-            <span class="slider"></span>
+          {{ toggle.value }}
+          <input type="checkbox" :value="toggle.value" v-model="vModel">
+          <span class="slider"></span>
         </label>
-    </div>
+      </div>
+      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+    </validation-provider>
   </div>
 </template>
 
 <script>
+import { ValidationProvider, extend } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
+
+extend('required', {
+  ...required,
+  message: 'This field is required'
+});
+
+extend('toggleOneOf', value => {
+  console.log("toggle oneof " + value);
+  if (value.length > 0 && value.length == 1) {
+    return true;
+  }
+  return 'Only choose one!'
+});
+
+extend('toggleMinOne', value => {
+  console.log("toggle minone " + value);
+  if (value.length >= 1) {
+    return true;
+  }
+  return 'Choose one or more!'
+});
+
 export default {
   name: 'ToggleButton',
+  components: {
+    ValidationProvider
+  },
   props: {
     item: Object,
     parent_index: Number
@@ -29,6 +59,20 @@ export default {
         return this.vModel;
       }
     },
+    onlyone: function() {
+      if(this.toggl.validation === "onlyone") {
+        return true;
+      } else {
+        return false;
+      }
+    }, 
+    minone: function() {
+      if(this.toggl.validation === "minone") {
+        return true;
+      } else {
+        return true;
+      }
+    },
   },
   data() {
     return {
@@ -40,5 +84,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.error{
+  color: red;
+}
 </style>

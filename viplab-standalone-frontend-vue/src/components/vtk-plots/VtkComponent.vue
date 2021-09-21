@@ -111,17 +111,11 @@ export default {
     VueSlider,
   },
   props: {
-    //files: Array
+    propFiles: Array
   },
   data() {
     return {
-      files: [
-        "triangle_mesh_linear.vtu",
-        "case1_single_onep_fracture_mpfa_0-00000.vtu",
-        "vtp-test.vtp",
-        "earth.vtp",
-        "cow.vtp",
-      ],
+      files: this.propFiles,
       fileIndex: 0,
       fullScreenRenderer: Object,
       renderer: Object,
@@ -156,25 +150,28 @@ export default {
       lookupTable: Object,
       enableAutoPlay: false,
       interval: undefined,
+      latestRepresentationEvent: null,
+      latestOpacityEvent: null,
+      latestColorEvent: null,
     };
   },
   watch: {
     enableAutoPlay() {
       this.watchAutoPlayOrPause();
     },
-    fileIndex(newValue, oldValue) {
-      console.log(oldValue + " " + newValue);
+    fileIndex() {
       this.renderNewFile();
 
       // reset v-model values for upper form
-      this.representation = "1:2:0";
+      /*this.representation = "1:2:0";
       this.color = ":";
-      this.opacityVModel = "100";
+      this.opacityVModel = "100";*/
     },
   },
   methods: {
     // set onchange hooks
     representationOnChange: function (event) {
+      this.latestRepresentationEvent = event;
       const representation = event.target.value;
 
       // apply representation
@@ -188,6 +185,7 @@ export default {
       this.renderWindow.render();
     },
     opacitySliderOnChange: function (value) {
+      this.latestOpacityEvent = value;
       const opacity = Number(value) / 100;
 
       //apply opacity
@@ -196,9 +194,10 @@ export default {
       this.renderWindow.render();
     },
     handleColorByOnChange: function (event) {
+      this.latestColorEvent = event;
       const color = event.target.value;
-
       const mapperConfig = this.getMapperConfig(color);
+      console.log(mapperConfig);
       this.mapper.set(mapperConfig);
       this.applyPreset();
 
@@ -206,14 +205,15 @@ export default {
     },
     getMapperConfig: function (value) {
       const [location, colorByArrayName] = value.split(":");
+      console.log(location);
       const interpolateScalarsBeforeMapping = location === "PointData";
       let colorMode = ColorMode.DEFAULT;
       let scalarMode = ScalarMode.DEFAULT;
       const scalarVisibility = location.length > 0;
       if (scalarVisibility) {
-        const dataArray =
-          this.source[`get${location}`]().getArrayByName(colorByArrayName);
+        const dataArray = this.source[`get${location}`]().getArrayByName(colorByArrayName);
         const newDataRange = dataArray.getRange();
+        console.log(newDataRange);
         this.dataRange[0] = newDataRange[0];
         this.dataRange[1] = newDataRange[1];
         colorMode = ColorMode.MAP_SCALARS;
@@ -237,6 +237,7 @@ export default {
       this.lookupTable.applyColorMap(preset);
       this.lookupTable.setMappingRange(this.dataRange[0], this.dataRange[1]);
       this.lookupTable.updateRange();
+      console.log(this.lookupTable);
     },
     decreaseFileIndex: function () {
       this.fileIndex = Math.max(this.fileIndex - 1, 0);
@@ -270,16 +271,23 @@ export default {
       this.renderNewFile();
     },
     async renderNewFile() {
-      const inputFile = this.files[this.fileIndex];
+      var inputFileUrl = this.files[this.fileIndex];
+
+      var lastIndex = inputFileUrl.lastIndexOf('/');
+      let inputFile = inputFileUrl.substr(lastIndex + 1);
 
       // initialize buffer for the ITK reader
       vtkITKPolyDataReader.setReadPolyDataArrayBufferFromITK(
         readPolyDataArrayBuffer
       );
-
-      let myRequest = new Request("http://localhost:8080/" + inputFile);
-
-      const reader = await fetch(myRequest)
+      
+      //let myRequest = new Request("http://localhost:8080/" + inputFile);
+      let myRequest = new Request(inputFileUrl);
+      //let myRequest = new Request("http://localhost:8080/cow.vtp");
+      
+      const reader = await fetch(myRequest, {
+          method: 'GET',
+        })
         .then(function (response) {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -287,6 +295,7 @@ export default {
           return response.blob();
         })
         .then(function (response) {
+          
           const readRawData = ({ fileName, data }) => {
             return new Promise((resolve, reject) => {
               const sourceType = null;
@@ -363,6 +372,17 @@ export default {
 
       this.renderer.resetCamera();
       this.renderWindow.render();
+
+      //set color, representation, opacity in case it was already set on another connected file
+      if(this.latestRepresentationEvent != null) {
+        this.representationOnChange(this.latestRepresentationEvent);
+      }
+      if(this.latestOpacityEvent != null) {
+        this.opacitySliderOnChange(this.latestOpacityEvent);
+      }
+      if(this.latestColorEvent != null) {
+        this.handleColorByOnChange(this.latestColorEvent);
+      }
     },
     watchAutoPlayOrPause: function () {
       if (this.enableAutoPlay) {
@@ -381,7 +401,7 @@ export default {
       //    über S3 einfach diese URL zurück geben
       //generate objectUrl of blob of the currently displayed file
       const inputFile = this.files[this.fileIndex];
-      let myRequest = new Request("http://localhost:8080/" + inputFile);
+      let myRequest = new Request(inputFile);
       const blob = await fetch(myRequest)
         .then(function (response) {
           if (!response.ok) {
@@ -400,6 +420,7 @@ export default {
     },
   },
   async mounted() {
+    console.log("vtk-component mounted");
     await this.renderFile(this);
   },
 };

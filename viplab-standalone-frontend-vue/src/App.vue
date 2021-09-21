@@ -17,7 +17,9 @@
     <!--<json-v-model-test/>-->
 
     <div class="side-to-side-div flex-left m-2 p-2">
-      <form>
+      <validation-observer v-slot="{ invalid }">
+        {{invalid}}
+      <form @submit.prevent="sendData">
         <div class="form-group mb-5 ml-5 mr-5">
           <h2 v-if="parsedFilesJson">InputFiles</h2>
 
@@ -26,17 +28,6 @@
           </div>
           <div class="item-name" v-if="json.metadata">
             {{ json.metadata.description }}
-          </div>
-
-          <div style="border-style:solid">
-            <input type="file" ref="doc" @change="displayMustacheTemplate()" />
-            <prism-editor v-if="mustacheContent"
-                class="my-editor output-editor"
-                :readonly="true"
-                v-model="mustacheContent"
-                :highlight="highlighter"
-                line-numbers
-              ></prism-editor>
           </div>
 
           <div class="cards" >
@@ -54,7 +45,7 @@
                   @click="tabClicked"
                 >
                   <div
-                    class="part"
+                    class="part mb-3"
                     v-for="part in file.parts"
                     :key="part.identifier"
                   >
@@ -86,42 +77,54 @@
                       v-if="part.parameters && part.access == 'template'"
                     >
                       <h2>Parameters</h2>
-                      <parameters :parameters="part.parameters"></parameters>
-                      {{ decodeBase64(part.content) }}
-                      <div
-                        v-for="(item, parent_index) in part.parameters"
-                        :key="parent_index"
-                      >
-                        {{ item.selected || item.value }}
+                      <parameters 
+                        v-if="asForm"
+                        :parameters="part.parameters">
+                      </parameters>
+                      <div v-else>
+                        <prism-editor
+                          class="my-editor editor-readonly"
+                          :readonly="true"
+                          :value=showMustacheTemplate(part)
+                          :highlight="highlighter"
+                          line-numbers
+                        ></prism-editor>
                       </div>
                     </div>
                   </div>
+                  <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right" @click="switchParameterView()" v-tooltip.top-center="asForm? 'View File' : 'Modify Parameters'">
+                    <b-icon v-if="asForm" icon="file-earmark-code" aria-hidden="true"></b-icon>
+                    <b-icon v-else icon="file-earmark-diff" aria-hidden="true"></b-icon>
+                  </b-button>
                 </b-tab>
                 <b-tab v-if="parsedParametersJson" title="Parameters">
                   <!-- render parameters section of the json -->
-                  <form>
+                  
+                  <!--<form>-->
                     <div class="form-group mb-5 ml-5 mr-5">
                       <h2 v-if="parsedParametersJson">Parameters</h2>
                       <parameters
                         :parameters="parsedParametersJson"
                       ></parameters>
                     </div>
-                  </form>
+                  <!--</form>-->
+                  
                 </b-tab>
               </b-tabs>
             </b-card>
             <div class="sticky-button">
-              <b-button class="btn" id="submit" variant="primary" disabled>
+              <b-button class="btn" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
                 <b-icon icon="play" aria-hidden="true"></b-icon>
               </b-button>
             </div>
           </div>
         </div>
       </form>
+      </validation-observer>
 
       <div class="d-flex flex-row mb-5 ml-5 mr-5">
         <div class="mr-auto">
-          <b-button class="btn mr-2">
+          <b-button class="btn mr-2" v-tooltip.top-center="'Download backup of changes'">
             <b-icon
               icon="download"
               aria-hidden="true"
@@ -138,6 +141,7 @@
           <b-button
             class="btn btn-secondary file"
             @click="$refs.upload.click()"
+            v-tooltip.top-center="'Upload of previously downloaded backup'"
           >
             <b-icon icon="upload" aria-hidden="true"></b-icon>
           </b-button>
@@ -148,10 +152,11 @@
           -->
         </div>
         <div class="">
-          <b-button class="btn mr-2" id="maximize-button" @click="maximize">
-            <b-icon icon="fullscreen" aria-hidden="true"></b-icon>
+          <b-button class="btn mr-2" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'">
+            <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
+            <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
           </b-button>
-          <b-button class="btn" style="width:62.5px" variant="success" btn-variant="white">
+          <b-button class="btn" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
             <font-awesome-icon icon="save" />
           </b-button>
         </div>
@@ -199,7 +204,7 @@
                   v-if="returnedOutputJson.artifacts.length > 0"
                   fill
                 >
-                  <b-tabs card class="files" content-class="m-2">
+                  <b-tabs card class="files" content-class="m-2" lazy>
                     <b-tab
                       :title="'OutputFile ' + artifactParent_index"
                       ref="artifact"
@@ -238,8 +243,14 @@
                       </div>
                       <!-- Render s3 files that have no content-element-->
                       <div v-else>
+                        <div v-if="artifact.MIMEtype == 'application/vtu'">
+                            <vtk-component
+                                v-if="artifact.MIMEtype == 'application/vtu'"
+                                :propFiles=artifact.urls
+                            ></vtk-component>
+                        </div>
                         <div
-                          v-if="artifact.MIMEtype !== 'image/png'"
+                          v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype == 'text/plain'"
                           ref="outPartcontent"
                           class="outPartcontent"
                         >
@@ -250,7 +261,9 @@
                             </template>
                             <!-- The default scoped slot will be used as the result -->
                             <template v-slot="data">
+                              <div>
                               <prism-editor
+                                v-if="artifact.MIMEtype == 'text/plain'"
                                 class="
                                   my-editor
                                   editor-readonly
@@ -263,11 +276,17 @@
                                 line-numbers
                                 :ref="artifact.path"
                               ></prism-editor>
+                              </div>
                             </template>
                             <template v-slot:rejected="error">
                               <p>Error: {{ error.message }}</p>
                             </template>
                           </Promised>
+                        </div>
+                        <div v-else-if="artifact.MIMEtype == 'text/csv'">
+                          <csv-plot 
+                            :urlsProp=artifact.urls>
+                          </csv-plot>
                         </div>
                         <div v-else>
                           <Promised :promise="getContentFromS3(artifact.url, true)">
@@ -293,7 +312,7 @@
               </div>
               <ul>
                 <li
-                  v-for="artifact in returnedOutputJson.artifacts"
+                  v-for="artifact in returnedArtifactsWOvtkCsv"
                   :key="artifact.identifier"
                 >
                   <a
@@ -312,11 +331,8 @@
             </div>
           </v-wait>
         </div>
-
-        <vtk-component></vtk-component>
         <grid-plot></grid-plot>
         <plot-2d></plot-2d>
-        <csv-plot></csv-plot>
       </div>
     </div>
   </div>
@@ -349,6 +365,10 @@ import CsvPlot from './components/csv-plots/CsvPlot.vue';
 
 import {Promised} from "vue-promised";
 
+var Mustache = require('mustache');
+
+import {ValidationObserver} from "vee-validate";
+
 export default {
   name: "app",
   components: {
@@ -360,7 +380,8 @@ export default {
     EditorComponent,
     Plot2d,
     CsvPlot,
-    Promised
+    Promised,
+    ValidationObserver
   },
   data() {
     return {
@@ -373,8 +394,9 @@ export default {
       outputFiles: "",
       errorFiles: "",
       maximized: false,
-      mustacheContent: null,
-      file: null
+      file: null,
+      asForm: true,
+      isPartParameters: 0
     };
   },
   computed: {
@@ -388,49 +410,18 @@ export default {
       var parsed = this.json.files;
       return parsed;
     },
-  },
-  methods: {
-    displayMustacheTemplate() {
-      var paramsToInsertInTemplate = [];
-      for(var f in this.json.files){
-        for(var p in this.json.files[f].parts) {
-          for(var param in this.json.files[f].parts[p].parameters) {
-            var currentParam = this.json.files[f].parts[p].parameters[param];
-            var id = currentParam.identifier;
-            var value = (currentParam.value) ? currentParam.value : currentParam.selected;
-            var object = JSON.parse('{ "id" : "' + id + '" , "val" : "' + value +'" }');
-            paramsToInsertInTemplate.push(object);
-          }
+    returnedArtifactsWOvtkCsv: function() {
+      let artifacts = this.returnedOutputJson.artifacts;
+      let newArtifacts = [];
+      for(var i = 0; i < artifacts.length; i++) {
+        if(artifacts[i].MIMEtype != 'application/vtu' && artifacts[i].MIMEtype != 'text/csv') {
+          newArtifacts.push(artifacts[i]);
         }
       }
-      console.log(paramsToInsertInTemplate);
-      this.file = this.$refs.doc.files[0];
-      const reader = new FileReader();
-      if (this.file.name.includes(".txt")) {
-        reader.onload = (res) => {
-          this.mustacheContent = res.target.result;
-          for (var i = 0; i < paramsToInsertInTemplate.length; i++) {
-          var parameter = paramsToInsertInTemplate[i];
-          this.mustacheContent = this.mustacheContent.replace('{{'+ parameter.id +'}}', parameter.val)
-      }
-        };
-        reader.onerror = (err) => console.log(err);
-        reader.readAsText(this.file);
-      } else {
-        this.mustacheContent = "check the console for file output";
-        reader.onload = (res) => {
-          console.log(res.target.result);
-          for (var i = 0; i < paramsToInsertInTemplate.length; i++) {
-            var parameter = paramsToInsertInTemplate[i];
-            this.mustacheContent = this.mustacheContent.replace("{{"+parameter.id+"}}", parameter.val)
-          }
-        };
-        reader.onerror = (err) => console.log(err);
-        reader.readAsText(this.file);
-      }
-
-      
-    },
+      return newArtifacts;
+    }
+  },
+  methods: {
     setNumberOfInputFiles: function () {
       var files = this.json.files;
       for (var file in files) {
@@ -469,6 +460,17 @@ export default {
       this.json = JSON.parse(this.decodeBase64(data));
       this.token = appDiv.getAttribute("data-token");
 
+      // if there are parameters in parts, set var accordingly for rendering of button
+      for(var file in this.json.files) {
+        for(var part in this.json.files[file].parts) {
+          var parti = this.json.files[file].parts[part]
+          if(parti.access == "template" && parti.parameters) {
+            this.isPartParameters++;
+            break;
+          }
+        }
+      }
+
       console.log(this.json);
 
       this.setNumberOfInputFiles();
@@ -485,6 +487,7 @@ export default {
         this.ws.send(
           JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
         );
+        // currently always enabled as soon as every part of form validates!!!
         document.getElementById("submit").disabled = false;
       };
       this.ws.onmessage = (event) => {
@@ -602,34 +605,154 @@ export default {
         this.returnedOutputJson.artifacts.push(result.result.artifacts);
       }
       
-      //for testing add image to json:
-      this.returnedOutputJson.artifacts.push({
-        type: "file",
-        identifier: "de762095-6cd2-439f-80eb-313e85d3386a",
-        MIMEtype: "image/png",
-        path: "/images/img.png",
-        content:
-          "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAH0lEQVR42mOcx/C/noGKgHHUwFEDRw0cNXDUwJFqIAAJpipFpDW1EwAAAABJRU5ErkJggg==",
-      });
-      // s3 file example: https://s3.amazonaws.com/havecamerawilltravel.developer/test.txt
-      this.returnedOutputJson.artifacts.push({
-          type : "s3file",
-          identifier : "cc3c1cf9-c02d-4694-902c-93c298d68c51",
-          MIMEtype: "text/plain",
-          path: "/largefile/test.txt",
-          url: "http://localhost:4040/test.txt",
-          size: "123456789",
-          hash: "sha512:hashcode_of_file"
-        });
-        this.returnedOutputJson.artifacts.push({
-          type : "s3file",
-          identifier : "cc3c1cf9-c02d-4694-902c-93c298d68c52",
-          MIMEtype: "image/png",
-          path: "/largefile/voyager.png",
-          url: "http://localhost:4040/voyager.png",
-          size: "123456789",
-          hash: "sha512:hashcode_of_file"
-        });
+      // vtu with other path for testing
+      this.returnedOutputJson.artifacts.unshift(
+        {
+      "type" : "s3file",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c63",
+      "MIMEtype": "application/vtu",
+      "path": "/vtu-collection2/case1_single_tracer_matrix-00000.vtu",
+      "url": "http://localhost:8080/case1_single_tracer_matrix-00000.vtu",
+      "size": "123456789",
+      "hash": "sha512:hashcode_of_file"
+    }
+      );
+      this.returnedOutputJson.artifacts.unshift(
+        {
+      "type" : "s3file",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c64",
+      "MIMEtype": "application/vtu",
+      "path": "/vtu-collection2/case1_single_tracer_matrix-00001.vtu",
+      "url": "http://localhost:8080/case1_single_tracer_matrix-00001.vtu",
+      "size": "123456789",
+      "hash": "sha512:hashcode_of_file"
+    }
+      );
+      this.returnedOutputJson.artifacts.unshift(
+        {
+      "type" : "s3file",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c64",
+      "MIMEtype": "application/vtu",
+      "path": "/vtu-collection2/case1_single_tracer_matrix-00002.vtu",
+      "url": "http://localhost:8080/case1_single_tracer_matrix-00002.vtu",
+      "size": "123456789",
+      "hash": "sha512:hashcode_of_file"
+    }
+      );
+      this.returnedOutputJson.artifacts.unshift(
+        {
+      "type" : "s3file",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c74",
+      "MIMEtype": "application/vtu",
+      "path": "/vtu-collection2/case1_single_tracer_matrix-00003.vtu",
+      "url": "http://localhost:8080/case1_single_tracer_matrix-00003.vtu",
+      "size": "123456789",
+      "hash": "sha512:hashcode_of_file"
+    }
+      );
+      this.returnedOutputJson.artifacts.unshift(
+        {
+      "type" : "s3file",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c75",
+      "MIMEtype": "application/vtu",
+      "path": "/vtu-collection2/case1_single_tracer_matrix-00030.vtu",
+      "url": "http://localhost:8080/case1_single_tracer_matrix-00030.vtu",
+      "size": "123456789",
+      "hash": "sha512:hashcode_of_file"
+    }
+      );
+      this.returnedOutputJson.artifacts.unshift(
+        {
+      "type" : "s3file",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c64",
+      "MIMEtype": "application/vtu",
+      "path": "/vtu-collection2/earth.vtp",
+      "url": "http://localhost:8080/earth.vtp",
+      "size": "123456789",
+      "hash": "sha512:hashcode_of_file"
+    }
+      );
+      this.returnedOutputJson.artifacts.push(
+        {
+      "type" : "s3file",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c65",
+      "MIMEtype": "text/csv",
+      "path": "/dataovertime/dataovertime-00003.csv",
+      "url": "http://localhost:8080/dataovertime-00003.csv",
+      "size": "123456789",
+      "hash": "sha512:hashcode_of_file"
+    }
+      );
+      this.returnedOutputJson.artifacts.push(
+        {
+      "type" : "s3file",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c66",
+      "MIMEtype": "text/csv",
+      "path": "/dataovertime/dataovertime-00004.csv",
+      "url": "http://localhost:8080/dataovertime-00004.csv",
+      "size": "123456789",
+      "hash": "sha512:hashcode_of_file"
+    }
+      );
+      this.returnedOutputJson.artifacts.push(
+        {
+      "type" : "s3file",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c67",
+      "MIMEtype": "text/csv",
+      "path": "/dataovertime/dataovertime-00005.csv",
+      "url": "http://localhost:8080/dataovertime-00005.csv",
+      "size": "123456789",
+      "hash": "sha512:hashcode_of_file"
+    }
+      );
+
+      console.log(this.returnedOutputJson);
+
+      // process connected vtu/vtk files
+      console.log(this.returnedOutputJson.artifacts)
+      var collections = [];
+      let connectedVtks = {};
+      var artifacts = this.returnedOutputJson.artifacts;
+      let created = false;
+      for(var a = 0; a < artifacts.length; a++) {
+        if((artifacts[a].MIMEtype == "application/vtu" || artifacts[a].MIMEtype == "text/csv") && !artifacts[a].artifacts){
+          let path = artifacts[a].path;
+          let lastIndex = path.lastIndexOf('/');
+          let pathPart = path.substr(0, lastIndex + 1);
+          
+          if(!connectedVtks[pathPart]){
+            connectedVtks[pathPart] = {};
+            connectedVtks[pathPart].type = "s3file";
+            connectedVtks[pathPart].MIMEtype = artifacts[a].MIMEtype;
+            created = false;
+            collections.push(pathPart);
+          }
+          if(created){
+            connectedVtks[pathPart].urls.push(artifacts[a].url);
+          } else {
+            connectedVtks[pathPart].urls = [];
+            connectedVtks[pathPart].urls.push(artifacts[a].url);
+            created = true;
+          }
+        }
+      }
+      console.log(JSON.parse(JSON.stringify(connectedVtks)))
+
+      // delete all vtk artifacts
+      artifacts = this.returnedOutputJson.artifacts;
+      var b = artifacts.length;
+      while(b--){
+        if((artifacts[b].MIMEtype == "application/vtu" || artifacts[b].MIMEtype == "text/csv")) {
+          artifacts.splice(b, 1);
+        }
+      }
+      
+      // add vtk collections
+      for(var c = 0; c < collections.length; c++){
+        this.returnedOutputJson.artifacts.push(connectedVtks[collections[c]]);
+      }
+      console.log(this.returnedOutputJson);
+
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.decodeBase64(result.result.output.stdout);
@@ -650,7 +773,7 @@ export default {
         test = await response.text();
       }
       
-      console.log("Response from the fetch: ", test);
+      //console.log("Response from the fetch: ", test);
 
       if (response.status >= 200 && response.status < 300) {
           return Promise.resolve(test);
@@ -851,6 +974,24 @@ export default {
           this.$set(currentParameter, "selected", arr);
         }
         
+      }
+    },
+    // switch between the form (to modify the parameters) and the mustache template with the filled out parameters
+    switchParameterView: function() {
+      this.asForm = !this.asForm;
+      
+    },
+    // fill in content of mustache template with selected parameter values return it
+    showMustacheTemplate(part){
+      if(!this.asForm){
+        var mustacheTemplate = this.decodeBase64(part.content);
+        var view = {};
+        for(var p in part.parameters) {
+          var currentParam = part.parameters[p];
+          view[currentParam.identifier] = currentParam.value || currentParam.selected;
+        }
+        var output = Mustache.render(mustacheTemplate, view);
+        return output;
       }
     }
   },
@@ -1079,5 +1220,98 @@ img {
   border-radius: 25px !important;
   padding-left: 20px !important;
   padding-right: 20px !important;
+}
+
+.tooltip {
+  display: block !important;
+  z-index: 10000;
+}
+
+.tooltip .tooltip-inner {
+  background: black;
+  color: white;
+  border-radius: 16px;
+  padding: 5px 10px 4px;
+}
+
+.tooltip .tooltip-arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  position: absolute;
+  margin: 5px;
+  border-color: black;
+}
+
+.tooltip[x-placement^="top"] {
+  margin-bottom: 5px;
+}
+
+.tooltip[x-placement^="top"] .tooltip-arrow {
+  border-width: 5px 5px 0 5px;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  bottom: -5px;
+  left: calc(50% - 5px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.tooltip[x-placement^="bottom"] {
+  margin-top: 5px;
+}
+
+.tooltip[x-placement^="bottom"] .tooltip-arrow {
+  border-width: 0 5px 5px 5px;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-top-color: transparent !important;
+  top: -5px;
+  left: calc(50% - 5px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.tooltip[x-placement^="right"] {
+  margin-left: 5px;
+}
+
+.tooltip[x-placement^="right"] .tooltip-arrow {
+  border-width: 5px 5px 5px 0;
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+  border-bottom-color: transparent !important;
+  left: -5px;
+  top: calc(50% - 5px);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tooltip[x-placement^="left"] {
+  margin-right: 5px;
+}
+
+.tooltip[x-placement^="left"] .tooltip-arrow {
+  border-width: 5px 0 5px 5px;
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  right: -5px;
+  top: calc(50% - 5px);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tooltip[aria-hidden='true'] {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .15s, visibility .15s;
+}
+
+.tooltip[aria-hidden='false'] {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity .15s;
 }
 </style>

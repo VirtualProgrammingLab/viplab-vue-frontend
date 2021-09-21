@@ -43,6 +43,62 @@
           "content": "VGhpcyBpcyBhIFRleHQ6Ont7X19zbGlkZXJTaW5nbGVfX319OjpUaGlzIGlzIGEgVGV4dA=="
         },
         {
+          "identifier": "preamble2",
+          "access": "template",
+          "metadata": {
+            "name": "Info: source before your code.",
+            "emphasis": "low"
+          },
+          "parameters" : 
+          [
+            {
+              "mode" : "any",
+              "identifier" : "__Temperature__", 
+              "metadata" : {
+                "guiType" : "slider",
+                "name": "temperature",
+                "vertical": false
+              },
+              "default": [
+                10
+              ],
+              "min": 0,
+              "max": 45,
+              "step": 0.1,
+              "validation": "range"
+            },
+            {
+              "mode" : "fixed",
+              "identifier" : "__Starship__", 
+              "metadata" : {
+                "guiType": "dropdown",
+                "name": "model"
+              },
+              "options": [
+                {
+                  "value" : "Please choose one",
+                  "disabled" : true
+                },
+                {
+                  "value" : "Voyager",
+                  "selected" : true
+                },
+                {
+                  "value" : "Enterprise"
+                },
+                {
+                  "value" : "Defiant"
+                },
+                {
+                  "value" : "Equinox"
+                }
+              ],
+              "validation": "oneof"
+            }
+          ],
+          "content": "VGhlIFRlbXBlcmF0dXJlIHlvdSBjaG9zZSBpczoge3tfX1RlbXBlcmF0dXJlX199fQpBbmQgeW91ciBmYXZvcml0ZSBTdGFyc2hpcCBpczoge3tfX1N0YXJzaGlwX199fQ=="
+        },
+        {
           "identifier": "codeFromStudent",
           "access": "modifiable",
           "metadata": {

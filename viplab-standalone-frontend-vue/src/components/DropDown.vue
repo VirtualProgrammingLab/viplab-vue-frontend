@@ -1,6 +1,7 @@
 <template>
   <div class="dropdown-component">
-      <div class="item-name">{{ dropitem.metadata.name }}:</div>
+    <div class="item-name">{{ dropitem.metadata.name }}:</div>
+    <validation-provider :rules="`${onlyone ? 'dropdownOneOf|required' : (minone ? 'dropdownMinOne|required' : '')}`" v-slot="{ errors, valid }">
       <div class="dropdown form-group">
         <select
           class="form-control"
@@ -38,12 +39,41 @@
           </option>
         </select>
       </div>
-    </div>
+      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+    </validation-provider>
+  </div>
 </template>
 
 <script>
+import { ValidationProvider, extend } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
+
+extend('required', {
+  ...required,
+  message: 'This field is required'
+});
+
+extend('dropdownOneOf', value => {
+  console.log("dropdown oneof " + value);
+  if (!Array.isArray(value)) {
+    return true;
+  }
+  return 'Only choose one!'
+});
+
+extend('dropdownMinOne', value => {
+  console.log("dropdown minone  " + value);
+  if (value.length >= 1) {
+    return true;
+  }
+  return 'Choose one or more!'
+});
+
 export default {
   name: 'DropDown',
+  components: {
+    ValidationProvider
+  },
   props: {
     item: Object,
     parent_index: Number, 
@@ -57,6 +87,20 @@ export default {
         this.$set(this.item , "selected", val);
         this.$forceUpdate();
         return this.vModel;
+      }
+    },
+    onlyone: function() {
+      if(this.dropitem.validation === "onlyone") {
+        return true;
+      } else {
+        return false;
+      }
+    }, 
+    minone: function() {
+      if(this.dropitem.validation === "minone") {
+        return true;
+      } else {
+        return false;
       }
     },
   },
@@ -91,5 +135,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.error{
+  color: red;
+}
 </style>

@@ -101,7 +101,7 @@
           "value" : "make_plot"
         }
       ],
-      "validation": "anyof"
+      "validation": "any"
     }, 
     {
       "mode" : "fixed",
@@ -126,7 +126,7 @@
           "value" : "test"
         }
       ],
-      "validation": "oneof"
+      "validation": "onlyone"
     },
     {
       "mode" : "fixed",
@@ -157,7 +157,7 @@
           "value" : "2p1c"
         }
       ],
-      "validation": "oneof"
+      "validation": "onlyone"
     }, 
     {
       "mode" : "fixed",
@@ -191,7 +191,7 @@
         }
       ], 
       "multiple": true,
-      "validation": "anyof"
+      "validation": "minone"
     }, 
     {
       "mode" : "fixed",
@@ -212,7 +212,7 @@
           "value" : "make_plot"
         }
       ], 
-      "validation": "anyof"
+      "validation": "minone"
     }, 
     {
       "mode" : "any",
@@ -258,7 +258,20 @@
       },
       "maxlength": 200,
       "default" : [""],
-      "validation": "pattern"
+      "validation": "pattern",
+      "pattern": "^a[a-z]+b$"
+    },
+    {
+      "mode" : "any",
+      "identifier" : "__inputTextNoValidation__", 
+      "metadata" : {
+        "guiType" : "input_field",
+        "type": "text",
+        "name": "file_name"
+      },
+      "maxlength": 200,
+      "default" : [""],
+      "validation": "none"
     },
     {
       "mode" : "any",
@@ -269,7 +282,8 @@
         "name": "file_name"
       },
       "default" : [""],
-      "validation": "pattern"
+      "validation": "pattern",
+      "pattern" : "^[0-9]+$"
     },
     {
       "mode" : "any",
@@ -293,7 +307,20 @@
         "name": "code 1"
       },
       "default": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg",
-      "validation": "pattern"
+      "validation": "pattern",
+      "pattern": ".*"
+    },
+    {
+      "mode" : "any",
+      "identifier" : "__editorNumber__", 
+      "metadata" : {
+        "guiType" : "editor", 
+        "name": "number input in editor"
+      },
+      "default": "NzQ2NTY=",
+      "validation": "range",
+      "min" : 1701,
+      "max" : 74656
     },
     {
       "mode" : "any",
@@ -303,7 +330,8 @@
         "name": "code 2"
       },
       "default": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K",
-      "validation": "pattern"
+      "validation": "pattern",
+      "pattern": "^v.*"
     }
   ],
   "configuration": {
