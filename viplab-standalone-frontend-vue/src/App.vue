@@ -410,6 +410,7 @@ export default {
       var parsed = this.json.files;
       return parsed;
     },
+    /* return result artifacts for download-links without the csv and vtk files that are downloadable from their respectable view */
     returnedArtifactsWOvtkCsv: function() {
       let artifacts = this.returnedOutputJson.artifacts;
       let newArtifacts = [];
@@ -422,6 +423,7 @@ export default {
     }
   },
   methods: {
+    /* set the number of input files */
     setNumberOfInputFiles: function () {
       var files = this.json.files;
       for (var file in files) {
@@ -430,6 +432,7 @@ export default {
         this.numberOfInputFiles = parts.length;
       }
     },
+    /* rewrite base64urlEncodedString to base64*/
     rewriteToBase64: function (base64urlEncodedString) {
       // Replace base64 characters with base64url characters
       base64urlEncodedString = base64urlEncodedString
@@ -447,6 +450,7 @@ export default {
       }
       return base64urlEncodedString;
     },
+    /** decode base64urlEncodedString to a normal string */
     decodeBase64: function (base64urlEncodedString) {
       var encodedString = this.rewriteToBase64(base64urlEncodedString);
 
@@ -479,6 +483,7 @@ export default {
     highlighter(code) {
       return highlight(code, languages.js); // languages.<insert language> to return html with markup
     },
+    /** should be the first thing that is executed when DOM is loaded: setup connection to webserver */
     executeAfterDomLoaded: function () {
       //this.ws = new WebSocket("ws://192.168.195.128:8083/computations");
       this.ws = new WebSocket("ws://localhost:8083/computations");
@@ -509,6 +514,7 @@ export default {
       };
       document.getElementById("submit").onclick = this.sendData;
     },
+    /** create uuid for the template to be sent as request */
     uuid: function () {
       function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
@@ -530,6 +536,7 @@ export default {
         s4()
       );
     },
+    /** send data to webserver for requesting the solution */
     sendData: function () {
       console.log("send data");
 
@@ -589,9 +596,11 @@ export default {
 
       return false;
     },
+    /** log the computation */
     displayComputation: function (computation) {
       console.log("computation: " + computation);
     },
+    /** process the result before displaying it in the DOM */
     displayResult: function (result) {
       console.log(result.result.output.stdout);
       if (result.result.status == "final") {
@@ -606,6 +615,7 @@ export default {
       }
       
       // vtu with other path for testing
+      /*
       this.returnedOutputJson.artifacts.unshift(
         {
       "type" : "s3file",
@@ -704,7 +714,7 @@ export default {
       "size": "123456789",
       "hash": "sha512:hashcode_of_file"
     }
-      );
+      );*/
 
       console.log(this.returnedOutputJson);
 
@@ -759,6 +769,7 @@ export default {
       this.errorFiles = this.decodeBase64(result.result.output.stderr);
       //console.log(this.outputFiles);
     }, 
+    /** get content from s3 if it is an image, process differently */
     async getContentFromS3(url, image) {
       const response = await fetch(url, {
         method: 'GET',
@@ -781,7 +792,8 @@ export default {
           return Promise.reject(new Error("Unable to complete request for: " + url));
       }   
       
-    },
+    }, 
+    /**  */
     imagesrc: function (base64Image) {
       return "data:image/png;base64," + base64Image;
     },
