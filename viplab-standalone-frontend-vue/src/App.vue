@@ -793,10 +793,11 @@ export default {
       }   
       
     }, 
-    /**  */
+    /**  return base64 image src for img-tag*/
     imagesrc: function (base64Image) {
       return "data:image/png;base64," + base64Image;
     },
+    /** Save file locally on click from the user */
     async save(filename, identifier, mimetype) {
       console.log(
         "save the following file: " +
@@ -850,7 +851,7 @@ export default {
       }
       return false;
     },
-    downloadTaskJson: function () {},
+    /** Maximize the window, meaning that the two collumns are displayed underneath each other */
     maximize: function () {
       this.maximized = !this.maximized;
     },
@@ -963,6 +964,10 @@ export default {
       window.scrollTo(window.scrollX, window.scrollY - 1);
       window.scrollTo(window.scrollX, window.scrollY + 1);
     },
+    /** Parse the json and add elements for gui/parameter rendering
+     * Add value element for parameters of mode any
+     * else add selected elements for parameters of mode fixed
+     */
     parseParametersForGuiGeneration: function(currentParameter) {
       var mode = currentParameter.mode;
       // add value-item to parameters with mode == any
