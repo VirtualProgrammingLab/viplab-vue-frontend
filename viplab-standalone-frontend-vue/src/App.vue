@@ -351,8 +351,6 @@
             </div>
           </v-wait>
         </div>
-        <grid-plot></grid-plot>
-        <plot-2d></plot-2d>
       </div>
     </div>
   </div>
@@ -375,12 +373,12 @@ import EditorComponent from "./components/EditorComponent.vue";
 
 import { CirclesToRhombusesSpinner } from "epic-spinners";
 
-import GridPlot from "./components/viplab-plots/gridplot/GridPlot.vue";
+//import GridPlot from "./components/viplab-plots/gridplot/GridPlot.vue";
 
 //import $ from 'jquery';
 
 import VtkComponent from "./components/vtk-plots/VtkComponent.vue";
-import Plot2d from './components/viplab-plots/plot2d/plot2d.vue';
+//import Plot2d from './components/viplab-plots/plot2d/plot2d.vue';
 import CsvPlot from './components/csv-plots/CsvPlot.vue';
 
 import {Promised} from "vue-promised";
@@ -395,10 +393,10 @@ export default {
     PrismEditor,
     CirclesToRhombusesSpinner,
     Parameters,
-    GridPlot,
+    //GridPlot,
     VtkComponent,
     EditorComponent,
-    Plot2d,
+    //Plot2d,
     CsvPlot,
     Promised,
     ValidationObserver
