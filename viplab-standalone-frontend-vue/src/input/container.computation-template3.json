@@ -1,5 +1,5 @@
 {
-  "identifier": "11483f23-95bf-424a-98a5-ee5868c85c3e",
+  "identifier": "11483f23-95bf-424a-98a5-ee5868c85c3",
   "metadata": {
     "display_name": "Aufgabe 1",
     "description": "Schreiben Sie eine C-Funktion..."
@@ -28,7 +28,7 @@
               "identifier" : "__sliderSingle__", 
               "metadata" : {
                 "guiType" : "slider",
-                "name": "temperature",
+                "name": "Range",
                 "vertical": false
               },
               "default": [
@@ -99,24 +99,6 @@
           "content": "VGhlIFRlbXBlcmF0dXJlIHlvdSBjaG9zZSBpczoge3tfX1RlbXBlcmF0dXJlX199fQpBbmQgeW91ciBmYXZvcml0ZSBTdGFyc2hpcCBpczoge3tfX1N0YXJzaGlwX199fQ=="
         },
         {
-          "identifier": "codeFromStudent",
-          "access": "modifiable",
-          "metadata": {
-            "name": "Fill in your code!",
-            "emphasis": "medium"
-          },
-          "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
-        },
-        {
-          "identifier": "codeFromStudent2",
-          "access": "visible",
-          "metadata": {
-            "name": "Fill in your code!",
-            "emphasis": "medium"
-          },
-          "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
-        },
-        {
           "identifier": "postscript",
           "access": "template",
           "metadata": {
@@ -150,11 +132,64 @@
           "content": "VGhpcyBpcyBhIFRleHQ6Ont7X19jaGVja2JveF9ffX06OlRoaXMgaXMgYSBUZXh0"
         }
       ]
+    }, 
+    {
+      "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3f",
+      "path": "code.c",
+      "metadata": {
+        "MIMEtype": "text/plain",
+        "syntaxHighlighting": "C"
+      },
+      "parts": [
+        {
+          "identifier": "preamble - 2",
+          "access": "template",
+          "metadata": {
+            "name": "Info: source before your code.",
+            "emphasis": "low"
+          },
+          "parameters" : 
+          [
+            {
+              "mode" : "any",
+              "identifier" : "__sliderSingle2__", 
+              "metadata" : {
+                "guiType" : "slider",
+                "name": "Range",
+                "vertical": false
+              },
+              "default": [
+                10
+              ],
+              "min": 0,
+              "max": 500,
+              "step": 10,
+              "validation": "range"
+            }
+          ],
+          "content": "VGhlIFJhbmdlIHlvdSBzZWxlY3RlZCBpczoge3tfX3NsaWRlclNpbmdsZTJfX319"
+        }
+      ]
     }
   ], 
   "parameters": 
   [
-
+    {
+      "mode": "any",
+      "identifier": "__STEPWIDTH__",
+      "metadata": {
+          "guiType": "input_field",
+          "type": "number",
+          "name": "stepwidth"
+      },
+      "default": [
+          0.001
+      ],
+      "min": 0,
+      "max": 1,
+      "step": 0.001,
+      "validation": "range"
+  }
   ],
   "configuration": {
     "compiling.compiler": "gcc",

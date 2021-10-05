@@ -1,7 +1,7 @@
 <template>
   <div class="togglebutton-component form-item toggle">
     <div class ="item-name">{{toggl.metadata.name}}:</div>
-    <validation-provider :rules="`${onlyone ? 'toggleOneOf|required' : (minone ? 'toggleMinOne|required' : '')}`" v-slot="{ errors, valid }">
+    <validation-provider :rules="`${onlyone ? 'toggleOneOf|required' : (minone ? 'toggleMinOne|required' : '')}`" v-slot="{ errors}">
       <div v-for="(toggle, index) in toggl.options" :key="'toggle'+ ' ' +index">
         <label>
           {{ toggle.value }}
@@ -9,7 +9,7 @@
           <span class="slider"></span>
         </label>
       </div>
-      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+      <span class="error">{{ errors[0] }}</span>
     </validation-provider>
   </div>
 </template>

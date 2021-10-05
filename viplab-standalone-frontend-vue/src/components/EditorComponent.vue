@@ -4,7 +4,7 @@
       <div class="item-name">{{ editor.metadata.name }}:</div>
     </div>
     <!-- if validation is set to pattern -->
-    <validation-provider v-if="pattern" :rules="{required: true, editorRegex: editor.pattern}" v-slot="{ errors, valid }">
+    <validation-provider v-if="pattern" :rules="{required: true, editorRegex: editor.pattern}" v-slot="{ errors }">
       <div v-if="readonly == true">
         <prism-editor
           class="my-editor editor-readonly"
@@ -22,10 +22,10 @@
           line-numbers
         ></prism-editor>
       </div>
-      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+      <span class="error">{{ errors[0] }}</span>
     </validation-provider>
     <!-- if validation is set to range -->
-    <validation-provider v-else-if="editor.validation === 'range'" :rules="{required: true, editorRange: [editor.min, editor.max]}" v-slot="{ errors, valid }">
+    <validation-provider v-else-if="editor.validation === 'range'" :rules="{required: true, editorRange: [editor.min, editor.max]}" v-slot="{ errors }">
       <div v-if="readonly == true">
         <prism-editor
           class="my-editor editor-readonly"
@@ -43,7 +43,7 @@
           line-numbers
         ></prism-editor>
       </div>
-      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+      <span class="error">{{ errors[0] }}</span>
     </validation-provider>
     <!-- if validation is set to none -->
     <div v-else>

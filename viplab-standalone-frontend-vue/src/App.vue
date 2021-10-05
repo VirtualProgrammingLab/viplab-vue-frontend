@@ -18,7 +18,6 @@
 
     <div class="side-to-side-div flex-left m-2 p-2">
       <validation-observer v-slot="{ invalid }">
-        {{invalid}}
       <form @submit.prevent="sendData">
         <div class="form-group mb-5 ml-5 mr-5">
           <h2 v-if="parsedFilesJson">InputFiles</h2>
@@ -76,20 +75,11 @@
                       class="part-parameters"
                       v-if="part.parameters && part.access == 'template'"
                     >
-                      <h2>Parameters</h2>
-                      <parameters 
-                        v-if="asForm"
+                      <!--<h2>Parameters</h2>-->
+                      <parameters
                         :parameters="part.parameters">
                       </parameters>
-                      <div v-else>
-                        <prism-editor
-                          class="my-editor editor-readonly"
-                          :readonly="true"
-                          :value=showMustacheTemplate(part)
-                          :highlight="highlighter"
-                          line-numbers
-                        ></prism-editor>
-                      </div>
+                      
                     </div>
                   </div>
                   <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right" @click="switchParameterView()" v-tooltip.top-center="asForm? 'View File' : 'Modify Parameters'">
@@ -166,6 +156,36 @@
     <div class="side-to-side-div flex-right m-2 p-2">
       <div class="form-group mb-5 ml-5 mr-5">
         <h2>OutputFiles</h2>
+
+        <!-- Render Mustache Templates with the filled in Parameters -->
+        <b-card no-body v-if="numberOfInputFiles > 0 && !asForm">
+          <b-tabs card class="files" content-class="m-2" fill>
+            <b-tab
+              :title="'File ' + fileParent_index"
+              ref="file"
+              class="file"
+              v-for="(file, fileParent_index) in parsedFilesJson"
+              :key="file.identifier"
+              @click="tabClicked"
+            >
+              <div
+                class="part mb-3"
+                v-for="part in file.parts"
+                :key="part.identifier"
+              >
+                <div v-if="part.parameters && part.access == 'template'">
+                  <prism-editor
+                    class="my-editor editor-readonly"
+                    :readonly="true"
+                    :value=showMustacheTemplate(part)
+                    :highlight="highlighter"
+                    line-numbers
+                  ></prism-editor>
+                </div>
+              </div>
+            </b-tab>
+          </b-tabs>
+        </b-card>
 
         <div class="my-2">
           <v-wait for="wait for ws response">

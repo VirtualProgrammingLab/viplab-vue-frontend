@@ -1,7 +1,7 @@
 <template>
   <div class="inputfield-component">
     <!-- if validation is set to pattern -->
-    <validation-provider v-if="pattern" :rules="{required: true, inputFieldRegex: input.pattern}" v-slot="{ errors, valid }">
+    <validation-provider v-if="pattern" :rules="{required: true, inputFieldRegex: input.pattern}" v-slot="{ errors}">
       <div v-if="input.metadata.type=='text'">
           <label class="item-name mr-2" for="input.metadata.name">{{ input.metadata.name }}: </label>
           <input type="text" class="form-control" id="input.metadata.name" :name="input.metadata.name" :maxlength="input.maxlength" v-model="vModel">
@@ -10,10 +10,10 @@
           <label class="item-name mr-2" for="input.metadata.name">{{ input.metadata.name }}: </label>
           <input type="number" class="form-control" id="input.metadata.name" :name="input.metadata.name" :max="input.max" :min="input.min" :step="input.step" v-model="vModel" :state="true">
       </div>
-      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+      <span class="error">{{ errors[0] }}</span>
     </validation-provider>
     <!-- if validation is set to range -->
-    <validation-provider v-else-if="range" :rules="{required: true, inputFieldRange:[input.min, input.max]}" v-slot="{ errors, valid }">
+    <validation-provider v-else-if="range" :rules="{required: true, inputFieldRange:[input.min, input.max]}" v-slot="{ errors}">
       <div v-if="input.metadata.type=='text'">
           <label class="item-name mr-2" for="input.metadata.name">{{ input.metadata.name }}: </label>
           <input type="text" class="form-control" id="input.metadata.name" :name="input.metadata.name" :maxlength="input.maxlength" v-model="vModel">
@@ -22,7 +22,7 @@
           <label class="item-name mr-2" for="input.metadata.name">{{ input.metadata.name }}: </label>
           <input type="number" class="form-control" id="input.metadata.name" :name="input.metadata.name" :max="input.max" :min="input.min" :step="input.step" v-model="vModel" :state="true">
       </div>
-      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+      <span class="error">{{ errors[0] }}</span>
     </validation-provider>
     <!-- if validation is set to none -->
     <div v-else>

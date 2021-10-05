@@ -1,7 +1,7 @@
 <template>
   <div class="checkbox-component">
     <div class="item-name">{{ checkbox.metadata.name }}:</div>
-    <validation-provider :rules="`${onlyone ? 'checkboxOneOf|required' : (minone ? 'checkboxMinOne|required' : '')}`" v-slot="{ errors, valid }">
+    <validation-provider :rules="`${onlyone ? 'checkboxOneOf|required' : (minone ? 'checkboxMinOne|required' : '')}`" v-slot="{ errors}">
       <div
         class="checkbox form-check custom-control custom-checkbox"
         v-for="(check, index) in checkbox.options"
@@ -18,7 +18,7 @@
           check.value
         }}</label>
       </div>
-      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+      <span class="error">{{ errors[0] }}</span>
     </validation-provider>
   </div>
 </template>

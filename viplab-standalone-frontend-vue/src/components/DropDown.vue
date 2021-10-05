@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown-component">
     <div class="item-name">{{ dropitem.metadata.name }}:</div>
-    <validation-provider :rules="`${onlyone ? 'dropdownOneOf|required' : (minone ? 'dropdownMinOne|required' : '')}`" v-slot="{ errors, valid }">
+    <validation-provider :rules="`${onlyone ? 'dropdownOneOf|required' : (minone ? 'dropdownMinOne|required' : '')}`" v-slot="{ errors }">
       <div class="dropdown form-group">
         <select
           class="form-control"
@@ -39,7 +39,7 @@
           </option>
         </select>
       </div>
-      <span class="error">{{ errors[0] }}  valid: {{valid}}</span>
+      <span class="error">{{ errors[0] }}</span>
     </validation-provider>
   </div>
 </template>
