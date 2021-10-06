@@ -1,38 +1,180 @@
 <template>
-  <div
-    id="app"
-    class="flex-container"
-    :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
-  >
-    <!--<div class="m-2">
-      <h1>Hello User</h1>
-      I found the following templates in example folder: 
-      
-      <ul>
-        <li v-for="temp in templates" :key=temp>
-          <a type="button" :href=temp>{{temp}}</a>
-        </li>
-      </ul>
-    </div>-->
-    <!--<json-v-model-test/>-->
+  <div>
+    <!-- header -->
+    <div class="header m-2">
+      <img class="logo" src="./assets/viplab.png">
+      <p class="header-right">
+        Virtuelles Programmier­labor
+      </p>
+    </div>
 
-    <div class="side-to-side-div flex-left m-2 p-2">
-      <validation-observer v-slot="{ invalid }">
-      <form @submit.prevent="sendData">
+    <!-- content -->
+    <div
+      id="app"
+      class="flex-container"
+      :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
+    >
+      <!--<div class="m-2">
+        <h1>Hello User</h1>
+        I found the following templates in example folder: 
+        
+        <ul>
+          <li v-for="temp in templates" :key=temp>
+            <a type="button" :href=temp>{{temp}}</a>
+          </li>
+        </ul>
+      </div>-->
+      <!--<json-v-model-test/>-->
+
+      <div class="side-to-side-div flex-left m-2 p-2">
+        <validation-observer v-slot="{ invalid }">
+        <form @submit.prevent="sendData">
+          <div class="form-group mb-5 ml-5 mr-5">
+            <h2 v-if="parsedFilesJson">InputFiles</h2>
+
+            <div class="item-name" v-if="json.metadata">
+              {{ json.metadata.display_name }}
+            </div>
+            <div class="item-name" v-if="json.metadata">
+              {{ json.metadata.description }}
+            </div>
+
+            <div class="cards" >
+              <!-- 
+              Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
+            -->
+              <b-card no-body v-if="numberOfInputFiles > 0">
+                <b-tabs card class="files" content-class="m-2" fill>
+                  <b-tab
+                    :title="'File ' + fileParent_index"
+                    ref="file"
+                    class="file"
+                    v-for="(file, fileParent_index) in parsedFilesJson"
+                    :key="file.identifier"
+                    @click="tabClicked"
+                  >
+                    <div
+                      class="part mb-3"
+                      v-for="part in file.parts"
+                      :key="part.identifier"
+                    >
+                      <div
+                        ref="partcontent"
+                        class="partcontent"
+                        :id="part.identifier"
+                        v-if="
+                          part.access !== 'template' && numberOfInputFiles > 0
+                        "
+                      >
+                        <div v-if="part.access == 'visible'">
+                          <editor-component
+                            :item="part"
+                            :readonly="true"
+                            :isParameter="false"
+                          ></editor-component>
+                        </div>
+                        <div v-else>
+                          <editor-component
+                            :item="part"
+                            :readonly="false"
+                            :isParameter="false"
+                          ></editor-component>
+                        </div>
+                      </div>
+                      <div
+                        class="part-parameters"
+                        v-if="part.parameters && part.access == 'template'"
+                      >
+                        <!--<h2>Parameters</h2>-->
+                        <parameters
+                          :parameters="part.parameters">
+                        </parameters>
+                        
+                      </div>
+                    </div>
+                    <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right" @click="switchParameterView()" v-tooltip.top-center="asForm? 'View File' : 'Modify Parameters'">
+                      <b-icon v-if="asForm" icon="file-earmark-code" aria-hidden="true"></b-icon>
+                      <b-icon v-else icon="file-earmark-diff" aria-hidden="true"></b-icon>
+                    </b-button>
+                  </b-tab>
+                  <b-tab v-if="parsedParametersJson" title="Parameters">
+                    <!-- render parameters section of the json -->
+                    
+                    <!--<form>-->
+                      <div class="form-group mb-5 ml-5 mr-5">
+                        <h2 v-if="parsedParametersJson">Parameters</h2>
+                        <parameters
+                          :parameters="parsedParametersJson"
+                        ></parameters>
+                      </div>
+                    <!--</form>-->
+                    
+                  </b-tab>
+                </b-tabs>
+              </b-card>
+              <div class="sticky-button">
+                <b-button class="btn" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
+                  <b-icon icon="play" aria-hidden="true"></b-icon>
+                </b-button>
+              </div>
+            </div>
+          </div>
+        </form>
+        </validation-observer>
+
+        <div class="d-flex flex-row mb-5 ml-5 mr-5">
+          <div class="mr-auto">
+            <b-button class="btn mr-2" v-tooltip.top-center="'Download backup of changes'">
+              <b-icon
+                icon="download"
+                aria-hidden="true"
+                @click="download"
+              ></b-icon>
+            </b-button>
+            <input
+              type="file"
+              ref="upload"
+              style="display: none"
+              @change="upload"
+              accept="application/JSON"
+            />
+            <b-button
+              class="btn btn-secondary file"
+              @click="$refs.upload.click()"
+              v-tooltip.top-center="'Upload of previously downloaded backup'"
+            >
+              <b-icon icon="upload" aria-hidden="true"></b-icon>
+            </b-button>
+            <!--
+            <b-button class="btn" variant="primary" id="submit" disabled>
+              <b-icon icon="play" aria-hidden="true"></b-icon>
+            </b-button>
+            -->
+          </div>
+          <div class="">
+            <b-button class="btn mr-2" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'">
+              <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
+              <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
+            </b-button>
+            <b-button class="btn" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
+              <font-awesome-icon icon="save" />
+            </b-button>
+          </div>
+        </div>
+      </div>
+
+      <div 
+        class="side-to-side-div flex-right m-2 p-2"
+        v-if="!asForm || outputFiles !== ''"
+        >
         <div class="form-group mb-5 ml-5 mr-5">
-          <h2 v-if="parsedFilesJson">InputFiles</h2>
+          <h2>OutputFiles</h2>
 
-          <div class="item-name" v-if="json.metadata">
-            {{ json.metadata.display_name }}
-          </div>
-          <div class="item-name" v-if="json.metadata">
-            {{ json.metadata.description }}
-          </div>
-
-          <div class="cards" >
-            <!-- 
-            Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
-          -->
+          <!-- Render Mustache Templates with the filled in Parameters -->
+          <div v-if="!asForm">
+            <div class ="item-name">
+              Templates: Adjust values using the form-fields
+            </div>
             <b-card no-body v-if="numberOfInputFiles > 0">
               <b-tabs card class="files" content-class="m-2" fill>
                 <b-tab
@@ -48,308 +190,185 @@
                     v-for="part in file.parts"
                     :key="part.identifier"
                   >
-                    <div
-                      ref="partcontent"
-                      class="partcontent"
-                      :id="part.identifier"
-                      v-if="
-                        part.access !== 'template' && numberOfInputFiles > 0
-                      "
-                    >
-                      <div v-if="part.access == 'visible'">
-                        <editor-component
-                          :item="part"
-                          :readonly="true"
-                          :isParameter="false"
-                        ></editor-component>
-                      </div>
-                      <div v-else>
-                        <editor-component
-                          :item="part"
-                          :readonly="false"
-                          :isParameter="false"
-                        ></editor-component>
-                      </div>
-                    </div>
-                    <div
-                      class="part-parameters"
-                      v-if="part.parameters && part.access == 'template'"
-                    >
-                      <!--<h2>Parameters</h2>-->
-                      <parameters
-                        :parameters="part.parameters">
-                      </parameters>
-                      
+                    <div v-if="part.parameters && part.access == 'template'">
+                      <prism-editor
+                        class="my-editor editor-readonly"
+                        :readonly="true"
+                        :value=showMustacheTemplate(part)
+                        :highlight="highlighter"
+                        line-numbers
+                      ></prism-editor>
                     </div>
                   </div>
-                  <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right" @click="switchParameterView()" v-tooltip.top-center="asForm? 'View File' : 'Modify Parameters'">
-                    <b-icon v-if="asForm" icon="file-earmark-code" aria-hidden="true"></b-icon>
-                    <b-icon v-else icon="file-earmark-diff" aria-hidden="true"></b-icon>
-                  </b-button>
-                </b-tab>
-                <b-tab v-if="parsedParametersJson" title="Parameters">
-                  <!-- render parameters section of the json -->
-                  
-                  <!--<form>-->
-                    <div class="form-group mb-5 ml-5 mr-5">
-                      <h2 v-if="parsedParametersJson">Parameters</h2>
-                      <parameters
-                        :parameters="parsedParametersJson"
-                      ></parameters>
-                    </div>
-                  <!--</form>-->
-                  
                 </b-tab>
               </b-tabs>
             </b-card>
-            <div class="sticky-button">
-              <b-button class="btn" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
-                <b-icon icon="play" aria-hidden="true"></b-icon>
-              </b-button>
-            </div>
           </div>
-        </div>
-      </form>
-      </validation-observer>
 
-      <div class="d-flex flex-row mb-5 ml-5 mr-5">
-        <div class="mr-auto">
-          <b-button class="btn mr-2" v-tooltip.top-center="'Download backup of changes'">
-            <b-icon
-              icon="download"
-              aria-hidden="true"
-              @click="download"
-            ></b-icon>
-          </b-button>
-          <input
-            type="file"
-            ref="upload"
-            style="display: none"
-            @change="upload"
-            accept="application/JSON"
-          />
-          <b-button
-            class="btn btn-secondary file"
-            @click="$refs.upload.click()"
-            v-tooltip.top-center="'Upload of previously downloaded backup'"
-          >
-            <b-icon icon="upload" aria-hidden="true"></b-icon>
-          </b-button>
-          <!--
-          <b-button class="btn" variant="primary" id="submit" disabled>
-            <b-icon icon="play" aria-hidden="true"></b-icon>
-          </b-button>
-          -->
-        </div>
-        <div class="">
-          <b-button class="btn mr-2" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'">
-            <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
-            <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
-          </b-button>
-          <b-button class="btn" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
-            <font-awesome-icon icon="save" />
-          </b-button>
-        </div>
-      </div>
-    </div>
-
-    <div class="side-to-side-div flex-right m-2 p-2">
-      <div class="form-group mb-5 ml-5 mr-5">
-        <h2>OutputFiles</h2>
-
-        <!-- Render Mustache Templates with the filled in Parameters -->
-        <b-card no-body v-if="numberOfInputFiles > 0 && !asForm">
-          <b-tabs card class="files" content-class="m-2" fill>
-            <b-tab
-              :title="'File ' + fileParent_index"
-              ref="file"
-              class="file"
-              v-for="(file, fileParent_index) in parsedFilesJson"
-              :key="file.identifier"
-              @click="tabClicked"
-            >
-              <div
-                class="part mb-3"
-                v-for="part in file.parts"
-                :key="part.identifier"
-              >
-                <div v-if="part.parameters && part.access == 'template'">
-                  <prism-editor
-                    class="my-editor editor-readonly"
-                    :readonly="true"
-                    :value=showMustacheTemplate(part)
-                    :highlight="highlighter"
-                    line-numbers
-                  ></prism-editor>
-                </div>
+          <div class="my-2">
+            <v-wait for="wait for ws response">
+              <circles-to-rhombuses-spinner
+                slot="waiting"
+                :animation-duration="1200"
+                :circles-num="3"
+                :circle-size="15"
+                color="#5bc0de"
+              />
+              <div id="stdout" v-if="outputFiles !== ''">
+                <h3>Stdout</h3>
+                <prism-editor
+                  class="my-editor output-editor"
+                  :readonly="true"
+                  v-model="outputFiles"
+                  :highlight="highlighter"
+                  line-numbers
+                ></prism-editor>
               </div>
-            </b-tab>
-          </b-tabs>
-        </b-card>
-
-        <div class="my-2">
-          <v-wait for="wait for ws response">
-            <circles-to-rhombuses-spinner
-              slot="waiting"
-              :animation-duration="1200"
-              :circles-num="3"
-              :circle-size="15"
-              color="#5bc0de"
-            />
-            <div id="stdout" v-if="outputFiles !== ''">
-              <h3>Stdout</h3>
-              <prism-editor
-                class="my-editor output-editor"
-                :readonly="true"
-                v-model="outputFiles"
-                :highlight="highlighter"
-                line-numbers
-              ></prism-editor>
-            </div>
-            <div id="stderr" class="mt-2" v-if="outputFiles !== ''">
-              <h3>Stderr</h3>
-              <prism-editor
-                class="my-editor output-editor"
-                :readonly="true"
-                v-model="errorFiles"
-                :highlight="highlighter"
-                line-numbers
-              ></prism-editor>
-            </div>
-            <div id="fileList" class="mt-2" v-if="outputFiles !== ''">
-              <h3>Files to Download</h3>
-              <div class="fileViewer">
-                <b-card
-                  no-body
-                  v-if="returnedOutputJson.artifacts.length > 0"
-                  fill
-                >
-                  <b-tabs card class="files" content-class="m-2" lazy>
-                    <b-tab
-                      :title="'OutputFile ' + artifactParent_index"
-                      ref="artifact"
-                      class="artifact"
-                      v-for="(
-                        artifact, artifactParent_index
-                      ) in returnedOutputJson.artifacts"
-                      :key="artifact.identifier"
-                    >
-                      <div v-if="artifact.type !== 's3file'">
-                        <div
-                          v-if="artifact.MIMEtype !== 'image/png'"
-                          ref="outPartcontent"
-                          class="outPartcontent"
-                        >
-                          <prism-editor
-                            class="
-                              my-editor
-                              editor-readonly
-                              top-editor
-                              bottom-editor
-                            "
-                            :readonly="true"
-                            :value="decodeBase64(artifact.content)"
-                            :highlight="highlighter"
-                            line-numbers
-                          ></prism-editor>
-                        </div>
-                        <div
-                          v-if="artifact.MIMEtype === 'image/png'"
-                          ref="outPartcontent"
-                          class="outPartcontent"
-                        >
-                          <img :src="imagesrc(artifact.content)" />
-                        </div>
-                      </div>
-                      <!-- Render s3 files that have no content-element-->
-                      <div v-else>
-                        <div v-if="artifact.MIMEtype == 'application/vtu'">
-                            <vtk-component
-                                v-if="artifact.MIMEtype == 'application/vtu'"
-                                :propFiles=artifact.urls
-                            ></vtk-component>
-                        </div>
-                        <div
-                          v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype == 'text/plain'"
-                          ref="outPartcontent"
-                          class="outPartcontent"
-                        >
-                          <Promised :promise="getContentFromS3(artifact.url, false)">
-                            <!-- Use the "pending" slot to display a loading message -->
-                            <template v-slot:pending>
-                              <p>Loading...</p>
-                            </template>
-                            <!-- The default scoped slot will be used as the result -->
-                            <template v-slot="data">
-                              <div>
-                              <prism-editor
-                                v-if="artifact.MIMEtype == 'text/plain'"
-                                class="
-                                  my-editor
-                                  editor-readonly
-                                  top-editor
-                                  bottom-editor
-                                "
-                                :readonly="true"
-                                :value="data"
-                                :highlight="highlighter"
-                                line-numbers
-                                :ref="artifact.path"
-                              ></prism-editor>
-                              </div>
-                            </template>
-                            <template v-slot:rejected="error">
-                              <p>Error: {{ error.message }}</p>
-                            </template>
-                          </Promised>
-                        </div>
-                        <div v-else-if="artifact.MIMEtype == 'text/csv'">
-                          <csv-plot 
-                            :urlsProp=artifact.urls>
-                          </csv-plot>
-                        </div>
-                        <div v-else>
-                          <Promised :promise="getContentFromS3(artifact.url, true)">
-                            <!-- Use the "pending" slot to display a loading message -->
-                            <template v-slot:pending>
-                              <p>Loading...</p>
-                            </template>
-                            <!-- The default scoped slot will be used as the result -->
-                            <template v-slot="data">
-                              <img 
-                                :src="data" 
-                                :ref="artifact.path"/>
-                            </template>
-                            <template v-slot:rejected="error">
-                              <p>Error: {{ error.message }}</p>
-                            </template>
-                          </Promised>
-                        </div>
-                      </div>  
-                    </b-tab>
-                  </b-tabs>
-                </b-card>
+              <div id="stderr" class="mt-2" v-if="outputFiles !== ''">
+                <h3>Stderr</h3>
+                <prism-editor
+                  class="my-editor output-editor"
+                  :readonly="true"
+                  v-model="errorFiles"
+                  :highlight="highlighter"
+                  line-numbers
+                ></prism-editor>
               </div>
-              <ul>
-                <li
-                  v-for="artifact in returnedArtifactsWOvtkCsv"
-                  :key="artifact.identifier"
-                >
-                  <a
-                    href="#"
-                    @click="
-                      save(
-                        artifact.path,
-                        artifact.identifier,
-                        artifact.MIMEtype
-                      )
-                    "
-                    >{{ artifact.path }}</a
+              <div id="fileList" class="mt-2" v-if="outputFiles !== ''">
+                <h3>Files to Download</h3>
+                <div class="fileViewer">
+                  <b-card
+                    no-body
+                    v-if="returnedOutputJson.artifacts.length > 0"
+                    fill
                   >
-                </li>
-              </ul>
-            </div>
-          </v-wait>
+                    <b-tabs card class="files" content-class="m-2" lazy>
+                      <b-tab
+                        :title="'OutputFile ' + artifactParent_index"
+                        ref="artifact"
+                        class="artifact"
+                        v-for="(
+                          artifact, artifactParent_index
+                        ) in returnedOutputJson.artifacts"
+                        :key="artifact.identifier"
+                      >
+                        <div v-if="artifact.type !== 's3file'">
+                          <div
+                            v-if="artifact.MIMEtype !== 'image/png'"
+                            ref="outPartcontent"
+                            class="outPartcontent"
+                          >
+                            <prism-editor
+                              class="
+                                my-editor
+                                editor-readonly
+                                top-editor
+                                bottom-editor
+                              "
+                              :readonly="true"
+                              :value="decodeBase64(artifact.content)"
+                              :highlight="highlighter"
+                              line-numbers
+                            ></prism-editor>
+                          </div>
+                          <div
+                            v-if="artifact.MIMEtype === 'image/png'"
+                            ref="outPartcontent"
+                            class="outPartcontent"
+                          >
+                            <img :src="imagesrc(artifact.content)" />
+                          </div>
+                        </div>
+                        <!-- Render s3 files that have no content-element-->
+                        <div v-else>
+                          <div v-if="artifact.MIMEtype == 'application/vtu'">
+                              <vtk-component
+                                  v-if="artifact.MIMEtype == 'application/vtu'"
+                                  :propFiles=artifact.urls
+                              ></vtk-component>
+                          </div>
+                          <div
+                            v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype == 'text/plain'"
+                            ref="outPartcontent"
+                            class="outPartcontent"
+                          >
+                            <Promised :promise="getContentFromS3(artifact.url, false)">
+                              <!-- Use the "pending" slot to display a loading message -->
+                              <template v-slot:pending>
+                                <p>Loading...</p>
+                              </template>
+                              <!-- The default scoped slot will be used as the result -->
+                              <template v-slot="data">
+                                <div>
+                                <prism-editor
+                                  v-if="artifact.MIMEtype == 'text/plain'"
+                                  class="
+                                    my-editor
+                                    editor-readonly
+                                    top-editor
+                                    bottom-editor
+                                  "
+                                  :readonly="true"
+                                  :value="data"
+                                  :highlight="highlighter"
+                                  line-numbers
+                                  :ref="artifact.path"
+                                ></prism-editor>
+                                </div>
+                              </template>
+                              <template v-slot:rejected="error">
+                                <p>Error: {{ error.message }}</p>
+                              </template>
+                            </Promised>
+                          </div>
+                          <div v-else-if="artifact.MIMEtype == 'text/csv'">
+                            <csv-plot 
+                              :urlsProp=artifact.urls>
+                            </csv-plot>
+                          </div>
+                          <div v-else>
+                            <Promised :promise="getContentFromS3(artifact.url, true)">
+                              <!-- Use the "pending" slot to display a loading message -->
+                              <template v-slot:pending>
+                                <p>Loading...</p>
+                              </template>
+                              <!-- The default scoped slot will be used as the result -->
+                              <template v-slot="data">
+                                <img 
+                                  :src="data" 
+                                  :ref="artifact.path"/>
+                              </template>
+                              <template v-slot:rejected="error">
+                                <p>Error: {{ error.message }}</p>
+                              </template>
+                            </Promised>
+                          </div>
+                        </div>  
+                      </b-tab>
+                    </b-tabs>
+                  </b-card>
+                </div>
+                <ul>
+                  <li
+                    v-for="artifact in returnedArtifactsWOvtkCsv"
+                    :key="artifact.identifier"
+                  >
+                    <a
+                      href="#"
+                      @click="
+                        save(
+                          artifact.path,
+                          artifact.identifier,
+                          artifact.MIMEtype
+                        )
+                      "
+                      >{{ artifact.path }}</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </v-wait>
+          </div>
         </div>
       </div>
     </div>
@@ -1071,6 +1090,28 @@ export default {
 body {
   /* Needed for the position sticky to work */
   overflow: unset;
+}
+
+.header {
+  overflow: hidden;
+  position: relative;
+}
+
+/* Style the header links */
+.header img {
+  float: left;
+  border-radius: 25px;
+}
+
+.header-right {
+  text-align: center;
+  font-size: 5vw;
+  width: 50%;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 
 .sticky-button {
