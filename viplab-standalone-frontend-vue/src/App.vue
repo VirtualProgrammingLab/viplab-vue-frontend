@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="injected">
     <!-- header -->
     <div class="header m-2">
       <img class="logo" src="./assets/viplab.png">
@@ -1086,313 +1086,318 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 body {
   /* Needed for the position sticky to work */
-  overflow: unset;
+  overflow: unset !important;
 }
 
-.header {
-  overflow: hidden;
-  position: relative;
-}
+#injected {
 
-/* Style the header links */
-.header img {
-  float: left;
-  border-radius: 25px;
-}
+  .header {
+    overflow: hidden;
+    position: relative;
+  }
 
-.header-right {
-  text-align: center;
-  font-size: 5vw;
-  width: 50%;
-  position: absolute;
-  top: 50%;
-  right: 0;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
+  /* Style the header links */
+  .header img {
+    float: left;
+    border-radius: 25px;
+  }
 
-.sticky-button {
-  position: -webkit-sticky;
-  position: sticky;
-  bottom: 50px;
-  left: 74px;
-  text-align: right;
-}
+  .header-right {
+    text-align: center;
+    font-size: 5vw;
+    width: 50%;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
 
-#submit {
-  float: right;
-  margin-top: 5px;
-}
+  .sticky-button {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 50px;
+    left: 74px;
+    text-align: right;
+  }
 
-.outer-div {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  padding: 10px;
-  /*margin: 0 10px;
-  border-radius: 25px;
-  max-width: 1170px;
-  margin: 0 auto;
-  background-color: #fff;*/
-}
+  #submit {
+    float: right;
+    margin-top: 5px;
+  }
 
-.flex-container {
-  display: flex;
-  /*flex-direction: row;*/
-  justify-content: center;
-}
+  .outer-div {
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+    padding: 10px;
+    /*margin: 0 10px;
+    border-radius: 25px;
+    max-width: 1170px;
+    margin: 0 auto;
+    background-color: #fff;*/
+  }
 
-.flex-left,
-.flex-right {
-  flex: 50%;
-  background-color: #fff;
-  border-radius: 25px;
-}
+  .flex-container {
+    display: flex;
+    /*flex-direction: row;*/
+    justify-content: center;
+  }
 
-.side-to-side-div {
-  /* make columns equal size when using minimize/maximize */
-  flex: 1 1 0px;
-  min-width: 0;
-}
+  .flex-left,
+  .flex-right {
+    flex: 50%;
+    background-color: #fff;
+    border-radius: 25px;
+  }
 
-img {
-  max-height: 100%;
-  max-width: 100%;
+  .side-to-side-div {
+    /* make columns equal size when using minimize/maximize */
+    flex: 1 1 0px;
+    min-width: 0;
+  }
+
+  img {
+    max-height: 100%;
+    max-width: 100%;
+  }
+
+  .form-item {
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .item-name {
+    font-weight: bold;
+    font-size: 14pt;
+  }
+
+  .toggle label {
+    position: relative;
+    display: inline-block;
+    width: 10em;
+    height: 3.5em;
+  }
+
+  .toggle input {
+    display: none;
+  }
+
+  .toggle .slider {
+    /* Grundfl�che */
+    position: absolute;
+    cursor: pointer;
+    top: 1.5em;
+    left: 2em;
+    width: 3.5em;
+    height: 1.5em;
+    background-color: #c32e04;
+    border-radius: 1em;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .toggle .slider::before {
+    /* verschiebbarer Button */
+    position: absolute;
+    content: "";
+    height: 1.1em;
+    width: 1.1em;
+    left: 0.2em;
+    bottom: 0.2em;
+    background-color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .toggle input:checked + .slider {
+    background-color: #5a9900;
+  }
+
+  .toggle input:checked + .slider::before {
+    transform: translateX(1.9em);
+  }
+
+  /* for class surrounding editors to surround them with border, but if files empty, displays line
+  .file {
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    overflow: hidden;
+  }
+  */
+
+  /* required class */
+  .my-editor {
+    /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
+    background: white;
+    color: #ccc;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+
+    /* you must provide font-family font-size line-height. Example: */
+    font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 5px;
+  }
+
+  /* optional class for removing the outline */
+  .prism-editor__textarea:focus {
+    outline: none;
+  }
+
+  .top-editor {
+    border-top-right-radius: 25px;
+    border-top-left-radius: 25px;
+    border-top: 1px solid #ddd;
+  }
+
+  .bottom-editor {
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .output-editor {
+    border-radius: 25px;
+    border: 1px solid #ddd;
+  }
+
+  .editor-readonly {
+    background: #ddd;
+    /*border-left: 1px solid #888;
+    border-right: 1px solid #888;
+    opacity: 0.3;*/
+  }
+
+  .card-header:nth-child(1) {
+    background-color: white;
+    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0 !important;
+  }
+
+  .nav-link {
+    background-color: #ddd;
+    margin-left: 2px;
+    text-decoration: none !important;
+    /*negative margin, so that there is no line under the currently selected tab*/
+    margin-bottom: -0.05rem !important;
+  }
+
+  .btn {
+    border-radius: 25px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .tooltip {
+    display: block !important;
+    z-index: 10000;
+  }
+
+  .tooltip .tooltip-inner {
+    background: black;
+    color: white;
+    border-radius: 16px;
+    padding: 5px 10px 4px;
+  }
+
+  .tooltip .tooltip-arrow {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: absolute;
+    margin: 5px;
+    border-color: black;
+  }
+
+  .tooltip[x-placement^="top"] {
+    margin-bottom: 5px;
+  }
+
+  .tooltip[x-placement^="top"] .tooltip-arrow {
+    border-width: 5px 5px 0 5px;
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+    border-bottom-color: transparent !important;
+    bottom: -5px;
+    left: calc(50% - 5px);
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .tooltip[x-placement^="bottom"] {
+    margin-top: 5px;
+  }
+
+  .tooltip[x-placement^="bottom"] .tooltip-arrow {
+    border-width: 0 5px 5px 5px;
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+    border-top-color: transparent !important;
+    top: -5px;
+    left: calc(50% - 5px);
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .tooltip[x-placement^="right"] {
+    margin-left: 5px;
+  }
+
+  .tooltip[x-placement^="right"] .tooltip-arrow {
+    border-width: 5px 5px 5px 0;
+    border-left-color: transparent !important;
+    border-top-color: transparent !important;
+    border-bottom-color: transparent !important;
+    left: -5px;
+    top: calc(50% - 5px);
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .tooltip[x-placement^="left"] {
+    margin-right: 5px;
+  }
+
+  .tooltip[x-placement^="left"] .tooltip-arrow {
+    border-width: 5px 0 5px 5px;
+    border-top-color: transparent !important;
+    border-right-color: transparent !important;
+    border-bottom-color: transparent !important;
+    right: -5px;
+    top: calc(50% - 5px);
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .tooltip[aria-hidden='true'] {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .15s, visibility .15s;
+  }
+
+  .tooltip[aria-hidden='false'] {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity .15s;
+  } 
 }
 
 /* Responsive layout - makes a one column-layout instead of two-column layout */
 @media (max-width: 1170px) {
-  .flex-container {
-    flex-direction: column;
+  #injected {
+    .flex-container {
+      flex-direction: column;
+    }
+    #maximize-button {
+      /* hide Maximizing-button if the screen is too small to shwo two columns */
+      display:none;
+    }
   }
-  #maximize-button {
-    /* hide Maximizing-button if the screen is too small to shwo two columns */
-    display:none;
-  }
-}
-
-.form-item {
-  border: 1px solid #ddd;
-  border-radius: 25px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.item-name {
-  font-weight: bold;
-  font-size: 14pt;
-}
-
-.toggle label {
-  position: relative;
-  display: inline-block;
-  width: 10em;
-  height: 3.5em;
-}
-
-.toggle input {
-  display: none;
-}
-
-.toggle .slider {
-  /* Grundfl�che */
-  position: absolute;
-  cursor: pointer;
-  top: 1.5em;
-  left: 2em;
-  width: 3.5em;
-  height: 1.5em;
-  background-color: #c32e04;
-  border-radius: 1em;
-  transition: all 0.3s ease-in-out;
-}
-
-.toggle .slider::before {
-  /* verschiebbarer Button */
-  position: absolute;
-  content: "";
-  height: 1.1em;
-  width: 1.1em;
-  left: 0.2em;
-  bottom: 0.2em;
-  background-color: white;
-  border-radius: 50%;
-  transition: all 0.3s ease-in-out;
-}
-
-.toggle input:checked + .slider {
-  background-color: #5a9900;
-}
-
-.toggle input:checked + .slider::before {
-  transform: translateX(1.9em);
-}
-
-/* for class surrounding editors to surround them with border, but if files empty, displays line
-.file {
-  border: 1px solid #ddd;
-  border-radius: 25px;
-  overflow: hidden;
-}
-*/
-
-/* required class */
-.my-editor {
-  /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
-  background: white;
-  color: #ccc;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-
-  /* you must provide font-family font-size line-height. Example: */
-  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-  font-size: 14px;
-  line-height: 1.5;
-  padding: 5px;
-}
-
-/* optional class for removing the outline */
-.prism-editor__textarea:focus {
-  outline: none;
-}
-
-.top-editor {
-  border-top-right-radius: 25px;
-  border-top-left-radius: 25px;
-  border-top: 1px solid #ddd;
-}
-
-.bottom-editor {
-  border-bottom-right-radius: 25px;
-  border-bottom-left-radius: 25px;
-  border-bottom: 1px solid #ddd;
-}
-
-.output-editor {
-  border-radius: 25px;
-  border: 1px solid #ddd;
-}
-
-.editor-readonly {
-  background: #ddd;
-  /*border-left: 1px solid #888;
-  border-right: 1px solid #888;
-  opacity: 0.3;*/
-}
-
-.card-header:nth-child(1) {
-  background-color: white;
-  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0 !important;
-}
-
-.nav-link {
-  background-color: #ddd;
-  margin-left: 2px;
-  text-decoration: none !important;
-  /*negative margin, so that there is no line under the currently selected tab*/
-  margin-bottom: -0.05rem !important;
-}
-
-.btn {
-  border-radius: 25px !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
-}
-
-.tooltip {
-  display: block !important;
-  z-index: 10000;
-}
-
-.tooltip .tooltip-inner {
-  background: black;
-  color: white;
-  border-radius: 16px;
-  padding: 5px 10px 4px;
-}
-
-.tooltip .tooltip-arrow {
-  width: 0;
-  height: 0;
-  border-style: solid;
-  position: absolute;
-  margin: 5px;
-  border-color: black;
-}
-
-.tooltip[x-placement^="top"] {
-  margin-bottom: 5px;
-}
-
-.tooltip[x-placement^="top"] .tooltip-arrow {
-  border-width: 5px 5px 0 5px;
-  border-left-color: transparent !important;
-  border-right-color: transparent !important;
-  border-bottom-color: transparent !important;
-  bottom: -5px;
-  left: calc(50% - 5px);
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.tooltip[x-placement^="bottom"] {
-  margin-top: 5px;
-}
-
-.tooltip[x-placement^="bottom"] .tooltip-arrow {
-  border-width: 0 5px 5px 5px;
-  border-left-color: transparent !important;
-  border-right-color: transparent !important;
-  border-top-color: transparent !important;
-  top: -5px;
-  left: calc(50% - 5px);
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.tooltip[x-placement^="right"] {
-  margin-left: 5px;
-}
-
-.tooltip[x-placement^="right"] .tooltip-arrow {
-  border-width: 5px 5px 5px 0;
-  border-left-color: transparent !important;
-  border-top-color: transparent !important;
-  border-bottom-color: transparent !important;
-  left: -5px;
-  top: calc(50% - 5px);
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.tooltip[x-placement^="left"] {
-  margin-right: 5px;
-}
-
-.tooltip[x-placement^="left"] .tooltip-arrow {
-  border-width: 5px 0 5px 5px;
-  border-top-color: transparent !important;
-  border-right-color: transparent !important;
-  border-bottom-color: transparent !important;
-  right: -5px;
-  top: calc(50% - 5px);
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.tooltip[aria-hidden='true'] {
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity .15s, visibility .15s;
-}
-
-.tooltip[aria-hidden='false'] {
-  visibility: visible;
-  opacity: 1;
-  transition: opacity .15s;
 }
 </style>
