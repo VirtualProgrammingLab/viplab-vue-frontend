@@ -5,7 +5,9 @@
     { "identifier": "22701b37-0a8f-405c-a89b-c31be7cd4b89",
       "path": "params.input",
       "metadata" :
-        { "syntaxHighlighting": "ini"
+        { 
+          "name" : "C Code",
+          "syntaxHighlighting": "ini"
         },
       "parts": [
         {

@@ -38,7 +38,7 @@ module.exports = {
                             options
                         },
                         'digest': digest,
-                        'test': dataTemplate,
+                        'dataTemplate': dataTemplate,
                         'token': token,
                         'templates': inputTemplates
                     };
@@ -50,7 +50,7 @@ module.exports = {
                     patterns: [
                         {
                             from: path.join(__dirname, 'node_modules', 'itk', 'WebWorkers'),
-                            to: path.join(__dirname, 'dist', 'itk', 'WebWorkers'),
+                            to: path.join(__dirname, 'dist', 'js', 'itk', 'WebWorkers'),
                         },
                         /*{
                             from: path.join(__dirname, 'node_modules', 'itk', 'ImageIOs'),
@@ -58,7 +58,7 @@ module.exports = {
                         },*/
                         {
                             from: path.join(__dirname, 'node_modules', 'itk', 'PolyDataIOs'),
-                            to: path.join(__dirname, 'dist', 'itk', 'PolyDataIOs'),
+                            to: path.join(__dirname, 'dist', 'js', 'itk', 'PolyDataIOs'),
                         },
                         /*{
                             from: path.join(__dirname, 'node_modules', 'itk', 'MeshIOs'),

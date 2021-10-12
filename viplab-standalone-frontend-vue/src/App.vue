@@ -46,11 +46,11 @@
               <b-card no-body v-if="numberOfInputFiles > 0">
                 <b-tabs card class="files" content-class="m-2" fill>
                   <b-tab
-                    :title="'File ' + fileParent_index"
                     ref="file"
                     class="file"
-                    v-for="(file, fileParent_index) in parsedFilesJson"
+                    v-for="file in parsedFilesJson"
                     :key="file.identifier"
+                    :title="file.metadata.name"
                     @click="tabClicked"
                   >
                     <div
@@ -384,7 +384,7 @@ import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhe
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
+import "prismjs/themes/prism.css"; // import syntax highlighting styles
 
 //own components
 import Parameters from "./components/Parameters.vue";
@@ -1253,6 +1253,11 @@ img {
   font-size: 14px;
   line-height: 1.5;
   padding: 5px;
+}
+
+/* optional class for removing the outline */
+.prism-editor__textarea:focus {
+  outline: none;
 }
 
 .top-editor {

@@ -20,28 +20,17 @@
   }
 </style>
 
-<body data-template='<%= test %>' data-token='<%= token %>'>
+<body data-template='<%= dataTemplate %>' data-token='<%= token %>'>
   <noscript>
     <strong>We're sorry but vue-hello-world doesn't work properly without JavaScript enabled. Please enable it to
       continue.</strong>
   </noscript>
   <div class="outer-div">
     <div class="m-2">
-      <!--
-      I found the following templates in example folder:
-      <div>
-        <ul id="templates">
-          <% templates.forEach( temp => { %>
-            <a href=<%= temp %>>
-              <li><%= temp %></li>
-            </a>
-          <% }) %>
-        </ul>
-      </div> -->
     </div>
+    <!-- built files will be auto injected in the div with id="app" -->
     <div id="app">
     </div>
-    <!-- built files will be auto injected -->
   </div>
 </body>
 
