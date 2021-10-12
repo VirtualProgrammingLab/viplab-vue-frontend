@@ -437,6 +437,7 @@ export default {
   flex-grow: 1;
   padding: 0;
   overflow: hidden;
+  border-radius: calc(0.25rem - 1px);
 }
 
 .file-controller {
@@ -485,6 +486,10 @@ div.btn-group {
   text-align: center;
   width: 100%;
   display: inline-block;
+}
+
+div.btn-group > .btn {
+  margin: 0 0 1px 1px;
 }
 
 .geometry-control-group .form-group {

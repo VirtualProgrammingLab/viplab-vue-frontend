@@ -1,5 +1,5 @@
 <template>
-  <div class="2dplot-component border">
+  <div class="a2dplot-component border">
     <div class="plot-div" >
       <Plotly ref="plot" :data="data" :layout="layout" :display-mode-bar="true" :to-image-button-options="imageConfig"></Plotly>
     </div>
@@ -26,11 +26,6 @@
             <font-awesome-icon icon="fast-forward" />
           </b-button>
         </b-button-group>
-        <!--<div class="fixed-row-70 display-flex-center">
-          <b-button btn-variant="white" @click="download()">
-            <font-awesome-icon icon="download" />
-          </b-button>
-        </div>-->
       </div>
     </div>
   </div>
@@ -40,7 +35,6 @@
 import * as LinePlotParser from "./LinePlotParser.js";
 
 import { Plotly } from "vue-plotly";
-//import plotlyjs from "plotly.js";
 
 export default {
   name: "Plot2d",
@@ -63,11 +57,6 @@ export default {
         format: 'svg',
         filename: 'graph'
       }
-      // dropdownVModel: "2DGitterplot",
-      // xArray: [],
-      // yArray: [],
-      // minColor: "",
-      // maxColor: "",
     };
   },
   watch: {
@@ -173,20 +162,16 @@ export default {
         clearInterval(this.interval);
       }
     },
-    /*download: function () {
-      let plot = this.$refs.plot;
-      return plotlyjs.downloadImage(plot,
-          {
-            format: 'png', width: 800, height: 600
-          }
-        )
-    },*/
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.a2dplot-component {
+  border-radius: calc(0.25rem - 1px);
+}
 
 .file-controller {
   bottom: 0;
@@ -211,6 +196,10 @@ div.btn-group {
   text-align: center;
   width: 100%;
   display: inline-block;
+}
+
+div.btn-group > .btn {
+  margin: 0 0 1px 1px;
 }
 
 </style>

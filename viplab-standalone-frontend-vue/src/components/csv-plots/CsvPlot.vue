@@ -1,5 +1,5 @@
 <template>
-  <div class="2dplot-component border">
+  <div class="csvplot-component border">
     <div class="plot-div">
       <Plotly
         ref="plot"
@@ -161,11 +161,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.csvplot-component {
+  border-radius: calc(0.25rem - 1px);
+}
+
 .file-controller {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
   min-height: 66px;
   padding: 12px;
   background: rgba(0, 0, 0, 0.15);
@@ -185,5 +185,9 @@ div.btn-group {
   text-align: center;
   width: 100%;
   display: inline-block;
+}
+
+div.btn-group > .btn {
+  margin: 0 0 1px 1px;
 }
 </style>

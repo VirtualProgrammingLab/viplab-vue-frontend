@@ -50,7 +50,7 @@ module.exports = {
                     patterns: [
                         {
                             from: path.join(__dirname, 'node_modules', 'itk', 'WebWorkers'),
-                            to: path.join(__dirname, 'dist', 'js', 'itk', 'WebWorkers'),
+                            to: path.join(__dirname, 'dist', 'itk', 'WebWorkers'),
                         },
                         /*{
                             from: path.join(__dirname, 'node_modules', 'itk', 'ImageIOs'),
@@ -58,7 +58,7 @@ module.exports = {
                         },*/
                         {
                             from: path.join(__dirname, 'node_modules', 'itk', 'PolyDataIOs'),
-                            to: path.join(__dirname, 'dist', 'js', 'itk', 'PolyDataIOs'),
+                            to: path.join(__dirname, 'dist', 'itk', 'PolyDataIOs'),
                         },
                         /*{
                             from: path.join(__dirname, 'node_modules', 'itk', 'MeshIOs'),

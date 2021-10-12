@@ -3,9 +3,14 @@
     <!-- header -->
     <div class="header m-2">
       <img class="logo" src="./assets/viplab.png">
-      <p class="header-right">
-        Virtuelles Programmier­labor
-      </p>
+      <div class="header-right">
+        <div class="item-name" v-if="json.metadata">
+          {{ json.metadata.display_name }}
+        </div>
+        <div class="item-name" v-if="json.metadata">
+          {{ json.metadata.description }}
+        </div>
+      </div>
     </div>
 
     <!-- content -->
@@ -14,30 +19,13 @@
       class="flex-container"
       :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
     >
-      <!--<div class="m-2">
-        <h1>Hello User</h1>
-        I found the following templates in example folder: 
-        
-        <ul>
-          <li v-for="temp in templates" :key=temp>
-            <a type="button" :href=temp>{{temp}}</a>
-          </li>
-        </ul>
-      </div>-->
-      <!--<json-v-model-test/>-->
 
       <div class="side-to-side-div flex-left m-2 p-2">
+
         <validation-observer v-slot="{ invalid }">
         <form @submit.prevent="sendData">
           <div class="form-group mb-5 ml-5 mr-5">
             <h2 v-if="parsedFilesJson">InputFiles</h2>
-
-            <div class="item-name" v-if="json.metadata">
-              {{ json.metadata.display_name }}
-            </div>
-            <div class="item-name" v-if="json.metadata">
-              {{ json.metadata.description }}
-            </div>
 
             <div class="cards" >
               <!-- 
@@ -151,8 +139,8 @@
             </b-button>
             -->
           </div>
-          <div class="">
-            <b-button class="btn mr-2" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'">
+          <div class="buttons">
+            <b-button class="btn mr-2" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'" v-if="!asForm || outputFiles !== ''">
               <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
               <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
             </b-button>
@@ -172,19 +160,19 @@
 
           <!-- Render Mustache Templates with the filled in Parameters -->
           <div v-if="!asForm">
-            <div class ="item-name">
-              Templates: Adjust values using the form-fields
-            </div>
             <b-card no-body v-if="numberOfInputFiles > 0">
               <b-tabs card class="files" content-class="m-2" fill>
                 <b-tab
-                  :title="'File ' + fileParent_index"
+                  :title="file.metadata.name"
                   ref="file"
                   class="file"
-                  v-for="(file, fileParent_index) in parsedFilesJson"
+                  v-for="file in parsedFilesJson"
                   :key="file.identifier"
                   @click="tabClicked"
                 >
+                  <div class="item-name mb-2">
+                    Adjust values using the form-fields
+                  </div>
                   <div
                     class="part mb-3"
                     v-for="part in file.parts"
@@ -418,7 +406,7 @@ export default {
     //Plot2d,
     CsvPlot,
     Promised,
-    ValidationObserver
+    ValidationObserver,
   },
   data() {
     return {
@@ -1102,7 +1090,7 @@ body {
   /* Style the header links */
   .header img {
     float: left;
-    border-radius: 25px;
+    border-radius: calc(0.25rem - 1px);
   }
 
   .header-right {
@@ -1152,7 +1140,7 @@ body {
   .flex-right {
     flex: 50%;
     background-color: #fff;
-    border-radius: 25px;
+    border-radius: calc(0.25rem - 1px);
   }
 
   .side-to-side-div {
@@ -1168,7 +1156,7 @@ body {
 
   .form-item {
     border: 1px solid #ddd;
-    border-radius: 25px;
+    border-radius: calc(0.25rem - 1px);
     padding: 10px;
     margin-bottom: 10px;
   }
@@ -1190,7 +1178,7 @@ body {
   }
 
   .toggle .slider {
-    /* Grundfl�che */
+    /* Grundfläche */
     position: absolute;
     cursor: pointer;
     top: 1.5em;
@@ -1252,19 +1240,19 @@ body {
   }
 
   .top-editor {
-    border-top-right-radius: 25px;
-    border-top-left-radius: 25px;
+    border-top-right-radius: calc(0.25rem - 1px);
+    border-top-left-radius: calc(0.25rem - 1px);
     border-top: 1px solid #ddd;
   }
 
   .bottom-editor {
-    border-bottom-right-radius: 25px;
-    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: calc(0.25rem - 1px);
+    border-bottom-left-radius: calc(0.25rem - 1px);
     border-bottom: 1px solid #ddd;
   }
 
   .output-editor {
-    border-radius: 25px;
+    border-radius: calc(0.25rem - 1px);
     border: 1px solid #ddd;
   }
 
@@ -1288,105 +1276,111 @@ body {
     margin-bottom: -0.05rem !important;
   }
 
+  .nav-link.active {
+    background-color: white;
+  }
+
   .btn {
-    border-radius: 25px !important;
+    border-radius: calc(0.25rem - 1px) !important;
     padding-left: 20px !important;
     padding-right: 20px !important;
   }
 
-  .tooltip {
-    display: block !important;
-    z-index: 10000;
-  }
-
-  .tooltip .tooltip-inner {
-    background: black;
-    color: white;
-    border-radius: 16px;
-    padding: 5px 10px 4px;
-  }
-
-  .tooltip .tooltip-arrow {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    position: absolute;
-    margin: 5px;
-    border-color: black;
-  }
-
-  .tooltip[x-placement^="top"] {
-    margin-bottom: 5px;
-  }
-
-  .tooltip[x-placement^="top"] .tooltip-arrow {
-    border-width: 5px 5px 0 5px;
-    border-left-color: transparent !important;
-    border-right-color: transparent !important;
-    border-bottom-color: transparent !important;
-    bottom: -5px;
-    left: calc(50% - 5px);
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
-  .tooltip[x-placement^="bottom"] {
-    margin-top: 5px;
-  }
-
-  .tooltip[x-placement^="bottom"] .tooltip-arrow {
-    border-width: 0 5px 5px 5px;
-    border-left-color: transparent !important;
-    border-right-color: transparent !important;
-    border-top-color: transparent !important;
-    top: -5px;
-    left: calc(50% - 5px);
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
-  .tooltip[x-placement^="right"] {
-    margin-left: 5px;
-  }
-
-  .tooltip[x-placement^="right"] .tooltip-arrow {
-    border-width: 5px 5px 5px 0;
-    border-left-color: transparent !important;
-    border-top-color: transparent !important;
-    border-bottom-color: transparent !important;
-    left: -5px;
-    top: calc(50% - 5px);
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .tooltip[x-placement^="left"] {
-    margin-right: 5px;
-  }
-
-  .tooltip[x-placement^="left"] .tooltip-arrow {
-    border-width: 5px 0 5px 5px;
-    border-top-color: transparent !important;
-    border-right-color: transparent !important;
-    border-bottom-color: transparent !important;
-    right: -5px;
-    top: calc(50% - 5px);
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .tooltip[aria-hidden='true'] {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity .15s, visibility .15s;
-  }
-
-  .tooltip[aria-hidden='false'] {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity .15s;
-  } 
+  
 }
+
+.tooltip {
+  display: block !important;
+  z-index: 10000;
+}
+
+.tooltip .tooltip-inner {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: calc(0.25rem - 1px);
+  padding: 5px 10px 4px;
+}
+
+.tooltip .tooltip-arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  position: absolute;
+  margin: 5px;
+  border-color: rgba(0, 0, 0, 0.5);
+}
+
+.tooltip[x-placement^="top"] {
+  margin-bottom: 5px;
+}
+
+.tooltip[x-placement^="top"] .tooltip-arrow {
+  border-width: 5px 5px 0 5px;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  bottom: -5px;
+  left: calc(50% - 5px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.tooltip[x-placement^="bottom"] {
+  margin-top: 5px;
+}
+
+.tooltip[x-placement^="bottom"] .tooltip-arrow {
+  border-width: 0 5px 5px 5px;
+  border-left-color: transparent !important;
+  border-right-color: transparent !important;
+  border-top-color: transparent !important;
+  top: -5px;
+  left: calc(50% - 5px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.tooltip[x-placement^="right"] {
+  margin-left: 5px;
+}
+
+.tooltip[x-placement^="right"] .tooltip-arrow {
+  border-width: 5px 5px 5px 0;
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+  border-bottom-color: transparent !important;
+  left: -5px;
+  top: calc(50% - 5px);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tooltip[x-placement^="left"] {
+  margin-right: 5px;
+}
+
+.tooltip[x-placement^="left"] .tooltip-arrow {
+  border-width: 5px 0 5px 5px;
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+  right: -5px;
+  top: calc(50% - 5px);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tooltip[aria-hidden='true'] {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .15s, visibility .15s;
+}
+
+.tooltip[aria-hidden='false'] {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity .15s;
+} 
 
 /* Responsive layout - makes a one column-layout instead of two-column layout */
 @media (max-width: 1170px) {
