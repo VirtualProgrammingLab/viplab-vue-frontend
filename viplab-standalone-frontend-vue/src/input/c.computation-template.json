@@ -1,0 +1,57 @@
+{
+  "identifier": "c77dd7ef-19bf-4a1f-9012-e74a6991e889",
+  "metadata": {
+    "display_name": "Aufgabe 1",
+    "description": "Schreiben Sie eine C-Funktion..."
+  },
+  "environment": "C",
+  "files": [
+    {
+      "identifier": "123e0118-2334-4733-85b3-ce3d1688c750",
+      "path": "code.c",
+      "metadata": {
+        "MIMEtype": "text/plain",
+        "syntaxHighlighting": "C"
+      },
+      "parts": [
+        {
+          "identifier": "cf32234e-2c46-442f-82fc-85461dd09a38",
+          "access": "visible",
+          "metadata": {
+            "name": "Info: source before your code.",
+            "emphasis": "low"
+          },
+          "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
+        },
+        {
+          "identifier": "8241814a-e950-4a21-88f8-9da951fa385a",
+          "access": "modifiable",
+          "metadata": {
+            "name": "Fill in your code!",
+            "emphasis": "medium"
+          },
+          "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
+        },
+        {
+          "identifier": "3dc5a842-2e1a-4e52-abc6-17635b32fb48",
+          "access": "visible",
+          "metadata": {
+            "name": "Info: source after your code calling bar() in it.",
+            "emphasis": "low"
+          },
+          "content": "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ"
+        }
+      ]
+    }
+  ],
+  "configuration": {
+    "compiling.compiler": "gcc",
+    "compiling.flags": "-O2 -Wall",
+    "checking.sources": [
+      "8241814a-e950-4a21-88f8-9da951fa385a"
+    ],
+    "checking.forbiddenCalls": "system execve",
+    "linking.flags": "-lm",
+    "running.commandLineArguments": "--stepwidth {{ __STEPWIDTH__ }}"
+  }
+}

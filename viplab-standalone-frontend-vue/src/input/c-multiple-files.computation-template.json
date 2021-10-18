@@ -1,0 +1,120 @@
+{
+  "identifier": "11483f23-95bf-424a-98a5-ee5868c85c3e",
+  "metadata": {
+    "display_name": "Aufgabe 1",
+    "description": "Schreiben Sie eine C-Funktion..."
+  },
+  "environment": "C",
+  "files": [
+    {
+      "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3e",
+      "path": "code.c",
+      "metadata": {
+        "name": "C-Code",
+        "MIMEtype": "text/plain",
+        "syntaxHighlighting": "C"
+      },
+      "parts": [
+        {
+          "identifier": "cc3c75d4-bcc4-4f1c-9a44-6abf2b814b15",
+          "access": "visible",
+          "metadata": {
+            "name": "Info: source before your code.",
+            "emphasis": "low"
+          },
+          "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
+        },
+        {
+          "identifier": "2d28ebb9-5c78-4bd5-9d61-a9408f549109",
+          "access": "modifiable",
+          "metadata": {
+            "name": "Fill in your code!",
+            "emphasis": "medium"
+          },
+          "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
+        },
+        {
+          "identifier": "4d8f4b77-0300-4306-bd95-a2cee84406eb",
+          "access": "visible",
+          "metadata": {
+            "name": "Info: source after your code calling bar() in it.",
+            "emphasis": "low"
+          },
+          "content": "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ"
+        }
+      ]
+    }, 
+    {
+      "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3f",
+      "path": "code.c",
+      "metadata": {
+        "name": "Even more C-Code",
+        "MIMEtype": "text/plain",
+        "syntaxHighlighting": "C"
+      },
+      "parts": [
+        {
+          "identifier": "44e2bf08-86c1-470b-96e7-b0ba83e1d3af",
+          "access": "visible",
+          "metadata": {
+            "name": "Info: source before your code.",
+            "emphasis": "low"
+          },
+          "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
+        },
+        {
+          "identifier": "834277b4-6a2d-4976-9854-9e80be7c036b",
+          "access": "modifiable",
+          "metadata": {
+            "name": "Fill in your code!",
+            "emphasis": "medium"
+          },
+          "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
+        },
+        {
+          "identifier": "f2805853-e475-4832-b370-990f59074aeb",
+          "access": "visible",
+          "metadata": {
+            "name": "Info: source after your code calling bar() in it.",
+            "emphasis": "low"
+          },
+          "content": "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ"
+        }
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "mode": "fixed",
+      "identifier": "__STEPWIDTH__",
+      "metadata": {
+        "guiType": "dropdown",
+        "name": "stepwidth"
+      },
+      "options": [
+        {
+          "value": "0.05",
+          "selected": true
+        },
+        {
+          "value": "0.5"
+        },
+        {
+          "value": "1"
+        }
+      ],
+      "validation": "onlyone"
+    }
+  ],
+  "configuration": {
+    "compiling.compiler": "gcc",
+    "compiling.flags": "-O2 -Wall",
+    "checking.sources": [
+      "2d28ebb9-5c78-4bd5-9d61-a9408f549109",
+      "834277b4-6a2d-4976-9854-9e80be7c036b"
+    ],
+    "checking.forbiddenCalls": "system execve",
+    "linking.flags": "-lm",
+    "running.commandLineArguments": "--stepwidth {{ __STEPWIDTH__ }}"
+  }
+}

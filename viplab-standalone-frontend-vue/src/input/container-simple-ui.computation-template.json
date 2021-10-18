@@ -1,0 +1,203 @@
+{
+  "identifier": "a86fb89b-0f22-4654-9f12-ee15dbb6329e",
+  "metadata": {
+    "display_name": "Simple UI Demo",
+    "description": "This template shows some input elements"
+  },
+  "environment": "Container",
+  "files": [
+    {
+      "identifier": "c21a6ffd-9747-46f7-9d99-9ae9167bbc33",
+      "path": "input-graphics.txt",
+      "metadata": {
+        "name": "Config File for graphics generation",
+        "MIMEtype": "text/plain",
+        "syntaxHighlighting": "C"
+      },
+      "parts": [
+        {
+          "identifier": "",
+          "access": "template",
+          "metadata": {
+            "name": "Info: source before your code.",
+            "emphasis": "low"
+          },
+          "parameters": [
+            {
+              "mode": "any",
+              "identifier": "__sliderSingle__",
+              "metadata": {
+                "guiType": "slider",
+                "name": "Range",
+                "vertical": false
+              },
+              "default": [
+                10
+              ],
+              "min": 0,
+              "max": 500,
+              "step": 10,
+              "validation": "range"
+            }
+          ],
+          "content": "VGhpcyBpcyBhIFRleHQ6Ont7X19zbGlkZXJTaW5nbGVfX319OjpUaGlzIGlzIGEgVGV4dA=="
+        },
+        {
+          "identifier": "51554b86-89ba-489a-820a-b0ecf9784b54",
+          "access": "template",
+          "metadata": {
+            "name": "Info: source before your code.",
+            "emphasis": "low"
+          },
+          "parameters": [
+            {
+              "mode": "any",
+              "identifier": "__Temperature__",
+              "metadata": {
+                "guiType": "slider",
+                "name": "temperature",
+                "vertical": false
+              },
+              "default": [
+                10
+              ],
+              "min": 0,
+              "max": 45,
+              "step": 0.1,
+              "validation": "range"
+            },
+            {
+              "mode": "fixed",
+              "identifier": "__Starship__",
+              "metadata": {
+                "guiType": "dropdown",
+                "name": "model"
+              },
+              "options": [
+                {
+                  "value": "Please choose one",
+                  "disabled": true
+                },
+                {
+                  "value": "Voyager",
+                  "selected": true
+                },
+                {
+                  "value": "Enterprise"
+                },
+                {
+                  "value": "Defiant"
+                },
+                {
+                  "value": "Equinox"
+                }
+              ],
+              "validation": "oneof"
+            }
+          ],
+          "content": "VGhlIFRlbXBlcmF0dXJlIHlvdSBjaG9zZSBpczoge3tfX1RlbXBlcmF0dXJlX199fQpBbmQgeW91ciBmYXZvcml0ZSBTdGFyc2hpcCBpczoge3tfX1N0YXJzaGlwX199fQ=="
+        },
+        {
+          "identifier": "e45b015c-01e2-4446-8e44-4501f1782499",
+          "access": "template",
+          "metadata": {
+            "name": "Info: source after your code calling bar() in it.",
+            "emphasis": "low"
+          },
+          "parameters": [
+            {
+              "mode": "fixed",
+              "identifier": "__checkbox__",
+              "metadata": {
+                "guiType": "checkbox",
+                "name": "options"
+              },
+              "options": [
+                {
+                  "value": "verbose",
+                  "selected": "true"
+                },
+                {
+                  "value": "debug"
+                },
+                {
+                  "value": "make_plot"
+                }
+              ],
+              "validation": "anyof"
+            }
+          ],
+          "content": "VGhpcyBpcyBhIFRleHQ6Ont7X19jaGVja2JveF9ffX06OlRoaXMgaXMgYSBUZXh0"
+        }
+      ]
+    },
+    {
+      "identifier": "c95c3c66-84cf-4ba3-a77e-cabdc616caea",
+      "path": "input-csv.txt",
+      "metadata": {
+        "name": "Config file for csv generation",
+        "MIMEtype": "text/plain",
+        "syntaxHighlighting": "C"
+      },
+      "parts": [
+        {
+          "identifier": "576e1d77-8b0c-465c-8d17-b08b3451b18c",
+          "access": "template",
+          "metadata": {
+            "name": "Info: source before your code.",
+            "emphasis": "low"
+          },
+          "parameters": [
+            {
+              "mode": "any",
+              "identifier": "__sliderSingle2__",
+              "metadata": {
+                "guiType": "slider",
+                "name": "Range",
+                "vertical": false
+              },
+              "default": [
+                10
+              ],
+              "min": 0,
+              "max": 500,
+              "step": 10,
+              "validation": "range"
+            }
+          ],
+          "content": "VGhlIFJhbmdlIHlvdSBzZWxlY3RlZCBpczoge3tfX3NsaWRlclNpbmdsZTJfX319"
+        }
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "mode": "fixed",
+      "identifier": "__STEPWIDTH__",
+      "metadata": {
+        "guiType": "dropdown",
+        "name": "stepwidth"
+      },
+      "options": [
+        {
+          "value": "0.05",
+          "selected": true
+        },
+        {
+          "value": "0.5"
+        },
+        {
+          "value": "1"
+        }
+      ],
+      "validation": "onlyone"
+    }
+  ],
+  "configuration": {
+    "resources.image": "simple-ui-democontainer",
+    "resources.volume": "/data/shared",
+    "resources.memory": "1g",
+    "resources.numCPUs": 1,
+    "running.commandLineArguments": "{{ __STEPWIDTH__ }}"
+  }
+}

@@ -584,11 +584,13 @@ export default {
         for (var fileIndex in this.json.files) {
           let file = { identifier: this.json.files[fileIndex].identifier, parts: [] };
           for (var part in this.json.files[fileIndex].parts) {
-            file.parts.push({
+            if (this.json.files[fileIndex].parts[part].access !== "visible") {
+              file.parts.push({
               identifier: this.json.files[fileIndex].parts[part].identifier,
               // TODO
-              content: btoa(this.json.files[fileIndex].parts[part].content),
+              content: this.json.files[fileIndex].parts[part].content,
             });
+            }
           }
           task.content.task.files.push(file);
           console.log(task);
@@ -1026,14 +1028,19 @@ export default {
     // fill in content of mustache template with selected parameter values return it
     showMustacheTemplate(part){
       if(!this.asForm){
-        var mustacheTemplate = this.decodeBase64(part.content);
-        var view = {};
-        for(var p in part.parameters) {
-          var currentParam = part.parameters[p];
-          view[currentParam.identifier] = currentParam.value || currentParam.selected;
+        if (part.content !== "") {
+          var mustacheTemplate = this.decodeBase64(part.content);
+          var view = {};
+          for(var p in part.parameters) {
+            var currentParam = part.parameters[p];
+            view[currentParam.identifier] = currentParam.value || currentParam.selected;
+          }
+          var output = Mustache.render(mustacheTemplate, view);
+          return output;
+        } else {
+          /** Get Content from separate file*/
+          return "";
         }
-        var output = Mustache.render(mustacheTemplate, view);
-        return output;
       }
     }
   },

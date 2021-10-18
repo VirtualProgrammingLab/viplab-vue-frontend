@@ -1,0 +1,429 @@
+{
+  "identifier": "bf734e76-b1fa-4f3a-ab19-82b6cb9ab652",
+  "metadata": {
+    "display_name": "All UI Elements demo",
+    "description": "The demo shows all available UI elements"
+  },
+  "environment": "Container",
+  "files": [
+    {
+      "identifier": "be2f68da-c6d3-4bac-985f-2f039915e9dd",
+      "path": "config.ini",
+      "metadata": {
+        "name": "config file for the all-ui-container",
+        "MIMEtype": "text/plain",
+        "syntaxHighlighting": "C"
+      },
+      "parts": [
+        {
+          "identifier": "66fa4877-349a-48c1-aefc-db2ee63673cf",
+          "access": "template",
+          "metadata": {
+            "name": "template containing all ui elements.",
+            "emphasis": "low"
+          },
+          "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg",
+          "parameters": [
+            {
+              "mode": "fixed",
+              "identifier": "__checkbox__",
+              "metadata": {
+                "guiType": "checkbox",
+                "name": "options"
+              },
+              "options": [
+                {
+                  "value": "verbose",
+                  "selected": true
+                },
+                {
+                  "value": "debug"
+                },
+                {
+                  "value": "make_plot"
+                }
+              ],
+              "validation": "any"
+            },
+            {
+              "mode": "fixed",
+              "identifier": "__radioButton__",
+              "metadata": {
+                "guiType": "radio",
+                "name": "backend"
+              },
+              "options": [
+                {
+                  "value": "debug"
+                },
+                {
+                  "value": "serial",
+                  "selected": true
+                },
+                {
+                  "value": "hpc",
+                  "disabled": true
+                },
+                {
+                  "value": "test"
+                }
+              ],
+              "validation": "onlyone"
+            },
+            {
+              "mode": "fixed",
+              "identifier": "__dropdownSingle__",
+              "metadata": {
+                "guiType": "dropdown",
+                "name": "model"
+              },
+              "options": [
+                {
+                  "value": "Please choose one",
+                  "disabled": true
+                },
+                {
+                  "value": "1p",
+                  "selected": true
+                },
+                {
+                  "value": "1pnc"
+                },
+                {
+                  "value": "1pncmin"
+                },
+                {
+                  "value": "2p"
+                },
+                {
+                  "value": "2p1c"
+                }
+              ],
+              "validation": "onlyone"
+            },
+            {
+              "mode": "fixed",
+              "identifier": "__dropdownMultiple__",
+              "metadata": {
+                "guiType": "dropdown",
+                "name": "model"
+              },
+              "options": [
+                {
+                  "value": "Please choose multiple",
+                  "disabled": true
+                },
+                {
+                  "value": "1p",
+                  "selected": true
+                },
+                {
+                  "value": "1pnc"
+                },
+                {
+                  "value": "1pncmin"
+                },
+                {
+                  "value": "2p",
+                  "selected": true
+                },
+                {
+                  "value": "2p1c",
+                  "disabled": true
+                }
+              ],
+              "multiple": true,
+              "validation": "minone"
+            },
+            {
+              "mode": "fixed",
+              "identifier": "__toggle__",
+              "metadata": {
+                "guiType": "toggle",
+                "name": "options"
+              },
+              "options": [
+                {
+                  "value": "verbose",
+                  "selected": true
+                },
+                {
+                  "value": "debug"
+                },
+                {
+                  "value": "make_plot"
+                }
+              ],
+              "validation": "minone"
+            },
+            {
+              "mode": "any",
+              "identifier": "__sliderSingle__",
+              "metadata": {
+                "guiType": "slider",
+                "name": "temperature",
+                "vertical": false
+              },
+              "default": [
+                10
+              ],
+              "min": 0,
+              "max": 500,
+              "step": 10,
+              "validation": "range"
+            },
+            {
+              "mode": "any",
+              "identifier": "__sliderMultiple__",
+              "metadata": {
+                "guiType": "slider",
+                "name": "temperature",
+                "vertical": true
+              },
+              "default": [
+                25,
+                50,
+                75
+              ],
+              "min": 0,
+              "max": 100,
+              "step": 5,
+              "validation": "range"
+            },
+            {
+              "mode": "any",
+              "identifier": "__inputTextWMaxlength__",
+              "metadata": {
+                "guiType": "input_field",
+                "type": "text",
+                "name": "file_name"
+              },
+              "maxlength": 200,
+              "default": [
+                ""
+              ],
+              "validation": "pattern",
+              "pattern": "^a[a-z]+b$"
+            },
+            {
+              "mode": "any",
+              "identifier": "__inputTextNoValidation__",
+              "metadata": {
+                "guiType": "input_field",
+                "type": "text",
+                "name": "file_name"
+              },
+              "maxlength": 200,
+              "default": [
+                ""
+              ],
+              "validation": "none"
+            },
+            {
+              "mode": "any",
+              "identifier": "__inputTextWOMaxlangth__",
+              "metadata": {
+                "guiType": "input_field",
+                "type": "text",
+                "name": "file_name"
+              },
+              "default": [
+                ""
+              ],
+              "validation": "pattern",
+              "pattern": "^[0-9]+$"
+            },
+            {
+              "mode": "any",
+              "identifier": "__inputNumber__",
+              "metadata": {
+                "guiType": "input_field",
+                "type": "number",
+                "name": "time_delay"
+              },
+              "default": [
+                10
+              ],
+              "min": 0,
+              "max": 500,
+              "step": 0.1,
+              "validation": "range"
+            },
+            {
+              "mode": "any",
+              "identifier": "__defaultJson__",
+              "metadata": {
+                "guiType": "editor",
+                "name": "code 1"
+              },
+              "default": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg",
+              "validation": "pattern",
+              "pattern": ".*"
+            },
+            {
+              "mode": "any",
+              "identifier": "__editorNumber__",
+              "metadata": {
+                "guiType": "editor",
+                "name": "number input in editor"
+              },
+              "default": "NzQ2NTY=",
+              "validation": "range",
+              "min": 1701,
+              "max": 74656
+            },
+            {
+              "mode": "any",
+              "identifier": "__defaultJava__",
+              "metadata": {
+                "guiType": "editor",
+                "name": "code 2"
+              },
+              "default": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K",
+              "validation": "pattern",
+              "pattern": "^v.*"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "mode": "fixed",
+      "identifier": "__outputcheckbox__",
+      "metadata": {
+        "guiType": "checkbox",
+        "name": "options"
+      },
+      "options": [
+        {
+          "value": "verbose",
+          "selected": true
+        },
+        {
+          "value": "debug"
+        },
+        {
+          "value": "none"
+        }
+      ],
+      "validation": "onlyone"
+    },
+    {
+      "mode": "fixed",
+      "identifier": "__orientationRadioButton__",
+      "metadata": {
+        "guiType": "radio",
+        "name": "backend"
+      },
+      "options": [
+        {
+          "value": "left"
+        },
+        {
+          "value": "right",
+          "selected": true
+        },
+        {
+          "value": "up",
+          "disabled": true
+        },
+        {
+          "value": "down"
+        }
+      ],
+      "validation": "onlyone"
+    },
+    {
+      "mode": "fixed",
+      "identifier": "__colorSchemedropdownSingle__",
+      "metadata": {
+        "guiType": "dropdown",
+        "name": "model"
+      },
+      "options": [
+        {
+          "value": "Please choose one",
+          "disabled": true
+        },
+        {
+          "value": "rainbow",
+          "selected": true
+        },
+        {
+          "value": "blue"
+        },
+        {
+          "value": "green"
+        },
+        {
+          "value": "black"
+        },
+        {
+          "value": "grey"
+        }
+      ],
+      "validation": "onlyone"
+    },
+    {
+      "mode": "fixed",
+      "identifier": "__outputSizedropdownMultiple__",
+      "metadata": {
+        "guiType": "dropdown",
+        "name": "model"
+      },
+      "options": [
+        {
+          "value": "Please choose multiple",
+          "disabled": true
+        },
+        {
+          "value": "128x128",
+          "selected": true
+        },
+        {
+          "value": "256x256"
+        },
+        {
+          "value": "512x512"
+        },
+        {
+          "value": "1024x1024",
+          "selected": true
+        },
+        {
+          "value": "2048x2048",
+          "disabled": true
+        }
+      ],
+      "multiple": true,
+      "validation": "minone"
+    },
+    {
+      "mode": "fixed",
+      "identifier": "__incrementalResultToggle__",
+      "metadata": {
+        "guiType": "toggle",
+        "name": "options"
+      },
+      "options": [
+        {
+          "value": "true",
+          "selected": true
+        },
+        {
+          "value": "false"
+        }
+      ],
+      "validation": "onlyone"
+    }
+  ],
+  "configuration": {
+    "resources.image": "all-ui-democontainer",
+    "resources.volume": "/data/shared",
+    "resources.memory": "1g",
+    "resources.numCPUs": 1,
+    "running.commandLineArguments": "--generatecsv={{ __csvcheckbox__ }} --pictureSize={{ __orientationRadioButton__ }} --colorScheme={{ __colorSchemedropdownSingle__ }} --incremental={{ __incrementalResultToggle__ }}"
+  }
+}

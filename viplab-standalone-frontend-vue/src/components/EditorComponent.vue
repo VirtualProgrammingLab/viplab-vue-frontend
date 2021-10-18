@@ -120,7 +120,7 @@ export default {
       get: function () {
         if (this.isParameter === true) {
           //console.log("get: " + this.decodeBase64(this.editor.value));
-          return this.decodeBase64(this.editor.value);
+          return this.decodeBase64(this.editor.value[0]);
         } else {
           return this.decodeBase64(this.editor.content);
         }
@@ -128,7 +128,7 @@ export default {
       set: function (val) {
         if (this.isParameter) {
           this.$set(this.editor , "value", val);
-          this.editor.value = btoa(val);
+          this.editor.value = [btoa(val)];
         } else {
           this.editor.content = btoa(val);
         }
