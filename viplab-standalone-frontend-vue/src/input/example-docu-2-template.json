@@ -250,8 +250,8 @@
               "validation": "pattern"
             }
           ],
-            "content"   : ""
-         }
+          "content"   : ""
+        }
       ] 
     }
   ], 

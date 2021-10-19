@@ -120,7 +120,12 @@ export default {
       get: function () {
         if (this.isParameter === true) {
           //console.log("get: " + this.decodeBase64(this.editor.value));
-          return this.decodeBase64(this.editor.value[0]);
+          if (Array.isArray(this.editor.value)) {
+            return this.decodeBase64(this.editor.value[0]);
+          } else {
+            return this.decodeBase64(this.editor.value);
+          }
+          
         } else {
           return this.decodeBase64(this.editor.content);
         }

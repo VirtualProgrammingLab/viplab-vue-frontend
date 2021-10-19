@@ -584,12 +584,29 @@ export default {
         for (var fileIndex in this.json.files) {
           let file = { identifier: this.json.files[fileIndex].identifier, parts: [] };
           for (var part in this.json.files[fileIndex].parts) {
-            if (this.json.files[fileIndex].parts[part].access !== "visible") {
+            // for access modifiable or access template, where the content is available
+            if (this.json.files[fileIndex].parts[part].access === "modifiable") {
               file.parts.push({
-              identifier: this.json.files[fileIndex].parts[part].identifier,
-              // TODO
-              content: this.json.files[fileIndex].parts[part].content,
-            });
+                identifier: this.json.files[fileIndex].parts[part].identifier,
+                content: this.json.files[fileIndex].parts[part].content,
+              });
+            // Generate json for access template parameters, if there is no content given
+            } else if (this.json.files[fileIndex].parts[part].access === "template") {
+              var generatedContent = JSON.parse("{}");
+              for (var paramIndex in this.json.files[fileIndex].parts[part].parameters) {
+                var currentParam = this.json.files[fileIndex].parts[part].parameters[paramIndex];
+                var value = currentParam.value || currentParam.selected;
+                if (Array.isArray(value)) {
+                  value = value.toString();
+                }
+                generatedContent[currentParam.identifier] = value;
+              }
+              var contentBase64 = window.btoa(JSON.stringify(generatedContent));
+              console.log(contentBase64);
+              file.parts.push({
+                identifier: this.json.files[fileIndex].parts[part].identifier,
+                content: contentBase64,
+              });
             }
           }
           task.content.task.files.push(file);

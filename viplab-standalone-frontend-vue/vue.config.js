@@ -109,10 +109,31 @@ var setParameters = function (filename) {
     //check is file exists, else use first file in input folder
     var file = null;
     try {
-        file = fs.readFileSync("./src/input/" + filename + ".json")
+        file = fs.readFileSync("./src/input/" + filename + ".json", 'utf8')
     } catch (err) {
-        file = fs.readFileSync("./src/input/" + inputTemplates[0].slice(0, -5) + ".json")
+        file = fs.readFileSync("./src/input/" + inputTemplates[0].slice(0, -5) + ".json", 'utf8')
     }
+
+    // Read in content from additional file and convert to base64. Then add to content
+    var json = JSON.parse(file);
+    for (var fileIndex in json.files) {
+        for (var partIndex in json.files[fileIndex].parts) {
+            var currentPart = json.files[fileIndex].parts[partIndex];
+            if (currentPart.access === "template") { //&& currentPart.content === "") {
+                var contentFile = filename.substring(0, filename.indexOf(".") + 1);
+                var content = "";
+                try {
+                    content = fs.readFileSync("./src/input/" + contentFile + currentPart.identifier + ".txt", 'utf8');
+                    currentPart.content = Base64.encode(Buffer.from(content).toString(), "utf-8");
+                } catch (err) {
+                    console.log(err);
+                    content = "";
+                }
+            }
+        }
+    }
+    file = JSON.stringify(json);
+
     var dataBase64 = Base64.encode(Buffer.from(file).toString(), "utf-8");
     var codeSha256 = CryptoJS.SHA256(dataBase64).toString(CryptoJS.enc.Hex);
 
