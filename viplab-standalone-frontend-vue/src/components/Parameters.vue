@@ -1,6 +1,6 @@
 <template>
   <div class="parameters-component">
-    <div v-for="(item, parent_index) in parameters" :key=parent_index>
+    <div class="parameter-div" v-for="(item, parent_index) in parameters" :key=parent_index>
         <!-- render checkbox elements -->
         <!-- render after form_v_model[parent_index] is set, or else js error occurs (even though page looks perfectly fine) -->
         <div class="form-item" v-if="isCheckbox(item)">
@@ -29,6 +29,10 @@
         <!-- render items with no gui-type as editor elements -->
         <div class="form-item" v-if="isEditor(item) && item.value">
           <editor-component :item="item" :readonly=false :isParameter=true></editor-component>
+        </div>
+        <!-- tooltip -->
+        <div class="tooltip-icon">
+            <b-icon-info-circle v-tooltip.top-center="item.metadata.description"></b-icon-info-circle>
         </div>
     </div>
   </div>
@@ -91,5 +95,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.parameter-div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-item {
+  width: 98%;
+}
+
+.tooltip-icon {
+  margin: auto 0;
+}
 
 </style>

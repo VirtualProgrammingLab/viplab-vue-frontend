@@ -32,7 +32,8 @@
               "metadata" : {
                 "guiType" : "slider",
                 "name": "temperature",
-                "vertical": false
+                "vertical": false, 
+                "description" : "slider description"
               },
               "default": [
                 10
@@ -58,7 +59,8 @@
               "identifier" : "__checkbox__", 
               "metadata" : {
                 "guiType": "checkbox",
-                "name": "options"
+                "name": "options", 
+                "description" : "checkbox description"
               },
               "options": [
                 {
@@ -79,7 +81,8 @@
               "identifier" : "__radioButton__", 
               "metadata" : {
                 "guiType": "radio",
-                "name": "backend"
+                "name": "backend",
+                "description" : "radio description"
               },
               "options": [
                 {
@@ -104,7 +107,8 @@
               "identifier" : "__dropdownSingle__", 
               "metadata" : {
                 "guiType": "dropdown",
-                "name": "model"
+                "name": "model",
+                "description" : "dropdown description"
               },
               "options": [
                 {
@@ -135,7 +139,8 @@
               "identifier" : "__dropdownMultiple__", 
               "metadata" : {
                 "guiType": "dropdown",
-                "name": "model"
+                "name": "model",
+                "description" : "dropdown description"
               },
               "options": [
                 {
@@ -168,7 +173,8 @@
               "identifier" : "__toggle__", 
               "metadata" : {
                 "guiType": "toggle",
-                "name": "options"
+                "name": "options",
+                "description" : "toggle description"
               },
               "options": [
                 {
@@ -190,7 +196,8 @@
               "metadata" : {
                 "guiType" : "slider",
                 "name": "temperature",
-                "vertical": true
+                "vertical": true,
+                "description" : "slider description"
               },
               "default": [
                 25,
@@ -208,7 +215,8 @@
               "metadata" : {
                 "guiType" : "input_field",
                 "type": "text",
-                "name": "file_name"
+                "name": "file_name",
+                "description" : "input description"
               },
               "default" : [""],
               "validation": "pattern"
@@ -219,7 +227,8 @@
               "metadata" : {
                 "guiType" : "input_field",
                 "type": "text",
-                "name": "file_name"
+                "name": "file_name",
+                "description" : "input description"
               },
               "maxlength": 200,
               "default" : [""],
@@ -231,7 +240,8 @@
               "metadata" : {
                 "guiType" : "input_field",
                 "type": "number",
-                "name": "time_delay"
+                "name": "time_delay",
+                "description" : "input description"
               },
               "default": [10],
               "min": 0,
@@ -244,7 +254,8 @@
               "identifier" : "__default__", 
               "metadata" : {
                 "guiType" : "editor", 
-                "name": "code 1"
+                "name": "code 1",
+                "description" : "input description"
               },
               "default": ["I2luY2x1ZGUgPHN0ZGlvLmg-Cg"],
               "validation": "pattern"

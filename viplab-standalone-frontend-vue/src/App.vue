@@ -38,7 +38,7 @@
                     class="file"
                     v-for="file in parsedFilesJson"
                     :key="file.identifier"
-                    :title="file.metadata.name"
+                    :title="file.path"
                     @click="tabClicked"
                   >
                     <div
@@ -90,7 +90,7 @@
                     
                     <!--<form>-->
                       <div class="form-group mb-5 ml-5 mr-5">
-                        <h2 v-if="parsedParametersJson">Parameters</h2>
+                        <h2 v-if="parsedParametersJson">Commandline Parameters</h2>
                         <parameters
                           :parameters="parsedParametersJson"
                         ></parameters>
