@@ -98,10 +98,12 @@ export default {
 .parameter-div {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .form-item {
   width: 98%;
+  /*margin-bottom: 0 !important;*/
 }
 
 .tooltip-icon {

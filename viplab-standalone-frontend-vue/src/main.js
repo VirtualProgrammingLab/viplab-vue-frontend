@@ -26,13 +26,30 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(VTooltip)
 
+import VueRouter from 'vue-router'
+
+Vue.use(VueRouter)
+
 Vue.config.productionTip = false
 
 Vue.use(VueWait);
+
+// Setup vue-router
+import Teacher from './pages/teacher/App.vue';
+import ViPLab from './pages/viplab/App.vue';
+const routes = [
+  { path: '/teacher', component: Teacher },
+  { path: '/', component: ViPLab }
+]
+
+const router = new VueRouter({
+  routes 
+})
 
 new Vue({
   wait: new VueWait({
     useVuex: false
   }),
+  router,
   render: h => h(App)
 }).$mount('#app')
