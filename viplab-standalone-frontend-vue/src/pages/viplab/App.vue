@@ -16,7 +16,7 @@
             <div class="cards" >
               <!-- 
               Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
-            -->
+              -->
               <b-card no-body v-if="numberOfInputFiles > 0">
                 <b-tabs card class="files" content-class="m-2" fill>
                   <b-tab
@@ -28,7 +28,7 @@
                     @click="tabClicked"
                   >
 
-                    <csv-plot :areUrlsProp="false" :csvsProp="['eCx5MCx5MSx5MgoxLDIsMiwxCjIsNCw0LDQKMyw2LDgsMQo0LDgsMTYsNQo1LDEwLDMyLDkKNiwxMiw2NCwyCjcsMTQsMTI4LDYKOCwxNiwyNTYsNQo5LDE4LDUxMiwzCjEwLDIwLDEwMjQsNQo=']"></csv-plot>
+                    <csv-plot :areUrlsProp="false" :csvsProp="['eCx5MCx5MSx5MgoxLDIsMiwxCjIsNCw0LDQKMyw2LDgsMQo0LDgsMTYsNQo1LDEwLDMyLDkKNiwxMiw2NCwyCjcsMTQsMTI4LDYKOCwxNiwyNTYsNQo5LDE4LDUxMiwzCjEwLDIwLDEwMjQsNQo=', 'eCx5MCx5MSx5MgoxLDIsMiwxCjIsNCw0LDQKMyw2LDgsMQo0LDgsMTYsNQo1LDEwLDMyLDkKNiwxMiw2NCwyCjcsMTQsMTI4LDYKOCwxNiwyNTYsNQo5LDE4LDUxMiwzCjEwLDIwLDEwMjQsNQoxMSwwLDAsMA==']"></csv-plot>
                     <csv-plot :areUrlsProp="true" :csvsProp="['http://localhost:8080/plotly-test.csv', 'https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv']"></csv-plot>
 
                     <div

@@ -71,7 +71,11 @@ export default {
       this.watchAutoPlayOrPause();
     },
     fileIndex() {
-      this.loadData(this);
+      if (this.areUrlsProp) {
+        this.loadData(this);
+      } else {
+        this.loadBase64Data(this.csvs[this.fileIndex]);
+      }
     },
   },
   mounted() {
