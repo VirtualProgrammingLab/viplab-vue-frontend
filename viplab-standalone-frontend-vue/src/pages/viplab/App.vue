@@ -6,11 +6,11 @@
       :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
     >
 
-      <div class="side-to-side-div flex-left m-2 p-2">
+      <div class="side-to-side-div flex-left m-2">
 
         <validation-observer v-slot="{ invalid }">
         <form @submit.prevent="sendData">
-          <div class="form-group mb-5 ml-5 mr-5">
+          <div class="form-group ml-5 mr-5">
             <h2 v-if="parsedFilesJson">InputFiles</h2>
 
             <div class="cards" >
@@ -24,9 +24,13 @@
                     class="file"
                     v-for="file in parsedFilesJson"
                     :key="file.identifier"
-                    :title="file.path"
+                    :title="getFilename(file.path)"
                     @click="tabClicked"
                   >
+
+                    <csv-plot :areUrlsProp="false" :csvsProp="['eCx5MCx5MSx5MgoxLDIsMiwxCjIsNCw0LDQKMyw2LDgsMQo0LDgsMTYsNQo1LDEwLDMyLDkKNiwxMiw2NCwyCjcsMTQsMTI4LDYKOCwxNiwyNTYsNQo5LDE4LDUxMiwzCjEwLDIwLDEwMjQsNQo=']"></csv-plot>
+                    <csv-plot :areUrlsProp="true" :csvsProp="['http://localhost:8080/plotly-test.csv', 'https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv']"></csv-plot>
+
                     <div
                       class="part mb-3"
                       v-for="part in file.parts"
@@ -86,55 +90,88 @@
                   </b-tab>
                 </b-tabs>
               </b-card>
-              <div class="sticky-button">
-                <b-button class="btn" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
-                  <b-icon icon="play" aria-hidden="true"></b-icon>
-                </b-button>
-              </div>
+
+              <!-- sticky buttons 
+              <div class="sticky-button d-flex flex-row">
+                <div class="mr-auto">
+                  <b-button class="btn mr-2 btn-row" v-tooltip.top-center="'Download backup of changes'">
+                    <b-icon
+                      icon="download"
+                      aria-hidden="true"
+                      @click="download"
+                    ></b-icon>
+                  </b-button>
+                  <input
+                    type="file"
+                    ref="upload"
+                    style="display: none"
+                    @change="upload"
+                    accept="application/JSON"
+                  />
+                  <b-button
+                    class="btn btn-secondary file btn-row"
+                    @click="$refs.upload.click()"
+                    v-tooltip.top-center="'Upload of previously downloaded backup'"
+                  >
+                    <b-icon icon="upload" aria-hidden="true"></b-icon>
+                  </b-button>
+                </div>
+                <div class="buttons">
+                  <b-button class="btn mr-2 btn-row" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'" v-if="!asForm || outputFiles !== ''">
+                    <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
+                    <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
+                  </b-button>
+                  <b-button class="btn mr-2 btn-row" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
+                    <font-awesome-icon icon="save" />
+                  </b-button>
+                  <b-button class="btn btn-row" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
+                    <b-icon icon="play" aria-hidden="true"></b-icon>
+                  </b-button>
+                </div>
+              </div> -->
             </div>
           </div>
         </form>
+        <!-- sticky buttons -->
+              <div class="sticky-button d-flex flex-row pl-5 pr-5">
+                <div class="mr-auto">
+                  <b-button class="btn mr-2 btn-row" v-tooltip.top-center="'Download backup of changes'">
+                    <b-icon
+                      icon="download"
+                      aria-hidden="true"
+                      @click="download"
+                    ></b-icon>
+                  </b-button>
+                  <input
+                    type="file"
+                    ref="upload"
+                    style="display: none"
+                    @change="upload"
+                    accept="application/JSON"
+                  />
+                  <b-button
+                    class="btn btn-secondary file btn-row"
+                    @click="$refs.upload.click()"
+                    v-tooltip.top-center="'Upload of previously downloaded backup'"
+                  >
+                    <b-icon icon="upload" aria-hidden="true"></b-icon>
+                  </b-button>
+                </div>
+                <div class="buttons">
+                  <b-button class="btn mr-2 btn-row" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'" v-if="!asForm || outputFiles !== ''">
+                    <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
+                    <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
+                  </b-button>
+                  <b-button class="btn mr-2 btn-row" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
+                    <font-awesome-icon icon="save" />
+                  </b-button>
+                  <b-button class="btn btn-row" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
+                    <b-icon icon="play" aria-hidden="true"></b-icon>
+                  </b-button>
+                </div>
+              </div>
+            
         </validation-observer>
-
-        <div class="d-flex flex-row mb-5 ml-5 mr-5">
-          <div class="mr-auto">
-            <b-button class="btn mr-2" v-tooltip.top-center="'Download backup of changes'">
-              <b-icon
-                icon="download"
-                aria-hidden="true"
-                @click="download"
-              ></b-icon>
-            </b-button>
-            <input
-              type="file"
-              ref="upload"
-              style="display: none"
-              @change="upload"
-              accept="application/JSON"
-            />
-            <b-button
-              class="btn btn-secondary file"
-              @click="$refs.upload.click()"
-              v-tooltip.top-center="'Upload of previously downloaded backup'"
-            >
-              <b-icon icon="upload" aria-hidden="true"></b-icon>
-            </b-button>
-            <!--
-            <b-button class="btn" variant="primary" id="submit" disabled>
-              <b-icon icon="play" aria-hidden="true"></b-icon>
-            </b-button>
-            -->
-          </div>
-          <div class="buttons">
-            <b-button class="btn mr-2" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'" v-if="!asForm || outputFiles !== ''">
-              <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
-              <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
-            </b-button>
-            <b-button class="btn" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
-              <font-awesome-icon icon="save" />
-            </b-button>
-          </div>
-        </div>
       </div>
 
       <div 
@@ -297,7 +334,8 @@
                           </div>
                           <div v-else-if="artifact.MIMEtype == 'text/csv'">
                             <csv-plot 
-                              :urlsProp=artifact.urls>
+                              :csvsProp=artifact.urls
+                              :areUrlsProp="true">
                             </csv-plot>
                           </div>
                           <div v-else>
@@ -777,7 +815,7 @@ export default {
       }
       console.log(JSON.parse(JSON.stringify(connectedVtks)))
 
-      // delete all vtk artifacts
+      // delete all vtk and csv artifacts
       artifacts = this.returnedOutputJson.artifacts;
       var b = artifacts.length;
       while(b--){
@@ -1044,6 +1082,14 @@ export default {
           return "";
         }
       }
+    }, 
+    /** get filename from part for displaying it as the tab-name */
+    getFilename: function(path) {
+      let filename = path;
+      if (path.includes('/')) {
+        filename = path.slice(path.lastIndexOf('/') + 1, path.length); 
+      }
+      return filename;
     }
   },
   created() {
@@ -1116,14 +1162,14 @@ body {
   .sticky-button {
     position: -webkit-sticky;
     position: sticky;
-    bottom: 50px;
+    bottom: 0px;
     left: 74px;
     text-align: right;
+    background: rgba(0,0,0,0.1);//rgba(255,255,255,0.7);
   }
 
-  #submit {
-    float: right;
-    margin-top: 5px;
+  .btn-row {
+    margin: 5px 0 5px 0;
   }
 
   .outer-div {

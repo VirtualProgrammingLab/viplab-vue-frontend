@@ -32,6 +32,7 @@
         </div>
         <!-- tooltip -->
         <div class="tooltip-icon">
+            <!-- v-if="item.metadata.description" -->
             <b-icon-info-circle v-tooltip.top-center="item.metadata.description"></b-icon-info-circle>
         </div>
     </div>

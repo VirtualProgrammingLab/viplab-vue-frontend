@@ -85,8 +85,6 @@ export default {
           }
         }
       }
-
-      console.log(this.json);
     },
   },
   created() {

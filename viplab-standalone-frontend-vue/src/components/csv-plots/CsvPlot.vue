@@ -9,9 +9,9 @@
         :to-image-button-options="imageConfig"
       ></Plotly>
     </div>
-    <div class="file-controller text-center">
+    <div v-if="csvs.length > 1" class="file-controller text-center">
       <div class="fixed-row-70 display-flex-center">
-        <span> {{ fileIndex + 1 }}/{{ urls.length }} </span>
+        <span> {{ fileIndex + 1 }}/{{ csvs.length }} </span>
       </div>
       <b-button-group>
         <b-button btn-variant="white" @click="resetFileIndex">
@@ -46,11 +46,12 @@ export default {
     Plotly,
   },
   props: {
-    urlsProp: Array
+    areUrlsProp: Boolean,
+    csvsProp: Array
   },
   data() {
     return {
-      urls: this.urlsProp,
+      csvs: this.csvsProp,
       fileIndex: 0,
       data: [],
       layout: {
@@ -74,18 +75,43 @@ export default {
     },
   },
   mounted() {
-    this.loadData(this);
+    if (this.areUrlsProp) {
+      this.loadData(this);
+    } else {
+      this.loadBase64Data(this.csvs[this.fileIndex]);
+    }
+    
   },
   methods: {
     //"http://localhost:8080/" + inputFile
     loadData: function(context) {
         //plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){ 
         //plotlyjs.d3.csv("http://localhost:8080/plotly-test.csv", function(data){ 
-        plotlyjs.d3.csv(context.urls[context.fileIndex], function(data){   
+        plotlyjs.d3.csv(context.csvs[context.fileIndex], function(data){   
           context.processData(data);
         });
     },
+    loadBase64Data: function(base64Data, delimiter = ",") {
+      let decodedData = this.decodeBase64(base64Data);
+      // get header: slice first line of first string and split by delimiter
+      const headers = decodedData.slice(0, decodedData.indexOf("\n")).split(delimiter);
+      // slice the rest of the string at line endings (\n)
+      const splitrows = decodedData.slice(decodedData.indexOf("\n") + 1).split("\n");
+      // filter empty rows
+      let rows = splitrows.filter(n => n);
+      // map the row-values to the header to create header:value type entries
+      const data = rows.map(function (row) {
+        const values = row.split(delimiter);
+        const element = headers.reduce(function (object, header, index) {
+          object[header] = values[index];
+          return object;
+        }, {});
+        return element;
+      });
+      this.processData(data);
+    },
     processData: function(data) {
+        console.log(data);
         var traces = [];
 
         // create an object, where there is an array for each column name
@@ -110,8 +136,8 @@ export default {
         }
 
         // set x-Axis label and title
-        let lastIndex = this.urls[this.fileIndex].lastIndexOf('/');
-        let title = this.urls[this.fileIndex].substr(lastIndex + 1, this.urls[this.fileIndex].length);
+        let lastIndex = this.csvs[this.fileIndex].lastIndexOf('/');
+        let title = ((this.areUrlsProp) ? this.csvs[this.fileIndex].substr(lastIndex + 1, this.csvs[this.fileIndex].length) : "Graph");
         this.layout = {
           title: title,
           xaxis: {
@@ -140,7 +166,7 @@ export default {
       return this.fileIndex;
     },
     increaseFileIndex: function () {
-      this.fileIndex = Math.min(this.fileIndex + 1, this.urls.length - 1);
+      this.fileIndex = Math.min(this.fileIndex + 1, this.csvs.length - 1);
       return this.fileIndex;
     },
     resetFileIndex: function () {
@@ -148,12 +174,37 @@ export default {
       return this.fileIndex;
     },
     setMaxFileIndex: function () {
-      this.fileIndex = this.urls.length - 1;
+      this.fileIndex = this.csvs.length - 1;
       return this.fileIndex;
     },
     setEnableAutoPlay: function () {
       this.enableAutoPlay = !this.enableAutoPlay;
       return this.enableAutoPlay;
+    },
+    /* rewrite base64urlEncodedString to base64*/
+    rewriteToBase64: function (base64urlEncodedString) {
+      // Replace base64 characters with base64url characters
+      base64urlEncodedString = base64urlEncodedString
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+      // Pad for base64
+      var padding = base64urlEncodedString.length % 4;
+      if (padding) {
+        if (padding === 1) {
+          throw new Error(
+            "InvalidLengthError: Input base64url string is the wrong length to determine padding"
+          );
+        }
+        base64urlEncodedString += new Array(5 - padding).join("=");
+      }
+      return base64urlEncodedString;
+    },
+    /** decode base64urlEncodedString to a normal string */
+    decodeBase64: function (base64urlEncodedString) {
+      var encodedString = this.rewriteToBase64(base64urlEncodedString);
+
+      var decodedString = window.atob(encodedString);
+      return decodedString;
     },
   },
 };
