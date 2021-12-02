@@ -28,9 +28,6 @@
                     @click="tabClicked"
                   >
 
-                    <csv-plot :areUrlsProp="false" :csvsProp="['eCx5MCx5MSx5MgoxLDIsMiwxCjIsNCw0LDQKMyw2LDgsMQo0LDgsMTYsNQo1LDEwLDMyLDkKNiwxMiw2NCwyCjcsMTQsMTI4LDYKOCwxNiwyNTYsNQo5LDE4LDUxMiwzCjEwLDIwLDEwMjQsNQo=', 'eCx5MCx5MSx5MgoxLDIsMiwxCjIsNCw0LDQKMyw2LDgsMQo0LDgsMTYsNQo1LDEwLDMyLDkKNiwxMiw2NCwyCjcsMTQsMTI4LDYKOCwxNiwyNTYsNQo5LDE4LDUxMiwzCjEwLDIwLDEwMjQsNQoxMSwwLDAsMA==']"></csv-plot>
-                    <csv-plot :areUrlsProp="true" :csvsProp="['http://localhost:8080/plotly-test.csv', 'https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv']"></csv-plot>
-
                     <div
                       class="part mb-3"
                       v-for="part in file.parts"
@@ -294,8 +291,12 @@
                         <div v-else>
                           <div v-if="artifact.MIMEtype == 'application/vtu'">
                               <vtk-component
-                                  v-if="artifact.MIMEtype == 'application/vtu'"
+                                  v-if="artifact.urls"
                                   :propFiles=artifact.urls
+                              ></vtk-component>
+                              <vtk-component
+                                  v-else-if="!artifact.urls"
+                                  :propFiles=[artifact.url]
                               ></vtk-component>
                           </div>
                           <div
@@ -333,10 +334,24 @@
                             </Promised>
                           </div>
                           <div v-else-if="artifact.MIMEtype == 'text/csv'">
-                            <csv-plot 
-                              :csvsProp=artifact.urls
-                              :areUrlsProp="true">
-                            </csv-plot>
+                            <div v-if="artifact.datasets">
+                              <div v-for="dataset in artifact.datasets" :key="dataset.key">
+                                <csv-plot 
+                                  :csvsProp=artifact.urls
+                                  :areUrlsProp="true"
+                                  :datasetProp=dataset
+                                  :labelProp="artifact.labels">
+                                </csv-plot>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <csv-plot 
+                                :csvsProp=artifact.urls
+                                :areUrlsProp="true"
+                                :datasetProp={}
+                                :labelProp={}>
+                              </csv-plot>
+                            </div>
                           </div>
                           <div v-else>
                             <Promised :promise="getContentFromS3(artifact.url, true)">
@@ -476,7 +491,7 @@ export default {
       var files = this.json.files;
       for (var file in files) {
         var parts = files[file].parts;
-        console.log(parts.length);
+        //console.log(parts.length);
         this.numberOfInputFiles = parts.length;
       }
     },
@@ -523,7 +538,7 @@ export default {
         }
       }
 
-      console.log(this.json);
+      //console.log(this.json);
 
       this.setNumberOfInputFiles();
     },
@@ -625,7 +640,7 @@ export default {
                 generatedContent[currentParam.identifier] = value;
               }
               var contentBase64 = window.btoa(JSON.stringify(generatedContent));
-              console.log(contentBase64);
+              //console.log(contentBase64);
               file.parts.push({
                 identifier: this.json.files[fileIndex].parts[part].identifier,
                 content: contentBase64,
@@ -669,7 +684,7 @@ export default {
     },
     /** process the result before displaying it in the DOM */
     displayResult: function (result) {
-      console.log(result.result.output.stdout);
+      //console.log(result.result.output.stdout);
       if (result.result.status == "final") {
         document.getElementById("submit").disabled = false;
       }
@@ -741,7 +756,7 @@ export default {
       this.returnedOutputJson.artifacts.unshift(
         {
       "type" : "s3file",
-      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c64",
+      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298dearth",
       "MIMEtype": "application/vtu",
       "path": "/vtu-collection2/earth.vtp",
       "url": "http://localhost:8080/earth.vtp",
@@ -783,52 +798,68 @@ export default {
     }
       );*/
 
-      console.log(this.returnedOutputJson);
+      //console.log(this.returnedOutputJson);
 
       // process connected vtu/vtk files
-      console.log(this.returnedOutputJson.artifacts)
-      var collections = [];
+      //console.log(this.returnedOutputJson.artifacts)
       let connectedVtks = {};
       var artifacts = this.returnedOutputJson.artifacts;
-      let created = false;
+      //let created = false;
+
+      //get basenames for collections of files
+      let outputConfig = this.json.configuration.output;
+      let basenames = [];
+      for (var out = 0; out < outputConfig.length; out++) {
+        let currentConfig = outputConfig[out];
+        let currentBasename = currentConfig.basename;
+        if (!basenames.includes(currentBasename)) {
+          basenames.push(currentBasename);
+        }
+
+        if(!connectedVtks[currentBasename]) {
+          connectedVtks[currentBasename] = {};
+          connectedVtks[currentBasename].type = "s3file";
+          connectedVtks[currentBasename].urls = [];
+          connectedVtks[currentBasename].datasets = currentConfig.datasets;
+          connectedVtks[currentBasename].labels = currentConfig.labels;
+        }
+        
+      }
+
+      // group results according to the available basenames
       for(var a = 0; a < artifacts.length; a++) {
         if((artifacts[a].MIMEtype == "application/vtu" || artifacts[a].MIMEtype == "text/csv") && !artifacts[a].artifacts){
           let path = artifacts[a].path;
           let lastIndex = path.lastIndexOf('/');
-          let pathPart = path.substr(0, lastIndex + 1);
+          let filenamePart = path.substr(lastIndex + 1, path.length);
           
-          if(!connectedVtks[pathPart]){
-            connectedVtks[pathPart] = {};
-            connectedVtks[pathPart].type = "s3file";
-            connectedVtks[pathPart].MIMEtype = artifacts[a].MIMEtype;
-            created = false;
-            collections.push(pathPart);
+          for (var base = 0; base < basenames.length; base++) {
+            let currentBasename = basenames[base];
+
+            if (filenamePart.startsWith(currentBasename)) {
+              connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
+              connectedVtks[currentBasename].urls.push(artifacts[a].url);
+              artifacts[a].inCollection = true;
+            }
+
           }
-          if(created){
-            connectedVtks[pathPart].urls.push(artifacts[a].url);
-          } else {
-            connectedVtks[pathPart].urls = [];
-            connectedVtks[pathPart].urls.push(artifacts[a].url);
-            created = true;
-          }
+
         }
       }
-      console.log(JSON.parse(JSON.stringify(connectedVtks)))
-
-      // delete all vtk and csv artifacts
+      // delete all vtk and csv artifacts that are part of a collection
       artifacts = this.returnedOutputJson.artifacts;
       var b = artifacts.length;
       while(b--){
-        if((artifacts[b].MIMEtype == "application/vtu" || artifacts[b].MIMEtype == "text/csv")) {
+        if(artifacts[b].inCollection) {
           artifacts.splice(b, 1);
         }
       }
       
       // add vtk collections
-      for(var c = 0; c < collections.length; c++){
-        this.returnedOutputJson.artifacts.push(connectedVtks[collections[c]]);
+      for(var c = 0; c < basenames.length; c++){
+        this.returnedOutputJson.artifacts.push(connectedVtks[basenames[c]]);
       }
-      console.log(this.returnedOutputJson);
+      //console.log(this.returnedOutputJson);
 
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
@@ -866,14 +897,14 @@ export default {
     },
     /** Save file locally on click from the user */
     async save(filename, identifier, mimetype) {
-      console.log(
+      /*console.log(
         "save the following file: " +
           filename +
           " " +
           identifier +
           " " +
           mimetype
-      );
+      );*/
       var content = "";
       this.returnedOutputJson.artifacts.forEach((item) => {
         if (item.identifier == identifier && item.content) {
@@ -899,7 +930,7 @@ export default {
         }
         const byteArray = new Uint8Array(byteNumbers);
         blob = new Blob([byteArray], { type: mimetype });
-        console.log(blob);
+        //console.log(blob);
       } else if (mimetype === "image/png" && content.includes("blob:http")) {
         // handle files that were downloaded from s3
         blob = await fetch(content).then(r => r.blob());
@@ -976,7 +1007,7 @@ export default {
     /*get json from uploaded file und update DOM */
     onReaderLoad: function (event) {
       var obj = JSON.parse(event.target.result);
-      console.log(obj);
+      //console.log(obj);
       // apply changes to current json
       let templateId = obj.template;
       if (templateId == this.json.identifier) {
@@ -1098,7 +1129,7 @@ export default {
       for (var part in this.json.files[file].parts) {
         for (var param in this.json.files[file].parts[part].parameters) {
           var currentParam = this.json.files[file].parts[part].parameters[param];
-          console.log(currentParam);
+          //console.log(currentParam);
           //console.log("test" + JSON.parse(currentParam).mode);
         }
       }
@@ -1121,8 +1152,8 @@ export default {
   },
   mounted() {
     this.executeAfterDomLoaded();
-    console.log(process.env.NODE_ENV);
-    console.log(__dirname);
+    //console.log(process.env.NODE_ENV);
+    //console.log(__dirname);
     //this.loadJsonFromFile();
     //this.loadJsonFromFile("./container.computation-template2.json");
   },

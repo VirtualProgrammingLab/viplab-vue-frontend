@@ -47,7 +47,9 @@ export default {
   },
   props: {
     areUrlsProp: Boolean,
-    csvsProp: Array
+    csvsProp: Array,
+    datasetProp: Object,
+    labelProp: Object
   },
   data() {
     return {
@@ -131,12 +133,15 @@ export default {
 
         // create traces to be rendered later; the first column is always x; the others are ys
         for (var k = 1; k < keys.length; k++) {
-          var trace = {
-            x: obj[(keys[0])],
-            y: obj[(keys[k])],
-            name: keys[k]
+          console.log(this.datasetProp.key);
+          if(keys[k] === this.datasetProp.key || this.datasetProp === {}) {
+            var trace = {
+              x: obj[(keys[0])],
+              y: obj[(keys[k])],
+              name: this.datasetProp.label || keys[k]
+            }
+            traces.push(trace);
           }
-          traces.push(trace);
         }
 
         // set x-Axis label and title
@@ -146,8 +151,13 @@ export default {
           title: title,
           xaxis: {
             title: {
-              text: keys[0]
+              text: this.labelProp.label || keys[0]
             }
+          },
+          yaxis: {
+            title: {
+              text: this.datasetProp.label
+            }  
           }
         }
 

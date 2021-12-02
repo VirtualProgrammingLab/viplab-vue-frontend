@@ -49,7 +49,7 @@
 
       <div ref="container"></div>
 
-      <div class="file-controller text-center">
+      <div v-if="files.length > 1" class="file-controller text-center">
         <div class="fixed-row-70 display-flex-center">
           <span> {{ fileIndex + 1 }}/{{ files.length }} </span>
         </div>

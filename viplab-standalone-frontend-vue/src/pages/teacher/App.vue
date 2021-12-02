@@ -64,20 +64,62 @@
                         <div v-if="copied.configuration">
                           <label class="item-name mr-2">configuration: </label>
                           <div v-if="ifConfigPropertyExists('compiling.sources')">
-                          <label class="item-name mr-2" for="copied.environment">environment: </label>
-                          <div class="dropdown form-group">
-                              <select
-                                class="form-control"
-                                v-model="copied.environment"
-                                @change="addConfig()"
-                              >
-                                <option>C</option>
-                                <option>C++</option>
-                                <option>Java</option>
-                                
-                              </select>
-                            </div>
-                        </div>
+                            <label class="item-name mr-2">compiling.sources:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('compiling.compiler')">
+                            <label class="item-name mr-2">compiling.compiler:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('compiling.flags')">
+                            <label class="item-name mr-2">compiling.flags:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('checking.sources')">
+                            <label class="item-name mr-2">checking.sources:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('checking.allowedCalls')">
+                            <label class="item-name mr-2">checking.allowedCalls:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('checking.forbiddenCalls')">
+                            <label class="item-name mr-2">checking.forbiddenCalls:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('linking.flags')">
+                            <label class="item-name mr-2">linking.flags:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('running.stdinFilename')">
+                            <label class="item-name mr-2">running.stdinFilename:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('running.timelimitInSeconds')">
+                            <label class="item-name mr-2">running.timelimitInSeconds:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('running.commandLineArguments')">
+                            <label class="item-name mr-2">running.commandLineArguments:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('running.flags')">
+                            <label class="item-name mr-2">running.flags:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('running.mainClass')">
+                            <label class="item-name mr-2">running.mainClass:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('running.executable')">
+                            <label class="item-name mr-2">running.executable:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('running.entrypoint')">
+                            <label class="item-name mr-2">running.entrypoint:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('running.intermediateFilesPattern')">
+                            <label class="item-name mr-2">running.intermediateFilesPattern:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('resources.image')">
+                            <label class="item-name mr-2">resources.image:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('resources.volume')">
+                            <label class="item-name mr-2">resources.volume:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('resources.memory')">
+                            <label class="item-name mr-2">resources.memory:</label>
+                          </div>
+                          <div v-if="ifConfigPropertyExists('resources.numCPUs')">
+                            <label class="item-name mr-2">resources.numCPUs:</label>
+                          </div>
                         </div>
                       </div>
 
@@ -483,10 +525,10 @@ export default {
           this.$set(this.copied.configuration, "running.commandLineArguments", "");
           this.$set(this.copied.configuration, "running.entrypoint", "");
           this.$set(this.copied.configuration, "running.intermediateFilesPattern", "");
-          this.$set(this.copied.configuration, "resouces.image", "");
-          this.$set(this.copied.configuration, "resouces.volume", "");
-          this.$set(this.copied.configuration, "resouces.memory", "");
-          this.$set(this.copied.configuration, "resouces.numCPUs", "");
+          this.$set(this.copied.configuration, "resources.image", "");
+          this.$set(this.copied.configuration, "resources.volume", "");
+          this.$set(this.copied.configuration, "resources.memory", "");
+          this.$set(this.copied.configuration, "resources.numCPUs", "");
           break;
         case "DuMuX":
           this.$set(this.copied.configuration, "running.commandLineArguments", "");
@@ -496,9 +538,9 @@ export default {
     },
     /** Check if property exists in current config, or if it is undefined */
     ifConfigPropertyExists(property) {
-      let test = this.copied.configuration;
-      console.log(test[property]);
-      if (typeof test["compiling.sources"] !== "undefined") {
+      let config = this.copied.configuration;
+      //console.log(config[property]);
+      if (typeof config[property] !== "undefined") {
         return true;
       }
       return false;
@@ -588,6 +630,7 @@ body {
 
   .preferences-list {
     padding: 10px 10px 10px 10px;
+    word-break: break-word;
   }
 
   .dnd-window {
