@@ -424,6 +424,53 @@
     "resources.volume": "/data/shared",
     "resources.memory": "1g",
     "resources.numCPUs": 1,
-    "running.commandLineArguments": "--generatecsv={{ __csvcheckbox__ }} --pictureSize={{ __orientationRadioButton__ }} --colorScheme={{ __colorSchemedropdownSingle__ }} --incremental={{ __incrementalResultToggle__ }}"
+    "running.commandLineArguments": "--generatecsv={{ __csvcheckbox__ }} --pictureSize={{ __orientationRadioButton__ }} --colorScheme={{ __colorSchemedropdownSingle__ }} --incremental={{ __incrementalResultToggle__ }}",
+    "output": [
+      {
+        "id": "bottom-mass-over-time",
+        "type": "chart",
+        "basename": "dataovertime",
+        "extensions": ["csv"],
+        "update": {
+          "type": "stdout",
+          "key": "[[Wrote tracer data over time]]"
+        },
+        "labels": {
+          "key": "time",
+          "label": "Time in years",
+          "factor": 3.1709792e-8,
+          "offset": 0,
+          "format": "0.0"
+        },
+        "datasets": [
+          {
+            "key": "massBottomLayer",
+            "label": "Tracer mass in bottom layer in kg"
+          },
+          {
+            "key": "massFracture",
+            "label": "Tracer mass in fracture in kg"
+          },
+          {
+            "key": "fluxAcrossOutlet",
+            "label": "Flux across outlet in kg/(s m^2)"
+          }
+        ]
+      },
+      {
+        "id": "matrix",
+        "type": "vtk",
+        "basename": "case1_single_tracer_matrix",
+        "extensions": ["vtu"],
+        "update" : { "type": "stdout", "key": "[[Wrote tracer vtk output]]" }
+      },
+      {
+        "id": "matrix",
+        "type": "vtk",
+        "basename": "case1_single_tracer_fracture",
+        "extensions": ["vtu"],
+        "update" : { "type": "stdout", "key": "[[Wrote tracer vtk output]]" }
+      }   
+    ]
   }
 }

@@ -808,57 +808,60 @@ export default {
 
       //get basenames for collections of files
       let outputConfig = this.json.configuration.output;
-      let basenames = [];
-      for (var out = 0; out < outputConfig.length; out++) {
-        let currentConfig = outputConfig[out];
-        let currentBasename = currentConfig.basename;
-        if (!basenames.includes(currentBasename)) {
-          basenames.push(currentBasename);
-        }
+      if (outputConfig !== undefined) {
+        let basenames = [];
+        for (var out = 0; out < outputConfig.length; out++) {
+          let currentConfig = outputConfig[out];
+          let currentBasename = currentConfig.basename;
+          if (!basenames.includes(currentBasename)) {
+            basenames.push(currentBasename);
+          }
 
-        if(!connectedVtks[currentBasename]) {
-          connectedVtks[currentBasename] = {};
-          connectedVtks[currentBasename].type = "s3file";
-          connectedVtks[currentBasename].urls = [];
-          connectedVtks[currentBasename].datasets = currentConfig.datasets;
-          connectedVtks[currentBasename].labels = currentConfig.labels;
-        }
-        
-      }
-
-      // group results according to the available basenames
-      for(var a = 0; a < artifacts.length; a++) {
-        if((artifacts[a].MIMEtype == "application/vtu" || artifacts[a].MIMEtype == "text/csv") && !artifacts[a].artifacts){
-          let path = artifacts[a].path;
-          let lastIndex = path.lastIndexOf('/');
-          let filenamePart = path.substr(lastIndex + 1, path.length);
+          if(!connectedVtks[currentBasename]) {
+            connectedVtks[currentBasename] = {};
+            connectedVtks[currentBasename].type = "s3file";
+            connectedVtks[currentBasename].urls = [];
+            connectedVtks[currentBasename].datasets = currentConfig.datasets;
+            connectedVtks[currentBasename].labels = currentConfig.labels;
+          }
           
-          for (var base = 0; base < basenames.length; base++) {
-            let currentBasename = basenames[base];
+        }
 
-            if (filenamePart.startsWith(currentBasename)) {
-              connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
-              connectedVtks[currentBasename].urls.push(artifacts[a].url);
-              artifacts[a].inCollection = true;
+        // group results according to the available basenames
+        for(var a = 0; a < artifacts.length; a++) {
+          if((artifacts[a].MIMEtype == "application/vtu" || artifacts[a].MIMEtype == "text/csv") && !artifacts[a].artifacts){
+            let path = artifacts[a].path;
+            let lastIndex = path.lastIndexOf('/');
+            let filenamePart = path.substr(lastIndex + 1, path.length);
+            
+            for (var base = 0; base < basenames.length; base++) {
+              let currentBasename = basenames[base];
+
+              if (filenamePart.startsWith(currentBasename)) {
+                connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
+                connectedVtks[currentBasename].urls.push(artifacts[a].url);
+                artifacts[a].inCollection = true;
+              }
+
             }
 
           }
-
         }
-      }
-      // delete all vtk and csv artifacts that are part of a collection
-      artifacts = this.returnedOutputJson.artifacts;
-      var b = artifacts.length;
-      while(b--){
-        if(artifacts[b].inCollection) {
-          artifacts.splice(b, 1);
+        // delete all vtk and csv artifacts that are part of a collection
+        artifacts = this.returnedOutputJson.artifacts;
+        var b = artifacts.length;
+        while(b--){
+          if(artifacts[b].inCollection) {
+            artifacts.splice(b, 1);
+          }
+        }
+        
+        // add vtk collections
+        for(var c = 0; c < basenames.length; c++){
+          this.returnedOutputJson.artifacts.push(connectedVtks[basenames[c]]);
         }
       }
       
-      // add vtk collections
-      for(var c = 0; c < basenames.length; c++){
-        this.returnedOutputJson.artifacts.push(connectedVtks[basenames[c]]);
-      }
       //console.log(this.returnedOutputJson);
 
 
@@ -1129,7 +1132,7 @@ export default {
       for (var part in this.json.files[file].parts) {
         for (var param in this.json.files[file].parts[part].parameters) {
           var currentParam = this.json.files[file].parts[part].parameters[param];
-          //console.log(currentParam);
+          console.log(currentParam);
           //console.log("test" + JSON.parse(currentParam).mode);
         }
       }
