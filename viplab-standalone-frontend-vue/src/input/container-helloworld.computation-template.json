@@ -38,6 +38,37 @@
           ]
         },
         {
+          "id": "base64-data-test",
+          "type": "chart",
+          "basename": "data",
+          "extensions": ["csv"],
+          "update": {
+            "type": "stdout",
+            "key": "[[Wrote tracer data over time]]"
+          },
+          "labels": {
+            "key": "time",
+            "label": "Time in years",
+            "factor": 3.1709792e-8,
+            "offset": 0,
+            "format": "0.0"
+          },
+          "datasets": [
+            {
+              "key": "massBottomLayer",
+              "label": "Tracer mass in bottom layer in kg"
+            },
+            {
+              "key": "massFracture",
+              "label": "Tracer mass in fracture in kg"
+            },
+            {
+              "key": "fluxAcrossOutlet",
+              "label": "Flux across outlet in kg/(s m^2)"
+            }
+          ]
+        },
+        {
           "id": "matrix",
           "type": "vtk",
           "basename": "case1_single_tracer_matrix",

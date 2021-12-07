@@ -291,23 +291,37 @@
                             ref="outPartcontent"
                             class="outPartcontent"
                           >
-                            <csv-plot 
-                              :csvsProp=[artifact.content]
-                              :areUrlsProp="false"
-                              :datasetProp={}
-                              :labelProp={}>
-                            </csv-plot>
+
+                            <div v-if="artifact.datasets">
+                              <div v-for="dataset in artifact.datasets" :key="dataset.key">
+                                <csv-plot 
+                                  :csvsProp=artifact.urlsOrContents
+                                  :areUrlsProp="false"
+                                  :datasetProp=dataset
+                                  :labelProp="artifact.labels">
+                                </csv-plot>
+                              </div>
+                            </div>
+                            <div v-else>
+                              <csv-plot 
+                                :csvsProp=[artifact.content]
+                                :areUrlsProp="false"
+                                :datasetProp={}
+                                :labelProp={}>
+                              </csv-plot>
+                            </div>
+
                           </div>
                         </div>
                         <!-- Render s3 files that have no content-element-->
                         <div v-else>
                           <div v-if="artifact.MIMEtype == 'application/vtu'">
                               <vtk-component
-                                  v-if="artifact.urls"
-                                  :propFiles=artifact.urls
+                                  v-if="artifact.urlsOrContents"
+                                  :propFiles=artifact.urlsOrContents
                               ></vtk-component>
                               <vtk-component
-                                  v-else-if="!artifact.urls"
+                                  v-else-if="!artifact.urlsOrContents"
                                   :propFiles=[artifact.url]
                               ></vtk-component>
                           </div>
@@ -349,7 +363,7 @@
                             <div v-if="artifact.datasets">
                               <div v-for="dataset in artifact.datasets" :key="dataset.key">
                                 <csv-plot 
-                                  :csvsProp=artifact.urls
+                                  :csvsProp=artifact.urlsOrContents
                                   :areUrlsProp="true"
                                   :datasetProp=dataset
                                   :labelProp="artifact.labels">
@@ -358,7 +372,7 @@
                             </div>
                             <div v-else>
                               <csv-plot 
-                                :csvsProp=artifact.urls
+                                :csvsProp=[artifact.url]
                                 :areUrlsProp="true"
                                 :datasetProp={}
                                 :labelProp={}>
@@ -797,16 +811,34 @@ export default {
       "size": "123456789",
       "hash": "sha512:hashcode_of_file"
     }
+      );*/
+      this.returnedOutputJson.artifacts.push(
+        {
+          "type" : "file",
+          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68d01",
+          "MIMEtype": "text/csv",
+          "path": "/dataovertime/test.csv",
+          "content": "dGltZSxtYXNzQm90dG9tTGF5ZXIsbWFzc0ZyYWN0dXJlLGZsdXhBY3Jvc3NPdXRsZXQKMWUrMDcsMC4wMDIwNDkyMywwLjAxNjA1Nyw2LjcxNTE3ZS0xMQoyZSswNywwLjAxMTcyOTMsMC4wNDUzMjMyLDMuNjU5NzZlLTEwCjNlKzA3LDAuMDM4MDQ4NywwLjA4MDk3MDMsMS4xMzAyZS0wOQo0ZSswNywwLjA5MjE4MywwLjExNzQ1NiwyLjYwNzAzZS0wOQo1ZSswNywwLjE4NTg1NiwwLjE1MTQ3LDUuMDA2MTdlLTA5Cg=="
+        }
       );
       this.returnedOutputJson.artifacts.push(
         {
           "type" : "file",
           "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68d01",
           "MIMEtype": "text/csv",
-          "path": "/dataovertime/data.csv",
+          "path": "/dataovertime/data-01.csv",
           "content": "dGltZSxtYXNzQm90dG9tTGF5ZXIsbWFzc0ZyYWN0dXJlLGZsdXhBY3Jvc3NPdXRsZXQKMWUrMDcsMC4wMDIwNDkyMywwLjAxNjA1Nyw2LjcxNTE3ZS0xMQoyZSswNywwLjAxMTcyOTMsMC4wNDUzMjMyLDMuNjU5NzZlLTEwCjNlKzA3LDAuMDM4MDQ4NywwLjA4MDk3MDMsMS4xMzAyZS0wOQo0ZSswNywwLjA5MjE4MywwLjExNzQ1NiwyLjYwNzAzZS0wOQo1ZSswNywwLjE4NTg1NiwwLjE1MTQ3LDUuMDA2MTdlLTA5Cg=="
         }
-      );*/
+      );
+      this.returnedOutputJson.artifacts.push(
+        {
+          "type" : "file",
+          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68d02",
+          "MIMEtype": "text/csv",
+          "path": "/dataovertime/data-02.csv",
+          "content": "dGltZSxtYXNzQm90dG9tTGF5ZXIsbWFzc0ZyYWN0dXJlLGZsdXhBY3Jvc3NPdXRsZXQKMWUrMDcsMC4wMDIwNDkyMywwLjAxNjA1Nyw2LjcxNTE3ZS0xMQoyZSswNywwLjAxMTcyOTMsMC4wNDUzMjMyLDMuNjU5NzZlLTEwCjNlKzA3LDAuMDM4MDQ4NywwLjA4MDk3MDMsMS4xMzAyZS0wOQo0ZSswNywwLjA5MjE4MywwLjExNzQ1NiwyLjYwNzAzZS0wOQo1ZSswNywwLjE4NTg1NiwwLjE1MTQ3LDUuMDA2MTdlLTA5Cg=="
+        }
+      );
 
       //console.log(this.returnedOutputJson);
 
@@ -830,7 +862,7 @@ export default {
           if(!connectedVtks[currentBasename]) {
             connectedVtks[currentBasename] = {};
             connectedVtks[currentBasename].type = "s3file";
-            connectedVtks[currentBasename].urls = [];
+            connectedVtks[currentBasename].urlsOrContents = [];
             connectedVtks[currentBasename].datasets = currentConfig.datasets;
             connectedVtks[currentBasename].labels = currentConfig.labels;
           }
@@ -847,9 +879,14 @@ export default {
             for (var base = 0; base < basenames.length; base++) {
               let currentBasename = basenames[base];
 
-              if (filenamePart.startsWith(currentBasename)) {
+              if (filenamePart.startsWith(currentBasename) && (filenamePart.charAt(currentBasename.length) === "-")) {
+                connectedVtks[currentBasename].type = artifacts[a].type;
                 connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
-                connectedVtks[currentBasename].urls.push(artifacts[a].url);
+                if (artifacts[a].url) {
+                  connectedVtks[currentBasename].urlsOrContents.push(artifacts[a].url);
+                } else {
+                  connectedVtks[currentBasename].urlsOrContents.push(artifacts[a].content);
+                }
                 artifacts[a].inCollection = true;
               }
 
@@ -871,8 +908,9 @@ export default {
           this.returnedOutputJson.artifacts.push(connectedVtks[basenames[c]]);
         }
       }
-      
-      //console.log(this.returnedOutputJson);
+      console.log("----------");
+      console.log(this.returnedOutputJson);
+      console.log("----------");
 
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
