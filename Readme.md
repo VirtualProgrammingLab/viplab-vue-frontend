@@ -23,6 +23,17 @@ cd <path-to-Vue-Frontend-Repo>/viplab-standalone-frontend
 npm install
 ```
 
+## Before running the Application
+
+Before running the Application, specify the URL of the Websocket-API, the frontend should communicate with. 
+The file you have to edit is `config.json` inside the `public`-folder. 
+Here you can see the file, where a local instance of the API is being used: 
+```
+{
+    "WEBSOCKET_API": "ws://localhost:8083/computations"
+}
+```
+
 ---
 
 ## Run the Application 
