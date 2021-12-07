@@ -117,7 +117,6 @@ export default {
       this.processData(data);
     },
     processData: function(data) {
-        console.log(data);
         var traces = [];
 
         // create an object, where there is an array for each column name
@@ -133,12 +132,20 @@ export default {
 
         // create traces to be rendered later; the first column is always x; the others are ys
         for (var k = 1; k < keys.length; k++) {
-          console.log(this.datasetProp.key);
-          if(keys[k] === this.datasetProp.key || this.datasetProp === {}) {
+          if (this.datasetProp.key) {
+            if(keys[k] === this.datasetProp.key) {
+              var trace = {
+                x: obj[(keys[0])],
+                y: obj[(keys[k])],
+                name: this.datasetProp.label
+              }
+              traces.push(trace);
+            }
+          } else {
             var trace = {
               x: obj[(keys[0])],
               y: obj[(keys[k])],
-              name: this.datasetProp.label || keys[k]
+              name:  keys[k]
             }
             traces.push(trace);
           }

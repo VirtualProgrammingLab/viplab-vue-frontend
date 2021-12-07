@@ -1,0 +1,3 @@
+{
+    "WEBSOCKET_API": "ws://localhost:8083/computations"
+}

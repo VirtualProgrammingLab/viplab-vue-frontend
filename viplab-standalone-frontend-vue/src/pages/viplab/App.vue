@@ -262,7 +262,7 @@
                       >
                         <div v-if="artifact.type !== 's3file'">
                           <div
-                            v-if="artifact.MIMEtype !== 'image/png'"
+                            v-if="artifact.MIMEtype == 'text/plain'"
                             ref="outPartcontent"
                             class="outPartcontent"
                           >
@@ -285,6 +285,18 @@
                             class="outPartcontent"
                           >
                             <img :src="imagesrc(artifact.content)" />
+                          </div>
+                          <div
+                            v-if="artifact.MIMEtype === 'text/csv'"
+                            ref="outPartcontent"
+                            class="outPartcontent"
+                          >
+                            <csv-plot 
+                              :csvsProp=[artifact.content]
+                              :areUrlsProp="false"
+                              :datasetProp={}
+                              :labelProp={}>
+                            </csv-plot>
                           </div>
                         </div>
                         <!-- Render s3 files that have no content-element-->
@@ -549,7 +561,7 @@ export default {
     /** should be the first thing that is executed when DOM is loaded: setup connection to webserver */
     executeAfterDomLoaded: function () {
       //this.ws = new WebSocket("ws://192.168.195.128:8083/computations");
-      this.ws = new WebSocket("ws://localhost:8083/computations");
+      this.ws = new WebSocket(this.$config.WEBSOCKET_API);
       console.log("connect to ws");
       this.ws.onopen = () => {
         this.ws.send(
@@ -788,14 +800,12 @@ export default {
       );
       this.returnedOutputJson.artifacts.push(
         {
-      "type" : "s3file",
-      "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68c67",
-      "MIMEtype": "text/csv",
-      "path": "/dataovertime/dataovertime-00005.csv",
-      "url": "http://localhost:8080/dataovertime-00005.csv",
-      "size": "123456789",
-      "hash": "sha512:hashcode_of_file"
-    }
+          "type" : "file",
+          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68d01",
+          "MIMEtype": "text/csv",
+          "path": "/dataovertime/data.csv",
+          "content": "dGltZSxtYXNzQm90dG9tTGF5ZXIsbWFzc0ZyYWN0dXJlLGZsdXhBY3Jvc3NPdXRsZXQKMWUrMDcsMC4wMDIwNDkyMywwLjAxNjA1Nyw2LjcxNTE3ZS0xMQoyZSswNywwLjAxMTcyOTMsMC4wNDUzMjMyLDMuNjU5NzZlLTEwCjNlKzA3LDAuMDM4MDQ4NywwLjA4MDk3MDMsMS4xMzAyZS0wOQo0ZSswNywwLjA5MjE4MywwLjExNzQ1NiwyLjYwNzAzZS0wOQo1ZSswNywwLjE4NTg1NiwwLjE1MTQ3LDUuMDA2MTdlLTA5Cg=="
+        }
       );*/
 
       //console.log(this.returnedOutputJson);
