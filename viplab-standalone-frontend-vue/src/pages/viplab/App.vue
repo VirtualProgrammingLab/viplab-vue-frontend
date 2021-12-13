@@ -114,45 +114,6 @@
                   </b-tab>
                 </b-tabs>
               </b-card>
-
-              <!-- sticky buttons 
-              <div class="sticky-button d-flex flex-row">
-                <div class="mr-auto">
-                  <b-button class="btn mr-2 btn-row" v-tooltip.top-center="'Download backup of changes'">
-                    <b-icon
-                      icon="download"
-                      aria-hidden="true"
-                      @click="download"
-                    ></b-icon>
-                  </b-button>
-                  <input
-                    type="file"
-                    ref="upload"
-                    style="display: none"
-                    @change="upload"
-                    accept="application/JSON"
-                  />
-                  <b-button
-                    class="btn btn-secondary file btn-row"
-                    @click="$refs.upload.click()"
-                    v-tooltip.top-center="'Upload of previously downloaded backup'"
-                  >
-                    <b-icon icon="upload" aria-hidden="true"></b-icon>
-                  </b-button>
-                </div>
-                <div class="buttons">
-                  <b-button class="btn mr-2 btn-row" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'" v-if="!asForm || outputFiles !== ''">
-                    <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
-                    <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
-                  </b-button>
-                  <b-button class="btn mr-2 btn-row" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
-                    <font-awesome-icon icon="save" />
-                  </b-button>
-                  <b-button class="btn btn-row" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
-                    <b-icon icon="play" aria-hidden="true"></b-icon>
-                  </b-button>
-                </div>
-              </div> -->
             </div>
           </div>
         </form>
@@ -975,14 +936,6 @@ export default {
     },
     /** Save file locally on click from the user */
     async save(filename, identifier, mimetype) {
-      /*console.log(
-        "save the following file: " +
-          filename +
-          " " +
-          identifier +
-          " " +
-          mimetype
-      );*/
       var content = "";
       this.returnedOutputJson.artifacts.forEach((item) => {
         if (item.identifier == identifier && item.content) {
@@ -990,11 +943,6 @@ export default {
         } else if (item.identifier == identifier) {
           // handle files that were downloaded from s3
           var itemContent = "";
-          /*if(item.MIMEtype === "text/plain") {
-            itemContent = this.$refs[item.path][0].$el.lastElementChild.textContent;
-          } else if (item.MIMEtype === "image/png") {
-            var image = this.$refs[item.path][0].src;
-            itemContent = image;*/
           if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vtu") {
             itemContent = item.url;
           }
@@ -1012,7 +960,7 @@ export default {
         const byteArray = new Uint8Array(byteNumbers);
         blob = new Blob([byteArray], { type: mimetype });
         //console.log(blob);
-      } else if ((mimetype === "image/png" && content.includes("blob:http")) || ((mimetype === "image/png" || mimetype === "text/csv" || mimetype === "application/vtu") && content.startsWith("http"))) {
+      } else if ((mimetype === "image/png" && content.includes("blob:http")) || ((mimetype === "text/plain" || mimetype === "image/png" || mimetype === "text/csv" || mimetype === "application/vtu") && content.startsWith("http"))) {
         // handle files that were downloaded from s3
         blob = await fetch(content).then(response => response.blob());
       } else {
@@ -1233,10 +1181,6 @@ export default {
   },
   mounted() {
     this.executeAfterDomLoaded();
-    //console.log(process.env.NODE_ENV);
-    //console.log(__dirname);
-    //this.loadJsonFromFile();
-    //this.loadJsonFromFile("./container.computation-template2.json");
   },
 };
 </script>
