@@ -1,7 +1,7 @@
 <template>
   <div id="injected">
     <!-- header -->
-    
+    <!--
     <div class="header m-2">
       <img class="logo" src="./assets/viplab.png">
       <div class="header-right">
@@ -21,7 +21,7 @@
         </div>
       </div>
     </div>
-    
+    -->
 
     <!-- content -->
     <!-- route outlet -->

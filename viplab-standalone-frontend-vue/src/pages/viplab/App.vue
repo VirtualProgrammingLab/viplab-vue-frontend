@@ -8,6 +8,33 @@
 
       <div class="side-to-side-div flex-left m-2">
 
+        <!--<ace-editor-component 
+          :isParameter="true" 
+          :readonly="false"
+          :item='{
+              "mode" : "any",
+              "identifier" : "__default__", 
+              "metadata" : {
+                "guiType" : "editor", 
+                "name": "code 1"
+              },
+              "default": ["I2luY2x1ZGUgPHN0ZGlvLmg-Cg"],
+              "value": ["I2luY2x1ZGUgPHN0ZGlvLmg-Cg"],
+              "validation": "pattern",
+              "pattern": "^[0-9]+$"
+            }'
+          :lang="'javascript'"
+        >
+        </ace-editor-component>-->
+
+        <!--<ace-editor-component 
+          :isParameter="false" 
+          :readonly="true"
+          :item='{ "identifier": "codeFromStudent-2", "access": "modifiable", "metadata":{ "name"    : "Fill in your code!", "emphasis"  : "medium"}, "content" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"}'
+          :lang="'c_cpp'"
+        >
+        </ace-editor-component>-->
+
         <validation-observer v-slot="{ invalid }">
         <form @submit.prevent="sendData">
           <div class="form-group ml-5 mr-5">
@@ -403,8 +430,8 @@
                 </div>
                 <ul>
                   <li
-                    v-for="artifact in returnedArtifactsWOvtkCsv"
-                    :key="artifact.identifier"
+                    v-for="artifact in returnedOutputJson.artifacts"
+                    :key="artifact.identifier+'Download'"
                   >
                     <a
                       href="#"
@@ -428,6 +455,9 @@
 </template>
 
 <script>
+// import Ace
+//import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
+
 // import Prism Editor
 import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhere
@@ -471,6 +501,7 @@ export default {
     CsvPlot,
     Promised,
     ValidationObserver,
+    //AceEditorComponent,
   },
   data() {
     return {
@@ -500,7 +531,7 @@ export default {
       return parsed;
     },
     /* return result artifacts for download-links without the csv and vtk files that are downloadable from their respectable view */
-    returnedArtifactsWOvtkCsv: function() {
+    /*returnedArtifactsWOvtkCsv: function() {
       let artifacts = this.returnedOutputJson.artifacts;
       let newArtifacts = [];
       for(var i = 0; i < artifacts.length; i++) {
@@ -509,7 +540,7 @@ export default {
         }
       }
       return newArtifacts;
-    }
+    }*/
   },
   methods: {
     /* set the number of input files */
@@ -815,7 +846,7 @@ export default {
       this.returnedOutputJson.artifacts.push(
         {
           "type" : "file",
-          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68d01",
+          "identifier" : "ac3c1cf9-c02d-4694-902c-93c298d68d01",
           "MIMEtype": "text/csv",
           "path": "/dataovertime/test.csv",
           "content": "dGltZSxtYXNzQm90dG9tTGF5ZXIsbWFzc0ZyYWN0dXJlLGZsdXhBY3Jvc3NPdXRsZXQKMWUrMDcsMC4wMDIwNDkyMywwLjAxNjA1Nyw2LjcxNTE3ZS0xMQoyZSswNywwLjAxMTcyOTMsMC4wNDUzMjMyLDMuNjU5NzZlLTEwCjNlKzA3LDAuMDM4MDQ4NywwLjA4MDk3MDMsMS4xMzAyZS0wOQo0ZSswNywwLjA5MjE4MywwLjExNzQ1NiwyLjYwNzAzZS0wOQo1ZSswNywwLjE4NTg1NiwwLjE1MTQ3LDUuMDA2MTdlLTA5Cg=="
@@ -908,10 +939,6 @@ export default {
           this.returnedOutputJson.artifacts.push(connectedVtks[basenames[c]]);
         }
       }
-      console.log("----------");
-      console.log(this.returnedOutputJson);
-      console.log("----------");
-
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.decodeBase64(result.result.output.stdout);
@@ -963,17 +990,20 @@ export default {
         } else if (item.identifier == identifier) {
           // handle files that were downloaded from s3
           var itemContent = "";
-          if(item.MIMEtype === "text/plain") {
+          /*if(item.MIMEtype === "text/plain") {
             itemContent = this.$refs[item.path][0].$el.lastElementChild.textContent;
-          } else {
+          } else if (item.MIMEtype === "image/png") {
             var image = this.$refs[item.path][0].src;
-            itemContent = image;
+            itemContent = image;*/
+          if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vtu") {
+            itemContent = item.url;
           }
           content = itemContent;
         }
       });
+      
       var blob = "";
-      if (mimetype === "image/png" && !(content.includes("blob:http"))) {
+      if (mimetype === "image/png" && !(content.includes("blob:http")) && !(content.startsWith("http"))) {
         // handle images that were not downloaded
         const byteNumbers = new Array(content.length);
         for (let i = 0; i < content.length; i++) {
@@ -982,9 +1012,9 @@ export default {
         const byteArray = new Uint8Array(byteNumbers);
         blob = new Blob([byteArray], { type: mimetype });
         //console.log(blob);
-      } else if (mimetype === "image/png" && content.includes("blob:http")) {
+      } else if ((mimetype === "image/png" && content.includes("blob:http")) || ((mimetype === "image/png" || mimetype === "text/csv" || mimetype === "application/vtu") && content.startsWith("http"))) {
         // handle files that were downloaded from s3
-        blob = await fetch(content).then(r => r.blob());
+        blob = await fetch(content).then(response => response.blob());
       } else {
         blob = new Blob([content], { mimetype: mimetype });
       }
