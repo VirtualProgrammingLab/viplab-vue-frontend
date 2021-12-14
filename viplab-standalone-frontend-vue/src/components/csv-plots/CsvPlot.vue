@@ -134,7 +134,7 @@ export default {
         for (var k = 1; k < keys.length; k++) {
           if (this.datasetProp.key) {
             if(keys[k] === this.datasetProp.key) {
-              var trace = {
+              let trace = {
                 x: obj[(keys[0])],
                 y: obj[(keys[k])],
                 name: this.datasetProp.label
@@ -142,7 +142,7 @@ export default {
               traces.push(trace);
             }
           } else {
-            var trace = {
+            let trace = {
               x: obj[(keys[0])],
               y: obj[(keys[k])],
               name:  keys[k]

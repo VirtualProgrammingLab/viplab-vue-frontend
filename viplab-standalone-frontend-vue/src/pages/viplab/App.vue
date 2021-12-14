@@ -5,35 +5,8 @@
       class="flex-container"
       :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
     >
-
+      
       <div class="side-to-side-div flex-left m-2">
-
-        <!--<ace-editor-component 
-          :isParameter="true" 
-          :readonly="false"
-          :item='{
-              "mode" : "any",
-              "identifier" : "__default__", 
-              "metadata" : {
-                "guiType" : "editor", 
-                "name": "code 1"
-              },
-              "default": ["I2luY2x1ZGUgPHN0ZGlvLmg-Cg"],
-              "value": ["I2luY2x1ZGUgPHN0ZGlvLmg-Cg"],
-              "validation": "pattern",
-              "pattern": "^[0-9]+$"
-            }'
-          :lang="'javascript'"
-        >
-        </ace-editor-component>-->
-
-        <!--<ace-editor-component 
-          :isParameter="false" 
-          :readonly="true"
-          :item='{ "identifier": "codeFromStudent-2", "access": "modifiable", "metadata":{ "name"    : "Fill in your code!", "emphasis"  : "medium"}, "content" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"}'
-          :lang="'c_cpp'"
-        >
-        </ace-editor-component>-->
 
         <validation-observer v-slot="{ invalid }">
         <form @submit.prevent="sendData">
@@ -54,6 +27,33 @@
                     :title="getFilename(file.path)"
                     @click="tabClicked"
                   >
+
+                  <!--<ace-editor-component 
+                    :isParameter="true" 
+                    :readonly="false"
+                    :item='{
+                        "mode" : "any",
+                        "identifier" : "__default__", 
+                        "metadata" : {
+                          "guiType" : "editor", 
+                          "name": "code 1"
+                        },
+                        "default": ["I2luY2x1ZGUgPHN0ZGlvLmg-Cg"],
+                        "value": ["I2luY2x1ZGUgPHN0ZGlvLmg-Cg"],
+                        "validation": "pattern",
+                        "pattern": "^[0-9]+$"
+                      }'
+                    :lang="'c_cpp'"
+                  >
+                  </ace-editor-component>-->
+
+                  <!--<ace-editor-component 
+                    :isParameter="false" 
+                    :readonly="true"
+                    :item='{ "identifier": "codeFromStudent-2", "access": "modifiable", "metadata":{ "name"    : "Fill in your code!", "emphasis"  : "medium"}, "content" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"}'
+                    :lang="'c_cpp'"
+                  >
+                  </ace-editor-component>-->
 
                     <div
                       class="part mb-3"

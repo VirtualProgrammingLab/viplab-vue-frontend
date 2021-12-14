@@ -121,6 +121,15 @@ export default {
       this.aceEditor.setTheme(`ace/theme/xcode`)
     }
 
+    // set font size to inherit
+    this.aceEditor.setOptions({
+      fontFamily: "Consolas",
+      fontSize: "inherit"
+    });
+
+    // disable the vertical grey line at 80 chars visible in the editor
+    this.aceEditor.setShowPrintMargin(false);
+
     this.aceEditor.on('change', () => {
       this.beforeContent = this.aceEditor.getValue()
       this.$emit('change-content', this.aceEditor.getValue())
@@ -141,7 +150,9 @@ export default {
 <style scoped>
 .editor-component-ace{
   height: 100px;
+  border: 1px solid #ddd;
 }
+
 .error{
   color: red;
 }
