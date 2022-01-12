@@ -28,7 +28,12 @@
         </div>
         <!-- render items with no gui-type as editor elements -->
         <div class="form-item" v-if="isEditor(item) && item.value">
-          <editor-component :item="item" :readonly=false :isParameter=true></editor-component>
+          <ace-editor-component 
+            :isParameter="true" 
+            :isMustache="false"
+            :readonly="false"
+            :item="item"
+          ></ace-editor-component>
         </div>
         <!-- tooltip -->
         <div class="tooltip-icon">
@@ -47,7 +52,7 @@ import DropDown from "../components/DropDown.vue";
 import ToggleButton from "../components/ToggleButton.vue";
 import SliderElement from "../components/SliderElement.vue";
 import InputField from "../components/InputField.vue";
-import EditorComponent from "../components/EditorComponent.vue";
+import AceEditorComponent from "../components/EditorComponent-Ace.vue"
 
 export default {
   components: {
@@ -57,7 +62,7 @@ export default {
     ToggleButton,
     SliderElement,
     InputField,
-    EditorComponent,
+    AceEditorComponent,
   },
   name: 'Parameters',
   props: {

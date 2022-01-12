@@ -22,65 +22,43 @@
                   <b-tab
                     ref="file"
                     class="file"
-                    v-for="file in parsedFilesJson"
+                    v-for="(file, fileIndex) in parsedFilesJson"
                     :key="file.identifier"
                     :title="getFilename(file.path)"
                     @click="tabClicked"
                   >
 
-                  <!--<ace-editor-component 
-                    :isParameter="true" 
-                    :readonly="false"
-                    :item='{
-                        "mode" : "any",
-                        "identifier" : "__default__", 
-                        "metadata" : {
-                          "guiType" : "editor", 
-                          "name": "code 1"
-                        },
-                        "default": ["I2luY2x1ZGUgPHN0ZGlvLmg-Cg"],
-                        "value": ["I2luY2x1ZGUgPHN0ZGlvLmg-Cg"],
-                        "validation": "pattern",
-                        "pattern": "^[0-9]+$"
-                      }'
-                    :lang="'c_cpp'"
-                  >
-                  </ace-editor-component>-->
-
-                  <!--<ace-editor-component 
-                    :isParameter="false" 
-                    :readonly="true"
-                    :item='{ "identifier": "codeFromStudent-2", "access": "modifiable", "metadata":{ "name"    : "Fill in your code!", "emphasis"  : "medium"}, "content" : "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"}'
-                    :lang="'c_cpp'"
-                  >
-                  </ace-editor-component>-->
-
                     <div
                       class="part mb-3"
-                      v-for="part in file.parts"
+                      v-for="(part, partIndex) in file.parts"
                       :key="part.identifier"
                     >
                       <div
                         ref="partcontent"
                         class="partcontent"
-                        :id="part.identifier"
+                        :id="part.identifier+'Part'"
                         v-if="
                           part.access !== 'template' && numberOfInputFiles > 0
                         "
                       >
                         <div v-if="part.access == 'visible'">
-                          <editor-component
-                            :item="part"
+                          <ace-editor-component 
+                            :isParameter="false" 
+                            :isMustache="false"
                             :readonly="true"
-                            :isParameter="false"
-                          ></editor-component>
+                            :item="part"
+                            :lang="file.metadata.syntaxHighlighting"
+                          ></ace-editor-component>
                         </div>
                         <div v-else>
-                          <editor-component
-                            :item="part"
+                          <ace-editor-component 
+                            :isParameter="false" 
+                            :isMustache="false"
                             :readonly="false"
-                            :isParameter="false"
-                          ></editor-component>
+                            :item="part"
+                            :lang="file.metadata.syntaxHighlighting"
+                            v-on:update:item="updateContent(fileIndex, partIndex, $event)"
+                          ></ace-editor-component>
                         </div>
                       </div>
                       <div
@@ -187,13 +165,17 @@
                     :key="part.identifier"
                   >
                     <div v-if="part.parameters && part.access == 'template'">
-                      <prism-editor
-                        class="my-editor editor-readonly"
+                      <ace-editor-component 
+                        :isParameter="false" 
+                        :isMustache="true"
                         :readonly="true"
-                        :value=showMustacheTemplate(part)
-                        :highlight="highlighter"
-                        line-numbers
-                      ></prism-editor>
+                        :item='{
+                            "identifier" : generateMustacheDivId(part.identifier),
+                            "content" : showMustacheTemplate(part)
+                          }'
+                        :lang="'ini'"
+                        :key="showMustacheTemplate(part)"
+                      ></ace-editor-component>
                     </div>
                   </div>
                 </b-tab>
@@ -212,23 +194,27 @@
               />
               <div id="stdout" v-if="outputFiles !== ''">
                 <h3>Stdout</h3>
-                <prism-editor
-                  class="my-editor output-editor"
+                <ace-editor-component 
+                  :isParameter="false" 
+                  :isMustache="false"
                   :readonly="true"
-                  v-model="outputFiles"
-                  :highlight="highlighter"
-                  line-numbers
-                ></prism-editor>
+                  :item='{
+                    "identifier" : "outputFiles",
+                    "content" : convertToBase64(outputFiles)
+                  }'
+                ></ace-editor-component>
               </div>
               <div id="stderr" class="mt-2" v-if="outputFiles !== ''">
                 <h3>Stderr</h3>
-                <prism-editor
-                  class="my-editor output-editor"
+                <ace-editor-component 
+                  :isParameter="false" 
+                  :isMustache="false"
                   :readonly="true"
-                  v-model="errorFiles"
-                  :highlight="highlighter"
-                  line-numbers
-                ></prism-editor>
+                  :item='{
+                    "identifier" : "errorFiles",
+                    "content" : convertToBase64(errorFiles)
+                  }'
+                ></ace-editor-component>
               </div>
               <div id="fileList" class="mt-2" v-if="outputFiles !== ''">
                 <h3>Files to Download</h3>
@@ -254,18 +240,15 @@
                             ref="outPartcontent"
                             class="outPartcontent"
                           >
-                            <prism-editor
-                              class="
-                                my-editor
-                                editor-readonly
-                                top-editor
-                                bottom-editor
-                              "
+                            <ace-editor-component 
+                              :isParameter="false" 
+                              :isMustache="false"
                               :readonly="true"
-                              :value="decodeBase64(artifact.content)"
-                              :highlight="highlighter"
-                              line-numbers
-                            ></prism-editor>
+                              :item='{
+                                "identifier" : "Editor" + artifact.identifier,
+                                "content" : artifact.content
+                              }'
+                            ></ace-editor-component>
                           </div>
                           <div
                             v-if="artifact.MIMEtype === 'image/png'"
@@ -326,20 +309,16 @@
                               <!-- The default scoped slot will be used as the result -->
                               <template v-slot="data">
                                 <div>
-                                <prism-editor
-                                  v-if="artifact.MIMEtype == 'text/plain'"
-                                  class="
-                                    my-editor
-                                    editor-readonly
-                                    top-editor
-                                    bottom-editor
-                                  "
+                                <ace-editor-component 
+                                  :isParameter="false" 
+                                  :isMustache="false"
                                   :readonly="true"
-                                  :value="data"
-                                  :highlight="highlighter"
-                                  line-numbers
+                                  :item='{
+                                    "identifier" : "Editor" + artifact.identifier,
+                                    "content" : convertToBase64(data)
+                                  }'
                                   :ref="artifact.path"
-                                ></prism-editor>
+                                ></ace-editor-component>
                                 </div>
                               </template>
                               <template v-slot:rejected="error">
@@ -391,7 +370,7 @@
                 </div>
                 <ul>
                   <li
-                    v-for="artifact in returnedOutputJson.artifacts"
+                    v-for="artifact in returnedUnmodifiedArtifacts.artifacts"
                     :key="artifact.identifier+'Download'"
                   >
                     <a
@@ -417,21 +396,10 @@
 
 <script>
 // import Ace
-//import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
-
-// import Prism Editor
-import { PrismEditor } from "vue-prism-editor";
-import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhere
-
-// import highlighting library (you can use any library you want just return html string)
-import { highlight, languages } from "prismjs/components/prism-core";
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism.css"; // import syntax highlighting styles
+import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
 
 //own components
 import Parameters from "../../components/Parameters.vue";
-import EditorComponent from "../../components/EditorComponent.vue";
 
 import { CirclesToRhombusesSpinner } from "epic-spinners";
 
@@ -452,17 +420,15 @@ import {ValidationObserver} from "vee-validate";
 export default {
   name: "app",
   components: {
-    PrismEditor,
     CirclesToRhombusesSpinner,
     Parameters,
     //GridPlot,
     VtkComponent,
-    EditorComponent,
     //Plot2d,
     CsvPlot,
     Promised,
     ValidationObserver,
-    //AceEditorComponent,
+    AceEditorComponent,
   },
   data() {
     return {
@@ -472,6 +438,7 @@ export default {
       numberOfInputFiles: [],
       ws: "",
       returnedOutputJson: "",
+      returnedUnmodifiedArtifacts: "",
       outputFiles: "",
       errorFiles: "",
       maximized: false,
@@ -479,6 +446,16 @@ export default {
       asForm: true,
       isPartParameters: 0
     };
+  },
+  watch: {
+    json: {
+      handler: function (val) {
+        this.json = val;
+        //console.log(this.json.files[0].parts[0].parameters[0].selected);
+        this.$forceUpdate();
+      },
+      deep: true
+    }
   },
   computed: {
     /* return parameters section of json file */
@@ -538,6 +515,9 @@ export default {
       var decodedString = window.atob(encodedString);
       return decodedString;
     },
+    convertToBase64: function (stringToConvert) {
+      return window.btoa(stringToConvert);
+    },
     /** load json from file with temp being the file name, set this.json to the content of the file and fill form_v_model */
     loadJsonFromFile: function () {
       var appDiv = document.body;
@@ -559,10 +539,6 @@ export default {
       //console.log(this.json);
 
       this.setNumberOfInputFiles();
-    },
-    /** highlight the code in the editor */
-    highlighter(code) {
-      return highlight(code, languages.js); // languages.<insert language> to return html with markup
     },
     /** should be the first thing that is executed when DOM is loaded: setup connection to webserver */
     executeAfterDomLoaded: function () {
@@ -708,12 +684,15 @@ export default {
       }
 
       // if the first result came back, set the whole object, else, only add the new artifacts to the existing object
+      // use JSON.parse(JSON.stringify(...)) to make sure a copy of the data is made, such that not only a reference is used
       if (this.returnedOutputJson === "") {
-        this.returnedOutputJson = result.result;
+        this.returnedOutputJson = JSON.parse(JSON.stringify(result.result))
+        this.returnedUnmodifiedArtifacts = JSON.parse(JSON.stringify(result.result))
       } else {
-        this.returnedOutputJson.artifacts.push(result.result.artifacts);
+        this.returnedOutputJson.artifacts.push(JSON.parse(JSON.stringify(result.result.artifacts)));
+        this.returnedUnmodifiedArtifacts.artifacts.push(JSON.parse(JSON.stringify(result.result.artifacts)))
       }
-      
+
       // vtu with other path for testing
       /*
       this.returnedOutputJson.artifacts.unshift(
@@ -804,6 +783,7 @@ export default {
       "hash": "sha512:hashcode_of_file"
     }
       );*/
+      /*
       this.returnedOutputJson.artifacts.push(
         {
           "type" : "file",
@@ -830,7 +810,7 @@ export default {
           "path": "/dataovertime/data-02.csv",
           "content": "dGltZSxtYXNzQm90dG9tTGF5ZXIsbWFzc0ZyYWN0dXJlLGZsdXhBY3Jvc3NPdXRsZXQKMWUrMDcsMC4wMDIwNDkyMywwLjAxNjA1Nyw2LjcxNTE3ZS0xMQoyZSswNywwLjAxMTcyOTMsMC4wNDUzMjMyLDMuNjU5NzZlLTEwCjNlKzA3LDAuMDM4MDQ4NywwLjA4MDk3MDMsMS4xMzAyZS0wOQo0ZSswNywwLjA5MjE4MywwLjExNzQ1NiwyLjYwNzAzZS0wOQo1ZSswNywwLjE4NTg1NiwwLjE1MTQ3LDUuMDA2MTdlLTA5Cg=="
         }
-      );
+      );*/
 
       //console.log(this.returnedOutputJson);
 
@@ -937,7 +917,7 @@ export default {
     /** Save file locally on click from the user */
     async save(filename, identifier, mimetype) {
       var content = "";
-      this.returnedOutputJson.artifacts.forEach((item) => {
+      this.returnedUnmodifiedArtifacts.artifacts.forEach((item) => {
         if (item.identifier == identifier && item.content) {
           content = this.decodeBase64(item.content);
         } else if (item.identifier == identifier) {
@@ -1064,7 +1044,10 @@ export default {
             for (let oldp in this.json.files[f].parts) {
               if (this.json.files[f].parts[oldp].identifier == partId) {
                 // set content of parts
-                this.json.files[f].parts[oldp].content = obj.parts[p].content;
+                //this.json.files[f].parts[oldp].content = obj.parts[p].content;
+                this.$set(this.json.files[f].parts[oldp], "content", obj.parts[p].content);
+                this.$forceUpdate();
+                console.log("Upload - " + this.json.files[f].parts[oldp].content);
                 // set parameters of parts
                 for(let oldPara in this.json.files[f].parts[oldp].parameters) {
                   let currentParamJson = this.json.files[f].parts[oldp].parameters[oldPara];
@@ -1135,6 +1118,7 @@ export default {
             var currentParam = part.parameters[p];
             view[currentParam.identifier] = currentParam.value || currentParam.selected;
           }
+          console.log(view);
           var output = Mustache.render(mustacheTemplate, view);
           return output;
         } else {
@@ -1143,6 +1127,9 @@ export default {
         }
       }
     }, 
+    generateMustacheDivId(partId) {
+      return "mustache" + partId;
+    },
     /** get filename from part for displaying it as the tab-name */
     getFilename: function(path) {
       let filename = path;
@@ -1150,6 +1137,9 @@ export default {
         filename = path.slice(path.lastIndexOf('/') + 1, path.length); 
       }
       return filename;
+    },
+    updateContent: function(fileIndex, partIndex, event) {
+      this.json.files[fileIndex].parts[partIndex].content = event
     }
   },
   created() {
@@ -1222,6 +1212,7 @@ body {
     left: 74px;
     text-align: right;
     background: rgba(0,0,0,0.1);//rgba(255,255,255,0.7);
+    z-index: 1000;
   }
 
   .btn-row {
@@ -1326,58 +1317,6 @@ body {
 
   .toggle input:checked + .slider::before {
     transform: translateX(1.9em);
-  }
-
-  /* for class surrounding editors to surround them with border, but if files empty, displays line
-  .file {
-    border: 1px solid #ddd;
-    border-radius: 25px;
-    overflow: hidden;
-  }
-  */
-
-  /* required class */
-  .my-editor {
-    /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
-    background: white;
-    color: #ccc;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-
-    /* you must provide font-family font-size line-height. Example: */
-    font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    padding: 5px;
-  }
-
-  /* optional class for removing the outline */
-  .prism-editor__textarea:focus {
-    outline: none;
-  }
-
-  .top-editor {
-    border-top-right-radius: calc(0.25rem - 1px);
-    border-top-left-radius: calc(0.25rem - 1px);
-    border-top: 1px solid #ddd;
-  }
-
-  .bottom-editor {
-    border-bottom-right-radius: calc(0.25rem - 1px);
-    border-bottom-left-radius: calc(0.25rem - 1px);
-    border-bottom: 1px solid #ddd;
-  }
-
-  .output-editor {
-    border-radius: calc(0.25rem - 1px);
-    border: 1px solid #ddd;
-  }
-
-  .editor-readonly {
-    background: #ddd;
-    /*border-left: 1px solid #888;
-    border-right: 1px solid #888;
-    opacity: 0.3;*/
   }
 
   .card-header:nth-child(1) {

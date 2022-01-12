@@ -1,44 +1,44 @@
 <template>
   <div class="radiobutton-component">
-      <div class="item-name">{{ rad.metadata.name }}:</div>
-      <div
-        class="radiobutton form-check custom-control custom-radio"
-        v-for="(radio, index) in rad.options"
-        :key="'Radio' + ' ' + index"
-      >
-        <div v-if="radio.disabled">
-          <input
-            class="form-check-input custom-control-input"
-            type="radio"
-            :id="'RadioDis' + ' ' + index"
-            disabled
-            :name="rad.identifier"
-            :value="radio.value"
-            v-model="vModel"
-          />
-          <label
-            class="form-check-label custom-control-label"
-            for="'RadioDis' + ' ' +index"
-            >{{ radio.value }}</label
-          >
-        </div>
-        <div v-else>
-          <input
-            class="form-check-input custom-control-input"
-            type="radio"
-            :id="'Radio' + ' ' + index"
-            :name="rad.identifier"
-            :value="radio.value"
-            v-model="vModel"
-          />
-          <label
-            class="form-check-label custom-control-label"
-            :for="'Radio' + ' ' + index"
-            >{{ radio.value }}</label
-          >
-        </div>
+    <div class="item-name">{{ rad.metadata.name }}:</div>
+    <div
+      class="radiobutton form-check custom-control custom-radio"
+      v-for="(radio, index) in rad.options"
+      :key="'Radio' + ' ' + index"
+    >
+      <div v-if="radio.disabled">
+        <input
+          class="form-check-input custom-control-input"
+          type="radio"
+          :id="rad.identifier + 'RadioDis' + ' ' + index"
+          disabled
+          :name="rad.identifier"
+          :value="radio.value"
+          v-model="vModel"
+        />
+        <label
+          class="form-check-label custom-control-label"
+          for="rad.identifier + 'RadioDis' + ' ' + index"
+          >{{ radio.value }}</label
+        >
+      </div>
+      <div v-else>
+        <input
+          class="form-check-input custom-control-input"
+          type="radio"
+          :id="rad.identifier + 'Radio' + ' ' + index"
+          :name="rad.identifier"
+          :value="radio.value"
+          v-model="vModel"
+        />
+        <label
+          class="form-check-label custom-control-label"
+          :for="rad.identifier + 'Radio' + ' ' + index"
+          >{{ radio.value }}</label
+        >
       </div>
     </div>
+  </div>
 </template>
 
 <script>

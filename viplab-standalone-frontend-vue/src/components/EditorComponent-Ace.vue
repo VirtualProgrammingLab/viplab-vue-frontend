@@ -1,12 +1,39 @@
 <template>
   <div class="editor-component-ace">
-    <validation-provider v-if="pattern" :rules="{required: true, editorRegex: editor.pattern}" v-slot="{ errors }">
-      <div 
-        :id=editor.identifier 
-        style="width: 100%; height: 100%;">
+    <div v-if="isParameter == true">
+      <div class="item-name">{{ editor.metadata.name }}:</div>
+    </div>
+    <!-- if validation is set to pattern -->
+    <validation-provider v-if="pattern" :rules="{required: true, editorRegex: editor.pattern}" v-slot="{ validate, errors }">
+      <div class="ace-editor-parent">
+        <div 
+          class="ace-editor-div"
+          :id=editor.identifier
+          @DOMSubtreeModified="validate(vModel)">
+        </div>
       </div>
       <span class="error">{{ errors[0] }}</span>
     </validation-provider>
+    <!-- if validation is set to range -->
+    <validation-provider v-else-if="editor.validation === 'range'" :rules="{required: true, editorRange: [editor.min, editor.max]}" v-slot="{ validate, errors }">
+      <div class="ace-editor-parent">
+        <div 
+          class="ace-editor-div"
+          :id=editor.identifier
+          @DOMSubtreeModified="validate(vModel)">
+        </div>
+      </div>
+      <span class="error">{{ errors[0] }}</span>
+    </validation-provider>
+    <!-- if validation is set to none -->
+    <div v-else>
+      <div class="ace-editor-parent">
+        <div 
+          class="ace-editor-div"
+          :id=editor.identifier>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -21,21 +48,23 @@ extend('required', {
 
 extend('editorRegex', (value, arg) => {
   //console.log("editor oneof " + value + " arg: " + arg);
-  console.log("validation: " + value);
+  //console.log("validation: " + value);
   const regex = new RegExp(arg);
   if (regex.test(value)) {
     return true;
   }
   return 'Field format invalid! Has to be: ' + arg;
 });
-/*
+
 extend('editorRange', (value, [min, max]) => {
   //console.log("editor oneof " + value + " min: " + min + " max: " + max);
-  if (value >= min && value <= max) {
+  //console.log("validation: " + value);
+  let val = Number(value);
+  if (val >= min && val <= max) {
     return true;
   }
   return 'Value has to be between ' + min + ' and ' + max + '!'
-});*/
+});
 
 import 'ace-builds'
 import 'ace-builds/webpack-resolver'
@@ -49,7 +78,56 @@ export default {
     item: Object,
     readonly: Boolean,
     isParameter: Boolean,
+    isMustache: Boolean, 
     lang: String,
+  },
+  data() {
+    return {
+      editor: this.item,
+      aceEditor: Object,
+      vModel: "",
+      isSettingContent: false,
+    };
+  },
+  watch: {
+    editor: {
+      handler: function (val) {
+        // check whether a change was made to the value of the text editor
+        // set value of isSettingContent to true such that the value change doesn't result in a loop triggering the OnChange-Listener, which in turn would trigger this watch-function again
+        if (this.isParameter) {
+          if (Array.isArray(val.value)) {
+            if (this.vModel !== this.decodeBase64(val.value[0])) {
+              this.isSettingContent = true;
+            } 
+          } else if (this.vModel !== this.decodeBase64(val.value)) {
+              this.isSettingContent = true;
+          }
+        } else if (this.vModel !== this.decodeBase64(val.content)) {
+            this.isSettingContent = true;
+        }
+        
+        if (this.isSettingContent) {
+          if (this.isParameter) {
+            if (Array.isArray(val.value)) {
+              this.vModel =  this.decodeBase64(val.value[0]);
+            } else {
+              this.vModel = this.decodeBase64(val.value);
+            }
+          } else if (this.isMustache) {
+            this.vModel = val.content;
+          } else {
+            this.vModel = this.decodeBase64(val.content);
+          }
+          
+          try {
+            this.aceEditor.setValue(this.vModel, 1);
+          } finally {
+            this.isSettingContent = false;
+          }
+        }
+      },
+      deep: true
+    }
   },
   computed: {
     pattern: function() {
@@ -59,12 +137,6 @@ export default {
         return false;
       }
     },
-  },
-  data() {
-    return {
-      editor: this.item,
-      aceEditor: Object,
-    };
   },
   methods: {
     rewriteToBase64: function (base64urlEncodedString) {
@@ -89,26 +161,29 @@ export default {
 
       var decodedString = window.atob(encodedString);
       return decodedString;
+    }, 
+    initvModel: function () {
+      if (this.isParameter) {
+        if (Array.isArray(this.editor.value)) {
+          this.vModel =  this.decodeBase64(this.editor.value[0]);
+        } else {
+          this.vModel = this.decodeBase64(this.editor.value);
+        }
+      } else if (this.isMustache) {
+        this.vModel = this.editor.content;
+      } else {
+        this.vModel = this.decodeBase64(this.editor.content);
+      }
+      this.aceEditor.setValue(this.vModel, 1)
     },
-  },
-  mounted () {
-    const lang = this.lang || 'text'
+    initAce: function () {
+      const lang = this.lang || 'text'
   
 		this.aceEditor = window.ace.edit(this.editor.identifier, {
       useWorker: false
     });
     
-    if (this.isParameter) {
-      if (Array.isArray(this.editor.value)) {
-        this.vModel =  this.decodeBase64(this.editor.value[0]);
-      } else {
-        this.vModel = this.decodeBase64(this.editor.value);
-      }
-      this.aceEditor.setValue(this.vModel, 1)
-    } else {
-      this.vModel = this.decodeBase64(this.editor.content);
-      this.aceEditor.setValue(this.vModel, 1)
-    }
+    this.initvModel();
 
     // set editor to readonly depending on parameter
     this.aceEditor.setReadOnly(this.readonly);
@@ -127,33 +202,55 @@ export default {
       fontSize: "inherit"
     });
 
+    this.aceEditor.container.style.lineHeight = 2
+    this.aceEditor.renderer.updateFontSize()
+
     // disable the vertical grey line at 80 chars visible in the editor
     this.aceEditor.setShowPrintMargin(false);
 
     this.aceEditor.on('change', () => {
       this.beforeContent = this.aceEditor.getValue()
-      this.$emit('change-content', this.aceEditor.getValue())
       this.vModel = this.aceEditor.getValue();
-      if (this.isParameter) {
-        this.$set(this.editor , "value", this.vModel);
-        this.editor.value = [btoa(this.vModel)];
-      } else {
-        this.editor.content = btoa(this.vModel);
+      if (!this.isSettingContent) {
+        if (this.isParameter) {
+          this.$set(this.editor , "value", this.vModel);
+          this.editor.value = [btoa(this.vModel)];
+        } else if (this.isMustache) {
+          this.$set(this.editor , "content", this.vModel);
+          this.editor.content = this.vModel;
+        } else {
+          this.$set(this.editor , "content", btoa(this.vModel));
+          this.editor.content = btoa(this.vModel);
+        }
+        this.$emit('update:item', btoa(this.vModel))
+        //console.log("on-change " + this.aceEditor.getValue() + " - " + this.editor.content + " " + this.editor.value);
       }
-      console.log("on-change " + this.aceEditor.getValue() + " - " + this.editor.content);
     })
+    }
+  },
+  mounted () {
+    this.initAce();
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.editor-component-ace{
-  height: 100px;
-  border: 1px solid #ddd;
+.ace-editor-parent {
+  height: 250px;
+  position: relative;
 }
 
-.error{
+.ace-editor-div {
+  border: 1px solid #ddd;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.error {
   color: red;
 }
 </style>

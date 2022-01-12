@@ -1,5 +1,5 @@
 <template>
-  <div class="checkbox-component">
+  <div class="checkbox-component" :key="checkbox.identifier">
     <div class="item-name">{{ checkbox.metadata.name }}:</div>
     <validation-provider :rules="`${onlyone ? 'checkboxOneOf|required' : (minone ? 'checkboxMinOne|required' : '')}`" v-slot="{ errors}">
       <div
@@ -10,11 +10,11 @@
         <input
           type="checkbox"
           class="form-check-input custom-control-input"
-          :id="index"
+          :id="checkbox.identifier + '-' + index"
           :value="check.value"
           v-model="vModel"
         />
-        <label class="form-check-label custom-control-label" :for="index">{{
+        <label class="form-check-label custom-control-label" :for="checkbox.identifier + '-' + index">{{
           check.value
         }}</label>
       </div>
