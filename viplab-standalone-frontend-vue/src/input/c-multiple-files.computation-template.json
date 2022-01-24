@@ -12,7 +12,7 @@
       "metadata": {
         "name": "C-Code",
         "MIMEtype": "text/plain",
-        "syntaxHighlighting": "C"
+        "syntaxHighlighting": "c_cpp"
       },
       "parts": [
         {
@@ -50,7 +50,7 @@
       "metadata": {
         "name": "Even more C-Code",
         "MIMEtype": "text/plain",
-        "syntaxHighlighting": "C"
+        "syntaxHighlighting": "c_cpp"
       },
       "parts": [
         {

@@ -12,7 +12,7 @@
       "metadata": {
         "name": "Config File for graphics generation",
         "MIMEtype": "text/plain",
-        "syntaxHighlighting": "C"
+        "syntaxHighlighting": "c_cpp"
       },
       "parts": [
         {
@@ -137,7 +137,7 @@
       "metadata": {
         "name": "Config file for csv generation",
         "MIMEtype": "text/plain",
-        "syntaxHighlighting": "C"
+        "syntaxHighlighting": "c_cpp"
       },
       "parts": [
         {

@@ -2,7 +2,8 @@
   "identifier": "c77dd7ef-19bf-4a1f-9012-e74a6991e889",
   "metadata": {
     "display_name": "Aufgabe 1",
-    "description": "Schreiben Sie eine C-Funktion..."
+    "description": "Schreiben Sie eine C-Funktion...",
+    "viewer": ["!Image", "!ParaView", "ViPLabGraphics", "!CSV"]
   },
   "environment": "C",
   "files": [
@@ -11,7 +12,7 @@
       "path": "code.c",
       "metadata": {
         "MIMEtype": "text/plain",
-        "syntaxHighlighting": "C"
+        "syntaxHighlighting": "c_cpp"
       },
       "parts": [
         {

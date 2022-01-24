@@ -24,6 +24,9 @@ module.exports = {
             // https://github.com/vuejs-templates/webpack/issues/378
             watchOptions: {
                 poll: true,
+                ignored: /node_modules/, // to make hot reload fast again
+                //aggregateTimeout: 300,
+                //poll: 300,
             },
         },
         plugins: [

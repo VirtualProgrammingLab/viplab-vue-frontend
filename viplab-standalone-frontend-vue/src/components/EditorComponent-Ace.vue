@@ -68,6 +68,9 @@ extend('editorRange', (value, [min, max]) => {
 
 import 'ace-builds'
 import 'ace-builds/webpack-resolver'
+//import {modelist} from 'ace-builds/src/ext-modelist'
+//import 'ace-builds/src/ext-modelist'
+//let modelist = window.require('ace-builds/src/ext-modelist')//require("ace/ext/modelist")
 
 export default {
   name: "AceEditorComponent",
@@ -80,6 +83,7 @@ export default {
     isParameter: Boolean,
     isMustache: Boolean, 
     lang: String,
+    startLineNumber: Number
   },
   data() {
     return {
@@ -177,55 +181,67 @@ export default {
       this.aceEditor.setValue(this.vModel, 1)
     },
     initAce: function () {
-      const lang = this.lang || 'text'
+      let lang = this.lang || 'text'
+      let firstLine = this.startLineNumber || 1;
   
-		this.aceEditor = window.ace.edit(this.editor.identifier, {
-      useWorker: false
-    });
-    
-    this.initvModel();
+      this.aceEditor = window.ace.edit(this.editor.identifier, {
+        useWorker: false
+      });
+      
+      this.initvModel();
 
-    // set editor to readonly depending on parameter
-    this.aceEditor.setReadOnly(this.readonly);
-    
-    // set mode and theme
-    this.aceEditor.getSession().setMode(`ace/mode/${lang}`)
-    if(this.readonly) {
-      this.aceEditor.setTheme(`ace/theme/katzenmilch`)
-    } else {
-      this.aceEditor.setTheme(`ace/theme/xcode`)
-    }
-
-    // set font size to inherit
-    this.aceEditor.setOptions({
-      fontFamily: "Consolas",
-      fontSize: "inherit"
-    });
-
-    this.aceEditor.container.style.lineHeight = 2
-    this.aceEditor.renderer.updateFontSize()
-
-    // disable the vertical grey line at 80 chars visible in the editor
-    this.aceEditor.setShowPrintMargin(false);
-
-    this.aceEditor.on('change', () => {
-      this.beforeContent = this.aceEditor.getValue()
-      this.vModel = this.aceEditor.getValue();
-      if (!this.isSettingContent) {
-        if (this.isParameter) {
-          this.$set(this.editor , "value", this.vModel);
-          this.editor.value = [btoa(this.vModel)];
-        } else if (this.isMustache) {
-          this.$set(this.editor , "content", this.vModel);
-          this.editor.content = this.vModel;
-        } else {
-          this.$set(this.editor , "content", btoa(this.vModel));
-          this.editor.content = btoa(this.vModel);
-        }
-        this.$emit('update:item', btoa(this.vModel))
-        //console.log("on-change " + this.aceEditor.getValue() + " - " + this.editor.content + " " + this.editor.value);
+      // set editor to readonly depending on parameter
+      this.aceEditor.setReadOnly(this.readonly);
+      
+      // set mode and theme
+      this.aceEditor.getSession().setMode(`ace/mode/${lang}`)
+      if(this.readonly) {
+        this.aceEditor.setTheme(`ace/theme/katzenmilch`)
+      } else {
+        this.aceEditor.setTheme(`ace/theme/xcode`)
       }
-    })
+
+      // set font size to inherit
+      this.aceEditor.setOptions({
+        fontFamily: "Consolas",
+        fontSize: "inherit",
+        firstLineNumber: firstLine
+      });
+      // firstLineNumber: 10
+      // var lines = editor.session.doc.getAllLines() => Number of lines
+
+      //make the editor as high and wide as the surrounding div
+      this.aceEditor.resize();
+
+      this.aceEditor.container.style.lineHeight = 2
+      this.aceEditor.renderer.updateFontSize()
+
+      // disable the vertical grey line at 80 chars visible in the editor
+      this.aceEditor.setShowPrintMargin(false);
+
+      this.aceEditor.on('change', () => {
+        this.beforeContent = this.aceEditor.getValue()
+        this.vModel = this.aceEditor.getValue();
+        if (!this.isSettingContent) {
+          if (this.isParameter) {
+            this.$set(this.editor , "value", this.vModel);
+            this.editor.value = [btoa(this.vModel)];
+          } else if (this.isMustache) {
+            this.$set(this.editor , "content", this.vModel);
+            this.editor.content = this.vModel;
+          } else {
+            this.$set(this.editor , "content", btoa(this.vModel));
+            this.editor.content = btoa(this.vModel);
+          }
+          this.$emit('update:item', btoa(this.vModel))
+          //console.log("on-change " + this.aceEditor.getValue() + " - " + this.editor.content + " " + this.editor.value);
+          /* set size
+          this.aceEditor.setOptions({
+            maxLines: this.aceEditor.getSession().getDocument().getLength() + 1
+          });
+          this.aceEditor.resize();*/
+        }
+      })
     }
   },
   mounted () {
