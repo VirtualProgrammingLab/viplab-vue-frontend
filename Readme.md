@@ -26,7 +26,7 @@ npm install
 ## Before running the Application
 
 Before running the Application, specify the URL of the Websocket-API, the frontend should communicate with. 
-The file you have to edit is `config.json` inside the `public`-folder. 
+The file you have to edit is `config.json` under path `public/static`. 
 Here you can see the file, where a local instance of the API is being used: 
 ```
 {
