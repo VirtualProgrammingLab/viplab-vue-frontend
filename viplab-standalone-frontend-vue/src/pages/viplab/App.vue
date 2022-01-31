@@ -129,7 +129,7 @@
                     <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
                     <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
                   </b-button>
-                  <b-button class="btn mr-2 btn-row" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
+                  <b-button v-if="$config.IS_STUDENT" class="btn mr-2 btn-row" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
                     <font-awesome-icon icon="save" />
                   </b-button>
                   <b-button class="btn btn-row" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
