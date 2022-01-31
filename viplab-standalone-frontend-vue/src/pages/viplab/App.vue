@@ -196,257 +196,294 @@
                 :circle-size="15"
                 color="#5bc0de"
               />
-              <div id="stdout" v-if="outputFiles !== ''">
-                <h3>Stdout</h3>
-                <ace-editor-component 
-                  :isParameter="false" 
-                  :isMustache="false"
-                  :readonly="true"
-                  :item='{
-                    "identifier" : "outputFiles",
-                    "content" : convertToBase64(outputFiles)
-                  }'
-                ></ace-editor-component>
-              </div>
-              <div id="stderr" class="mt-2" v-if="outputFiles !== ''">
-                <h3>Stderr</h3>
-                <ace-editor-component 
-                  :isParameter="false" 
-                  :isMustache="false"
-                  :readonly="true"
-                  :item='{
-                    "identifier" : "errorFiles",
-                    "content" : convertToBase64(errorFiles)
-                  }'
-                ></ace-editor-component>
-              </div>
-              <div id="fileList" class="mt-2" v-if="outputFiles !== ''">
-                <h3>Files</h3>
-                <div class="fileViewer">
-                  <b-card
-                    no-body
-                    v-if="returnedOutputJson.artifacts.length > 0"
-                    fill
+
+              <b-card
+                no-body
+                v-if="outputFiles !== '' || returnedOutputJson.artifacts.length > 0"
+                fill
+              >
+                <b-tabs card class="files" content-class="m-2" lazy>
+                  
+                  <b-tab
+                    title="Stdout"
+                    ref="artifact"
+                    class="artifact"
                   >
-                    <b-tabs card class="files" content-class="m-2" lazy>
-                      <b-tab
-                        :title="'OutputFile ' + artifactParent_index"
-                        ref="artifact"
-                        class="artifact"
-                        v-for="(
-                          artifact, artifactParent_index
-                        ) in returnedOutputJson.artifacts"
-                        :key="artifact.identifier"
-                      >
-                        <div v-if="artifact.type !== 's3file'">
-                          <div
-                            v-if="artifact.MIMEtype == 'text/plain'"
-                            ref="outPartcontent"
-                            class="outPartcontent"
-                          >
-                            <ace-editor-component 
-                              :isParameter="false" 
-                              :isMustache="false"
-                              :readonly="true"
-                              :item='{
-                                "identifier" : "Editor" + artifact.identifier,
-                                "content" : artifact.content,
-                                "path" : artifact.path
-                              }'
-                            ></ace-editor-component>
-                          </div>
-                          <div
-                            v-if="artifact.MIMEtype === 'image/png'"
-                            ref="outPartcontent"
-                            class="outPartcontent"
-                          >
-                            <img :src="imagesrc(artifact.content)" />
-                          </div>
-                          <div
-                            v-if="artifact.MIMEtype === 'text/csv'"
-                            ref="outPartcontent"
-                            class="outPartcontent"
-                          >
+                    <div id="stdout" v-if="outputFiles !== ''">
+                      <h3>Stdout</h3>
+                      <ace-editor-component 
+                        :isParameter="false" 
+                        :isMustache="false"
+                        :readonly="true"
+                        :item='{
+                          "identifier" : "outputFiles",
+                          "content" : convertToBase64(outputFiles)
+                        }'
+                      ></ace-editor-component>
+                    </div>
+                  </b-tab>
 
-                            <div v-if="artifact.datasets">
-                              <div v-for="dataset in artifact.datasets" :key="dataset.key">
-                                <csv-plot 
-                                  :csvsProp=artifact.urlsOrContents
-                                  :areUrlsProp="false"
-                                  :datasetProp=dataset
-                                  :labelProp="artifact.labels">
-                                </csv-plot>
-                              </div>
-                            </div>
-                            <div v-else>
-                              <csv-plot 
-                                :csvsProp=[artifact.content]
-                                :areUrlsProp="false"
-                                :datasetProp={}
-                                :labelProp={}>
-                              </csv-plot>
-                            </div>
+                  <b-tab
+                    title="Stderr"
+                    ref="artifact"
+                    class="artifact"
+                  >
+                    <div id="stderr" class="mt-2" v-if="outputFiles !== ''">
+                      <h3>Stderr</h3>
+                      <ace-editor-component 
+                        :isParameter="false" 
+                        :isMustache="false"
+                        :readonly="true"
+                        :item='{
+                          "identifier" : "errorFiles",
+                          "content" : convertToBase64(errorFiles)
+                        }'
+                      ></ace-editor-component>
+                    </div>
+                  </b-tab>
 
-                          </div>
-
-                          <!-- show viplab grid plot -->
-                          <div
-                            v-if="artifact.MIMEtype === 'application/x-vgfc'"
-                            ref="outPartcontent"
-                            class="outPartcontent"
-                          >
-                            <grid-plot :plotData="decodeBase64(artifact.content)"></grid-plot>
-                          </div>
-                          <!-- show viplab 2d plot -->
-                          <div
-                            v-if="artifact.MIMEtype === 'application/x-vgf'"
-                            ref="outPartcontent"
-                            class="outPartcontent"
-                          >
-                            <plot-2d :plotData="decodeBase64(artifact.content)"></plot-2d>
-                          </div>
-
-                        </div>
-                        <!-- Render s3 files that have no content-element-->
-                        <div v-else>
-                          <div v-if="artifact.MIMEtype == 'application/vtu'">
-                              <vtk-component
-                                  v-if="artifact.urlsOrContents"
-                                  :propFiles=artifact.urlsOrContents
-                              ></vtk-component>
-                              <vtk-component
-                                  v-else-if="!artifact.urlsOrContents"
-                                  :propFiles=[artifact.url]
-                              ></vtk-component>
-                          </div>
-                          <div
-                            v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype == 'text/plain'"
-                            ref="outPartcontent"
-                            class="outPartcontent"
-                          >
-                            <Promised :promise="getContentFromS3(artifact.url, false)">
-                              <!-- Use the "pending" slot to display a loading message -->
-                              <template v-slot:pending>
-                                <p>Loading...</p>
-                              </template>
-                              <!-- The default scoped slot will be used as the result -->
-                              <template v-slot="data">
-                                <div>
-                                <ace-editor-component 
-                                  :isParameter="false" 
-                                  :isMustache="false"
-                                  :readonly="true"
-                                  :item='{
-                                    "identifier" : "Editor" + artifact.identifier,
-                                    "content" : convertToBase64(data),
-                                    "path" : artifact.path
-                                  }'
-                                  :ref="artifact.path"
-                                ></ace-editor-component>
+                  <b-tab
+                    title="Files"
+                    ref="artifact"
+                    class="artifact"
+                  >
+                    <div id="fileList" class="mt-2" v-if="outputFiles !== ''">
+                      <h3>Files</h3>
+                      <div class="fileViewer">
+                        <b-card
+                          no-body
+                          v-if="returnedOutputJson.artifacts.length > 0"
+                          fill
+                        >
+                          <b-tabs card class="files" content-class="m-2" lazy>
+                            <b-tab
+                              :title="'OutputFile ' + artifactParent_index"
+                              ref="artifact"
+                              class="artifact"
+                              v-for="(
+                                artifact, artifactParent_index
+                              ) in returnedOutputJson.artifacts"
+                              :key="artifact.identifier"
+                            >
+                              <div v-if="artifact.type !== 's3file'">
+                                <div
+                                  v-if="artifact.MIMEtype == 'text/plain'"
+                                  ref="outPartcontent"
+                                  class="outPartcontent"
+                                >
+                                  <ace-editor-component 
+                                    :isParameter="false" 
+                                    :isMustache="false"
+                                    :readonly="true"
+                                    :item='{
+                                      "identifier" : "Editor" + artifact.identifier,
+                                      "content" : artifact.content,
+                                      "path" : artifact.path
+                                    }'
+                                  ></ace-editor-component>
                                 </div>
-                              </template>
-                              <template v-slot:rejected="error">
-                                <p>Error: {{ error.message }}</p>
-                              </template>
-                            </Promised>
-                          </div>
-                          <div v-else-if="artifact.MIMEtype == 'text/csv'">
-                            <div v-if="artifact.datasets">
-                              <div v-for="dataset in artifact.datasets" :key="dataset.key">
-                                <csv-plot 
-                                  :csvsProp=artifact.urlsOrContents
-                                  :areUrlsProp="true"
-                                  :datasetProp=dataset
-                                  :labelProp="artifact.labels">
-                                </csv-plot>
-                              </div>
-                            </div>
-                            <div v-else>
-                              <csv-plot 
-                                :csvsProp=[artifact.url]
-                                :areUrlsProp="true"
-                                :datasetProp={}
-                                :labelProp={}>
-                              </csv-plot>
-                            </div>
-                          </div>
-                          <div v-else-if="artifact.MIMEtype == 'image/png'">
-                            <Promised :promise="getContentFromS3(artifact.url, true)">
-                              <!-- Use the "pending" slot to display a loading message -->
-                              <template v-slot:pending>
-                                <p>Loading...</p>
-                              </template>
-                              <!-- The default scoped slot will be used as the result -->
-                              <template v-slot="data">
-                                <img 
-                                  :src="data" 
-                                  :ref="artifact.path"/>
-                              </template>
-                              <template v-slot:rejected="error">
-                                <p>Error: {{ error.message }}</p>
-                              </template>
-                            </Promised>
-                          </div>
-                          <div v-else>
-                            <Promised :promise="getContentFromS3(artifact.url, false)">
-                              <!-- Use the "pending" slot to display a loading message -->
-                              <template v-slot:pending>
-                                <p>Loading...</p>
-                              </template>
-                              <!-- The default scoped slot will be used as the result -->
-                              <template v-slot="data">
-                                <!-- Render ViPLabGraphics whose files need to be downloaded from S3 -->
+                                <div
+                                  v-if="artifact.MIMEtype === 'image/png'"
+                                  ref="outPartcontent"
+                                  class="outPartcontent"
+                                >
+                                  <img :src="imagesrc(artifact.content)" />
+                                </div>
+                                <div
+                                  v-if="artifact.MIMEtype === 'text/csv'"
+                                  ref="outPartcontent"
+                                  class="outPartcontent"
+                                >
+
+                                  <div v-if="artifact.datasets">
+                                    <div v-for="dataset in artifact.datasets" :key="dataset.key">
+                                      <csv-plot 
+                                        :csvsProp=artifact.urlsOrContents
+                                        :areUrlsProp="false"
+                                        :datasetProp=dataset
+                                        :labelProp="artifact.labels">
+                                      </csv-plot>
+                                    </div>
+                                  </div>
+                                  <div v-else>
+                                    <csv-plot 
+                                      :csvsProp=[artifact.content]
+                                      :areUrlsProp="false"
+                                      :datasetProp={}
+                                      :labelProp={}>
+                                    </csv-plot>
+                                  </div>
+
+                                </div>
+
                                 <!-- show viplab grid plot -->
-                                <div>
-                                  <div
-                                    v-if="artifact.MIMEtype === 'application/x-vgfc'"
-                                    ref="outPartcontent"
-                                    class="outPartcontent"
-                                  >
-                                    
-                                    <grid-plot :plotData="data"></grid-plot>
+                                <div
+                                  v-if="artifact.MIMEtype === 'application/x-vgfc'"
+                                  ref="outPartcontent"
+                                  class="outPartcontent"
+                                >
+                                  <grid-plot :plotData="decodeBase64(artifact.content)"></grid-plot>
+                                </div>
+                                <!-- show viplab 2d plot -->
+                                <div
+                                  v-if="artifact.MIMEtype === 'application/x-vgf'"
+                                  ref="outPartcontent"
+                                  class="outPartcontent"
+                                >
+                                  <plot-2d :plotData="decodeBase64(artifact.content)"></plot-2d>
+                                </div>
+
+                              </div>
+                              <!-- Render s3 files that have no content-element-->
+                              <div v-else>
+                                <div v-if="artifact.MIMEtype == 'application/vtu'">
+                                    <vtk-component
+                                        v-if="artifact.urlsOrContents"
+                                        :propFiles=artifact.urlsOrContents
+                                    ></vtk-component>
+                                    <vtk-component
+                                        v-else-if="!artifact.urlsOrContents"
+                                        :propFiles=[artifact.url]
+                                    ></vtk-component>
+                                </div>
+                                <div
+                                  v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype == 'text/plain'"
+                                  ref="outPartcontent"
+                                  class="outPartcontent"
+                                >
+                                  <Promised :promise="getContentFromS3(artifact.url, false)">
+                                    <!-- Use the "pending" slot to display a loading message -->
+                                    <template v-slot:pending>
+                                      <p>Loading...</p>
+                                    </template>
+                                    <!-- The default scoped slot will be used as the result -->
+                                    <template v-slot="data">
+                                      <div>
+                                      <ace-editor-component 
+                                        :isParameter="false" 
+                                        :isMustache="false"
+                                        :readonly="true"
+                                        :item='{
+                                          "identifier" : "Editor" + artifact.identifier,
+                                          "content" : convertToBase64(data),
+                                          "path" : artifact.path
+                                        }'
+                                        :ref="artifact.path"
+                                      ></ace-editor-component>
+                                      </div>
+                                    </template>
+                                    <template v-slot:rejected="error">
+                                      <p>Error: {{ error.message }}</p>
+                                    </template>
+                                  </Promised>
+                                </div>
+                                <div v-else-if="artifact.MIMEtype == 'text/csv'">
+                                  <div v-if="artifact.datasets">
+                                    <div v-for="dataset in artifact.datasets" :key="dataset.key">
+                                      <csv-plot 
+                                        :csvsProp=artifact.urlsOrContents
+                                        :areUrlsProp="true"
+                                        :datasetProp=dataset
+                                        :labelProp="artifact.labels">
+                                      </csv-plot>
+                                    </div>
                                   </div>
-                                  <!-- show viplab 2d plot -->
-                                  <div
-                                    v-if="artifact.MIMEtype === 'application/x-vgf'"
-                                    ref="outPartcontent"
-                                    class="outPartcontent"
-                                  >
-                                    <plot-2d :plotData="data"></plot-2d>
+                                  <div v-else>
+                                    <csv-plot 
+                                      :csvsProp=[artifact.url]
+                                      :areUrlsProp="true"
+                                      :datasetProp={}
+                                      :labelProp={}>
+                                    </csv-plot>
                                   </div>
                                 </div>
-                              </template>
-                              <template v-slot:rejected="error">
-                                <p>Error: {{ error.message }}</p>
-                              </template>
-                            </Promised>
-                          </div>
-
-                        </div>  
-                      </b-tab>
-                    </b-tabs>
-                  </b-card>
-                </div>
-                <h3>Files to Download</h3>
-                <ul>
-                  <li
-                    v-for="artifact in returnedUnmodifiedArtifacts.artifacts"
-                    :key="artifact.identifier+'Download'"
+                                <div v-else-if="artifact.MIMEtype == 'image/png'">
+                                  <Promised :promise="getContentFromS3(artifact.url, true)">
+                                    <!-- Use the "pending" slot to display a loading message -->
+                                    <template v-slot:pending>
+                                      <p>Loading...</p>
+                                    </template>
+                                    <!-- The default scoped slot will be used as the result -->
+                                    <template v-slot="data">
+                                      <img 
+                                        :src="data" 
+                                        :ref="artifact.path"/>
+                                    </template>
+                                    <template v-slot:rejected="error">
+                                      <p>Error: {{ error.message }}</p>
+                                    </template>
+                                  </Promised>
+                                </div>
+                                <div v-else>
+                                  <Promised :promise="getContentFromS3(artifact.url, false)">
+                                    <!-- Use the "pending" slot to display a loading message -->
+                                    <template v-slot:pending>
+                                      <p>Loading...</p>
+                                    </template>
+                                    <!-- The default scoped slot will be used as the result -->
+                                    <template v-slot="data">
+                                      <!-- Render ViPLabGraphics whose files need to be downloaded from S3 -->
+                                      <!-- show viplab grid plot -->
+                                      <div>
+                                        <div
+                                          v-if="artifact.MIMEtype === 'application/x-vgfc'"
+                                          ref="outPartcontent"
+                                          class="outPartcontent"
+                                        >
+                                          
+                                          <grid-plot :plotData="data"></grid-plot>
+                                        </div>
+                                        <!-- show viplab 2d plot -->
+                                        <div
+                                          v-if="artifact.MIMEtype === 'application/x-vgf'"
+                                          ref="outPartcontent"
+                                          class="outPartcontent"
+                                        >
+                                          <plot-2d :plotData="data"></plot-2d>
+                                        </div>
+                                      </div>
+                                    </template>
+                                    <template v-slot:rejected="error">
+                                      <p>Error: {{ error.message }}</p>
+                                    </template>
+                                  </Promised>
+                                </div>
+                              </div>  
+                            </b-tab>
+                          </b-tabs>
+                        </b-card>
+                      </div>
+                    </div>
+                  </b-tab>
+                  <b-tab
+                    title="Downloads"
+                    ref="artifact"
+                    class="artifact"
                   >
-                    <a
-                      href="#"
-                      @click="
-                        save(
-                          artifact.path,
-                          artifact.identifier,
-                          artifact.MIMEtype
-                        )
-                      "
-                      >{{ artifact.path }}</a
-                    >
-                  </li>
-                </ul>
-              </div>
+                    <div id="downloadFiles">
+                      <h3>Files to Download</h3>
+                      <ul>
+                        <li
+                          v-for="artifact in returnedUnmodifiedArtifacts.artifacts"
+                          :key="artifact.identifier+'Download'"
+                        >
+                          <a
+                            href="#"
+                            @click="
+                              save(
+                                artifact.path,
+                                artifact.identifier,
+                                artifact.MIMEtype
+                              )
+                            "
+                            >{{ artifact.path }}</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                  </b-tab>
+                </b-tabs>
+              </b-card>
             </v-wait>
           </div>
         </div>
@@ -820,7 +857,10 @@ export default {
       );*/
 
       // filter result such that only specified results are displayed
-      let viewer = this.json.metadata.viewer || [];
+      let viewer = [];
+      if (typeof this.json.metadata !== 'undefined') {
+        viewer  = this.json.metadata.viewer;
+      }
       if (!viewer.includes("Image")) {
         this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
           if (value.MIMEtype !== "image/png") {

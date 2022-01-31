@@ -233,6 +233,10 @@ export default {
             this.$set(this.editor , "content", btoa(this.vModel));
             this.editor.content = btoa(this.vModel);
           }
+          //autoscroll if new input is added to the log (editor readonly, e.g. for stdout and stderr)
+          if (this.readonly) {
+            this.aceEditor.renderer.scrollToLine(Number.POSITIVE_INFINITY);
+          }
           this.$emit('update:item', btoa(this.vModel))
           //console.log("on-change " + this.aceEditor.getValue() + " - " + this.editor.content + " " + this.editor.value);
           /* set size
