@@ -1218,6 +1218,7 @@ export default {
   },
   mounted() {
     this.executeAfterDomLoaded();
+    console.log(this.$config.WEBSOCKET_API)
   },
 };
 </script>

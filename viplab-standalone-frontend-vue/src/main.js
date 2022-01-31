@@ -46,7 +46,7 @@ const router = new VueRouter({
   routes 
 })
 
-fetch(process.env.BASE_URL + "config.json")
+fetch(process.env.BASE_URL + "static/config.json?/t=currentTimestamp")
   .then((response) => response.json())
   .then((config) => {
     Vue.prototype.$config = config
