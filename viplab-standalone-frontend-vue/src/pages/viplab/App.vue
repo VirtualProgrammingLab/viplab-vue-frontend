@@ -604,7 +604,7 @@ export default {
     executeAfterDomLoaded: function () {
       //this.ws = new WebSocket("ws://192.168.195.128:8083/computations");
       this.ws = new WebSocket(this.$config.WEBSOCKET_API);
-      console.log("connect to ws");
+      //console.log("connect to ws");
       this.ws.onopen = () => {
         this.ws.send(
           JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
@@ -655,7 +655,7 @@ export default {
     },
     /** send data to webserver for requesting the solution */
     sendData: function () {
-      console.log("send data");
+      //console.log("send data");
 
       // start waiting
       this.$wait.start("wait for ws response");
@@ -702,7 +702,7 @@ export default {
             }
           }
           task.content.task.files.push(file);
-          console.log(task);
+          //console.log(task);
         }
         
         /*
@@ -754,6 +754,7 @@ export default {
       }
 
       // additional results for testing
+      /*
       this.returnedOutputJson.artifacts.push(
         {
           "type" : "s3file",
@@ -816,7 +817,7 @@ export default {
           "path": "/test/text.c",
           "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
         }
-      );
+      );*/
 
       // filter result such that only specified results are displayed
       let viewer = this.json.metadata.viewer || [];
@@ -848,7 +849,7 @@ export default {
           }
         });
       }
-      console.log(this.returnedOutputJson)
+      //console.log(this.returnedOutputJson)
       // process connected vtu/vtk files
       //console.log(this.returnedOutputJson.artifacts)
       let connectedVtks = {};
@@ -1082,7 +1083,7 @@ export default {
                 //this.json.files[f].parts[oldp].content = obj.parts[p].content;
                 this.$set(this.json.files[f].parts[oldp], "content", obj.parts[p].content);
                 this.$forceUpdate();
-                console.log("Upload - " + this.json.files[f].parts[oldp].content);
+                //console.log("Upload - " + this.json.files[f].parts[oldp].content);
                 // set parameters of parts
                 for(let oldPara in this.json.files[f].parts[oldp].parameters) {
                   let currentParamJson = this.json.files[f].parts[oldp].parameters[oldPara];
@@ -1153,7 +1154,7 @@ export default {
             var currentParam = part.parameters[p];
             view[currentParam.identifier] = currentParam.value || currentParam.selected;
           }
-          console.log(view);
+          //console.log(view);
           var output = Mustache.render(mustacheTemplate, view);
           return output;
         } else {
@@ -1191,15 +1192,15 @@ export default {
   },
   created() {
     this.loadJsonFromFile();
-    for (var file in this.json.files) {
+    /*for (var file in this.json.files) {
       for (var part in this.json.files[file].parts) {
         for (var param in this.json.files[file].parts[part].parameters) {
           var currentParam = this.json.files[file].parts[part].parameters[param];
-          console.log(currentParam);
+          //console.log(currentParam);
           //console.log("test" + JSON.parse(currentParam).mode);
         }
       }
-    }
+    }*/
     // parse the parameters and add items for generating the gui and modifing the content
     // first: modify parameters section
     for (var parameter in this.json.parameters) {
@@ -1218,7 +1219,6 @@ export default {
   },
   mounted() {
     this.executeAfterDomLoaded();
-    console.log(this.$config.WEBSOCKET_API)
   },
 };
 </script>

@@ -48,9 +48,7 @@ export default {
     }
   },
   mounted() {
-    console.log(JSON.parse(JSON.stringify(this.plotData)));
     var parseTest = new Parser.Parse(this.plotData);
-    console.log(parseTest);
     var testJson = parseTest.parseFileToJson();
     this.datasetList = parseTest.parseValues(testJson);
     this.minColor = parseTest.getMinColor();
@@ -88,7 +86,7 @@ export default {
   },
   methods: { 
     onChange(event) {
-      console.log(event.target.value);
+      //console.log(event.target.value);
       if (event.target.value === "2DGitterplot") {
         this.create2dGitterplot();
       } else if (event.target.value === "3DKaestchen") {
