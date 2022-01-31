@@ -48,7 +48,9 @@ export default {
     }
   },
   mounted() {
+    console.log(JSON.parse(JSON.stringify(this.plotData)));
     var parseTest = new Parser.Parse(this.plotData);
+    console.log(parseTest);
     var testJson = parseTest.parseFileToJson();
     this.datasetList = parseTest.parseValues(testJson);
     this.minColor = parseTest.getMinColor();
