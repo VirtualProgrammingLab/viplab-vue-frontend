@@ -68,9 +68,6 @@ extend('editorRange', (value, [min, max]) => {
 
 import 'ace-builds'
 import 'ace-builds/webpack-resolver'
-//import {modelist} from 'ace-builds/src/ext-modelist'
-//import 'ace-builds/src/ext-modelist'
-//let modelist = window.require('ace-builds/src/ext-modelist')//require("ace/ext/modelist")
 
 export default {
   name: "AceEditorComponent",

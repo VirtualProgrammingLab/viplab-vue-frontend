@@ -19,7 +19,7 @@
           "identifier": "",
           "access": "template",
           "metadata": {
-            "name": "Info: source before your code.",
+            "description": "Info: source before your code.",
             "emphasis": "low"
           },
           "parameters": [
@@ -46,7 +46,7 @@
           "identifier": "51554b86-89ba-489a-820a-b0ecf9784b54",
           "access": "template",
           "metadata": {
-            "name": "Info: source before your code.",
+            "description": "Info: source before your code.",
             "emphasis": "low"
           },
           "parameters": [
@@ -101,7 +101,7 @@
           "identifier": "e45b015c-01e2-4446-8e44-4501f1782499",
           "access": "template",
           "metadata": {
-            "name": "Info: source after your code calling bar() in it.",
+            "description": "Info: source after your code calling bar() in it.",
             "emphasis": "low"
           },
           "parameters": [
@@ -144,7 +144,7 @@
           "identifier": "576e1d77-8b0c-465c-8d17-b08b3451b18c",
           "access": "template",
           "metadata": {
-            "name": "Info: source before your code.",
+            "description": "Info: source before your code.",
             "emphasis": "low"
           },
           "parameters": [

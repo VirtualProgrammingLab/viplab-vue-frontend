@@ -5,14 +5,16 @@
     { "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a1",
       "path": "params.input",
       "metadata" :
-        { "syntaxHighlighting": "ini"
+        { 
+          "syntaxHighlighting": "ini"
         },
       "parts": [
         {
           "identifier": "5fa346f4-85e2-4e16-9cc6-11c82a7d3265",
           "access"    : "modifiable",
             "metadata"  :
-              { "name"      : "params.input file"
+              { 
+                "description"      : "params.input file"
               },
             "content"   : 
 "W1RpbWVMb29wXQpEdEluaXRpYWwgPSAxICMgW3NdClRFbmQgPSAxICMgW3NdCgpbR3JpZF0KTG93ZXJMZWZ0ID0gMCAwClVwcGVyUmlnaHQgPSAxIDEKQ2VsbHMgPSAxMCAxMAoKW1Byb2JsZW1dCk5hbWUgPSAxcHRlc3RmdiAjIG5hbWUgcGFzc2VkIHRvIHRoZSBvdXRwdXQgcm91dGluZXMKCltTcGF0aWFsUGFyYW1zXQpMZW5zTG93ZXJMZWZ0ID0gMC4yIDAuMgpMZW5zVXBwZXJSaWdodCA9IDAuOCAwLjgKClBlcm1lYWJpbGl0eSA9IDFlLTEwICMgW21eMl0KUGVybWVhYmlsaXR5TGVucyA9IDFlLTEyICMgW21eMl0K"

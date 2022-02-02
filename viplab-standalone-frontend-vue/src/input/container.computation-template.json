@@ -12,7 +12,8 @@
           "identifier": "5fa346f4-85e2-4e16-9cc6-11c82a7d3265",
           "access"    : "modifiable",
             "metadata"  :
-              { "name"      : "params.input file"
+              { 
+                "description" : "params.input file"
               },
             "content"   : ""
           }

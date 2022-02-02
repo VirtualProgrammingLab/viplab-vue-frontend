@@ -21,7 +21,7 @@
           "identifier": "part-contains-slider",
           "access": "template",
           "metadata": {
-            "name": "Parameter in part",
+            "description": "Parameter in part",
             "emphasis": "low"
           },
           "parameters" : 
@@ -50,7 +50,8 @@
           "identifier": "ceb051d8-b50c-4814-983a-b9d703cae0c6",
           "access"    : "template",
           "metadata"  :
-              { "name"      : "params.input file"
+              { 
+                "description"      : "params.input file"
               },
           "parameters":
           [

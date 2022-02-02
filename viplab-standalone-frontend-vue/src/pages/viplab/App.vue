@@ -11,6 +11,10 @@
         <validation-observer v-slot="{ invalid }">
         <form @submit.prevent="sendData">
           <div class="form-group ml-5 mr-5">
+
+            <h1 v-if="json.metadata.display_name">{{json.metadata.display_name}}</h1>
+            <p v-if="json.metadata.description">{{json.metadata.description}}</p>
+
             <h2 v-if="parsedFilesJson">InputFiles</h2>
 
             <div class="cards" >
@@ -29,7 +33,7 @@
                   >
 
                     <div
-                      class="part mb-3"
+                      class="part"
                       v-for="(part, partIndex) in file.parts"
                       :key="part.identifier"
                     >
@@ -40,7 +44,8 @@
                         v-if="
                           part.access !== 'template' && numberOfInputFiles > 0
                         "
-                      >
+                      > 
+                        <h3 class="mt-3" v-if="(part.access == 'visible' || part.access == 'modifiable') && part.metadata.description">{{part.metadata.description}}</h3>
                         <div v-if="part.access == 'visible'">
                           <ace-editor-component 
                             :isParameter="false" 

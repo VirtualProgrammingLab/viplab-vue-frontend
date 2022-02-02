@@ -105,6 +105,8 @@ import vtkColorMaps from "vtk.js/Sources/Rendering/Core/ColorTransferFunction/Co
 import vtkITKPolyDataReader from "vtk.js/Sources/IO/Misc/ITKPolyDataReader";
 import readPolyDataArrayBuffer from "itk/readPolyDataArrayBuffer.js";
 
+import itkConfig from "itk/itkConfig"
+
 export default {
   name: "VtkComponent",
   components: {
@@ -423,6 +425,10 @@ export default {
     console.log("vtk-component mounted");
     await this.renderFile(this);
   },
+  beforeCreate() {
+    // before creation change the path of the itk modules such that they can be moved to the dist/js-folder upon build
+    itkConfig.itkModulesPath = "js/itk";
+  }
 };
 </script>
 

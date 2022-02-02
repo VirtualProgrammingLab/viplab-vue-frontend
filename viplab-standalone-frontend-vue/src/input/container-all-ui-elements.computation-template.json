@@ -19,7 +19,7 @@
           "identifier": "66fa4877-349a-48c1-aefc-db2ee63673cf",
           "access": "template",
           "metadata": {
-            "name": "template containing all ui elements.",
+            "description": "template containing all ui elements.",
             "emphasis": "low"
           },
           "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg",

@@ -18,7 +18,7 @@
           "identifier": "preamble",
           "access": "visible",
           "metadata": {
-            "name": "Info: source before your code.",
+            "description": "Info: source before your code.",
             "emphasis": "low"
           },
           "content": "I2luY2x1ZGUgPHN0ZGlvLmg-Cg"
@@ -27,7 +27,7 @@
           "identifier": "codeFromStudent",
           "access": "modifiable",
           "metadata": {
-            "name": "Fill in your code!",
+            "description": "Fill in your code!",
             "emphasis": "medium"
           },
           "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
@@ -36,7 +36,7 @@
           "identifier": "postscript",
           "access": "visible",
           "metadata": {
-            "name": "Info: source after your code calling bar() in it.",
+            "description": "Info: source after your code calling bar() in it.",
             "emphasis": "low"
           },
           "content": "aW50IG1haW4oKSB7IGJhcigpOyByZXR1cm4gMDsgfQ"
