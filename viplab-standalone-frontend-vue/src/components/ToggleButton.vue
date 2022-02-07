@@ -4,7 +4,7 @@
     <validation-provider :rules="`${onlyone ? 'toggleOneOf|required' : (minone ? 'toggleMinOne|required' : '')}`" v-slot="{ errors}">
       <div v-for="(toggle, index) in toggl.options" :key="'toggle'+ ' ' +index">
         <label>
-          {{ toggle.value }}
+          <p class="slider-label"> {{ toggle.value }}</p>
           <input type="checkbox" :value="toggle.value" v-model="vModel">
           <span class="slider"></span>
         </label>
@@ -86,5 +86,9 @@ export default {
 <style scoped>
 .error{
   color: red;
+}
+
+.slider-label {
+  margin-bottom: 2em;
 }
 </style>

@@ -1371,8 +1371,7 @@ body {
   .toggle label {
     position: relative;
     display: inline-block;
-    width: 10em;
-    height: 3.5em;
+    min-height: 3.5em;
   }
 
   .toggle input {
@@ -1383,7 +1382,8 @@ body {
     /* Grundfläche */
     position: absolute;
     cursor: pointer;
-    top: 1.5em;
+    
+    bottom: 0;
     left: 2em;
     width: 3.5em;
     height: 1.5em;
