@@ -31,7 +31,7 @@
                     :title="getFilename(file.path)"
                     @click="tabClicked"
                   >
-
+                    
                     <div
                       class="part"
                       v-for="(part, partIndex) in file.parts"
@@ -204,7 +204,7 @@
 
               <b-card
                 no-body
-                v-if="outputFiles !== '' || returnedOutputJson.artifacts.length > 0"
+                v-if="outputFiles !== '' || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0)"
                 fill
               >
                 <b-tabs card class="files" content-class="m-2" lazy>
@@ -864,7 +864,8 @@ export default {
       // filter result such that only specified results are displayed
       let viewer = [];
       if (typeof this.json.metadata !== 'undefined') {
-        viewer  = this.json.metadata.viewer;
+        if (typeof this.json.metadata.viewer !== 'undefined')
+          viewer  = this.json.metadata.viewer;
       }
       if (!viewer.includes("Image")) {
         this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {

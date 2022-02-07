@@ -131,6 +131,8 @@ var setParameters = function (filename) {
                 } catch (err) {
                     console.log(err);
                     content = "";
+                    // continue searching for files
+                    continue;
                 }
             }
         }
