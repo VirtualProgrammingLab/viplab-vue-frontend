@@ -1295,10 +1295,9 @@ body {
     border-radius: calc(0.25rem - 1px);
     background:#fff;
     overflow-y: auto;
-    height: 300px;
+    height: 250px;
     display: -webkit-flex;
     display: flex;
-    align-items: center;
     justify-content: center;
     align-content: center;
   }
