@@ -2,18 +2,30 @@
     <!-- content -->
     <div
       id="app"
-      class="flex-container"
-      :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
     >
       
-      <div class="side-to-side-div flex-left m-2">
+    <!-- header -->
+    <div class="header m-2 p-5">
+      <div class="header-right">
+        <h1>Test</h1>
+        <h1 v-if="json.metadata.display_name">
+          {{ json.metadata.display_name }}
+        </h1>
+        <h4 v-if="json.metadata.description">
+          {{ json.metadata.description }}
+        </h4>
+      </div>
+    </div>
+
+      <div
+        class="flex-container"
+      :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
+      >
+      <div class="side-to-side-div flex-left m-2 pt-5 pb-5">
 
         <validation-observer v-slot="{ invalid }">
         <form @submit.prevent="sendData">
-          <div class="form-group ml-5 mr-5">
-
-            <h1 v-if="json.metadata.display_name">{{json.metadata.display_name}}</h1>
-            <p v-if="json.metadata.description">{{json.metadata.description}}</p>
+          <div class="form-group ml-5 mr-5 ">
 
             <h2 v-if="parsedFilesJson">InputFiles</h2>
 
@@ -147,7 +159,7 @@
       </div>
 
       <div 
-        class="side-to-side-div flex-right m-2 p-2"
+        class="side-to-side-div flex-right m-2 pt-5 pb-5"
         v-if="!asForm || outputFiles !== ''"
         >
         <div class="sticky-div form-group mb-5 ml-5 mr-5">
@@ -492,6 +504,7 @@
             </v-wait>
           </div>
         </div>
+      </div>
       </div>
     </div>
 </template>
@@ -1192,6 +1205,7 @@ export default {
     },
     // fill in content of mustache template with selected parameter values return it
     showMustacheTemplate(part){
+      console.log(part.content)
       if(!this.asForm){
         if (part.content !== "") {
           var mustacheTemplate = this.decodeBase64(part.content);
@@ -1278,25 +1292,20 @@ body {
 #injected {
 
   .header {
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* Style the header links */
-  .header img {
-    float: left;
     border-radius: calc(0.25rem - 1px);
+    background:#fff;
+    overflow-y: auto;
+    height: 300px;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
   }
 
   .header-right {
     text-align: center;
-    font-size: 5vw;
     width: 50%;
-    position: absolute;
-    top: 50%;
-    right: 0;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
   }
 
   .sticky-button {

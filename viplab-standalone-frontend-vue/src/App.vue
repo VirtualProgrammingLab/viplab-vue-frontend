@@ -103,12 +103,12 @@ body {
 
 #injected {
 
+/*
   .header {
     overflow: hidden;
     position: relative;
   }
 
-  /* Style the header links */
   .header img {
     float: left;
     border-radius: calc(0.25rem - 1px);
@@ -124,6 +124,7 @@ body {
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
   }
+  */
 
   .outer-div {
     font-family: "Avenir", Helvetica, Arial, sans-serif;
