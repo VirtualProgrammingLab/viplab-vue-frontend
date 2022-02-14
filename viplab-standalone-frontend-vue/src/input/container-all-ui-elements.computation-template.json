@@ -1,7 +1,7 @@
 {
   "identifier": "bf734e76-b1fa-4f3a-ab19-82b6cb9ab652",
   "metadata": {
-    "display_name": "All UI Elements demo",
+    "displayName": "All UI Elements demo",
     "description": "The demo shows all available UI elements"
   },
   "environment": "Container",

@@ -5,11 +5,10 @@
     >
       
     <!-- header -->
-    <div class="header m-2 p-5" v-if="typeof json.metadata !== 'undefined'">
+    <div class="header m-2 p-5" v-if="showHeader">
       <div class="header-content">
-        <h1>Test</h1>
-        <h1 v-if="json.metadata.display_name">
-          {{ json.metadata.display_name }}
+        <h1 v-if="json.metadata.displayName">
+          {{ json.metadata.displayName }}
         </h1>
         <h4 v-if="json.metadata.description">
           {{ json.metadata.description }}
@@ -19,7 +18,7 @@
 
       <div
         class="flex-container"
-      :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
+        :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
       >
       <div class="side-to-side-div flex-left m-2 pt-5 pb-5">
 
@@ -594,6 +593,14 @@ export default {
       }
       return newArtifacts;
     }*/
+    showHeader: function() {
+      if (typeof this.json.metadata !== 'undefined') {
+        if (typeof this.json.metadata.displayName !== 'undefined' || typeof this.json.metadata.description !== 'undefined') {
+          return true;
+        }
+      }
+      return false;
+    }
   },
   methods: {
     /* set the number of input files */
