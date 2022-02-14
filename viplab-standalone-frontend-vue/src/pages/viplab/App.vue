@@ -5,8 +5,8 @@
     >
       
     <!-- header -->
-    <div class="header m-2 p-5">
-      <div class="header-right">
+    <div class="header m-2 p-5" v-if="typeof json.metadata !== 'undefined'">
+      <div class="header-content">
         <h1>Test</h1>
         <h1 v-if="json.metadata.display_name">
           {{ json.metadata.display_name }}
@@ -1302,7 +1302,7 @@ body {
     align-content: center;
   }
 
-  .header-right {
+  .header-content {
     text-align: center;
     width: 50%;
   }
