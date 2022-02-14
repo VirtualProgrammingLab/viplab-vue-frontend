@@ -1,0 +1,11 @@
+[about you]
+ __checkbox__={{__checkbox__}}
+ __radioButton__={{__radioButton__}}
+ __dropdownSingle__={{__dropdownSingle__}}
+ __dropdownMultiple__={{__dropdownMultiple__}}
+ __toggle__={{__toggle__}}
+ __sliderMultiple__={{__sliderMultiple__}}
+ __inputTextWOMaxlangth__={{__inputTextWOMaxlangth__}}
+ __inputTextWMaxlength__={{__inputTextWMaxlength__}}
+ __inputNumber__={{__inputNumber__}}
+ __default__={{__default__}}
