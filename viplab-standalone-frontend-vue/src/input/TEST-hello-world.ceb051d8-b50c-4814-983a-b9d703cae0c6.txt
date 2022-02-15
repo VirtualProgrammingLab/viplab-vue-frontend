@@ -1,11 +1,11 @@
 [about you]
- __checkbox__={{__checkbox__}}
- __radioButton__={{__radioButton__}}
- __dropdownSingle__={{__dropdownSingle__}}
- __dropdownMultiple__={{__dropdownMultiple__}}
- __toggle__={{__toggle__}}
- __sliderMultiple__={{__sliderMultiple__}}
- __inputTextWOMaxlangth__={{__inputTextWOMaxlangth__}}
- __inputTextWMaxlength__={{__inputTextWMaxlength__}}
- __inputNumber__={{__inputNumber__}}
- __default__={{__default__}}
+likedThings={{__checkbox__}}
+favoritePL={{__radioButton__}}
+fridge={{__dropdownSingle__}}
+dancing={{__dropdownMultiple__}}
+dislikedThings={{__toggle__}}
+randomNumbers={{__sliderMultiple__}}
+name={{__inputTextWOMaxlangth__}}
+christmasWish={{__inputTextWMaxlength__}}
+age={{__inputNumber__}}
+codeSnippet={{__default__}}
