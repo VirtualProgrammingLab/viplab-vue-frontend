@@ -1211,17 +1211,21 @@ export default {
       
     },
     // fill in content of mustache template with selected parameter values return it
-    showMustacheTemplate(part){
-      console.log(part.content)
+    showMustacheTemplate(part) {
+      // Disable Mustache HTML-escaping behaviour:
+      Mustache.escape = function(text) {return text;};
+      // If the template should be displayed
       if(!this.asForm){
         if (part.content !== "") {
           var mustacheTemplate = this.decodeBase64(part.content);
           var view = {};
+          // Get values that will be substituted into the template
           for(var p in part.parameters) {
-            var currentParam = part.parameters[p];
-            view[currentParam.identifier] = currentParam.value || currentParam.selected;
+            let currentParam = part.parameters[p];
+            let currentValue = currentParam.value || currentParam.selected;
+            view[currentParam.identifier] = currentValue;
           }
-          //console.log(view);
+          // Substitute values in mustache template
           var output = Mustache.render(mustacheTemplate, view);
           return output;
         } else {
