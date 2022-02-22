@@ -1,6 +1,9 @@
 {
   "identifier": "cd39715e-55de-4563-bf8c-929d3d699953",
   "environment": "Container",
+  "metadata" : {
+    "viewer" : ["CSV", "ParaView", "Image"]
+  },
   "files":   [],
   "configuration" :
     { 
