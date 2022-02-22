@@ -800,7 +800,7 @@ export default {
     },
     /** process the result before displaying it in the DOM */
     displayResult: function (result) {
-      //console.log(result.result.output.stdout);
+
       if (result.result.status == "final") {
         document.getElementById("submit").disabled = false;
       }
@@ -915,9 +915,10 @@ export default {
           }
         });
       }
-      //console.log(this.returnedOutputJson)
-      // process connected vtu/vtk files
-      //console.log(this.returnedOutputJson.artifacts)
+
+      console.log(this.returnedOutputJson.artifacts);
+      
+      // process connected vtu/vtk & csv files
       let connectedVtks = {};
       var artifacts = this.returnedOutputJson.artifacts;
       //let created = false;
@@ -952,8 +953,8 @@ export default {
             
             for (var base = 0; base < basenames.length; base++) {
               let currentBasename = basenames[base];
-
               if (filenamePart.startsWith(currentBasename) && (filenamePart.charAt(currentBasename.length) === "-")) {
+                console.log(currentBasename + " - " + filenamePart);
                 connectedVtks[currentBasename].type = artifacts[a].type;
                 connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
                 if (artifacts[a].url) {
@@ -963,11 +964,23 @@ export default {
                 }
                 artifacts[a].inCollection = true;
               }
-
             }
 
           }
         }
+
+        // If config contains output, that wasn't sent: remove from connectedVtks so ot isn't shown in gui
+        console.log(connectedVtks);
+        let tmpConnectedFiles = {};
+        for (let fileGroupKey in connectedVtks) {
+          let value = connectedVtks[fileGroupKey]
+          if (value.urlsOrContents.length > 0) {
+            tmpConnectedFiles[fileGroupKey] = connectedVtks[fileGroupKey];
+          }
+        }
+        connectedVtks = tmpConnectedFiles;
+        console.log(basenames);
+
         // delete all vtk and csv artifacts that are part of a collection
         artifacts = this.returnedOutputJson.artifacts;
         var b = artifacts.length;
@@ -977,11 +990,13 @@ export default {
           }
         }
         
-        // add vtk collections
-        for(var c = 0; c < basenames.length; c++){
-          this.returnedOutputJson.artifacts.push(connectedVtks[basenames[c]]);
+        // add vtk/csv collections
+        let connectedFilesKeys = Object.keys(connectedVtks);
+        for(var c = 0; c <connectedFilesKeys.length; c++){
+          this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
         }
       }
+      console.log(this.returnedOutputJson)
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.decodeBase64(result.result.output.stdout);
