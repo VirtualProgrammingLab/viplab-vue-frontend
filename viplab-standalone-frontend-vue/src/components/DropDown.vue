@@ -13,14 +13,16 @@
             v-for="(disabled, index) in itemsDisabled(dropitem)"
             disabled
             :key="'dropdis' + ' ' + index"
+            :label="disabled.text || disabled.value"
           >
-            {{ disabled }}
+            {{ disabled.value }}
           </option>
           <option
             v-for="(drop, index) in itemWithoutDisabled(dropitem)"
             :key="'drop' + ' ' + index"
+            :label="drop.text || drop.value"
           >
-            {{ drop }}
+            {{ drop.value }}
           </option>
         </select>
         <select class="form-control" v-else v-model="vModel">
@@ -28,14 +30,16 @@
             v-for="(disabled, index) in itemsDisabled(dropitem)"
             disabled
             :key="'dropdis' + ' ' + index"
+            :label="disabled.text || disabled.value"
           >
-            {{ disabled }}
+            {{ disabled.value }}
           </option>
           <option
             v-for="(drop, index) in itemWithoutDisabled(dropitem)"
             :key="'drop' + ' ' + index"
+            :label="drop.text || drop.value"
           >
-            {{ drop }}
+            {{ drop.value }}
           </option>
         </select>
       </div>
@@ -115,7 +119,7 @@ export default {
       var array = [];
       for(var i = 0; i < item.options.length; i++){
         if(!item.options[i].disabled){
-          array.push(item.options[i].value);
+          array.push(item.options[i]);
         }
       }
       return array;
@@ -124,7 +128,7 @@ export default {
       var array = [];
       for(var i = 0; i < item.options.length; i++){
         if(item.options[i].disabled){
-          array.push(item.options[i].value);
+          array.push(item.options[i]);
         }
       }
       return array;

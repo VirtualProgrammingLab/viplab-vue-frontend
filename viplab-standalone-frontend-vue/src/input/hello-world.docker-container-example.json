@@ -35,7 +35,7 @@
                 "guiType" : "slider",
                 "name": "Temperature",
                 "vertical": false,
-                "description" : "How hot do you like your coffee? (in degrees Celsius)"
+                "description" : "How hot do you like your coffee? (in degrees Celsius) - Tip: Typical Serving Temperature lies between 65 and 70 Degrees"
               },
               "default": [
                 75
@@ -67,6 +67,7 @@
               },
               "options": [
                 {
+                  "text" : "Programming",
                   "value" : "programming",
                   "selected" : true
                 },
@@ -100,6 +101,7 @@
                   "disabled" : true
                 },
                 {
+                  "text" : "Sssss... Python ...ssssS",
                   "value" : "Python"
                 }
               ],
@@ -123,6 +125,7 @@
                   "selected" : true
                 },
                 {
+                  "text" : "1 a day",
                   "value" : "Once a day"
                 },
                 {
@@ -151,6 +154,7 @@
                   "disabled" : true
                 },
                 {
+                  "text" : "Last Christmas (aka the one that drives everybody else crazy)",
                   "value" : "Last Christmas",
                   "selected" : true
                 },
@@ -185,7 +189,8 @@
                   "selected" : true
                 },
                 {
-                  "value" : "All kinds of Bugs (also the ones living in your Computer)"
+                  "text" : "All kinds of Bugs (also the ones living in your Computer)",
+                  "value" : "All kinds of Bugs"
                 },
                 {
                   "value" : "I never dislike anything!"

@@ -19,7 +19,7 @@
         <label
           class="form-check-label custom-control-label"
           for="rad.identifier + 'RadioDis' + ' ' + index"
-          >{{ radio.value }}</label
+          >{{ radio.text || radio.value }}</label
         >
       </div>
       <div v-else>
@@ -34,7 +34,7 @@
         <label
           class="form-check-label custom-control-label"
           :for="rad.identifier + 'Radio' + ' ' + index"
-          >{{ radio.value }}</label
+          >{{ radio.text || radio.value }}</label
         >
       </div>
     </div>

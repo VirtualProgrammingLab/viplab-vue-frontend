@@ -14,9 +14,9 @@
           :value="check.value"
           v-model="vModel"
         />
-        <label class="form-check-label custom-control-label" :for="checkbox.identifier + '-' + index">{{
-          check.value
-        }}</label>
+        <label class="form-check-label custom-control-label" :for="checkbox.identifier + '-' + index">
+          {{ check.text || check.value }}
+        </label>
       </div>
       <span class="error">{{ errors[0] }}</span>
     </validation-provider>
@@ -86,7 +86,7 @@ export default {
     return {
       checkbox: this.item
     }
-  },
+  }
 };
 </script>
 
