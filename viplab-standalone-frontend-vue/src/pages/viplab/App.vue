@@ -28,7 +28,7 @@
 
             <h2 v-if="parsedFilesJson">InputFiles</h2>
 
-            <ansi-output :divId="'test-div'" :content="'\n\n\x1B[1;33;40m 33;40  \x1B[1;33;41m 33;41  \x1B[1;33;42m 33;42  \x1B[1;33;43m 33;43  \x1B[1;33;44m 33;44  \x1B[1;33;45m 33;45  \x1B[1;33;46m 33;46  \x1B[1m\x1B[0\n\n\x1B[1;33;42m >> Tests OK\n\n\n \n \u001b[31;44m Hello World \r\n \u001b[35;40m HI!'"></ansi-output>
+            <ansi-output :divId="'test-div'" :content="'\n\n\x1B[1;33;40m 33;40  \x1B[1;33;41m 33;41  \x1B[1;33;42m 33;42  \x1B[1;33;43m 33;43  \x1B[1;33;44m 33;44  \x1B[1;33;45m 33;45  \x1B[1;33;46m 33;46 \x1B[1;33;40m 33;40  \x1B[1;33;41m 33;41  \x1B[1;33;42m 33;42  \x1B[1;33;43m 33;43  \x1B[1;33;44m 33;44  \x1B[1;33;45m 33;45  \x1B[1;33;46m 33;46  \x1B[1m\x1B[0\n\n\x1B[1;33;42m >> Tests OK\n\n\n \n \u001b[31;44m Hello World \r\n \u001b[35;40m HI! \r\n \u001b[35;40m HI! \r\n \u001b[35;40m HI! \r\n \u001b[35;40m HI! \r\n \u001b[35;40m HI! \r\n \u001b[35;40m HI! \r\n \u001b[35;40m HI! \r\n \u001b[35;40m HI! \r\n \u001b[35;40m HI! \r\n \u001b[35;40m HI!'"></ansi-output>
 
             <div class="cards" >
               <!-- 
