@@ -2,30 +2,19 @@
   "identifier": "cd39715e-55de-4563-bf8c-929d3d699953",
   "environment": "Container",
   "metadata" : {
-    "viewer" : ["CSV", "ParaView", "Image"]
-  },
-  "files":   [],
-  "configuration" :
-    { 
-      "resources.image"  : "name://hello-world",
-      "output": [
+    "viewer" : ["CSV", "ParaView", "Image"],
+    "output": {
+      "csv": [
         {
           "id": "bottom-mass-over-time",
-          "type": "chart",
           "basename": "dataovertime",
-          "extensions": ["csv"],
-          "update": {
-            "type": "stdout",
-            "key": "[[Wrote tracer data over time]]"
-          },
-          "labels": {
+          "xlabel": {
             "key": "time",
             "label": "Time in years",
             "factor": 3.1709792e-8,
-            "offset": 0,
-            "format": "0.0"
+            "format": ".2f"
           },
-          "datasets": [
+          "plots": [
             {
               "key": "massBottomLayer",
               "label": "Tracer mass in bottom layer in kg",
@@ -43,21 +32,14 @@
         },
         {
           "id": "base64-data-test",
-          "type": "chart",
           "basename": "data",
-          "extensions": ["csv"],
-          "update": {
-            "type": "stdout",
-            "key": "[[Wrote tracer data over time]]"
-          },
-          "labels": {
+          "xlabel": {
             "key": "time",
             "label": "Time in years",
             "factor": 3.1709792e-8,
-            "offset": 0,
-            "format": "0.0"
+            "format": ".1f"
           },
-          "datasets": [
+          "plots": [
             {
               "key": "massBottomLayer",
               "label": "Tracer mass in bottom layer in kg"
@@ -71,21 +53,29 @@
               "label": "Flux across outlet in kg/(s m^2)"
             }
           ]
-        },
+        }
+      ],
+      "vtk": [
         {
           "id": "matrix",
-          "type": "vtk",
-          "basename": "case1_single_tracer_matrix",
-          "extensions": ["vtu"],
-          "update" : { "type": "stdout", "key": "[[Wrote tracer vtk output]]" }
+          "basename": "case1_single_tracer_matrix"
         },
         {
-          "id": "matrix",
-          "type": "vtk",
-          "basename": "case1_single_tracer_fracture",
-          "extensions": ["vtu"],
-          "update" : { "type": "stdout", "key": "[[Wrote tracer vtk output]]" }
+          "id": "matrix2",
+          "basename": "case1_single_tracer_fracture"
         }   
+      ]
+    }
+  },
+  "files":   [],
+  "configuration" :
+    { 
+      "resources.image"  : "name://hello-world",
+      "running.intermediateFilesPattern" : [
+        "[[Wrote tracer data over time]]",
+        "[[Wrote tracer data over time 2]]",
+        "[[Wrote tracer vtk output]]",
+        "[[Wrote tracer vtk output 2]]"
       ]
     }
 }

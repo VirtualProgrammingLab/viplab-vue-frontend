@@ -22,6 +22,8 @@
       >
       <div class="side-to-side-div flex-left m-2 pt-5 pb-5">
 
+        <csv-plot :areUrlsProp="true" :csvsProp="['http://localhost:8080/plotly-test.csv']" :datasetProp="{}" :labelProp="{}"></csv-plot>
+
         <validation-observer v-slot="{ invalid }">
         <form @submit.prevent="sendData">
           <div class="form-group ml-5 mr-5 ">
@@ -310,14 +312,13 @@
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
-
-                                  <div v-if="artifact.datasets">
-                                    <div v-for="dataset in artifact.datasets" :key="dataset.key">
+                                  <div v-if="artifact.plots">
+                                    <div v-for="plot in artifact.plots" :key="plot.key">
                                       <csv-plot 
                                         :csvsProp=artifact.urlsOrContents
                                         :areUrlsProp="false"
-                                        :datasetProp=dataset
-                                        :labelProp="artifact.labels">
+                                        :datasetProp=plot
+                                        :labelProp="artifact.xlabel">
                                       </csv-plot>
                                     </div>
                                   </div>
@@ -394,13 +395,13 @@
                                   </Promised>
                                 </div>
                                 <div v-else-if="artifact.MIMEtype == 'text/csv'">
-                                  <div v-if="artifact.datasets">
-                                    <div v-for="dataset in artifact.datasets" :key="dataset.key">
+                                  <div v-if="artifact.plots">
+                                    <div v-for="plot in artifact.plots" :key="plot.key">
                                       <csv-plot 
                                         :csvsProp=artifact.urlsOrContents
                                         :areUrlsProp="true"
-                                        :datasetProp=dataset
-                                        :labelProp="artifact.labels">
+                                        :datasetProp=plot
+                                        :labelProp="artifact.xlabel">
                                       </csv-plot>
                                     </div>
                                   </div>
@@ -924,7 +925,11 @@ export default {
       //let created = false;
 
       //get basenames for collections of files
-      let outputConfig = this.json.configuration.output;
+      let outputConfig = this.json.metadata.output.csv.concat(this.json.metadata.output.vtk);
+      console.log("----------")
+      console.log("outputConfig:");
+      console.log(outputConfig);
+      console.log("----------")
       if (outputConfig !== undefined) {
         let basenames = [];
         for (var out = 0; out < outputConfig.length; out++) {
@@ -938,8 +943,8 @@ export default {
             connectedVtks[currentBasename] = {};
             connectedVtks[currentBasename].type = "s3file";
             connectedVtks[currentBasename].urlsOrContents = [];
-            connectedVtks[currentBasename].datasets = currentConfig.datasets;
-            connectedVtks[currentBasename].labels = currentConfig.labels;
+            connectedVtks[currentBasename].plots = currentConfig.plots;
+            connectedVtks[currentBasename].xlabel = currentConfig.xlabel;
           }
           
         }
@@ -979,7 +984,6 @@ export default {
           }
         }
         connectedVtks = tmpConnectedFiles;
-        console.log(basenames);
 
         // delete all vtk and csv artifacts that are part of a collection
         artifacts = this.returnedOutputJson.artifacts;
@@ -996,7 +1000,10 @@ export default {
           this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
         }
       }
+      console.log("----------");
+      console.log("returnedOutputJson");
       console.log(this.returnedOutputJson)
+      console.log("----------");
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.decodeBase64(result.result.output.stdout);
