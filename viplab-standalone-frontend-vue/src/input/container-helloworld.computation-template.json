@@ -28,7 +28,8 @@
           "datasets": [
             {
               "key": "massBottomLayer",
-              "label": "Tracer mass in bottom layer in kg"
+              "label": "Tracer mass in bottom layer in kg",
+              "factor": 100
             },
             {
               "key": "massFracture",

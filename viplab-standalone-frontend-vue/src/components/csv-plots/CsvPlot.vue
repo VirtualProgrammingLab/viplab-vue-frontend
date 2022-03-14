@@ -123,17 +123,29 @@ export default {
         var obj = []
         var keys = Object.keys(data[0]);
         keys.forEach(element => obj[element] = []);
-
         // fill the object with the data depending on the keys (column names)
         for (var i=0; i<data.length; i++) {
           let row = data[i];
           keys.forEach(element => obj[element].push(row[element]));
         }
 
+        // multiply x-axis by factor if given
+        if (this.labelProp.factor !== undefined) {
+          for (let j = 0; j < obj[(keys[0])].length; j++) {
+              obj[(keys[0])][j] = obj[(keys[0])][j] * this.labelProp.factor
+          }
+        }
+
         // create traces to be rendered later; the first column is always x; the others are ys
         for (var k = 1; k < keys.length; k++) {
           if (this.datasetProp.key) {
+            // multiply y-axis by factor if given
             if(keys[k] === this.datasetProp.key) {
+              if (this.datasetProp.factor !== undefined) {
+                for (let j = 0; j < obj[(keys[0])].length; j++) {
+                  obj[(keys[k])][j] = obj[(keys[k])][j] * this.datasetProp.factor
+                }
+              }
               let trace = {
                 x: obj[(keys[0])],
                 y: obj[(keys[k])],
