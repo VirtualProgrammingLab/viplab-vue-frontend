@@ -229,15 +229,7 @@
                   >
                     <div id="stdout" v-if="outputFiles !== ''">
                       <h3>Stdout</h3>
-                      <ace-editor-component 
-                        :isParameter="false" 
-                        :isMustache="false"
-                        :readonly="true"
-                        :item='{
-                          "identifier" : "outputFiles",
-                          "content" : convertToBase64(outputFiles)
-                        }'
-                      ></ace-editor-component>
+                      <ansi-output :divId="'stdout-div'" :content="outputFiles"></ansi-output>
                     </div>
                   </b-tab>
 
@@ -248,15 +240,7 @@
                   >
                     <div id="stderr" class="mt-2" v-if="outputFiles !== ''">
                       <h3>Stderr</h3>
-                      <ace-editor-component 
-                        :isParameter="false" 
-                        :isMustache="false"
-                        :readonly="true"
-                        :item='{
-                          "identifier" : "errorFiles",
-                          "content" : convertToBase64(errorFiles)
-                        }'
-                      ></ace-editor-component>
+                      <ansi-output :divId="'stderr-div'" :content="errorFiles"></ansi-output>
                     </div>
                   </b-tab>
 
@@ -526,6 +510,8 @@ import VtkComponent from "../../components/vtk-plots/VtkComponent.vue";
 import Plot2d from '../../components/viplab-plots/plot2d/plot2d.vue';
 import CsvPlot from '../../components/csv-plots/CsvPlot.vue';
 
+import AnsiOutput from "../../components/AnsiOutput.vue";
+
 import {Promised} from "vue-promised";
 
 var Mustache = require('mustache');
@@ -544,6 +530,7 @@ export default {
     Promised,
     ValidationObserver,
     AceEditorComponent,
+    AnsiOutput
   },
   data() {
     return {
