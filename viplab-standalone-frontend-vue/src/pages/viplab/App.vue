@@ -238,7 +238,7 @@
                     ref="artifact"
                     class="artifact"
                   >
-                    <div id="stderr" class="mt-2" v-if="outputFiles !== ''">
+                    <div id="stderr" v-if="outputFiles !== ''">
                       <h3>Stderr</h3>
                       <ansi-output :divId="'stderr-div'" :content="errorFiles"></ansi-output>
                     </div>
