@@ -22,8 +22,6 @@
       >
       <div class="side-to-side-div flex-left m-2 pt-5 pb-5">
 
-        <csv-plot :areUrlsProp="true" :csvsProp="['http://localhost:8080/plotly-test.csv']" :datasetProp="{}" :labelProp="{}"></csv-plot>
-
         <validation-observer v-slot="{ invalid }">
         <form @submit.prevent="sendData">
           <div class="form-group ml-5 mr-5 ">
