@@ -1,12 +1,11 @@
 { 
   "identifier"  : "11483f23-95bf-424a-98a5-ee5868c85c3f", 
   "version" : "3.0.0",
-  "metadata": 
-    { 
-      "displayName" : "Parameters Example",  
-      "description" : "This is a 'Hello World' example showing the usage of parameters. Please introduce yourself so that the Hello World-Container can print your information...",
-      "viewer" : ["Image"]                                 
-    },
+  "metadata": { 
+    "displayName" : "Parameters Example",  
+    "description" : "This is a 'Hello World' example showing the usage of parameters. Please introduce yourself so that the Hello World-Container can print your information...",
+    "viewer" : ["CSV", "ParaView", "Image"]
+  },
   "environment" : "Container", 
   "files" : 
   [
@@ -20,7 +19,7 @@
       "parts" : 
       [
         {
-          "identifier": "part-contains-slider",
+          "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a1",
           "access": "template",
           "metadata": {
             "name": "Parameter in part",
@@ -275,7 +274,7 @@
     }
   ], 
   "configuration" :
-    { "resources.image"  : "viplab-example-image",
+    { "resources.image"  : "name://viplab-example-image",
       "resources.volume" : "/data/shared",
       "resources.memory" : "1g",
       "resources.numCPUs" : 1
