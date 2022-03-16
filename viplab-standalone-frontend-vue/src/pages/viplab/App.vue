@@ -910,7 +910,10 @@ export default {
       //let created = false;
 
       //get basenames for collections of files
-      let outputConfig = this.json.metadata.output.csv.concat(this.json.metadata.output.vtk);
+      let outputConfig;
+      if (this.json.metadata.output !== undefined) {
+        outputConfig = this.json.metadata.output.csv.concat(this.json.metadata.output.vtk);
+      }
       console.log("----------")
       console.log("outputConfig:");
       console.log(outputConfig);
