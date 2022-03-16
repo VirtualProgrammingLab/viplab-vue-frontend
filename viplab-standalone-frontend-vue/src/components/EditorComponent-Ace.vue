@@ -200,7 +200,6 @@ export default {
 
       // set font size to inherit
       this.aceEditor.setOptions({
-        fontFamily: "Consolas",
         fontSize: "inherit",
         firstLineNumber: firstLine
       });
@@ -253,6 +252,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.ace_editor, .ace_editor *{
+font-family: "Monaco", "Menlo", "Ubuntu Mono", "Droid Sans Mono", "Consolas", monospace !important;
+font-size: inherit !important;
+font-weight: 400 !important;
+letter-spacing: 0 !important;
+}
+
 .ace-editor-parent {
   height: 250px;
   position: relative;
