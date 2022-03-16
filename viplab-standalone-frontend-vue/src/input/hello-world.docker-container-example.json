@@ -12,7 +12,7 @@
   [
     { 
       "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3f", 
-      "path"      : "params.input",                              
+      "path"      : "params.ini",                              
       "metadata"  : 
         {  
           "syntaxHighlighting": "ini"                   
@@ -53,7 +53,7 @@
           "access"    : "template",
           "metadata"  :
               { 
-                "name"      : "params.input file"
+                "name"      : "params.ini file part"
               },
           "parameters":
           [
@@ -275,11 +275,9 @@
     }
   ], 
   "configuration" :
-    { "resources.image"  : "hello-world-image",
+    { "resources.image"  : "viplab-example-image",
       "resources.volume" : "/data/shared",
       "resources.memory" : "1g",
-      "resources.numCPUs" : 1,
-      "running.entrypoint" : "/data/bin/run.sh",
-      "running.commandLineArguments" : "params.input"
+      "resources.numCPUs" : 1
     }
 }
