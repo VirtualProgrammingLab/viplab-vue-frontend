@@ -277,7 +277,15 @@
                                   <b-card-body>
                                     <div class="part-content-field">
                                       <label class="item-name mr-2" for="item.content">content: </label>
-                                      <editor-component :isParameter="false" :item="item" :readonly="false"></editor-component>
+                                      <ace-editor-component 
+                                        :isParameter="false" 
+                                        :isMustache="false"
+                                        :readonly="false"
+                                        :item='{
+                                          "identifier" : "Editor" + item.identifier,
+                                          "content" : ""
+                                        }'
+                                      ></ace-editor-component>
                                     </div>
                                   </b-card-body>
                                 </b-collapse>
@@ -306,7 +314,8 @@
 <script>
 import { Drag, Drop, DropList } from "vue-easy-dnd";
 
-import EditorComponent from "../../components/EditorComponent.vue"
+// import Ace
+import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
 
 export default {
   name: "app",
@@ -314,7 +323,7 @@ export default {
     Drag,
     Drop,
     DropList,
-    EditorComponent
+    AceEditorComponent
   },
   data() {
     return {
