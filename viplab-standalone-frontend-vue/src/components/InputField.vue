@@ -42,6 +42,8 @@
 import { ValidationProvider, extend } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules';
 
+import base64url from "base64url";
+
 extend('required', {
   ...required,
   message: 'This field is required'
@@ -76,10 +78,18 @@ export default {
   computed: {
     vModel: {
       get: function () {
-        return this.item.value;
+        if (this.item.metadata.type === "number") {
+          return this.item.value;
+        } else {
+          return base64url.decode(this.item.value);
+        }
       },
       set: function (val) {
-        this.$set(this.item , "value", val);
+        if (this.item.metadata.type === "number") {
+          this.$set(this.item , "value", val);
+        } else {
+          this.$set(this.item , "value", base64url(val));
+        }
         this.$forceUpdate();
         return this.vModel;
       }

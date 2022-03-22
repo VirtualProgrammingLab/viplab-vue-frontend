@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import base64url from "base64url";
 
 export default {
   name: "app",
@@ -45,36 +46,11 @@ export default {
     };
   },
   methods: {
-    /* rewrite base64urlEncodedString to base64*/
-    rewriteToBase64: function (base64urlEncodedString) {
-      // Replace base64 characters with base64url characters
-      base64urlEncodedString = base64urlEncodedString
-        .replace(/-/g, "+")
-        .replace(/_/g, "/");
-      // Pad for base64
-      var padding = base64urlEncodedString.length % 4;
-      if (padding) {
-        if (padding === 1) {
-          throw new Error(
-            "InvalidLengthError: Input base64url string is the wrong length to determine padding"
-          );
-        }
-        base64urlEncodedString += new Array(5 - padding).join("=");
-      }
-      return base64urlEncodedString;
-    },
-    /** decode base64urlEncodedString to a normal string */
-    decodeBase64: function (base64urlEncodedString) {
-      var encodedString = this.rewriteToBase64(base64urlEncodedString);
-
-      var decodedString = window.atob(encodedString);
-      return decodedString;
-    },
     /** load json from file with temp being the file name, set this.json to the content of the file and fill form_v_model */
     loadJsonFromFile: function () {
       var appDiv = document.body;
       var data = appDiv.getAttribute("data-template");
-      this.json = JSON.parse(this.decodeBase64(data));
+      this.json = JSON.parse(base64url.decode(data));
       this.token = appDiv.getAttribute("data-token");
 
       // if there are parameters in parts, set var accordingly for rendering of button

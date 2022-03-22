@@ -321,7 +321,7 @@
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
-                                  <grid-plot :plotData="decodeBase64(artifact.content)"></grid-plot>
+                                  <grid-plot :plotData="base64url.decode(artifact.content)"></grid-plot>
                                 </div>
                                 <!-- show viplab 2d plot -->
                                 <div
@@ -329,7 +329,7 @@
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
-                                  <plot-2d :plotData="decodeBase64(artifact.content)"></plot-2d>
+                                  <plot-2d :plotData="base64url.decode(artifact.content)"></plot-2d>
                                 </div>
 
                               </div>
@@ -364,7 +364,7 @@
                                         :readonly="true"
                                         :item='{
                                           "identifier" : "Editor" + artifact.identifier,
-                                          "content" : convertToBase64(data),
+                                          "content" : base64url(data),
                                           "path" : artifact.path
                                         }'
                                         :ref="artifact.path"
@@ -516,6 +516,8 @@ var Mustache = require('mustache');
 
 import {ValidationObserver} from "vee-validate";
 
+import base64url from "base64url";
+
 export default {
   name: "app",
   components: {
@@ -598,39 +600,11 @@ export default {
         this.numberOfInputFiles = parts.length;
       }
     },
-    /* rewrite base64urlEncodedString to base64*/
-    rewriteToBase64: function (base64urlEncodedString) {
-      // Replace base64 characters with base64url characters
-      base64urlEncodedString = base64urlEncodedString
-        .replace(/-/g, "+")
-        .replace(/_/g, "/");
-      // Pad for base64
-      var padding = base64urlEncodedString.length % 4;
-      if (padding) {
-        if (padding === 1) {
-          throw new Error(
-            "InvalidLengthError: Input base64url string is the wrong length to determine padding"
-          );
-        }
-        base64urlEncodedString += new Array(5 - padding).join("=");
-      }
-      return base64urlEncodedString;
-    },
-    /** decode base64urlEncodedString to a normal string */
-    decodeBase64: function (base64urlEncodedString) {
-      var encodedString = this.rewriteToBase64(base64urlEncodedString);
-
-      var decodedString = window.atob(encodedString);
-      return decodedString;
-    },
-    convertToBase64: function (stringToConvert) {
-      return window.btoa(stringToConvert);
-    },
     /** load json from file with temp being the file name, set this.json to the content of the file and fill form_v_model */
     loadJsonFromFile: function () {
       var appDiv = document.body;
       var data = appDiv.getAttribute("data-template");
-      this.json = JSON.parse(this.decodeBase64(data));
+      this.json = JSON.parse(base64url.decode(data));
       this.token = appDiv.getAttribute("data-token");
 
       // if there are parameters in parts, set var accordingly for rendering of button
@@ -741,8 +715,11 @@ export default {
                 }
                 generatedContent[currentParam.identifier] = value;
               }
-              var contentBase64 = window.btoa(JSON.stringify(generatedContent));
-              //console.log(contentBase64);
+              var contentBase64 = base64url(JSON.stringify(generatedContent));
+              console.log("----------");
+              console.log("contentBase64:");
+              console.log(contentBase64);
+              console.log("----------");
               file.parts.push({
                 identifier: this.json.files[fileIndex].parts[part].identifier,
                 content: contentBase64,
@@ -775,6 +752,11 @@ export default {
       //document.querySelector('#stderr').value = '';
       //document.getElementById("fileList").innerHTML = '';
       //this.outputFiles = new Map();
+
+      console.log("----------")
+      console.log("task")
+      console.log(task)
+      console.log("----------")
 
       this.ws.send(JSON.stringify(task));
 
@@ -994,8 +976,8 @@ export default {
       console.log("----------");
 
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
-      this.outputFiles = this.decodeBase64(result.result.output.stdout);
-      this.errorFiles = this.decodeBase64(result.result.output.stderr);
+      this.outputFiles = base64url.decode(result.result.output.stdout);
+      this.errorFiles = base64url.decode(result.result.output.stderr);
       //console.log(this.outputFiles);
     }, 
     /** get content from s3 if it is an image, process differently */
@@ -1031,7 +1013,7 @@ export default {
       var content = "";
       this.returnedUnmodifiedArtifacts.artifacts.forEach((item) => {
         if (item.identifier == identifier && item.content) {
-          content = this.decodeBase64(item.content);
+          content = base64url.decode(item.content);
         } else if (item.identifier == identifier) {
           // handle files that were downloaded from s3
           var itemContent = "";
@@ -1227,7 +1209,7 @@ export default {
       // If the template should be displayed
       if(!this.asForm){
         if (part.content !== "") {
-          var mustacheTemplate = this.decodeBase64(part.content);
+          var mustacheTemplate = base64url.decode(part.content);
           var view = {};
           // Get values that will be substituted into the template
           for(var p in part.parameters) {
@@ -1263,7 +1245,7 @@ export default {
       if (partIndex > 0) {
         for (let previousPartIndex = 0; previousPartIndex < partIndex; previousPartIndex++) {
           let previousPart = allParts[previousPartIndex];
-          let decodedPreviousContent = this.decodeBase64(previousPart.content);
+          let decodedPreviousContent = base64url.decode(previousPart.content);
           let lines = decodedPreviousContent.split(/\r\n|\r|\n/).length;
           firstLine += lines;
         }

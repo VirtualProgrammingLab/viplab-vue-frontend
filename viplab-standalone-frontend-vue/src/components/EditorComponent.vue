@@ -82,6 +82,8 @@ import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
 import { ValidationProvider, extend } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules';
 
+import base64url from "base64url";
+
 extend('required', {
   ...required,
   message: 'This field is required'
@@ -119,15 +121,14 @@ export default {
     vModel: {
       get: function () {
         if (this.isParameter === true) {
-          //console.log("get: " + this.decodeBase64(this.editor.value));
           if (Array.isArray(this.editor.value)) {
-            return this.decodeBase64(this.editor.value[0]);
+            return base64url.decode(this.editor.value[0]);
           } else {
-            return this.decodeBase64(this.editor.value);
+            return base64url.decode(this.editor.value);
           }
           
         } else {
-          return this.decodeBase64(this.editor.content);
+          return base64url.decode(this.editor.content);
         }
       },
       set: function (val) {
@@ -158,31 +159,8 @@ export default {
     /** highlight the code in the editor */
     highlighter(code) {
       return highlight(code, languages.js); // languages.<insert language> to return html with markup
-    },
-    rewriteToBase64: function (base64urlEncodedString) {
-      // Replace base64 characters with base64url characters
-      base64urlEncodedString = base64urlEncodedString
-        .replace(/-/g, "+")
-        .replace(/_/g, "/");
-      // Pad for base64
-      var padding = base64urlEncodedString.length % 4;
-      if (padding) {
-        if (padding === 1) {
-          throw new Error(
-            "InvalidLengthError: Input base64url string is the wrong length to determine padding"
-          );
-        }
-        base64urlEncodedString += new Array(5 - padding).join("=");
-      }
-      return base64urlEncodedString;
-    },
-    decodeBase64: function (base64urlEncodedString) {
-      var encodedString = this.rewriteToBase64(base64urlEncodedString);
-
-      var decodedString = window.atob(encodedString);
-      return decodedString;
-    },
-  },
+    }
+  }
 }
 </script>
 

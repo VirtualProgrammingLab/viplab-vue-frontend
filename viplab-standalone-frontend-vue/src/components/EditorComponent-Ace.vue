@@ -41,6 +41,11 @@
 import { ValidationProvider, extend } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules';
 
+import 'ace-builds'
+import 'ace-builds/webpack-resolver'
+
+import base64url from "base64url";
+
 extend('required', {
   ...required,
   message: 'This field is required'
@@ -65,9 +70,6 @@ extend('editorRange', (value, [min, max]) => {
   }
   return 'Value has to be between ' + min + ' and ' + max + '!'
 });
-
-import 'ace-builds'
-import 'ace-builds/webpack-resolver'
 
 export default {
   name: "AceEditorComponent",
@@ -97,27 +99,27 @@ export default {
         // set value of isSettingContent to true such that the value change doesn't result in a loop triggering the OnChange-Listener, which in turn would trigger this watch-function again
         if (this.isParameter) {
           if (Array.isArray(val.value)) {
-            if (this.vModel !== this.decodeBase64(val.value[0])) {
+            if (this.vModel !== base64url.decode(val.value[0])) {
               this.isSettingContent = true;
             } 
-          } else if (this.vModel !== this.decodeBase64(val.value)) {
+          } else if (this.vModel !== base64url.decode(val.value)) {
               this.isSettingContent = true;
           }
-        } else if (this.vModel !== this.decodeBase64(val.content)) {
+        } else if (this.vModel !== base64url.decode(val.content)) {
             this.isSettingContent = true;
         }
         
         if (this.isSettingContent) {
           if (this.isParameter) {
             if (Array.isArray(val.value)) {
-              this.vModel =  this.decodeBase64(val.value[0]);
+              this.vModel =  base64url.decode(val.value[0]);
             } else {
-              this.vModel = this.decodeBase64(val.value);
+              this.vModel = base64url.decode(val.value);
             }
           } else if (this.isMustache) {
             this.vModel = val.content;
           } else {
-            this.vModel = this.decodeBase64(val.content);
+            this.vModel = base64url.decode(val.content);
           }
           
           try {
@@ -140,40 +142,17 @@ export default {
     },
   },
   methods: {
-    rewriteToBase64: function (base64urlEncodedString) {
-      // Replace base64 characters with base64url characters
-      base64urlEncodedString = base64urlEncodedString
-        .replace(/-/g, "+")
-        .replace(/_/g, "/");
-      // Pad for base64
-      var padding = base64urlEncodedString.length % 4;
-      if (padding) {
-        if (padding === 1) {
-          throw new Error(
-            "InvalidLengthError: Input base64url string is the wrong length to determine padding"
-          );
-        }
-        base64urlEncodedString += new Array(5 - padding).join("=");
-      }
-      return base64urlEncodedString;
-    },
-    decodeBase64: function (base64urlEncodedString) {
-      var encodedString = this.rewriteToBase64(base64urlEncodedString);
-
-      var decodedString = window.atob(encodedString);
-      return decodedString;
-    }, 
     initvModel: function () {
       if (this.isParameter) {
         if (Array.isArray(this.editor.value)) {
-          this.vModel =  this.decodeBase64(this.editor.value[0]);
+          this.vModel =  base64url.decode(this.editor.value[0]);
         } else {
-          this.vModel = this.decodeBase64(this.editor.value);
+          this.vModel = base64url.decode(this.editor.value);
         }
       } else if (this.isMustache) {
         this.vModel = this.editor.content;
       } else {
-        this.vModel = this.decodeBase64(this.editor.content);
+        this.vModel = base64url.decode(this.editor.content);
       }
       this.aceEditor.setValue(this.vModel, 1)
     },
