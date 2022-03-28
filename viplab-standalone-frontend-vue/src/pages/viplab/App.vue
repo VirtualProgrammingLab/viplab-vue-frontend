@@ -710,6 +710,13 @@ export default {
               for (var paramIndex in this.json.files[fileIndex].parts[part].parameters) {
                 var currentParam = this.json.files[fileIndex].parts[part].parameters[paramIndex];
                 var value = currentParam.value || currentParam.selected;
+                if (currentParam.metadata.guiType === "editor" || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "text")) {
+                  value = "base64:" + value
+                }
+                console.log("----------");
+                console.log("Param value before sending");
+                console.log(currentParam.metadata.guiType + " - " + value);
+                console.log("----------");
                 if (Array.isArray(value)) {
                   value = value.toString();
                 }
