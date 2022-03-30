@@ -200,19 +200,19 @@ export default {
         if (!this.isSettingContent) {
           if (this.isParameter) {
             this.$set(this.editor , "value", this.vModel);
-            this.editor.value = [btoa(this.vModel)];
+            this.editor.value = [base64url(this.vModel)];
           } else if (this.isMustache) {
             this.$set(this.editor , "content", this.vModel);
             this.editor.content = this.vModel;
           } else {
-            this.$set(this.editor , "content", btoa(this.vModel));
-            this.editor.content = btoa(this.vModel);
+            this.$set(this.editor , "content", base64url(this.vModel));
+            this.editor.content = base64url(this.vModel);
           }
           //autoscroll if new input is added to the log (editor readonly, e.g. for stdout and stderr)
           if (this.readonly) {
             this.aceEditor.renderer.scrollToLine(Number.POSITIVE_INFINITY);
           }
-          this.$emit('update:item', btoa(this.vModel))
+          this.$emit('update:item', base64url(this.vModel))
           //console.log("on-change " + this.aceEditor.getValue() + " - " + this.editor.content + " " + this.editor.value);
           /* set size
           this.aceEditor.setOptions({

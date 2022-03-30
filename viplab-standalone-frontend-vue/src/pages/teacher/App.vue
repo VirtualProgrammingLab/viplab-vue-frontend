@@ -283,8 +283,9 @@
                                         :readonly="false"
                                         :item='{
                                           "identifier" : "Editor" + item.identifier,
-                                          "content" : ""
+                                          "content" : item.content
                                         }'
+                                        v-on:update:item="updateContent(item, $event)"
                                       ></ace-editor-component>
                                     </div>
                                   </b-card-body>
@@ -553,6 +554,10 @@ export default {
         return true;
       }
       return false;
+    },
+    updateContent: function (item, event) {
+      //this.copied.files[fileIndex].parts[partIndex].content = event
+      item.content = event;
     },
   },
   created() {

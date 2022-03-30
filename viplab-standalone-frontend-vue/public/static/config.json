@@ -1,4 +1,4 @@
 {
-    "WEBSOCKET_API": "ws://localhost:8083/computations",
+    "WEBSOCKET_API": "wss://localhost/computations",
     "IS_STUDENT": false
 }
