@@ -199,7 +199,7 @@ export default {
       this.latestColorEvent = event;
       const color = event.target.value;
       const mapperConfig = this.getMapperConfig(color);
-      console.log(mapperConfig);
+      //console.log(mapperConfig);
       this.mapper.set(mapperConfig);
       this.applyPreset();
 
@@ -207,7 +207,7 @@ export default {
     },
     getMapperConfig: function (value) {
       const [location, colorByArrayName] = value.split(":");
-      console.log(location);
+      //console.log(location);
       const interpolateScalarsBeforeMapping = location === "PointData";
       let colorMode = ColorMode.DEFAULT;
       let scalarMode = ScalarMode.DEFAULT;
@@ -215,7 +215,7 @@ export default {
       if (scalarVisibility) {
         const dataArray = this.source[`get${location}`]().getArrayByName(colorByArrayName);
         const newDataRange = dataArray.getRange();
-        console.log(newDataRange);
+        //console.log(newDataRange);
         this.dataRange[0] = newDataRange[0];
         this.dataRange[1] = newDataRange[1];
         colorMode = ColorMode.MAP_SCALARS;
@@ -239,7 +239,7 @@ export default {
       this.lookupTable.applyColorMap(preset);
       this.lookupTable.setMappingRange(this.dataRange[0], this.dataRange[1]);
       this.lookupTable.updateRange();
-      console.log(this.lookupTable);
+      //console.log(this.lookupTable);
     },
     decreaseFileIndex: function () {
       this.fileIndex = Math.max(this.fileIndex - 1, 0);
@@ -396,7 +396,7 @@ export default {
       }
     },
     async download(event) {
-      console.log(event);
+      //console.log(event);
       event.preventDefault();
 
       //TODO: Unterscheidung: files in content als Base64 => so wie hier
@@ -422,7 +422,7 @@ export default {
     },
   },
   async mounted() {
-    console.log("vtk-component mounted");
+    //console.log("vtk-component mounted");
     await this.renderFile(this);
   },
   beforeCreate() {

@@ -713,20 +713,24 @@ export default {
                 if (currentParam.metadata.guiType === "editor" || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "text")) {
                   value = "base64:" + value
                 }
+                /*
                 console.log("----------");
                 console.log("Param value before sending");
                 console.log(currentParam.metadata.guiType + " - " + value);
                 console.log("----------");
+                */
                 if (Array.isArray(value)) {
                   value = value.toString();
                 }
                 generatedContent[currentParam.identifier] = value;
               }
               var contentBase64 = base64url(JSON.stringify(generatedContent));
+              /*
               console.log("----------");
               console.log("contentBase64:");
               console.log(contentBase64);
               console.log("----------");
+              */
               file.parts.push({
                 identifier: this.json.files[fileIndex].parts[part].identifier,
                 content: contentBase64,
@@ -759,11 +763,12 @@ export default {
       //document.querySelector('#stderr').value = '';
       //document.getElementById("fileList").innerHTML = '';
       //this.outputFiles = new Map();
-
+      /*
       console.log("----------")
       console.log("task")
       console.log(task)
       console.log("----------")
+      */
 
       this.ws.send(JSON.stringify(task));
 
@@ -903,10 +908,12 @@ export default {
       if (this.json.metadata.output !== undefined) {
         outputConfig = this.json.metadata.output.csv.concat(this.json.metadata.output.vtk);
       }
+      /*
       console.log("----------")
       console.log("outputConfig:");
       console.log(outputConfig);
       console.log("----------")
+      */
       if (outputConfig !== undefined) {
         let basenames = [];
         for (var out = 0; out < outputConfig.length; out++) {
@@ -936,7 +943,7 @@ export default {
             for (var base = 0; base < basenames.length; base++) {
               let currentBasename = basenames[base];
               if (filenamePart.startsWith(currentBasename) && (filenamePart.charAt(currentBasename.length) === "-")) {
-                console.log(currentBasename + " - " + filenamePart);
+                //console.log(currentBasename + " - " + filenamePart);
                 connectedVtks[currentBasename].type = artifacts[a].type;
                 connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
                 if (artifacts[a].url) {
@@ -952,7 +959,7 @@ export default {
         }
 
         // If config contains output, that wasn't sent: remove from connectedVtks so ot isn't shown in gui
-        console.log(connectedVtks);
+        //console.log(connectedVtks);
         let tmpConnectedFiles = {};
         for (let fileGroupKey in connectedVtks) {
           let value = connectedVtks[fileGroupKey]
@@ -977,11 +984,13 @@ export default {
           this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
         }
       }
+      /*
       console.log("----------");
       console.log("returnedOutputJson");
       console.log(this.returnedOutputJson)
       console.log("----------");
-
+      */
+      
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = base64url.decode(result.result.output.stdout);
       this.errorFiles = base64url.decode(result.result.output.stderr);
