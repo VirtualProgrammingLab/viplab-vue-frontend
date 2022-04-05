@@ -255,7 +255,30 @@
               "max": 100,
               "step": 1,
               "validation": "range"
-            },
+            }
+          ],
+          "content"   : "W2Fib3V0IHlvdV0NCmxpa2VkVGhpbmdzPXt7X19jaGVja2JveF9ffX0NCmZhdm9yaXRlUEw9e3tfX3JhZGlvQnV0dG9uX199fQ0KZnJpZGdlPXt7X19kcm9wZG93blNpbmdsZV9ffX0NCmRhbmNpbmc9e3tfX2Ryb3Bkb3duTXVsdGlwbGVfX319DQpkaXNsaWtlZFRoaW5ncz17e19fdG9nZ2xlX199fQ0KcmFuZG9tTnVtYmVycz17e19fc2xpZGVyTXVsdGlwbGVfX319DQpuYW1lPXt7X19pbnB1dFRleHRXT01heGxlbmd0aF9ffX0NCmNocmlzdG1hc1dpc2g9e3tfX2lucHV0VGV4dFdNYXhsZW5ndGhfX319DQphZ2U9e3tfX2lucHV0TnVtYmVyX199fQ"
+        }
+      ]
+    },
+    { 
+      "identifier": "22483f42-95bf-984a-98a5-ee9485c85c31", 
+      "path"      : "code.json",                              
+      "metadata"  : 
+        {  
+          "syntaxHighlighting": "ini"                   
+        },
+      "parts" : 
+      [
+        {
+          "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a2",
+          "access": "template",
+          "metadata": {
+            "name": "Parameter in part",
+            "emphasis": "low"
+          },
+          "parameters" : 
+          [
             {
               "mode" : "any",
               "identifier" : "__default__", 
@@ -264,13 +287,12 @@
                 "name": "code",
                 "description" : "Enter some code"
               },
-              "default": ["aW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KSB7IC8vIFByaW50ICdIZWxsbyBXb3JsZCcgfQ"], 
-              "validation": "pattern"
+              "default": ["aW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KSB7IA0KLy8gUHJpbnQgJ0hlbGxvIFdvcmxkJyANCn0"]
             }
           ],
-          "content"   : "W2Fib3V0IHlvdV0KbGlrZWRUaGluZ3M9e3tfX2NoZWNrYm94X199fQpmYXZvcml0ZVBMPXt7X19yYWRpb0J1dHRvbl9ffX0KZnJpZGdlPXt7X19kcm9wZG93blNpbmdsZV9ffX0KZGFuY2luZz17e19fZHJvcGRvd25NdWx0aXBsZV9ffX0KZGlzbGlrZWRUaGluZ3M9e3tfX3RvZ2dsZV9ffX0KcmFuZG9tTnVtYmVycz17e19fc2xpZGVyTXVsdGlwbGVfX319Cm5hbWU9e3tfX2lucHV0VGV4dFdPTWF4bGVuZ3RoX199fQpjaHJpc3RtYXNXaXNoPXt7X19pbnB1dFRleHRXTWF4bGVuZ3RoX199fQphZ2U9e3tfX2lucHV0TnVtYmVyX199fQpjb2RlU25pcHBldD17e19fZGVmYXVsdF9ffX0"
+          "content": "ew0KImNvZGVTbmlwcGV0IiA6ICJ7e19fZGVmYXVsdF9ffX0iDQp9"
         }
-      ] 
+      ]
     }
   ], 
   "configuration" :
