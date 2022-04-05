@@ -266,7 +266,7 @@
       "path"      : "code.json",                              
       "metadata"  : 
         {  
-          "syntaxHighlighting": "ini"                   
+          "syntaxHighlighting": "json"                   
         },
       "parts" : 
       [
