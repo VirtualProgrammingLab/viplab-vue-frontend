@@ -20,6 +20,18 @@
         class="flex-container"
         :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
       >
+
+      <v-wait for="wait for ws response">
+        <BlockUI message="Waiting..." slot="waiting">
+          <spring-spinner
+            class="wait-spinner"
+            :animation-duration="3000"
+            :size="25"
+            color="#000"
+            />
+        </BlockUI>
+      </v-wait>
+
       <div class="side-to-side-div flex-left m-2 pt-5 pb-5">
 
         <validation-observer v-slot="{ invalid }">
@@ -213,13 +225,6 @@
 
           <div class="my-2">
             <v-wait for="wait for ws response">
-              <circles-to-rhombuses-spinner
-                slot="waiting"
-                :animation-duration="1200"
-                :circles-num="3"
-                :circle-size="15"
-                color="#5bc0de"
-              />
 
               <b-card
                 no-body
@@ -506,7 +511,6 @@ import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
 //own components
 import Parameters from "../../components/Parameters.vue";
 
-import { CirclesToRhombusesSpinner } from "epic-spinners";
 import { SpringSpinner } from 'epic-spinners'
 
 import GridPlot from "../../components/viplab-plots/gridplot/GridPlot.vue";
@@ -530,7 +534,6 @@ import base64url from "base64url";
 export default {
   name: "app",
   components: {
-    CirclesToRhombusesSpinner,
     SpringSpinner,
     Parameters,
     GridPlot,
@@ -1480,6 +1483,10 @@ body {
 
   .disabled {
     pointer-events: none;
+  }
+
+  .wait-spinner {
+    margin: auto;
   }
 
 }

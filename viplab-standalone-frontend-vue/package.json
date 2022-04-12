@@ -35,6 +35,7 @@
     "vee-validate": "^3.4.13",
     "vtk.js": "^18.1.11",
     "vue": "^2.5.17",
+    "vue-blockui": "^1.1.7",
     "vue-demi": "^0.11.3",
     "vue-easy-dnd": "^1.19.0",
     "vue-plotly": "^1.1.0",

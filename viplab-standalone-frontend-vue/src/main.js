@@ -34,6 +34,10 @@ Vue.config.productionTip = false
 
 Vue.use(VueWait);
 
+import BlockUI from 'vue-blockui'
+
+Vue.use(BlockUI)
+
 // Setup vue-router
 import Teacher from './pages/teacher/App.vue';
 import ViPLab from './pages/viplab/App.vue';
