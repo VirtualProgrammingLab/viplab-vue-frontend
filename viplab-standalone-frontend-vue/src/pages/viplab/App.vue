@@ -149,7 +149,15 @@
                     <font-awesome-icon icon="save" />
                   </b-button>
                   <b-button class="btn btn-row" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
-                    <b-icon icon="play" aria-hidden="true"></b-icon>
+                    <b-icon v-if="!waitingResponse" icon="play" aria-hidden="true"></b-icon>
+                    <v-wait for="wait for ws response">
+                      <spring-spinner
+                        slot="waiting"
+                        :animation-duration="3000"
+                        :size="25"
+                        color="#fff"
+                      />
+                    </v-wait>
                   </b-button>
                 </div>
               </div>
@@ -499,6 +507,7 @@ import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
 import Parameters from "../../components/Parameters.vue";
 
 import { CirclesToRhombusesSpinner } from "epic-spinners";
+import { SpringSpinner } from 'epic-spinners'
 
 import GridPlot from "../../components/viplab-plots/gridplot/GridPlot.vue";
 
@@ -522,6 +531,7 @@ export default {
   name: "app",
   components: {
     CirclesToRhombusesSpinner,
+    SpringSpinner,
     Parameters,
     GridPlot,
     VtkComponent,
@@ -546,7 +556,8 @@ export default {
       maximized: false,
       file: null,
       asForm: true,
-      isPartParameters: 0
+      isPartParameters: 0,
+      waitingResponse: false
     };
   },
   watch: {
@@ -649,6 +660,7 @@ export default {
         if (this.outputFiles !== "") {
           // stop waiting
           this.$wait.end("wait for ws response");
+          this.waitingResponse = false;
         }
       };
       document.getElementById("submit").onclick = this.sendData;
@@ -681,6 +693,7 @@ export default {
 
       // start waiting
       this.$wait.start("wait for ws response");
+      this.waitingResponse = true;
 
       document.getElementById("submit").disabled = true;
       var task = {
@@ -1461,9 +1474,14 @@ body {
     border-radius: calc(0.25rem - 1px) !important;
     padding-left: 20px !important;
     padding-right: 20px !important;
+    width: 61px;
+    height: 38px;
   }
 
-  
+  .disabled {
+    pointer-events: none;
+  }
+
 }
 
 .tooltip {
