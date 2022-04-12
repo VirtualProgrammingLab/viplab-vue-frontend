@@ -348,7 +348,7 @@
                               </div>
                               <!-- Render s3 files that have no content-element-->
                               <div v-else>
-                                <div v-if="artifact.MIMEtype == 'application/vtu'">
+                                <div v-if="artifact.MIMEtype == 'application/vnd.kitware'">
                                     <vtk-component
                                         v-if="artifact.urlsOrContents"
                                         :propFiles=artifact.urlsOrContents
@@ -589,7 +589,7 @@ export default {
       let artifacts = this.returnedOutputJson.artifacts;
       let newArtifacts = [];
       for(var i = 0; i < artifacts.length; i++) {
-        if(artifacts[i].MIMEtype != 'application/vtu' && artifacts[i].MIMEtype != 'text/csv') {
+        if(artifacts[i].MIMEtype != 'application/vnd.kitware' && artifacts[i].MIMEtype != 'text/csv') {
           newArtifacts.push(artifacts[i]);
         }
       }
@@ -892,7 +892,7 @@ export default {
       }
       if (!viewer.includes("ParaView")) {
         this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
-          if (value.MIMEtype !== "application/vtu") {
+          if (value.MIMEtype !== "application/vnd.kitware") {
             return value;
           }
         });
@@ -951,7 +951,7 @@ export default {
 
         // group results according to the available basenames
         for(var a = 0; a < artifacts.length; a++) {
-          if((artifacts[a].MIMEtype == "application/vtu" || artifacts[a].MIMEtype == "text/csv") && !artifacts[a].artifacts){
+          if((artifacts[a].MIMEtype == "application/vnd.kitware" || artifacts[a].MIMEtype == "text/csv") && !artifacts[a].artifacts){
             let path = artifacts[a].path;
             let lastIndex = path.lastIndexOf('/');
             let filenamePart = path.substr(lastIndex + 1, path.length);
@@ -1049,7 +1049,7 @@ export default {
         } else if (item.identifier == identifier) {
           // handle files that were downloaded from s3
           var itemContent = "";
-          if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vtu") {
+          if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vnd.kitware") {
             itemContent = item.url;
           }
           content = itemContent;
@@ -1066,7 +1066,7 @@ export default {
         const byteArray = new Uint8Array(byteNumbers);
         blob = new Blob([byteArray], { type: mimetype });
         //console.log(blob);
-      } else if ((mimetype === "image/png" && content.includes("blob:http")) || ((mimetype === "text/plain" || mimetype === "image/png" || mimetype === "text/csv" || mimetype === "application/vtu") && content.startsWith("http"))) {
+      } else if ((mimetype === "image/png" && content.includes("blob:http")) || ((mimetype === "text/plain" || mimetype === "image/png" || mimetype === "text/csv" || mimetype === "application/vnd.kitware") && content.startsWith("http"))) {
         // handle files that were downloaded from s3
         blob = await fetch(content).then(response => response.blob());
       } else {
