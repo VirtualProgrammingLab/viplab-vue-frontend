@@ -296,11 +296,11 @@
                                   ></ace-editor-component>
                                 </div>
                                 <div
-                                  v-if="artifact.MIMEtype === 'image/png'"
+                                  v-if="artifact.MIMEtype === 'image/png' || artifact.MIMEtype === 'image/jpeg'"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
-                                  <img :src="imagesrc(artifact.content)" />
+                                  <img :src="imagesrc(artifact.content, artifact.MIMEtype)" />
                                 </div>
                                 <div
                                   v-if="artifact.MIMEtype === 'text/csv'"
@@ -359,7 +359,7 @@
                                     ></vtk-component>
                                 </div>
                                 <div
-                                  v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype == 'text/plain'"
+                                  v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype !== 'image/jpeg' && artifact.MIMEtype == 'text/plain'"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
@@ -409,7 +409,7 @@
                                     </csv-plot>
                                   </div>
                                 </div>
-                                <div v-else-if="artifact.MIMEtype == 'image/png'">
+                                <div v-else-if="artifact.MIMEtype == 'image/png' || artifact.MIMEtype == 'image/jpeg'">
                                   <Promised :promise="getContentFromS3(artifact.url, true)">
                                     <!-- Use the "pending" slot to display a loading message -->
                                     <template v-slot:pending>
@@ -885,7 +885,7 @@ export default {
       }
       if (!viewer.includes("Image")) {
         this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
-          if (value.MIMEtype !== "image/png") {
+          if (value.MIMEtype !== "image/png" || value.MIMEtype !== "image/jpeg") {
             return value;
           }
         });
@@ -1037,50 +1037,69 @@ export default {
       
     }, 
     /**  return base64 image src for img-tag*/
-    imagesrc: function (base64Image) {
-      return "data:image/png;base64," + base64Image;
+    imagesrc: function (base64Image, mimetype) {
+      var base64 = base64Image.replaceAll("-", "+").replaceAll("_", "/")
+      if (base64.length % 4 != 0) {
+          base64.concat("=".repeat(4 - (base64.length % 4)))
+      }
+      if (mimetype === "image/jpeg") {
+        return "data:image/jpeg;base64," + base64;
+      }
+      return "data:image/png;base64," + base64;
     },
     /** Save file locally on click from the user */
     async save(filename, identifier, mimetype) {
       var content = "";
       this.returnedUnmodifiedArtifacts.artifacts.forEach((item) => {
         if (item.identifier == identifier && item.content) {
-          content = base64url.decode(item.content);
+          if (item.MIMEtype !== "image/png" && item.MIMEtype !== "image/jpeg") {
+            content = base64url.decode(item.content);
+          } else {
+            content = item.content;
+          }
         } else if (item.identifier == identifier) {
           // handle files that were downloaded from s3
           var itemContent = "";
-          if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vnd.kitware") {
+          if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png"  || item.MIMEtype === "image/jpeg" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vnd.kitware") {
             itemContent = item.url;
           }
           content = itemContent;
         }
       });
       
+      let downloadNecessary = true;
       var blob = "";
-      if (mimetype === "image/png" && !(content.includes("blob:http")) && !(content.startsWith("http"))) {
-        // handle images that were not downloaded
-        const byteNumbers = new Array(content.length);
-        for (let i = 0; i < content.length; i++) {
-          byteNumbers[i] = content.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        blob = new Blob([byteArray], { type: mimetype });
-        //console.log(blob);
-      } else if ((mimetype === "image/png" && content.includes("blob:http")) || ((mimetype === "text/plain" || mimetype === "image/png" || mimetype === "text/csv" || mimetype === "application/vnd.kitware") && content.startsWith("http"))) {
+      if ((mimetype === "image/png" || mimetype === "image/jpeg") && !(content.includes("blob:http")) && !(content.startsWith("http"))) {
+        downloadNecessary = false;
+        let base64 = this.imagesrc(content, mimetype)
+        fetch(base64)
+          .then(res => res.blob())
+          .then(blob => {
+            let elem = window.document.createElement("a");
+            elem.href = window.URL.createObjectURL(blob);
+            elem.download = filename;
+            document.body.appendChild(elem);
+            elem.click();
+            document.body.removeChild(elem);
+          });
+      } else if (((mimetype === "image/png" ||  mimetype === "image/jpeg") && content.includes("blob:http")) || ((mimetype === "text/plain" || mimetype === "image/png" || mimetype === "image/jpeg" || mimetype === "text/csv" || mimetype === "application/vnd.kitware") && content.startsWith("http"))) {
         // handle files that were downloaded from s3
         blob = await fetch(content).then(response => response.blob());
       } else {
         blob = new Blob([content], { mimetype: mimetype });
       }
-      if (window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveBlob(blob, filename);
-      } else {
-        var elem = window.document.createElement("a");
-        elem.href = window.URL.createObjectURL(blob);
-        elem.download = filename;
-        document.body.appendChild(elem);
-        elem.click();
-        document.body.removeChild(elem);
+
+      if (downloadNecessary) {
+        if (window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveBlob(blob, filename);
+        } else {
+          var elem = window.document.createElement("a");
+          elem.href = window.URL.createObjectURL(blob);
+          elem.download = filename;
+          document.body.appendChild(elem);
+          elem.click();
+          document.body.removeChild(elem);
+        }
       }
       return false;
     },
