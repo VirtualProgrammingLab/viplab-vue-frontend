@@ -288,6 +288,7 @@
                                     :isParameter="false" 
                                     :isMustache="false"
                                     :readonly="true"
+                                    :lang="(artifact.MIMEtype == 'application/json') ? 'json' : 'text'"
                                     :item='{
                                       "identifier" : "Editor" + artifact.identifier,
                                       "content" : artifact.content,
@@ -392,6 +393,7 @@
                                         :isParameter="false" 
                                         :isMustache="false"
                                         :readonly="true"
+                                        :lang="(artifact.MIMEtype == 'application/json') ? 'json' : 'text'"
                                         :item='{
                                           "identifier" : "Editor" + artifact.identifier,
                                           "content" : base64url(data),
@@ -892,7 +894,7 @@ export default {
           "path": "/test/text.c",
           "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
         }
-      );*/
+      );
 
       this.returnedOutputJson.artifacts.push(
         {
@@ -911,7 +913,7 @@ export default {
           "path": "/test/uri-list.txt",
           "content": "aHR0cDovL2xvY2FsaG9zdDo4MDgxL3Rlc3QucGRmDQpodHRwOi8vbG9jYWxob3N0OjgwODEvdGVzdC50eHQNCmh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS92b3lhZ2VyLnBuZw"
         }
-      );
+      );*/
 
       // filter result such that only specified results are displayed
       let viewer = [];
@@ -1362,13 +1364,6 @@ export default {
           setTimeout(() => URL.revokeObjectURL(link.href), 7000);
       })
       .catch(console.error);
-      /*console.log("download");
-      const link = document.createElement("a");
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.href = dataurl;
-      link.download = filename;
-      link.click();*/
     },
     filteredArtifacts: function(artifactsArray) {
       let availableMIMEtypes = ["text/plain", "text/uri-list", "application/json", "image/png", "image/jpeg", "application/x-vgf", "application/x-vgf3", "application/x-vgfc", "text/csv", "application/vnd.kitware"]
