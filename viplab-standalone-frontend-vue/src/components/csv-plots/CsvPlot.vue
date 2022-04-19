@@ -170,6 +170,8 @@ export default {
         let title = ((this.areUrlsProp) ? this.csvs[this.fileIndex].substr(lastIndex + 1, this.csvs[this.fileIndex].length) : "Graph");
         let xformat = (this.labelProp.format) ? this.labelProp.format : ".1f"
         let yformat = (this.datasetProp.format) ? this.datasetProp.format : ".1f"
+        let ytext = this.datasetProp.label || ((keys.length <= 2) ? keys[1] : '')
+
         this.layout = {
           title: title,
           xaxis: {
@@ -180,7 +182,7 @@ export default {
           },
           yaxis: {
             title: {
-              text: this.datasetProp.label
+              text: ytext
             },
             tickformat: yformat 
           }
