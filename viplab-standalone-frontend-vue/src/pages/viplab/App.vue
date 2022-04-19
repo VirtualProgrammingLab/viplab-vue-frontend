@@ -296,6 +296,23 @@
                                   ></ace-editor-component>
                                 </div>
                                 <div
+                                  v-if="artifact.MIMEtype == 'text/uri-list'"
+                                  ref="outPartcontent"
+                                  class="outPartcontent"
+                                >
+                                  Links: 
+                                  <ul>
+                                      <li v-for="(link, link_index) in getLinks(artifact.content)" :key="'uri' + artifact.identifier + link_index">
+                                        <div class="d-flex justify-content-between">
+                                          <a target="_blank" rel="noopener noreferrer" :href="link">{{ link }}</a>
+                                          <b-button class="float-right" variant="outline-primary" @click="downloadFromLink(link)">
+                                            <b-icon icon="download" aria-hidden="true"></b-icon>
+                                          </b-button>
+                                        </div>
+                                      </li>
+                                  </ul>
+                                </div>
+                                <div
                                   v-if="artifact.MIMEtype === 'image/png' || artifact.MIMEtype === 'image/jpeg'"
                                   ref="outPartcontent"
                                   class="outPartcontent"
@@ -877,6 +894,25 @@ export default {
         }
       );*/
 
+      this.returnedOutputJson.artifacts.push(
+        {
+          "type" : "file",
+          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68d02",
+          "MIMEtype": "text/uri-list",
+          "path": "/test/uri-list.txt",
+          "content": "aHR0cDovL2xvY2FsaG9zdDo4MDgxL3Rlc3QucGRmDQpodHRwOi8vbG9jYWxob3N0OjgwODEvdGVzdC50eHQNCmh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS92b3lhZ2VyLnBuZw"
+        }
+      );
+      this.returnedUnmodifiedArtifacts.artifacts.push(
+        {
+          "type" : "file",
+          "identifier" : "aa3c1cf9-c02d-4694-902c-93c298d68d02",
+          "MIMEtype": "application/uri-list",
+          "path": "/test/uri-list.txt",
+          "content": "aHR0cDovL2xvY2FsaG9zdDo4MDgxL3Rlc3QucGRmDQpodHRwOi8vbG9jYWxob3N0OjgwODEvdGVzdC50eHQNCmh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS92b3lhZ2VyLnBuZw"
+        }
+      );
+
       // filter result such that only specified results are displayed
       let viewer = [];
       if (typeof this.json.metadata !== 'undefined') {
@@ -1302,6 +1338,37 @@ export default {
         }
       }
       return firstLine;
+    },
+    getLinks: function(base64UriContent) {
+      let decodedString = base64url.decode(base64UriContent);
+      let uriArray = decodedString.split("\n");
+      return uriArray;
+    },
+    downloadFromLink: function(dataurl) {
+      let filename = dataurl.slice(dataurl.lastIndexOf("/") + 1, dataurl.length);
+      console.log(filename);
+      fetch(dataurl)
+        .then(response => response.arrayBuffer())
+        .then(response => {
+          const blob = new Blob([response], {type: 'application/octet-stream'})
+          const link = document.createElement("a");
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.href = URL.createObjectURL(blob);
+          link.download = filename;
+          link.click();
+          link.remove();
+          // in case the Blob uses a lot of memory
+          setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+      })
+      .catch(console.error);
+      /*console.log("download");
+      const link = document.createElement("a");
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.href = dataurl;
+      link.download = filename;
+      link.click();*/
     }
   },
   created() {
