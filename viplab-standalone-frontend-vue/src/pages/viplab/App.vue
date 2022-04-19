@@ -275,12 +275,12 @@
                               class="artifact"
                               v-for="(
                                 artifact, artifactParent_index
-                              ) in returnedOutputJson.artifacts"
+                              ) in filteredArtifacts(returnedOutputJson.artifacts)"
                               :key="artifact.identifier"
                             >
                               <div v-if="artifact.type !== 's3file'">
                                 <div
-                                  v-if="artifact.MIMEtype == 'text/plain'"
+                                  v-if="artifact.MIMEtype == 'text/plain' || artifact.MIMEtype == 'application/json'"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
@@ -376,7 +376,7 @@
                                     ></vtk-component>
                                 </div>
                                 <div
-                                  v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype !== 'image/jpeg' && artifact.MIMEtype == 'text/plain'"
+                                  v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype !== 'image/jpeg' && ( artifact.MIMEtype == 'text/plain' || artifact.MIMEtype == 'application/json')"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
@@ -1369,6 +1369,11 @@ export default {
       link.href = dataurl;
       link.download = filename;
       link.click();*/
+    },
+    filteredArtifacts: function(artifactsArray) {
+      let availableMIMEtypes = ["text/plain", "text/uri-list", "application/json", "image/png", "image/jpeg", "application/x-vgf", "application/x-vgf3", "application/x-vgfc", "text/csv", "application/vnd.kitware"]
+      let filtered = artifactsArray.filter(artifact => (availableMIMEtypes.indexOf(artifact.MIMEtype) > -1));
+      return filtered;
     }
   },
   created() {
