@@ -22,7 +22,7 @@
       >
 
       <v-wait for="wait for ws response">
-        <BlockUI message="Waiting..." slot="waiting">
+        <BlockUI :message="statusMessage.message" slot="waiting">
           <spring-spinner
             class="wait-spinner"
             :animation-duration="3000"
@@ -579,7 +579,8 @@ export default {
       file: null,
       asForm: true,
       isPartParameters: 0,
-      waitingResponse: false
+      waitingResponse: false, 
+      statusMessage: { "timestamp" : "2022-04-21T06:30+01:00", "message" : "Waiting..."}
     };
   },
   watch: {
@@ -676,9 +677,17 @@ export default {
           case "result":
             this.displayResult(data.content);
             break;
+          case "status":
+            // TODO: 
+            // check if date is newer than the one from the previous message
+            // set message-variable so that info-message can be displayed in the progress bar
+            // if status is warning or error, stop progress bar, show error message to user and re-enable run-button
+            break;
           default:
             console.error(data);
         }
+
+        // TODO: Also stop waiting, if status == error || waiting
         if (this.outputFiles !== "") {
           // stop waiting
           this.$wait.end("wait for ws response");
@@ -812,6 +821,7 @@ export default {
     /** log the computation */
     displayComputation: function (computation) {
       console.log("computation: " + computation);
+      //console.log(computation);
     },
     /** process the result before displaying it in the DOM */
     displayResult: function (result) {
@@ -950,7 +960,7 @@ export default {
         });
       }
 
-      console.log(this.returnedOutputJson.artifacts);
+      //console.log(this.returnedOutputJson.artifacts);
       
       // process connected vtu/vtk & csv files
       let connectedVtks = {};
