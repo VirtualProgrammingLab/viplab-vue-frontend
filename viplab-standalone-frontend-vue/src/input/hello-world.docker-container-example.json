@@ -263,10 +263,10 @@
     },
     { 
       "identifier": "22483f42-95bf-984a-98a5-ee9485c85c31", 
-      "path"      : "code.json",                              
+      "path"      : "code.c",                              
       "metadata"  : 
         {  
-          "syntaxHighlighting": "json"                   
+          "syntaxHighlighting": "c_cpp"                   
         },
       "parts" : 
       [
@@ -290,7 +290,7 @@
               "default": ["aW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KSB7IA0KLy8gUHJpbnQgJ0hlbGxvIFdvcmxkJyANCn0"]
             }
           ],
-          "content": "ew0KICAgICJjb2RlU25pcHBldCIgOiAie3tfX2RlZmF1bHRfX319Ig0KfQ"
+          "content": "e3tfX2RlZmF1bHRfX319"
         }
       ]
     }
