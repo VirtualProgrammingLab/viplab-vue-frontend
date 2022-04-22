@@ -313,6 +313,18 @@
                                       </li>
                                   </ul>
                                 </div>
+
+                                <div v-if="artifact.MIMEtype == 'application/vnd.kitware'">
+                                    <vtk-component
+                                        v-if="artifact.urlsOrContents"
+                                        :propFiles=artifact.urlsOrContents
+                                    ></vtk-component>
+                                    <vtk-component
+                                        v-else-if="!artifact.urlsOrContents"
+                                        :propFiles=[artifact.content]
+                                    ></vtk-component>
+                                </div>
+
                                 <div
                                   v-if="artifact.MIMEtype === 'image/png' || artifact.MIMEtype === 'image/jpeg'"
                                   ref="outPartcontent"
@@ -962,6 +974,37 @@ export default {
 
       //console.log(this.returnedOutputJson.artifacts);
       
+      // process vtk-files with base64-content
+      this.returnedOutputJson.artifacts.forEach(function(item) {
+        if (item.MIMEtype == "application/vnd.kitware") {
+          
+          if (item.content) {
+            // generate Object-URLs of the base64url encoded content
+            const byteCharacters = base64url.decode(item.content);
+            const byteArrays = [];
+            let sliceSize = 512;
+
+            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+              const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+              const byteNumbers = new Array(slice.length);
+              for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+              }
+
+              const byteArray = new Uint8Array(byteNumbers);
+              byteArrays.push(byteArray);
+            }
+
+            const blob = new Blob(byteArrays, {type: "application/vnd.kitware"});
+            // generate file from blob to retain the file name with the correct extension (for usage in vtk-component)
+            const file = new File([blob], "earth.vtp")
+            const blobUrl = URL.createObjectURL(file);
+            item.content = blobUrl;
+          }
+        }
+      });
+
       // process connected vtu/vtk & csv files
       let connectedVtks = {};
       var artifacts = this.returnedOutputJson.artifacts;
@@ -1358,7 +1401,7 @@ export default {
     },
     downloadFromLink: function(dataurl) {
       let filename = dataurl.slice(dataurl.lastIndexOf("/") + 1, dataurl.length);
-      console.log(filename);
+      //console.log(filename);
       fetch(dataurl)
         .then(response => response.arrayBuffer())
         .then(response => {

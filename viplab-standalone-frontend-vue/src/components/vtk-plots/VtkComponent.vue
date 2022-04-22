@@ -113,7 +113,7 @@ export default {
     VueSlider,
   },
   props: {
-    propFiles: Array
+    propFiles: Array,
   },
   data() {
     return {
@@ -299,9 +299,15 @@ export default {
         .then(function (response) {
           
           const readRawData = ({ fileName, data }) => {
+            
             return new Promise((resolve, reject) => {
               const sourceType = null;
               const reader = vtkITKPolyDataReader.newInstance();
+              
+              // if file was fetched from a blob-url (created from base64-content, in App.vue), get filename from File-response-object
+              if (!fileName.endsWith(".vtu") && !fileName.endsWith(".vtp")) {
+                fileName = response.name;
+              }
               reader.setFileName(fileName);
               try {
                 const ds = reader.parseAsArrayBuffer(data);
