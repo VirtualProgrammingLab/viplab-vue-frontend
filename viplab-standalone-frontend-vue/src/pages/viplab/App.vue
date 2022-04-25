@@ -689,17 +689,25 @@ export default {
           case "result":
             this.displayResult(data.content);
             break;
-          case "status":
-            // TODO: 
-            // check if date is newer than the one from the previous message
-            // set message-variable so that info-message can be displayed in the progress bar
-            // if status is warning or error, stop progress bar, show error message to user and re-enable run-button
+          case "system-status":
+            // Check if date is newer than the one from the previous message
+            // Set message-variable so that info-message can be displayed in the progress bar
+            // If status is warning or error, stop progress bar, show error message to user and re-enable run-button
+            if (new Date(this.statusMessage.timestamp) < new Date(data.content.timestamp)) {
+              this.statusMessage = data.content;
+              if (this.statusMessage.status !== "info") {
+                // stop waiting
+                this.$wait.end("wait for ws response");
+                this.waitingResponse = false;
+                // stop progress bar and show error in popup
+                this.$alert(this.statusMessage.message, "", this.statusMessage.status);
+              }
+            }
             break;
           default:
             console.error(data);
         }
 
-        // TODO: Also stop waiting, if status == error || waiting
         if (this.outputFiles !== "") {
           // stop waiting
           this.$wait.end("wait for ws response");
@@ -1722,6 +1730,17 @@ body {
   opacity: 1;
   transition: opacity .15s;
 } 
+
+/*Style button in popup */
+  .swal2-styled {
+    padding: 0;
+    border-radius: calc(0.25rem - 1px) !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    width: 61px;
+    height: 38px;
+    font-size: inherit !important;
+  }
 
 /* Responsive layout - makes a one column-layout instead of two-column layout */
 @media (max-width: 1170px) {

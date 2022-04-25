@@ -42,6 +42,7 @@
     "vue-prism-editor": "^1.2.2",
     "vue-promised": "^2.1.0",
     "vue-router": "^3.5.2",
+    "vue-simple-alert": "^1.1.1",
     "vue-slider-component": "^3.2.11",
     "vue-sticky-directive": "0.0.10",
     "vue-sticky-element": "^1.1.2",
