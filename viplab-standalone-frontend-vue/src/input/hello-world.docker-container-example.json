@@ -147,6 +147,7 @@
                 "name": "Dance Time",
                 "description" : "To which songs would you dance in the kitchen?"
               },
+              "multiple": true,
               "options": [
                 {
                   "value" : "Please choose multiple",
@@ -257,7 +258,7 @@
               "validation": "range"
             }
           ],
-          "content"   : "W2Fib3V0IHlvdV0NCmxpa2VkVGhpbmdzPXt7X19jaGVja2JveF9ffX0NCmZhdm9yaXRlUEw9e3tfX3JhZGlvQnV0dG9uX199fQ0KZnJpZGdlPXt7X19kcm9wZG93blNpbmdsZV9ffX0NCmRhbmNpbmc9e3tfX2Ryb3Bkb3duTXVsdGlwbGVfX319DQpkaXNsaWtlZFRoaW5ncz17e19fdG9nZ2xlX199fQ0KcmFuZG9tTnVtYmVycz17e19fc2xpZGVyTXVsdGlwbGVfX319DQpuYW1lPXt7X19pbnB1dFRleHRXT01heGxlbmd0aF9ffX0NCmNocmlzdG1hc1dpc2g9e3tfX2lucHV0VGV4dFdNYXhsZW5ndGhfX319DQphZ2U9e3tfX2lucHV0TnVtYmVyX199fQ"
+          "content"   : "W2Fib3V0IHlvdV0NCmxpa2VkVGhpbmdzPXt7I2VhY2ggX19jaGVja2JveF9ffX17eyNpZiBAbGFzdH19e3sufX17e2Vsc2V9fXt7Ln19LCB7ey9pZn19e3svZWFjaH19DQpmYXZvcml0ZVBMPXt7X19yYWRpb0J1dHRvbl9ffX0NCmZyaWRnZT17e19fZHJvcGRvd25TaW5nbGVfX319DQpkYW5jaW5nPXt7I2VhY2ggX19kcm9wZG93bk11bHRpcGxlX199fXt7I2lmIEBsYXN0fX17ey59fXt7ZWxzZX19e3sufX0sIHt7L2lmfX17ey9lYWNofX0NCmRpc2xpa2VkVGhpbmdzPXt7I2VhY2ggX190b2dnbGVfX319e3sjaWYgQGxhc3R9fXt7Ln19e3tlbHNlfX17ey59fSwge3svaWZ9fXt7L2VhY2h9fQ0KcmFuZG9tTnVtYmVycz17eyNlYWNoIF9fc2xpZGVyTXVsdGlwbGVfX319e3sjaWYgQGxhc3R9fXt7Ln19e3tlbHNlfX17ey59fSwge3svaWZ9fXt7L2VhY2h9fQ0KbmFtZT17e3tfX2lucHV0VGV4dFdPTWF4bGVuZ3RoX199fX0NCmNocmlzdG1hc1dpc2g9e3tfX2lucHV0VGV4dFdNYXhsZW5ndGhfX319DQphZ2U9e3tfX2lucHV0TnVtYmVyX199fQ"
         }
       ]
     },
@@ -290,7 +291,7 @@
               "default": ["aW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KSB7IA0KLy8gUHJpbnQgJ0hlbGxvIFdvcmxkJyANCn0"]
             }
           ],
-          "content": "e3tfX2RlZmF1bHRfX319"
+          "content": "e3t7X19kZWZhdWx0X199fX0"
         }
       ]
     }

@@ -210,11 +210,11 @@
                         :isMustache="true"
                         :readonly="true"
                         :item='{
-                            "identifier" : generateMustacheDivId(part.identifier),
-                            "content" : showMustacheTemplate(part)
+                            "identifier" : generateHandlebarsDivId(part.identifier),
+                            "content" : showHandlebarsTemplate(part)
                           }'
                         :lang="'matlab'"
-                        :key="showMustacheTemplate(part)"
+                        :key="showHandlebarsTemplate(part)"
                       ></ace-editor-component>
                     </div>
                   </div>
@@ -556,7 +556,7 @@ import AnsiOutput from "../../components/AnsiOutput.vue";
 
 import {Promised} from "vue-promised";
 
-var Mustache = require('mustache');
+const Handlebars = require('handlebars');
 
 import {ValidationObserver} from "vee-validate";
 
@@ -677,6 +677,9 @@ export default {
         this.ws.send(
           JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
         );
+        this.ws.send(
+          JSON.stringify({ type: "prepare-computation", content: { template: document.body.getAttribute("data-template") } })
+        );
         // currently always enabled as soon as every part of form validates!!!
         document.getElementById("submit").disabled = false;
       };
@@ -686,8 +689,12 @@ export default {
           case "computation":
             this.displayComputation(data.content);
             break;
+          case "prepared":
+            console.log(event.data)
+            break;
           case "result":
             this.displayResult(data.content);
+            console.log(data.content)
             break;
           case "system-status":
             // Check if date is newer than the one from the previous message
@@ -696,10 +703,10 @@ export default {
             if (new Date(this.statusMessage.timestamp) < new Date(data.content.timestamp)) {
               this.statusMessage = data.content;
               if (this.statusMessage.status !== "info") {
-                // stop waiting
+                // stop waiting/ progress bar
                 this.$wait.end("wait for ws response");
                 this.waitingResponse = false;
-                // stop progress bar and show error in popup
+                // show error in popup
                 this.$alert(this.statusMessage.message, "", this.statusMessage.status);
               }
             }
@@ -774,21 +781,28 @@ export default {
               for (var paramIndex in this.json.files[fileIndex].parts[part].parameters) {
                 var currentParam = this.json.files[fileIndex].parts[part].parameters[paramIndex];
                 var value = currentParam.value || currentParam.selected;
+                
+                /* If parameter is editor or text-input, add prefix to signal to websocket-api, that value is base64url-encoded*/
                 if (currentParam.metadata.guiType === "editor" || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "text")) {
                   value = "base64:" + value
                 }
+
+                /* If Parameter is single-value slider, use string as result, instead of array */
+                if (currentParam.metadata.guiType === "slider" && value.length == 1) {
+                  value = value[0];
+                }
+                
                 /*
                 console.log("----------");
                 console.log("Param value before sending");
                 console.log(currentParam.metadata.guiType + " - " + value);
+                console.log(value);
                 console.log("----------");
                 */
-                if (Array.isArray(value)) {
-                  value = value.toString();
-                }
                 generatedContent[currentParam.identifier] = value;
+                //console.log(generatedContent)
               }
-              var contentBase64 = base64url(JSON.stringify(generatedContent));
+              let contentBase64 = base64url(JSON.stringify(generatedContent));
               /*
               console.log("----------");
               console.log("contentBase64:");
@@ -840,8 +854,10 @@ export default {
     },
     /** log the computation */
     displayComputation: function (computation) {
-      console.log("computation: " + computation);
-      //console.log(computation);
+      console.log("----------")
+      console.log("computation:");
+      console.log(computation);
+      console.log("----------")
     },
     /** process the result before displaying it in the DOM */
     displayResult: function (result) {
@@ -1353,13 +1369,12 @@ export default {
       
     },
     // fill in content of mustache template with selected parameter values return it
-    showMustacheTemplate(part) {
-      // Disable Mustache HTML-escaping behaviour:
-      Mustache.escape = function(text) {return text;};
+    showHandlebarsTemplate(part, forSend = false) {
+      // To disable Mustache HTML-escaping behaviour, use three curly brackets, instead of two!
       // If the template should be displayed
-      if(!this.asForm){
+      if(!this.asForm || forSend){
         if (part.content !== "") {
-          var mustacheTemplate = base64url.decode(part.content);
+          var handlebarsTemplate = base64url.decode(part.content);
           var view = {};
           // Get values that will be substituted into the template
           for(var p in part.parameters) {
@@ -1367,8 +1382,10 @@ export default {
             let currentValue = currentParam.value || currentParam.selected;
             view[currentParam.identifier] = currentValue;
           }
-          // Substitute values in mustache template
-          var output = Mustache.render(mustacheTemplate, view);
+          console.log(view)
+          // Substitute values in handlebars template
+          const template = Handlebars.compile(handlebarsTemplate);
+          var output = template(view);
           return output;
         } else {
           /** Get Content from separate file*/
@@ -1376,8 +1393,8 @@ export default {
         }
       }
     }, 
-    generateMustacheDivId(partId) {
-      return "mustache" + partId;
+    generateHandlebarsDivId(partId) {
+      return "handlebars" + partId;
     },
     /** get filename from part for displaying it as the tab-name */
     getFilename: function(path) {

@@ -21,6 +21,7 @@
     "epic-spinners": "^1.1.0",
     "eslint": "^7.14.0",
     "eslint-plugin-vue": "^7.1.0",
+    "handlebars": "^4.7.7",
     "itk": "^14.1.0",
     "jquery": "^3.5.1",
     "js-base64": "^3.6.0",
