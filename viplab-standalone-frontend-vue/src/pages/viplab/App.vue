@@ -787,8 +787,8 @@ export default {
                   value = "base64:" + value
                 }
 
-                /* If Parameter is single-value slider, use string as result, instead of array */
-                if (currentParam.metadata.guiType === "slider" && value.length == 1) {
+                /* If Parameter is single-value slider or input_field of type number, use string/number as result, instead of array */
+                if ((currentParam.metadata.guiType === "slider" && value.length == 1) || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "number" && Array.isArray(value))) {
                   value = value[0];
                 }
                 
