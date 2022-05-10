@@ -41,7 +41,7 @@
               ],
               "min": 0,
               "max": 90,
-              "step": 10,
+              "step": 5,
               "validation": "range"
             }
           ],
@@ -77,7 +77,7 @@
                   "value" : "books"
                 }
               ],
-              "validation": "anyof"
+              "validation": "minone"
             }, 
             {
               "mode" : "fixed",
@@ -240,7 +240,8 @@
               },
               "maxlength": 200,
               "default" : [""],
-              "validation": "pattern"
+              "validation": "pattern", 
+              "pattern": "^[A-z]+$"
             },
             {
               "mode" : "any",
@@ -288,7 +289,8 @@
                 "name": "code",
                 "description" : "Enter some code"
               },
-              "default": ["aW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KSB7IA0KLy8gUHJpbnQgJ0hlbGxvIFdvcmxkJyANCn0"]
+              "default": ["aW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KSB7IA0KLy8gUHJpbnQgJ0hlbGxvIFdvcmxkJyANCn0"],
+              "validation": "none"
             }
           ],
           "content": "e3t7X19kZWZhdWx0X199fX0"
@@ -296,6 +298,33 @@
       ]
     }
   ], 
+  "parameters" :
+  [
+    {
+      "mode" : "fixed",
+      "identifier" : "__TEST__", 
+      "metadata" : {
+        "guiType" : "checkbox",
+        "name": "test-checkbox"
+      },
+      "options": [
+        {
+          "value" : "test 0",
+          "selected" : "true"
+        },
+        {
+          "value" : "test 1"
+        },
+        {
+          "value" : "test 2"
+        },
+        {
+          "value" : "test 3"
+        }
+      ],
+      "validation" : "anyof"
+    }
+  ],
   "configuration" :
     { "resources.image"  : "name://viplab-example-image",
       "resources.volume" : "/data/shared",

@@ -778,9 +778,9 @@ export default {
             // Generate json for access template parameters, if there is no content given
             } else if (this.json.files[fileIndex].parts[part].access === "template") {
               var generatedContent = JSON.parse("{}");
-              for (var paramIndex in this.json.files[fileIndex].parts[part].parameters) {
-                var currentParam = this.json.files[fileIndex].parts[part].parameters[paramIndex];
-                var value = currentParam.value || currentParam.selected;
+              for (let paramIndex in this.json.files[fileIndex].parts[part].parameters) {
+                let currentParam = this.json.files[fileIndex].parts[part].parameters[paramIndex];
+                let value = currentParam.value || currentParam.selected;
                 
                 /* If parameter is editor or text-input, add prefix to signal to websocket-api, that value is base64url-encoded*/
                 if (currentParam.metadata.guiType === "editor" || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "text")) {
@@ -816,8 +816,24 @@ export default {
             }
           }
           task.content.task.files.push(file);
-          //console.log(task);
         }
+
+        // Add arguments to task - only fixed-value parameters!
+        if (Object.prototype.hasOwnProperty.call(this.json, "parameters")) {
+          let args = JSON.parse("{}");
+          let parametersJson = this.json.parameters;
+          for (let paramIndex in parametersJson) {
+            let currentParam = parametersJson[paramIndex];
+            let value = currentParam.value || currentParam.selected;
+            
+            args[currentParam.identifier] = value;
+          }
+
+          task.content.task["arguments"] = args;
+        }
+        console.log("---------- Task: ----------");
+        console.log(task);
+        console.log("----------");
         
         /*
         var i = 0;
