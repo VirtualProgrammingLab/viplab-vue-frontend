@@ -297,33 +297,6 @@
         }
       ]
     }
-  ], 
-  "parameters" :
-  [
-    {
-      "mode" : "fixed",
-      "identifier" : "__TEST__", 
-      "metadata" : {
-        "guiType" : "checkbox",
-        "name": "test-checkbox"
-      },
-      "options": [
-        {
-          "value" : "test 0",
-          "selected" : "true"
-        },
-        {
-          "value" : "test 1"
-        },
-        {
-          "value" : "test 2"
-        },
-        {
-          "value" : "test 3"
-        }
-      ],
-      "validation" : "anyof"
-    }
   ],
   "configuration" :
     { "resources.image"  : "name://viplab-example-image",

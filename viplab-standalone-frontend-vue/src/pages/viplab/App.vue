@@ -678,7 +678,7 @@ export default {
           JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
         );
         this.ws.send(
-          JSON.stringify({ type: "prepare-computation", content: { template: document.body.getAttribute("data-template") } })
+          JSON.stringify({ type: "prepare-computation", content: { template: document.body.getAttribute("data-template"), task: this.generateComputationTask() } })
         );
         // currently always enabled as soon as every part of form validates!!!
         document.getElementById("submit").disabled = false;
@@ -689,7 +689,7 @@ export default {
           case "computation":
             this.displayComputation(data.content);
             break;
-          case "prepared":
+          case "prepared-computation":
             console.log(event.data)
             break;
           case "result":
@@ -758,13 +758,21 @@ export default {
         type: "create-computation",
         content: {
           template: document.body.getAttribute("data-template"),
-          task: {
+          task: this.generateComputationTask()
+        },
+      };
+
+      this.ws.send(JSON.stringify(task));
+
+      return false;
+    },
+    generateComputationTask: function() {
+      let task = {
             template: this.json.identifier,
             identifier: this.uuid(),
             files: [],
-          },
-        },
-      };
+          };
+      
       if (this.$refs.file != null) {
         for (var fileIndex in this.json.files) {
           let file = { identifier: this.json.files[fileIndex].identifier, parts: [] };
@@ -786,7 +794,6 @@ export default {
                 if (currentParam.metadata.guiType === "editor" || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "text")) {
                   value = "base64:" + value
                 }
-
                 /* If Parameter is single-value slider or input_field of type number, use string/number as result, instead of array */
                 if ((currentParam.metadata.guiType === "slider" && value.length == 1) || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "number" && Array.isArray(value))) {
                   value = value[0];
@@ -815,7 +822,7 @@ export default {
               });
             }
           }
-          task.content.task.files.push(file);
+          task.files.push(file);
         }
 
         // Add arguments to task - only fixed-value parameters!
@@ -828,45 +835,14 @@ export default {
             
             args[currentParam.identifier] = value;
           }
-
-          task.content.task["arguments"] = args;
+          task["arguments"] = args;
         }
         console.log("---------- Task: ----------");
         console.log(task);
         console.log("----------");
-        
-        /*
-        var i = 0;
-        this.$refs.file.forEach((filediv) => {
-          let file = { identifier: filediv.id, parts: [] };
-          var j = 0;
-          this.$refs.partcontent.forEach((partcontent) => {
-            file.parts.push({
-              identifier: partcontent.id,
-              // TODO
-              content: btoa(this.json.files[i][j].content),
-            });
-            console.log(file.parts.content);
-            j++;
-          });
-          task.content.task.files.push(file);
-          i++;
-        });*/
       }
-      //document.querySelector('#stdout').value = '';
-      //document.querySelector('#stderr').value = '';
-      //document.getElementById("fileList").innerHTML = '';
-      //this.outputFiles = new Map();
-      /*
-      console.log("----------")
-      console.log("task")
-      console.log(task)
-      console.log("----------")
-      */
 
-      this.ws.send(JSON.stringify(task));
-
-      return false;
+      return task;
     },
     /** log the computation */
     displayComputation: function (computation) {
