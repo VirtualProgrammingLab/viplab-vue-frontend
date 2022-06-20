@@ -4,7 +4,9 @@
   "metadata": { 
     "displayName" : "Parameters Example",  
     "description" : "This is a 'Hello World' example showing the usage of parameters. Please introduce yourself so that the Hello World-Container can print your information...",
-    "viewer" : ["CSV", "ParaView", "Image"]
+    "output" : {
+      "viewer" : ["CSV", "ParaView", "Image"]
+    }
   },
   "environment" : "Container", 
   "files" : 
@@ -241,7 +243,7 @@
               "maxlength": 200,
               "default" : [""],
               "validation": "pattern", 
-              "pattern": "^[A-z]+$"
+              "pattern": "^[A-z_! ]+$"
             },
             {
               "mode" : "any",

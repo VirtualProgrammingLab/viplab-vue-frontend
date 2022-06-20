@@ -1,0 +1,52 @@
+{
+    "identifier": "f50bc87b-215a-5ac3-0f0e-0f1db4f75c40",
+    "version": "3.0.0",
+    "metadata": { 
+        "displayName" : "Introduction Example",  
+        "description" : "This is a 'Hello You' example",
+        "viewer" : ["CSV", "ParaView", "Image"]
+    },
+    "environment": "Container",
+    "files": [
+        {
+            "identifier": "de5182bd-b994-32eb-5864-8107e1afe40d",
+            "path": "input.ini",
+            "metadata": {
+                "syntaxHighlighting": "ini"
+            },
+            "parts": [
+                {
+                    "identifier": "aa4c795a-2091-80ff-aa7c-be9e030b4a57",
+                    "access": "template",
+                    "metadata": {
+                        "name": "New Part"
+                    },
+                    "content": "W2ludHJvZHVjdGlvbl0NCm5hbWU9e3tkMTE1ZDAwOS0zNWM0LTM5MWEtN2JiNy05YjFiMTUxM2RjZTN9fQ",
+                    "parameters": 
+                    [
+                        {
+                            "mode": "any",
+                            "identifier": "d115d009-35c4-391a-7bb7-9b1b1513dce3",
+                            "metadata": {
+                                "guiType": "input_field",
+                                "type": "text",
+                                "name": "Name",
+                                "description" : "Enter your name"
+                            },
+                            "default": [
+                                "S2F0"
+                            ],
+                            "validation": "none"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "configuration": {
+        "resources.image": "name://introduction-docker",
+        "resources.volume" : "/data/shared",
+        "resources.memory" : "1g",
+        "resources.numCPUs" : 1
+    }
+}

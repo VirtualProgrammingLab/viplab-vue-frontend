@@ -956,8 +956,11 @@ export default {
       // filter result such that only specified results are displayed
       let viewer = [];
       if (typeof this.json.metadata !== 'undefined') {
-        if (typeof this.json.metadata.viewer !== 'undefined')
-          viewer  = this.json.metadata.viewer;
+        if (typeof this.json.metadata.output !== 'undefined') {
+          if (typeof this.json.metadata.output.viewer !== 'undefined') {
+            viewer  = this.json.metadata.output.viewer;
+          }
+        }
       }
       if (!viewer.includes("Image")) {
         this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
@@ -1027,9 +1030,14 @@ export default {
       //let created = false;
 
       //get basenames for collections of files
-      let outputConfig;
+      let outputConfig = [];
       if (this.json.metadata.output !== undefined) {
-        outputConfig = this.json.metadata.output.csv.concat(this.json.metadata.output.vtk);
+        if (this.json.metadata.output.csv !== undefined) {
+          outputConfig.concat(this.json.metadata.output.csv);
+        }
+        if (this.json.metadata.output.vtk !== undefined) {
+          outputConfig.concat(this.json.metadata.output.vtk);
+        }
       }
       /*
       console.log("----------")
@@ -1037,7 +1045,7 @@ export default {
       console.log(outputConfig);
       console.log("----------")
       */
-      if (outputConfig !== undefined) {
+      if (outputConfig.length > 0) {
         let basenames = [];
         for (var out = 0; out < outputConfig.length; out++) {
           let currentConfig = outputConfig[out];
