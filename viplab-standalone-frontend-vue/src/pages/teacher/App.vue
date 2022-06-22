@@ -367,7 +367,6 @@
                             <!-- default value -->
                             <div>
                               <label class="item-name mr-2" for="selectedParameter.default">default value: </label>
-                              <!-- TODO: de- and encode default value of type text -->
                               <input v-if="selectedParameter.metadata.type == 'text'" type="text" class="form-control" id="selectedParameter.default" v-model="inputvModel">
                               <input v-else type="number" class="form-control" id="selectedParameter.default" v-model="selectedParameter.default[0]">
                             </div>
@@ -439,7 +438,6 @@
                         <div v-if="selectedParameter.metadata.guiType=='editor'">
                           <div>
                             <label class="item-name mr-2" for="selectedParameter.default">value: </label>
-                            <!--<input class="form-control" id="selectedParameter.default" v-model="inputvModel">-->
                             <ace-editor-component 
                                         :isParameter="false" 
                                         :isMustache="false"
@@ -560,7 +558,7 @@
         <!-- Graphical View of Template -->
         <div class="dnd-window">
           <drop class="top-copy" @drop="onFileDrop($event)" :accepts-data="(file) => ((file  === 'file') || (file === 'commandline arguments'))">
-            <div class="template" @click="openWindow($event, 'template', copied)">
+            <div class="template p-2" @click="openWindow($event, 'template', copied)">
               Files
               <div v-for="(file, index) in copied.files" :key="file.identifier + '-' + index">
                 <drop class="copy" @drop="onPartDrop($event,file)" :accepts-data="(part) => part  === 'part'">
@@ -709,6 +707,8 @@
         </div>
       </div>
       <pre>{{ JSON.stringify(copied, null, 2) }}</pre>
+      <b-button @click="validateJson">Validate</b-button>
+      {{validationResult}}
     </div>
   </div>
 </template>
@@ -720,6 +720,10 @@ import { Drag, Drop, DropList } from "vue-easy-dnd";
 import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
 
 import base64url from "base64url";
+
+// for validation
+var Validator = require('jsonschema').Validator;
+import ctSchema from './json-schema/computation-template.json';
 
 export default {
   name: "app",
@@ -748,6 +752,8 @@ export default {
       showParameter: false,
       showCommands: false,
       valueNumbers: new Map(),
+      schema: ctSchema,
+      validationResult: {}
     };
   },
   computed: {
@@ -1288,6 +1294,10 @@ export default {
         return this.selectedParameter.options[index].selected;
       }
       return false;
+    },
+    validateJson: function () {
+      let v = new Validator();
+      this.validationResult = v.validate(this.copied, this.schema);
     }
   },
   created() {

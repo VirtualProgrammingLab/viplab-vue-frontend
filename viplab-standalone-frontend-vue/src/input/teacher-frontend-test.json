@@ -4,7 +4,9 @@
     "metadata": { 
         "displayName" : "Introduction Example",  
         "description" : "This is a 'Hello You' example",
-        "viewer" : ["CSV", "ParaView", "Image"]
+        "output" : {
+            "viewer" : ["CSV", "ParaView", "Image"]
+        }
     },
     "environment": "Container",
     "files": [

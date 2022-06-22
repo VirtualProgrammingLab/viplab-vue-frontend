@@ -1073,7 +1073,8 @@ export default {
             
             for (var base = 0; base < basenames.length; base++) {
               let currentBasename = basenames[base];
-              if (filenamePart.startsWith(currentBasename) && (filenamePart.charAt(currentBasename.length) === "-")) {
+              // filename has to start with basename
+              if (filenamePart.startsWith(currentBasename)) {
                 //console.log(currentBasename + " - " + filenamePart);
                 connectedVtks[currentBasename].type = artifacts[a].type;
                 connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;

@@ -6,7 +6,6 @@
       "viewer" : ["CSV", "ParaView", "Image"],
       "csv": [
         {
-          "id": "bottom-mass-over-time",
           "basename": "dataovertime",
           "xlabel": {
             "key": "time",
@@ -31,7 +30,6 @@
           ]
         },
         {
-          "id": "base64-data-test",
           "basename": "data",
           "xlabel": {
             "key": "time",
@@ -57,11 +55,9 @@
       ],
       "vtk": [
         {
-          "id": "matrix",
           "basename": "case1_single_tracer_matrix"
         },
         {
-          "id": "matrix2",
           "basename": "case1_single_tracer_fracture"
         }   
       ]
