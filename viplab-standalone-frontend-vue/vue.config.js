@@ -42,6 +42,7 @@ module.exports = {
                         },
                         'digest': digest,
                         'dataTemplate': dataTemplate,
+                        'dataMode': "create-and-execute",
                         'token': token,
                         'templates': inputTemplates
                     };

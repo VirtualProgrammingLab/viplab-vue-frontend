@@ -1298,6 +1298,14 @@ export default {
     validateJson: function () {
       let v = new Validator();
       this.validationResult = v.validate(this.copied, this.schema);
+    },
+    /** Check if teacher-frontend was opened by a user that is signed in */
+    isLoggedIn: function() {
+      let appDiv = document.body;
+      let dataMode = appDiv.getAttribute("data-mode");
+      // if data-mode is set to "create-and-execute", user is logged in (if it is set to "created", the user is not logged in)
+      let loggedIn = ( (dataMode == "create-and-execute")? true : false );
+      return loggedIn;
     }
   },
   created() {
