@@ -49,6 +49,7 @@
     "vue-slider-component": "^3.2.11",
     "vue-sticky-directive": "0.0.10",
     "vue-sticky-element": "^1.1.2",
+    "vue-tour": "^2.0.0",
     "vue-wait": "^1.4.8",
     "worker-loader": "^2.0.0"
   },

@@ -40,6 +40,10 @@ Vue.use(BlockUI)
 import VueSimpleAlert from "vue-simple-alert";
 Vue.use(VueSimpleAlert);
 
+import VueTour from 'vue-tour'
+require('vue-tour/dist/vue-tour.css')
+Vue.use(VueTour)
+
 // Setup vue-router
 import Teacher from './pages/teacher/App.vue';
 import ViPLab from './pages/viplab/App.vue';

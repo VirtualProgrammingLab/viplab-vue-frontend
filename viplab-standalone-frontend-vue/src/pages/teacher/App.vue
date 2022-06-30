@@ -2,79 +2,400 @@
   <!-- content -->
   <div
     id="app"
-    class="flex-container"
+    class=""
   >
-    <div id="teacher" class="main-div flex-left m-2 p-2">
-      <h2>Teacher</h2>
-      <h3>This site will help you create a Computation Template</h3>
 
+  <div id="teacher">
+
+    <div class="sample-header p-2">
+          <div class="sample-header-section">
+            <h2>Teacher</h2>
+            <h3>This site will help you create a Computation Template</h3>
+
+            <b-button id="start-guide" variant="outline-primary" @click="startGuide">Start Guide</b-button>
+          </div>
+        </div>
+
+    <div class="main-div pl-4 pr-4">
+      
+      <!--
+      <div class="header-intro">
+        
+        <div class="header-content">
+          <h2>Teacher</h2>
+          <h3>This site will help you create a Computation Template</h3>
+
+          <b-button id="start-guide" variant="outline-primary" @click="startGuide">Start Guide</b-button>
+        </div>
+      </div>-->
+
+      <div class="toggle-controls mt-2">
+        <div id="toggle-left-components">
+          <a v-b-toggle="'components-collapse'" href="#" id="about">
+            <div class="toggle-content">
+              Toggle Components
+            </div>
+          </a>
+        </div>
+
+        <div id="toggle-right-config">
+          <a v-b-toggle="'config-collapse'" href="#" id="about">
+            <div class="toggle-content">
+              Toggle Configuration
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="sample-section-wrap">
       <div class="group">
 
         <!-- Components and Preferences -->
-        <div class="select-list">
+        <b-collapse class="select-list" id="components-collapse" visible>
           <b-card no-body>
-                <b-tabs card class="files" content-class="m-2" fill>
+                <b-tabs card class="files" id="component-selection" content-class="m-2" fill>
                   
                   <!-- Drag-and-Drop Components -->
                   <b-tab
                     title="Components"
                   >
                     <div v-if="showTemplate">
-                      Template
+                      <div class="mb-2">Template:</div>
                       <transition-group name="list" tag="div">
                         <drag v-for="n in componentsFiles" :key="n" class="drag" :data="n">{{n}}</drag>
                       </transition-group>
                     </div>
                     <div v-if="showFile">
-                      File
+                      <div class="mb-2">File:</div>
                       <transition-group name="list" tag="div">
                         <drag v-for="n in componentsFiles.concat(componentsFile)" :key="n" class="drag" :data="n">{{n}}</drag>
                       </transition-group>
                     </div>
                     <div v-if="showPart && !thereIsTemplate">
-                      Part
+                      <div class="mb-2">Part:</div>
                       <transition-group name="list" tag="div">
                         <drag v-for="n in componentsFiles.concat(componentsFile)" :key="n" class="drag" :data="n">{{n}}</drag>
                       </transition-group>
                     </div>
                     <div v-if="showPart && thereIsTemplate">
-                      Part
+                      <div class="mb-2">Part:</div>
                       <transition-group name="list" tag="div">
                         <drag v-for="n in componentsFiles.concat(componentsPart).concat(availableGuiTypes)" :key="n" class="drag" :data="n">{{n}}</drag>
                       </transition-group>
                     </div>
                     <div v-if="showCommands">
-                      Commandline Arguments
+                      <div class="mb-2">Commandline Arguments:</div>
                       <transition-group name="list" tag="div">
                         <drag v-for="n in componentsFiles.concat(componentsCommand).concat(availableGuiTypes)" :key="n" class="drag" :data="n">{{n}}</drag>
                       </transition-group>
                     </div>
                   </b-tab>
 
-                  <!-- Preferences -->
-                  <b-tab v-if="preferences" title="Preferences">
+            </b-tabs>
+          </b-card>
+        </b-collapse>
+
+        <!-- Graphical View of Template -->
+        <div class="dnd-window" id="drag-components-here">
+          <b-card no-body>
+                <b-tabs card class="files" id="component-selection" content-class="m-2" fill>
+                  
+                  <!-- Drag-and-Drop Components -->
+                  <b-tab
+                    title="Drop Here"
+                  >
+          <drop class="top-copy" @drop="onFileDrop($event)" :accepts-data="(file) => ((file  === 'file') || (file === 'commandline arguments'))">
+            <div class="template p-2" @click="openWindow($event, 'template', copied)">
+              
+              <div v-for="(file, index) in copied.files" :key="file.identifier + '-' + index">
+                <drop class="copy" @drop="onPartDrop($event,file)" :accepts-data="(part) => part  === 'part'">
+                  <div class="file p-2" @click="openWindow($event, 'file', file)">
+                    
+                    <b-row align-v="stretch">
+                      <b-col cols="8">
+                        File
+                      </b-col>
+                      <b-col cols="4">
+                        <div class="text-right" @click="removeFile($event, file)">
+                          <b-icon icon="x-circle"></b-icon>
+                        </div>
+                      </b-col>
+                    </b-row>
+
+                    <!--<div v-for="(part, index) in file.parts" :key="index">-->
+                    <drop-list class="part-droplist" v-if="file.parts" :items="file.parts" @insert="onInsert($event, false, file)" @reorder="$event.apply(file.parts)" :accepts-data="(part) => false" :column="true">
+                      <template v-slot:item="{item}"> 
+                        <drag class="item part-drag" :key="item.identifier">           
+                          <drop class="part-border" @drop="onParameterDrop($event, item)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && item.parameters">
+                            <div class="part p-2" @click="openWindow($event, 'part', item)">
+
+                              <b-row align-v="stretch" class="mb-2">
+                                <b-col cols="8">
+                                  Part
+                                </b-col>
+                                <b-col cols="4">
+                                  <div class="text-right" @click="removePart($event, item)">
+                                    <b-icon icon="x-circle"></b-icon>
+                                  </div>
+                                </b-col>
+                              </b-row>
+                              
+                              <b-card v-if="item.parameters" no-body class="">
+                                <b-card-header header-tag="header" class="p-1" role="tab">
+                                  <b-button block v-b-toggle:[paramAccordeon(item.identifier)] variant="info">
+                                    Parameters
+                                    <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
+                                    <b-icon class="when-open" icon="caret-up"></b-icon>
+                                  </b-button>
+                                </b-card-header>
+                                <b-collapse :id="item.identifier+'param'" visible accordion="my-accordion-1" role="tabpanel">
+                                  <b-card-body>
+                                    <drop-list class="param-droplist" v-if="item.parameters" :items="item.parameters" @insert="onInsert($event, true ,item)" @reorder="$event.apply(item.parameters)" :accepts-data="(param) => false" :column="true">
+                                      <template v-slot:item="{item}">
+                                        <drag class="item param" :key="item.identifier">
+                                          <b-container class="param-container" @click="openWindow($event, 'parameter', item)">
+                                            
+                                            <b-row align-v="stretch">
+                                              <b-col cols="8">
+                                                {{item.metadata.guiType}}
+                                              </b-col>
+                                              <b-col cols="4">
+                                                <div class="text-right" @click="removeParameter($event, item)">
+                                                  <b-icon icon="x-circle"></b-icon>
+                                                </div>
+                                              </b-col>
+                                            </b-row>
+                                          </b-container>
+                                        </drag>
+                                      </template>
+                                      <template v-slot:feedback="{data}">
+                                        <div class="item feedback" :key="data">{{data}}</div>
+                                      </template>
+                                    </drop-list>
+                                  </b-card-body>
+                                </b-collapse>
+                              </b-card>
+
+                              <b-card no-body class="">
+                                <b-card-header header-tag="header" class="p-1" role="tab">
+                                  <b-button block v-b-toggle:[contentAccordeon(item.identifier)] variant="info">
+                                    Content
+                                    <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
+                                    <b-icon class="when-open" icon="caret-up"></b-icon>
+                                  </b-button>
+                                </b-card-header>
+                                <b-collapse :id="item.identifier+'content'" visible accordion="my-accordion-2" role="tabpanel">
+                                  <b-card-body>
+                                    <div class="part-content-field">
+                                      <label class="mr-2" for="item.content">content: </label>
+                                      <ace-editor-component 
+                                        :isParameter="false" 
+                                        :isMustache="false"
+                                        :readonly="false"
+                                        :item='{
+                                          "identifier" : "Editor" + item.identifier,
+                                          "content" : item.content
+                                        }'
+                                        v-on:update:item="updateContent(item, $event)"
+                                      ></ace-editor-component>
+                                    </div>
+                                  </b-card-body>
+                                </b-collapse>
+                              </b-card>
+                            </div>
+                          </drop> 
+                        </drag>
+                      </template>
+                      <template v-slot:feedback="{data}">
+                        <div class="item feedback" :key="data">{{data}}</div>
+                      </template>
+                    </drop-list>
+                    <!--</div>-->
+                  </div>
+                </drop> 
+              </div>
+
+              <!-- Commandline Parameters -->
+              <div v-if="copied.parameters">
+                <drop class="copy" @drop="onParameterDrop($event)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && copied.parameters">
+                  <div class="file p-2" @click="openWindow($event, 'commands', copied.parameters)">
+                  
+                    <b-row align-v="stretch">
+                      <b-col cols="10">
+                        Commandline Arguments
+                      </b-col>
+                      <b-col cols="2">
+                        <div class="text-right" @click="removeCommandlineArgs($event)">
+                          <b-icon icon="x-circle"></b-icon>
+                        </div>
+                      </b-col>
+                    </b-row>
+
+                    <drop-list class="param-droplist" v-if="copied.parameters" :items="copied.parameters" @insert="onInsert($event, true, item)" @reorder="$event.apply(copied.parameters)" :accepts-data="(param) => false" :column="true" :key="uuid()">
+                      <template v-slot:item="{item}">
+                        <drag class="item param" :key="item.identifier">
+                          <b-container class="param-container" @click="openWindow($event, 'parameter', item)">
+                            <b-row align-v="stretch">
+                              <b-col cols="8">
+                                {{item.metadata.guiType}}
+                              </b-col>
+                              <b-col cols="4">
+                                <div class="text-right" @click="removeParameter($event, item, false)">
+                                  <b-icon icon="x-circle"></b-icon>
+                                </div>
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </drag>
+                      </template>
+                      <template v-slot:feedback="{data}">
+                        <div class="item feedback" :key="data">{{data}}</div>
+                      </template>
+                    </drop-list>
+
+                  </div>
+                </drop>
+              </div>
+            </div>     
+          </drop>
+          </b-tab>
+            </b-tabs>
+          </b-card>
+        </div>
+
+        <!-- Components and Preferences -->
+        <b-collapse class="select-list" id="config-collapse" visible>
+          <b-card no-body>
+                <b-tabs card class="files" content-class="m-2" fill>
+
+                  <!-- Configuration -->
+                  <b-tab v-if="preferences" title="Configuration" active>
                     <div class="preferences-list">
                       <!-- Template Data -->
                       <div v-if="showTemplate">
+
+                        <!-- Environment -->
+                        <div id="run-configuration">
+                          <div>
+                            <label class="mr-2" for="copied.environment">environment: </label>
+                            <div class="dropdown form-group">
+                              <select
+                                class="form-control"
+                                v-model="copied.environment"
+                                @change="addConfig()"
+                              >
+                                <option>C</option>
+                                <option>C++</option>
+                                <option>Java</option>
+                                <option>Matlab</option>
+                                <option>Octave</option>
+                                <option>Container</option>
+                                <option>DuMuX</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <!-- Configuration -->
+                          <div v-if="copied.configuration && copied.environment != ''" class="border mb-2 p-2">
+                            <div v-if="ifConfigPropertyExists('compiling.sources')">
+                              <label class="mr-2">compiling.sources*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['compiling.sources']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('compiling.compiler')">
+                              <label class="mr-2">compiling.compiler*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['compiling.compiler']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('compiling.flags')">
+                              <label class="mr-2">compiling.flags*(Must for C, C++, optional for Java):</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['compiling.flags']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('checking.sources')">
+                              <label class="mr-2">checking.sources*(must if checking should be performed):</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['checking.sources']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('linking.flags')">
+                              <label class="mr-2">linking.flags*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['linking.flags']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.stdinFilename')">
+                              <label class="mr-2">running.stdinFilename*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.stdinFilename']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.executable')">
+                              <label class="mr-2">running.executable*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.executable']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('resources.image')" id="image">
+                              <label class="mr-2">resources.image*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['resources.image']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('checking.allowedCalls')">
+                              <label class="mr-2">checking.allowedCalls(must if checking should be performed):</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['checking.allowedCalls']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('checking.forbiddenCalls')">
+                              <label class="mr-2">checking.forbiddenCalls(must if checking should be performed):</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['checking.forbiddenCalls']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.timelimitInSeconds')">
+                              <label class="mr-2">running.timelimitInSeconds:</label>
+                              <input type="number" class="form-control" v-model="copied.configuration['running.timelimitInSeconds']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.commandLineArguments')">
+                              <label class="mr-2">running.commandLineArguments:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.commandLineArguments']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.flags')">
+                              <label class="mr-2">running.flags:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.flags']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.mainClass')">
+                              <label class="mr-2">running.mainClass:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.mainClass']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.entrypoint')">
+                              <label class="mr-2">running.entrypoint:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.entrypoint']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.intermediateFilesPattern')">
+                              <label class="mr-2">running.intermediateFilesPattern:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.intermediateFilesPattern']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('resources.volume')">
+                              <label class="mr-2">resources.volume:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['resources.volume']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('resources.memory')">
+                              <label class="mr-2">resources.memory:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['resources.memory']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('resources.numCPUs')">
+                              <label class="mr-2">resources.numCPUs:</label>
+                              <input type="number" class="form-control" v-model="copied.configuration['resources.numCPUs']">
+                            </div>
+                          </div>
+                        </div>
+
                         <!-- Metadata -->
                         <div v-if="copied.metadata">
-                          <label class="item-name mr-2" for="copied.metadata">metadata: </label>
+                          <label class="mr-2" for="copied.metadata">metadata: </label>
                           <!-- display name -->
                           <div>
-                            <label class="item-name mr-2">displayName:</label>
+                            <label class="mr-2">displayName:</label>
                             <input type="text" class="form-control" v-model="copied.metadata.displayName">
                           </div>
                           <!-- description -->
                           <div>
-                            <label class="item-name mr-2">description:</label>
+                            <label class="mr-2">description:</label>
                             <input type="text" class="form-control" v-model="copied.metadata.description">
                           </div>
+
                           <!-- output -->
-                          <div>
-                            <label class="item-name mr-2" for="copied.metadata.output">output: </label>
+                          <div id="define-output">
+                            <label class="mr-2" for="copied.metadata.output">output: </label>
                             <!-- viewer -->
                             <div>
-                              <label class="item-name mr-2" for="copied.metadata.output.viewer">viewer: </label>
+                              <label class="mr-2" for="copied.metadata.output.viewer">viewer: </label>
                               <div class="dropdown form-group">
                                   <select
                                     class="form-control"
@@ -90,7 +411,7 @@
                             </div>
                             <!-- csv -->
                             <div>
-                              <label class="item-name mr-2" for="copied.metadata.output.csv">csv: </label>
+                              <label class="mr-2" for="copied.metadata.output.csv">csv: </label>
                               <b-button class="btn mb-3" @click="addCsvConfig()" v-tooltip.top-center="'Add Config for Group of CSV-Files'">
                                 <b-icon icon="plus" aria-hidden="true"></b-icon>
                               </b-button>
@@ -98,50 +419,50 @@
                                 <div class="border p-2" v-for="csvConfig in copied.metadata.output.csv" :key="csvConfig.identifier">
                                   <!-- identifier -->
                                   <div>
-                                    <label class="item-name mr-2" for="csvConfig.identifier">identifier: </label>
+                                    <label class="mr-2" for="csvConfig.identifier">identifier: </label>
                                     <input type="text" class="form-control" id="csvConfig.identifier" v-model="csvConfig.identifier" disabled>
                                   </div>
                                   <!-- basename -->
                                   <div>
-                                    <label class="item-name mr-2" for="csvConfig.basename">basename: </label>
+                                    <label class="mr-2" for="csvConfig.basename">basename: </label>
                                     <input type="text" class="form-control" id="csvConfig.basename" v-model="csvConfig.basename">
                                   </div>
                                   <!-- xlabel -->
                                   <div>
-                                    <label class="item-name mr-2" for="csvConfig.xlabel">xlabel: </label>
+                                    <label class="mr-2" for="csvConfig.xlabel">xlabel: </label>
                                     <div class="ml-4 mr-4">
                                       <!-- key -->
-                                      <label class="item-name mr-2" for="csvConfig.xlabel.key">key: </label>
+                                      <label class="mr-2" for="csvConfig.xlabel.key">key: </label>
                                       <input type="text" class="form-control" id="csvConfig.xlabel.key" v-model="csvConfig.xlabel.key">
                                       <!-- label -->
-                                      <label class="item-name mr-2" for="csvConfig.xlabel.label">label: </label>
+                                      <label class="mr-2" for="csvConfig.xlabel.label">label: </label>
                                       <input type="text" class="form-control" id="csvConfig.xlabel.label" v-model="csvConfig.xlabel.label">
                                       <!-- factor -->
-                                      <label class="item-name mr-2" for="csvConfig.xlabel.factor">factor: </label>
+                                      <label class="mr-2" for="csvConfig.xlabel.factor">factor: </label>
                                       <input type="number" class="form-control" id="csvConfig.xlabel.factor" v-model="csvConfig.xlabel.factor">
                                       <!-- format -->
-                                      <label class="item-name mr-2" for="csvConfig.xlabel.format">format: </label>
+                                      <label class="mr-2" for="csvConfig.xlabel.format">format: </label>
                                       <input type="text" class="form-control" id="csvConfig.xlabel.format" v-model="csvConfig.xlabel.format">
                                     </div>
                                   </div>
                                   <!-- plots -->
-                                  <label class="item-name mr-2" for="csvConfig.plots">plots: </label>
+                                  <label class="mr-2" for="csvConfig.plots">plots: </label>
                                   <b-button class="btn mb-3" @click="addCsvPlot(csvConfig)" v-tooltip.top-center="'Add Y-Axis to generate Plot from CSV-Files'">
                                     <b-icon icon="plus" aria-hidden="true"></b-icon>
                                   </b-button>
                                   <div class="ml-4 mr-4">
                                     <div class="border mb-2 p-2" v-for="(csvPlot, plotIndex) in csvConfig.plots" :key="csvConfig.identifier + '-plot-' + plotIndex">
                                       <!-- key -->
-                                      <label class="item-name mr-2" for="csvPlot.key">key: </label>
+                                      <label class="mr-2" for="csvPlot.key">key: </label>
                                       <input type="text" class="form-control" id="csvPlot.key" v-model="csvPlot.key">
                                       <!-- label -->
-                                      <label class="item-name mr-2" for="csvPlot.label">label: </label>
+                                      <label class="mr-2" for="csvPlot.label">label: </label>
                                       <input type="text" class="form-control" id="csvPlot.label" v-model="csvPlot.label">
                                       <!-- factor -->
-                                      <label class="item-name mr-2" for="csvPlot.factor">factor: </label>
+                                      <label class="mr-2" for="csvPlot.factor">factor: </label>
                                       <input type="number" class="form-control" id="csvPlot.factor" v-model="csvPlot.factor">
                                       <!-- factor -->
-                                      <label class="item-name mr-2" for="csvPlot.format">format: </label>
+                                      <label class="mr-2" for="csvPlot.format">format: </label>
                                       <input type="text" class="form-control" id="csvPlot.format" v-model="csvPlot.format">
                                     </div>
                                   </div>
@@ -150,7 +471,7 @@
                             </div>
                             <!-- vtk -->
                             <div>
-                              <label class="item-name mr-2" for="copied.metadata.output.vtk">vtk: </label>
+                              <label class="mr-2" for="copied.metadata.output.vtk">vtk: </label>
                               <b-button class="btn mb-3" @click="addVtkConfig()" v-tooltip.top-center="'Add Config for Group of VTK-Files'">
                                 <b-icon icon="plus" aria-hidden="true"></b-icon>
                               </b-button>
@@ -158,12 +479,12 @@
                                 <div class="border mb-2 p-2" v-for="vtkConfig in copied.metadata.output.vtk" :key="vtkConfig.identifier">
                                   <!-- identifier -->
                                   <div>
-                                    <label class="item-name mr-2" for="vtkConfig.identifier">identifier: </label>
+                                    <label class="mr-2" for="vtkConfig.identifier">identifier: </label>
                                     <input type="text" class="form-control" id="vtkConfig.identifier" v-model="vtkConfig.identifier" disabled>
                                   </div>
                                   <!-- basename -->
                                   <div>
-                                    <label class="item-name mr-2" for="vtkConfig.basename">basename: </label>
+                                    <label class="mr-2" for="vtkConfig.basename">basename: </label>
                                     <input type="text" class="form-control" id="vtkConfig.basename" v-model="vtkConfig.basename">
                                   </div>
                                 </div>
@@ -171,119 +492,21 @@
                             </div>
                           </div>
                         </div>
-                        <!-- Environment -->
-                        <div>
-                          <label class="item-name mr-2" for="copied.environment">environment: </label>
-                          <div class="dropdown form-group">
-                              <select
-                                class="form-control"
-                                v-model="copied.environment"
-                                @change="addConfig()"
-                              >
-                                <option>C</option>
-                                <option>C++</option>
-                                <option>Java</option>
-                                <option>Matlab</option>
-                                <option>Octave</option>
-                                <option>Container</option>
-                                <option>DuMuX</option>
-                              </select>
-                            </div>
-                        </div>
-                        <!-- Configuration -->
-                        <div v-if="copied.configuration">
-                          <label class="item-name mr-2">configuration: </label>
-                          <div v-if="ifConfigPropertyExists('compiling.sources')">
-                            <label class="item-name mr-2">compiling.sources*:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['compiling.sources']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('compiling.compiler')">
-                            <label class="item-name mr-2">compiling.compiler*:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['compiling.compiler']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('compiling.flags')">
-                            <label class="item-name mr-2">compiling.flags*(Must for C, C++, optional for Java):</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['compiling.flags']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('checking.sources')">
-                            <label class="item-name mr-2">checking.sources*(must if checking should be performed):</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['checking.sources']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('checking.allowedCalls')">
-                            <label class="item-name mr-2">checking.allowedCalls(must if checking should be performed):</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['checking.allowedCalls']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('checking.forbiddenCalls')">
-                            <label class="item-name mr-2">checking.forbiddenCalls(must if checking should be performed):</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['checking.forbiddenCalls']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('linking.flags')">
-                            <label class="item-name mr-2">linking.flags*:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['linking.flags']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('running.stdinFilename')">
-                            <label class="item-name mr-2">running.stdinFilename*:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['running.stdinFilename']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('running.timelimitInSeconds')">
-                            <label class="item-name mr-2">running.timelimitInSeconds:</label>
-                            <input type="number" class="form-control" v-model="copied.configuration['running.timelimitInSeconds']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('running.commandLineArguments')">
-                            <label class="item-name mr-2">running.commandLineArguments:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['running.commandLineArguments']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('running.flags')">
-                            <label class="item-name mr-2">running.flags:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['running.flags']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('running.mainClass')">
-                            <label class="item-name mr-2">running.mainClass:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['running.mainClass']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('running.executable')">
-                            <label class="item-name mr-2">running.executable*:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['running.executable']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('running.entrypoint')">
-                            <label class="item-name mr-2">running.entrypoint:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['running.entrypoint']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('running.intermediateFilesPattern')">
-                            <label class="item-name mr-2">running.intermediateFilesPattern:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['running.intermediateFilesPattern']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('resources.image')">
-                            <label class="item-name mr-2">resources.image*:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['resources.image']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('resources.volume')">
-                            <label class="item-name mr-2">resources.volume:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['resources.volume']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('resources.memory')">
-                            <label class="item-name mr-2">resources.memory:</label>
-                            <input type="text" class="form-control" v-model="copied.configuration['resources.memory']">
-                          </div>
-                          <div v-if="ifConfigPropertyExists('resources.numCPUs')">
-                            <label class="item-name mr-2">resources.numCPUs:</label>
-                            <input type="number" class="form-control" v-model="copied.configuration['resources.numCPUs']">
-                          </div>
-                        </div>
+                        
                       </div>
 
                       <!-- Files Data -->
                       <div v-else-if="showFile">
                         <!-- path -->
                         <div>
-                          <label class="item-name mr-2" for="selectedFile.path">path: </label>
+                          <label class="mr-2" for="selectedFile.path">path: </label>
                           <input type="text" class="form-control" id="selectedFile.path" v-model="selectedFile.path">
                         </div>
                         <!-- metadata -->
                         <div>
-                          <label class="item-name mr-2">metadata: </label>
+                          <label class="mr-2">metadata: </label>
                           <div v-if="selectedFile.metadata.syntaxHighlighting">
-                            <label class="item-name mr-2">syntaxHighlighting:</label>
+                            <label class="mr-2">syntaxHighlighting:</label>
                             <div class="dropdown form-group">
                               <select
                                 class="form-control"
@@ -304,7 +527,7 @@
                       <div v-else-if="showPart">
                         <!-- access -->
                         <div>
-                          <label class="item-name mr-2" for="selectedPart.access">access: </label>
+                          <label class="mr-2" for="selectedPart.access">access: </label>
                           <div class="dropdown form-group">
                             <select
                               class="form-control"
@@ -320,9 +543,9 @@
                         </div>
                         <!-- metadata -->
                         <div>
-                          <label class="item-name mr-2">metadata: </label>
+                          <label class="mr-2">metadata: </label>
                           <div v-if="selectedPart.metadata.name">
-                            <label class="item-name mr-2">name:</label>
+                            <label class="mr-2">name:</label>
                             <input type="text" class="form-control" id="selectedPart.metadata.name" v-model="selectedPart.metadata.name">
                           </div>
                         </div>
@@ -333,17 +556,17 @@
                         
                         <!-- identifier -->
                         <div>
-                          <label class="item-name mr-2" for="selectedParameter.identifier">identifier: </label>
-                          <input type="text" class="form-control" id="selectedParameter.identifier" v-model="selectedParameter.identifier" disabled>
+                          <label class="mr-2" for="selectedParameter.identifier">identifier: </label>
+                          <input type="text" class="form-control" id="selectedParameter.identifier" v-model="selectedParameter.identifier">
                         </div>
                         <!-- name -->
                         <div>
-                          <label class="item-name mr-2" for="selectedParameter.metadata.name">name: </label>
+                          <label class="mr-2" for="selectedParameter.metadata.name">name: </label>
                           <input type="text" class="form-control" id="selectedParameter.metadata.name" v-model="selectedParameter.metadata.name">
                         </div>
                         <!-- description -->
                         <div>
-                          <label class="item-name mr-2" for="selectedParameter.metadata.description">description: </label>
+                          <label class="mr-2" for="selectedParameter.metadata.description">description: </label>
                           <input type="text" class="form-control" id="selectedParameter.metadata.description" v-model="selectedParameter.metadata.description">
                         </div>
 
@@ -351,7 +574,7 @@
                         <div v-if="selectedParameter.metadata.guiType=='input_field'">
                           <!-- type -->
                           <div>
-                            <label class="item-name mr-2" for="selectedParameter.metadata.type">type: </label>
+                            <label class="mr-2" for="selectedParameter.metadata.type">type: </label>
                             <div class="dropdown form-group">
                               <select
                                 class="form-control"
@@ -366,22 +589,22 @@
                           <div v-if="selectedParameter.metadata.type">
                             <!-- default value -->
                             <div>
-                              <label class="item-name mr-2" for="selectedParameter.default">default value: </label>
+                              <label class="mr-2" for="selectedParameter.default">default value: </label>
                               <input v-if="selectedParameter.metadata.type == 'text'" type="text" class="form-control" id="selectedParameter.default" v-model="inputvModel">
                               <input v-else type="number" class="form-control" id="selectedParameter.default" v-model="selectedParameter.default[0]">
                             </div>
                             <!-- type: number - min, max, step -->
                             <div v-if="selectedParameter.metadata.type == 'number'">
                               <div>
-                                <label class="item-name mr-2" for="selectedParameter.min">min value: </label>
+                                <label class="mr-2" for="selectedParameter.min">min value: </label>
                                 <input type="number" class="form-control" id="selectedParameter.min" v-model="selectedParameter.min">
                               </div>
                               <div>
-                                <label class="item-name mr-2" for="selectedParameter.max">max value: </label>
+                                <label class="mr-2" for="selectedParameter.max">max value: </label>
                                 <input type="number" class="form-control" id="selectedParameter.max" v-model="selectedParameter.max">
                               </div>
                               <div>
-                                <label class="item-name mr-2" for="selectedParameter.step">step size: </label>
+                                <label class="mr-2" for="selectedParameter.step">step size: </label>
                                 <input type="number" class="form-control" id="selectedParameter.step" v-model="selectedParameter.step">
                               </div>
                             </div>
@@ -391,7 +614,7 @@
                         <!-- slider -->
                         <div v-if="selectedParameter.metadata.guiType=='slider'">
                           <!-- vertical -->
-                          <label class="item-name mr-2" for="selectedParameter.metadata.vertical">vertical: </label>
+                          <label class="mr-2" for="selectedParameter.metadata.vertical">vertical: </label>
                           <div class="radiobutton form-check custom-control custom-radio">
                             <div>
                               <input class="form-check-input custom-control-input" id="vertical" type="radio" name="slider-vertical" value=true v-model="selectedParameter.metadata.vertical" />
@@ -405,7 +628,7 @@
                         
                           <!-- default -->
                           <div>
-                            <label class="item-name mr-2" for="selectedParameter.default">value(s): </label>
+                            <label class="mr-2" for="selectedParameter.default">value(s): </label>
                             <div class="ml-4 mr-4">
                               <!-- set how many values the slider should have -->
                               <label for="selectedParameter.identifier + 'sb-default'">How many values should the slider have?</label>
@@ -419,17 +642,17 @@
                           </div>
                           <!-- min -->
                           <div>
-                            <label class="item-name mr-2" for="selectedParameter.min">min value: </label>
+                            <label class="mr-2" for="selectedParameter.min">min value: </label>
                             <input type="number" class="form-control" id="selectedParameter.min" v-model="selectedParameter.min">
                           </div>
                           <!-- max -->
                           <div>
-                            <label class="item-name mr-2" for="selectedParameter.max">max value: </label>
+                            <label class="mr-2" for="selectedParameter.max">max value: </label>
                             <input type="number" class="form-control" id="selectedParameter.max" v-model="selectedParameter.max">
                           </div>
                           <!-- step -->
                           <div>
-                            <label class="item-name mr-2" for="selectedParameter.step">step size: </label>
+                            <label class="mr-2" for="selectedParameter.step">step size: </label>
                             <input type="number" class="form-control" id="selectedParameter.step" v-model="selectedParameter.step">
                           </div>
                         </div>
@@ -437,17 +660,17 @@
                         <!-- editor -->
                         <div v-if="selectedParameter.metadata.guiType=='editor'">
                           <div>
-                            <label class="item-name mr-2" for="selectedParameter.default">value: </label>
+                            <label class="mr-2" for="selectedParameter.default">value: </label>
                             <ace-editor-component 
-                                        :isParameter="false" 
-                                        :isMustache="false"
-                                        :readonly="false"
-                                        :item='{
-                                          "identifier" : "Editor" + selectedParameter.identifier,
-                                          "content" : ""
-                                        }'
-                                        v-on:update:item="setEditorValue($event)"
-                                      ></ace-editor-component>
+                              :isParameter="false" 
+                              :isMustache="false"
+                              :readonly="false"
+                              :item='{
+                                "identifier" : "Editor" + selectedParameter.identifier,
+                                "content" : ""
+                              }'
+                              v-on:update:item="setEditorValue($event)"
+                            ></ace-editor-component>
                           </div>
                         </div>
 
@@ -455,7 +678,7 @@
                         <div v-if="selectedParameter.metadata.guiType=='checkbox' || selectedParameter.metadata.guiType=='dropdown' || selectedParameter.metadata.guiType=='toggle'|| selectedParameter.metadata.guiType=='radio'">
                           <!-- options -->
                           <div>
-                            <label class="item-name mr-2" for="selectedParameter.options">value(s): </label>
+                            <label class="mr-2" for="selectedParameter.options">value(s): </label>
                             <div class="ml-4 mr-4">
                               <!-- set how many values the checkbox should have -->
                               <label for="selectedParameter.identifier + 'sb-options'">How many values should the parameter have?</label>
@@ -511,7 +734,7 @@
                           
                         <!-- Validation -->
                         <div>
-                          <label class="item-name mr-2" for="selectedParameter.validation">validation: </label>
+                          <label class="mr-2" for="selectedParameter.validation">validation: </label>
                           
                           <!-- mode: any -->
                           <div class="dropdown form-group" v-if="selectedParameter.mode === 'any'">
@@ -528,7 +751,7 @@
                             <!-- pattern -->
                             <div class="ml-4 mr-4" v-if="selectedParameter.validation === 'pattern'">
                               <div>
-                                <label class="item-name mr-2" for="selectedParameter.pattern">pattern: </label>
+                                <label class="mr-2" for="selectedParameter.pattern">pattern: </label>
                                 <input type="text" class="form-control" id="selectedParameter.pattern" v-model="selectedParameter.pattern">
                               </div>
                             </div>
@@ -553,163 +776,19 @@
               </b-tab>
             </b-tabs>
           </b-card>
+        </b-collapse>
         </div>
-
-        <!-- Graphical View of Template -->
-        <div class="dnd-window">
-          <drop class="top-copy" @drop="onFileDrop($event)" :accepts-data="(file) => ((file  === 'file') || (file === 'commandline arguments'))">
-            <div class="template p-2" @click="openWindow($event, 'template', copied)">
-              Files
-              <div v-for="(file, index) in copied.files" :key="file.identifier + '-' + index">
-                <drop class="copy" @drop="onPartDrop($event,file)" :accepts-data="(part) => part  === 'part'">
-                  <div class="file p-2" @click="openWindow($event, 'file', file)">
-                    
-                    <b-row align-v="stretch">
-                      <b-col cols="10">
-                        File
-                      </b-col>
-                      <b-col cols="2">
-                        <div class="text-right" @click="removeFile($event, file)">
-                          <b-icon icon="x-circle"></b-icon>
-                        </div>
-                      </b-col>
-                    </b-row>
-
-                    <!--<div v-for="(part, index) in file.parts" :key="index">-->
-                    <drop-list class="part-droplist" v-if="file.parts" :items="file.parts" @insert="onInsert($event, false, file)" @reorder="$event.apply(file.parts)" :accepts-data="(part) => false" :column="true">
-                      <template v-slot:item="{item}"> 
-                        <drag class="item part-drag" :key="item.identifier">           
-                          <drop class="part-border" @drop="onParameterDrop($event, item)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && item.parameters">
-                            <div class="part p-2" @click="openWindow($event, 'part', item)">
-
-                              <b-row align-v="stretch" class="mb-2">
-                                <b-col cols="10">
-                                  Part
-                                </b-col>
-                                <b-col cols="2">
-                                  <div class="text-right" @click="removePart($event, item)">
-                                    <b-icon icon="x-circle"></b-icon>
-                                  </div>
-                                </b-col>
-                              </b-row>
-                              
-                              <b-card v-if="item.parameters" no-body class="">
-                                <b-card-header header-tag="header" class="p-1" role="tab">
-                                  <b-button block v-b-toggle:[paramAccordeon(item.identifier)] variant="info">
-                                    Parameters
-                                    <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
-                                    <b-icon class="when-open" icon="caret-up"></b-icon>
-                                  </b-button>
-                                </b-card-header>
-                                <b-collapse :id="item.identifier+'param'" visible accordion="my-accordion-1" role="tabpanel">
-                                  <b-card-body>
-                                    <drop-list class="param-droplist" v-if="item.parameters" :items="item.parameters" @insert="onInsert($event, true ,item)" @reorder="$event.apply(item.parameters)" :accepts-data="(param) => false" :column="true">
-                                      <template v-slot:item="{item}">
-                                        <drag class="item param" :key="item.identifier">
-                                          <b-container class="param-container" @click="openWindow($event, 'parameter', item)">
-                                            <b-row align-v="stretch">
-                                              <b-col cols="10">
-                                                {{item.metadata.guiType}}
-                                                <br>
-                                                {{item.identifier}}
-                                              </b-col>
-                                              <b-col cols="2">
-                                                <div class="text-right" @click="removeParameter($event, item)">
-                                                  <b-icon icon="x-circle"></b-icon>
-                                                </div>
-                                              </b-col>
-                                            </b-row>
-                                          </b-container>
-                                        </drag>
-                                      </template>
-                                      <template v-slot:feedback="{data}">
-                                        <div class="item feedback" :key="data">{{data}}</div>
-                                      </template>
-                                    </drop-list>
-                                  </b-card-body>
-                                </b-collapse>
-                              </b-card>
-
-                              <b-card no-body class="">
-                                <b-card-header header-tag="header" class="p-1" role="tab">
-                                  <b-button block v-b-toggle:[contentAccordeon(item.identifier)] variant="info">
-                                    Content
-                                    <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
-                                    <b-icon class="when-open" icon="caret-up"></b-icon>
-                                  </b-button>
-                                </b-card-header>
-                                <b-collapse :id="item.identifier+'content'" visible accordion="my-accordion-2" role="tabpanel">
-                                  <b-card-body>
-                                    <div class="part-content-field">
-                                      <label class="item-name mr-2" for="item.content">content: </label>
-                                      <ace-editor-component 
-                                        :isParameter="false" 
-                                        :isMustache="false"
-                                        :readonly="false"
-                                        :item='{
-                                          "identifier" : "Editor" + item.identifier,
-                                          "content" : item.content
-                                        }'
-                                        v-on:update:item="updateContent(item, $event)"
-                                      ></ace-editor-component>
-                                    </div>
-                                  </b-card-body>
-                                </b-collapse>
-                              </b-card>
-                            </div>
-                          </drop> 
-                        </drag>
-                      </template>
-                      <template v-slot:feedback="{data}">
-                        <div class="item feedback" :key="data">{{data}}</div>
-                      </template>
-                    </drop-list>
-                    <!--</div>-->
-                  </div>
-                </drop> 
-              </div>
-
-              <!-- Commandline Parameters -->
-              <div v-if="copied.parameters">
-                <drop class="copy" @drop="onParameterDrop($event)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && copied.parameters">
-                  <div class="file" @click="openWindow($event, 'commands', copied.parameters)">
-                  
-                    Commandline Arguments
-                    <drop-list class="param-droplist" v-if="copied.parameters" :items="copied.parameters" @insert="onInsert($event, true, item)" @reorder="$event.apply(copied.parameters)" :accepts-data="(param) => false" :column="true" :key="uuid()">
-                      <template v-slot:item="{item}">
-                        <drag class="item param" :key="item.identifier">
-                          <b-container class="param-container" @click="openWindow($event, 'parameter', item)">
-                            <b-row align-v="stretch">
-                              <b-col cols="10">
-                                {{item.metadata.guiType}}
-                                <br>
-                                {{item.identifier}}
-                              </b-col>
-                              <b-col cols="2">
-                                <div class="text-right" @click="removeParameter($event, item, false)">
-                                  <b-icon icon="x-circle"></b-icon>
-                                </div>
-                              </b-col>
-                            </b-row>
-                          </b-container>
-                        </drag>
-                      </template>
-                      <template v-slot:feedback="{data}">
-                        <div class="item feedback" :key="data">{{data}}</div>
-                      </template>
-                    </drop-list>
-
-                  </div>
-                </drop>
-              </div>
-            </div>     
-          </drop>
+        <div class="validation-div pl-2 pr-2">
+          <pre>
+            {{ JSON.stringify(copied, null, 2) }}
+          </pre>
+          <b-button @click="validateJson">Validate</b-button>
+          {{validationResult}}
         </div>
       </div>
-      <pre>{{ JSON.stringify(copied, null, 2) }}</pre>
-      <b-button @click="validateJson">Validate</b-button>
-      {{validationResult}}
     </div>
+    <v-tour name="myTour" :steps="steps" :callbacks="tourCallbacks" :options="{ highlight: true }"></v-tour>
+  </div>
   </div>
 </template>
 
@@ -739,7 +818,23 @@ export default {
       componentsFile: ["part"], 
       componentsPart: ["part"],
       componentsCommand: [],
-      copied: {"identifier" : "", "version" : "3.0.0", "metadata": { "displayName" : "", "description": "", "output": { "viewer": [], "csv" : [], "vtk" : [] } }, "environment": "", "files": [], "configuration": {}}, 
+      copied: {
+        "identifier" : "", 
+        "version" : "3.0.0", 
+        "metadata": { "displayName" : "", "description": "", "output": { "viewer": [], "csv" : [], "vtk" : [] } }, 
+        "environment": "Container", 
+        "configuration": {
+          "running.timelimitInSeconds": "",
+          "running.commandLineArguments": "",
+          "running.entrypoint": "",
+          "running.intermediateFilesPattern": "",
+          "resources.image": "",
+          "resources.volume": "",
+          "resources.memory": "",
+          "resources.numCPUs": ""
+        }, 
+        "files": []
+      }, 
       availableGuiTypes : ["input_field", "editor", "slider", "checkbox", "radio", "dropdown", "toggle"],
       preferences: true,
       selectedParameter: {},
@@ -748,12 +843,42 @@ export default {
       showTemplate: true,
       showFile: false,
       showPart: false, 
-      showParam: false,
       showParameter: false,
       showCommands: false,
       valueNumbers: new Map(),
       schema: ctSchema,
-      validationResult: {}
+      validationResult: {},
+      steps: [
+        {
+          target: '#start-guide', 
+          content: `Tour the <strong>ViPLab Computation Template Generator</strong>!`
+        },
+        {
+          target: '#run-configuration',
+          content: 'Choose the Environment! How is your Application run? After that, Configure other parameters for the execution.'
+        },
+        {
+          target: '#component-selection',
+          content: 'Add components, like files, parts of files and gui-elements to your template by dragging and dropping them to the middle-section.'
+        },
+        {
+          target: '#drag-components-here',
+          content: 'By clicking on the different components in the middle-section, you can modify the configuration of each component on the right.',
+          params: {
+            placement: 'top'
+          }
+        },
+        {
+          target: '#define-output',
+          content: 'Last, define, what the output should look like.',
+          params: {
+            placement: 'top'
+          }
+        }
+      ],
+      tourCallbacks: {
+        onNextStep: this.myCustomNextStepCallback
+      }
     };
   },
   computed: {
@@ -998,6 +1123,7 @@ export default {
       } else {
         delete selectedPart.parameters;
       }
+      this.sh
     }, 
     /**
      * Delete Parameter from part or command line arguments and rerender
@@ -1043,6 +1169,9 @@ export default {
           delete this.copied.files.splice(fileIndex, 1);
         }
       }
+      this.closePreferences();
+      this.preferences = true;
+      this.showTemplate = true;
       this.$forceUpdate();
     },
     /**
@@ -1057,6 +1186,21 @@ export default {
           }
         }
       }
+      this.closePreferences();
+      this.preferences = true;
+      this.showTemplate = true;
+      this.$forceUpdate();
+    },
+    /**
+     * Delete commandline args from json and rerender
+     */
+    removeCommandlineArgs: function(event) {
+      event.stopPropagation();
+      delete this.copied.parameters;
+      this.componentsFiles.push("commandline arguments")
+      this.closePreferences();
+      this.preferences = true;
+      this.showTemplate = true;
       this.$forceUpdate();
     },
     /**
@@ -1306,6 +1450,23 @@ export default {
       // if data-mode is set to "create-and-execute", user is logged in (if it is set to "created", the user is not logged in)
       let loggedIn = ( (dataMode == "create-and-execute")? true : false );
       return loggedIn;
+    },
+    startGuide: function() {
+      this.$tours['myTour'].start()
+    },
+    myCustomNextStepCallback (currentStep) {
+      //console.log('[Vue Tour] A custom nextStep callback has been called on step ' + (currentStep + 1))
+      console.log(currentStep)
+      if (currentStep === 0) {
+        console.log('[Vue Tour] A custom nextStep callback has been called from step 2 to step 3')
+        if (Object.keys(this.copied.configuration).length === 0 && this.copied.configuration.constructor === Object) {
+          console.log("empty")
+          let nextBtn = document.getElementsByClassName('.v-step__button-next');
+          console.log(nextBtn)
+          
+          this.$forceUpdate();
+        } 
+      }
     }
   },
   created() {
@@ -1314,6 +1475,7 @@ export default {
   mounted() {
     // generate id for ct
     this.copied.identifier = this.uuid();
+    //this.$tours['myTour'].start()
   },
 };
 </script>
@@ -1325,6 +1487,43 @@ body {
 }
 
 #injected #teacher {
+
+  .sample-header {
+    position: fixed;
+    height: 200px;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: linear-gradient(110deg, #004191 60%, #00BEFF 60%);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sample-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /*background-color: MidnightBlue;*/
+    opacity: 0.3;
+  }
+
+  .sample-header-section {
+    position: relative;
+    margin-top: auto;
+    margin-bottom: auto;
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    font-family: "Montserrat", sans-serif;
+  }
 
   .header {
     overflow: hidden;
@@ -1348,12 +1547,20 @@ body {
     transform: translateY(-50%);
   }
 
+  .header-intro {
+    position: relative;
+    z-index: 100;
+  }
+
   .outer-div {
     font-family: "Avenir", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
     padding: 10px;
+
+    margin: 0 !important;
+
     /*margin: 0 10px;
     border-radius: 25px;
     max-width: 1170px;
@@ -1362,6 +1569,14 @@ body {
   }
 
   .main-div {
+    position: relative;
+    background-color: #fff;
+    border-radius: calc(0.25rem - 1px);
+    top: 200px;
+  }
+
+  .validation-div {
+    position: relative;
     background-color: #fff;
     border-radius: calc(0.25rem - 1px);
   }
@@ -1373,13 +1588,15 @@ body {
 
   .drag {
     padding: 10px;
-    background-color: rgb(220, 220, 255);
+    background-color: rgba(0, 190, 255, 0.2);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 10px 10px 0 10px;
-    font-size: 20px;
+    margin: 0 0 10px 0;
+    /*font-size: 20px;*/
     transition: all 0.5s;
+    width: 100%;
+    text-align: center;
   }
 
   .drop-allowed{
@@ -1390,18 +1607,28 @@ body {
     background-color: rgba(255, 0, 0, 0.2);
   }
 
+  .card-body {
+    height: 100% !important;
+  }
+
   .group {
     display: flex;
+    position:relative;
+    background-color: #fff;
+  }
+
+  .sample-section-wrap {
+    position:relative;
+    background-color: #fff;
   }
 
   .select-list {
     margin: 20px 10px 20px 10px;
-    width: 30%;
-    border: solid 1px black;
+    width: 20%;
   }
 
   .preferences-list {
-    padding: 10px 10px 10px 10px;
+    padding: 0 10px 10px 10px;
     word-break: break-word;
   }
 
@@ -1413,16 +1640,30 @@ body {
   }
 
   .top-copy {
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     min-height: 100px;
     position: relative;
     flex: 1;
     width: 100%;
     height: 100%;
+    font-size: 1em;
+  }
+
+  .top-copy::before {
+    /*content: "Drop Components Here";*/
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 25px;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 0;
   }
 
   .copy {
-    border: 1px solid black;
+    border: 1px solid #dee2e6;
     min-height: 100px;
     margin: 20px auto 20px auto;
     position: relative;
@@ -1432,6 +1673,7 @@ body {
 
   .card {
     background-color: rgba(0, 0, 0, 0);
+    height: 100%;
   }
 
   .card-body {
@@ -1449,7 +1691,7 @@ body {
   }
 
   .part-border {
-    border: 1px solid black;
+    border: 1px solid #dee2e6;
   }
 
   .part-drag {
@@ -1464,7 +1706,7 @@ body {
   }
 
   .param {
-    border: 1px solid black;
+    border: 1px solid #dee2e6;
     min-height: 100px;
     margin: 20px auto 20px auto;
     position: relative;
@@ -1532,10 +1774,137 @@ body {
     width: 100%;
   }
 
+  .part .card .card-header .btn {
+    color: #fff;
+    background-color: #00BEFF;
+    border-color: #00BEFF;
+  }
+
   .b-form-spinbutton .btn {
     width: 100%;
     padding : 0 !important;
     height: 100%;
+  }
+
+  .tool-button {
+    width: 30%;
+    margin: 0px 0px 0px 0px;
+  }
+
+  .toggle-controls {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden !important;
+    right: 0;
+    top: 10px;
+  }
+
+  #toggle-left-components a {
+    position: absolute;
+    transition: 0.3s;
+    padding: 15px;
+    width: 120px;
+    text-decoration: none;
+    color: white;
+    z-index: 10;
+
+    left: -70px;
+    border-radius: 5px 5px 5px 5px;
+    
+    transform: rotate(-90deg);
+    /* Legacy vendor prefixes that you probably don't need... */
+    /* Safari */
+    -webkit-transform: rotate(-90deg);
+    /* Firefox */
+    -moz-transform: rotate(-90deg);
+    /* IE */
+    -ms-transform: rotate(-90deg);
+    /* Opera */
+    -o-transform: rotate(-90deg);
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  }
+
+  #toggle-left-components a:hover {
+      left: -30px;
+  }
+
+  #toggle-right-config a {
+    position: absolute;
+    transition: 0.3s;
+    padding: 15px;
+    width: 120px;
+    text-decoration: none;
+    color: white;
+    z-index: 10;
+
+    right: -70px;
+    border-radius: 5px 5px 5px 5px;
+
+    transform: rotate(-270deg);
+    /* Legacy vendor prefixes that you probably don't need... */
+    /* Safari */
+    -webkit-transform: rotate(-270deg);
+    /* Firefox */
+    -moz-transform: rotate(-270deg);
+    /* IE */
+    -ms-transform: rotate(-270deg);
+    /* Opera */
+    -o-transform: rotate(-270deg);
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  }
+
+  #toggle-right-config a:hover {
+      right: -30px;
+  }
+
+  #about {
+      top: 20px;
+      background-color: #00BEFF;
+  }
+
+  .toggle-content {
+    padding: 0;
+    position: relative;
+    top: 10px !important;
+  }
+
+  #start-guide {
+    color: white;
+    background-color: rgb(178,180,183);
+    border-color: rgb(178,180,183);
+    width: 100%;
+  }
+
+  #start-guide:hover {
+    background-color: rgb(178,180,183);
+    color: #323232;
+    border-color: rgb(178,180,183);
+  }
+
+  #drag-components-here {
+    min-width: 393px;
+  }
+
+  .v-tour__target--highlighted {
+    box-shadow: 0 0 0 99999px rgba(0, 0, 0, .4);
+  }
+
+  @media (max-width: 799px) {
+    .group {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .select-list {
+      width: 100%;
+    }
+
+    #drop-components-here {
+      width: 100%;
+    }
   }
 
 }
