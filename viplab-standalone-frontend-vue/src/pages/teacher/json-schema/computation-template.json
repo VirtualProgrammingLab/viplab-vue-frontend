@@ -217,8 +217,7 @@
                 "additionalProperties": false,
                 "required" : ["identifier", "path", "parts"]
             },
-            "additionalItems": false,
-            "minItems" : 1
+            "additionalItems": false
         },
         "parameters" : {
             "type" : "array",

@@ -1,0 +1,312 @@
+{
+    "$schema": "http://json-schema.org/draft/2020-12/schema#",
+    "$id": "http://virtualprogramminglab.github.io/schemas/parameters.json",
+
+    "type" : "array",
+
+    "items" : {
+    "type" : "object",
+    
+    "properties": {
+        "mode" : {
+            "type" : "string",
+            "enum": ["fixed", "any"]
+        },
+        "identifier" : {
+                "type" : "string",
+                "description" : "Each parameter has a unique identifier"
+        },
+        "metadata" : {
+            "type" : "object"
+        }
+    },
+
+    "allOf": [
+        {
+            "if" : {
+                "properties": { 
+                    "mode": { "const": "fixed" }
+                }
+            },
+            "then" : {
+                "properties": { 
+                    "metadata": { 
+                        "type": "object",
+                        "properties": {
+                            "guiType" : {
+                                "type" : "string",
+                                "enum": ["checkbox", "radio", "dropdown", "toggle"]
+                            },
+                            "name" : {
+                                "type" : "string"
+                            }
+                        },
+                        "additionalProperties": false,
+                        "required": ["guiType", "name"]
+                    },
+                    "options" : {
+                        "type" : "array",
+                        "items": {
+                            "type" : "object",
+                            "properties": {
+                                "value" : {
+                                    "type" : "string"
+                                },
+                                "text" : {
+                                    "type" : "string"
+                                },
+                                "selected" : {
+                                    "type": "boolean"
+                                },
+                                "disabled" : {
+                                    "type": "boolean"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "required": ["value"]
+                        },
+                        "additionalItems": false,
+                        "minItems" : 1
+                    },
+                    "validation" : {
+                        "type" : "string",
+                        "enum" : ["anyof", "minone", "oneof"]
+                    }
+                },
+                "required": ["metadata", "options", "validation"]
+            }
+        },
+        {
+            "if" : {
+                "properties": { 
+                    "mode": { "const": "any" }
+                }
+            },
+            "then" : {
+                "oneOf" : [
+                    {
+                        "properties" : {
+                            "metadata": { 
+                                "type": "object",
+                                "properties": {
+                                    "guiType" : {
+                                        "const": "slider"
+                                    },
+                                    "name" : {
+                                        "type" : "string"
+                                    },
+                                    "vertical" : {
+                                        "type" : "boolean"
+                                    },
+                                    "description" : {
+                                        "type" : "string"
+                                    }
+                                },
+                                "additionalProperties": false,
+                                "required": ["guiType", "name", "vertical"]
+                            },
+                            "default" : {
+                                "type" : "array",
+                                "items": {
+                                    "type" : "number"
+                                },
+                                "additionalItems": false,
+                                "minItems" : 1
+                            },
+                            "min" : {
+                                "type" : "number"
+                            },
+                            "max" : {
+                                "type" : "number"
+                            },
+                            "step" : {
+                                "type": "number"
+                            },
+                            "validation" : {
+                                "type" : "string",
+                                "enum" : ["range", "none"]
+                            }
+                        },
+                        "required": ["metadata", "default", "min", "max", "step", "validation"]
+                    },
+                    {
+                        "properties" : {
+                            "metadata": { 
+                                "type": "object",
+                                "properties": {
+                                    "guiType" : {
+                                        "const": "input_field"
+                                    },
+                                    "name" : {
+                                        "type" : "string"
+                                    },
+                                    "type" : {
+                                        "type" : "string",
+                                        "enum" : ["text" , "number"]
+                                    },
+                                    "description" : {
+                                        "type" : "string"
+                                    }
+                                },
+                                "additionalProperties": false,
+                                "required": ["guiType", "name", "type"]
+                            }
+                        },
+                        "allOf" : [
+                            {
+                                "if" : {
+                                    "properties": {
+                                        "metadata" : {
+                                            "properties": {
+                                                "type" : { "const" : "text" }
+                                            }
+                                        }
+                                    }
+                                },
+                                "then" : {
+                                    "properties": {
+                                        "default" : {
+                                            "type" : "array",
+                                            "items": {
+                                                "type" : "string"
+                                            },
+                                            "additionalItems": false,
+                                            "minItems" : 1,
+                                            "maxItems" : 1
+                                        },
+                                        "maxlength" : {
+                                            "type" : "integer"
+                                        },
+                                        "validation" : {
+                                            "type" : "string",
+                                            "enum" : ["pattern", "none"]
+                                        },
+                                        "if" : {
+                                            "properties": {
+                                                "validation" : {
+                                                    "const" : "pattern"
+                                                }
+                                            }
+                                        },
+                                        "then" : {
+                                            "properties": {
+                                                "pattern" : {
+                                                    "type" : "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "if" : {
+                                    "properties": {
+                                        "metadata" : {
+                                            "properties": {
+                                                "type" : { "const" : "number" }
+                                            }
+                                        }
+                                    }
+                                },
+                                "then" : {
+                                    "properties": {
+                                        "default" : {
+                                            "type" : "array",
+                                            "items": {
+                                                "type" : "number"
+                                            },
+                                            "additionalItems": false,
+                                            "minItems" : 1,
+                                            "maxItems" : 1
+                                        },
+                                        "min" : {
+                                            "type" : "number"
+                                        },
+                                        "max" : {
+                                            "type" : "number"
+                                        },
+                                        "step" : {
+                                            "type" : "number"
+                                        }, 
+                                        "validation" : {
+                                            "type" : "string",
+                                            "enum" : ["range", "pattern", "none"]
+                                        },
+                                        "if" : {
+                                            "properties": {
+                                                "validation" : {
+                                                    "const" : "pattern"
+                                                }
+                                            }
+                                        },
+                                        "then" : {
+                                            "properties": {
+                                                "pattern" : {
+                                                    "type" : "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": ["default", "min", "max", "step", "validation"]
+                                }
+                            }
+                        ],
+                        "required": ["metadata"]
+                    },
+                    {
+                        "properties" : {
+                            "metadata": { 
+                                "type": "object",
+                                "properties": {
+                                    "guiType" : {
+                                        "const": "editor"
+                                    },
+                                    "name" : {
+                                        "type" : "string"
+                                    },
+                                    "description" : {
+                                        "type" : "string"
+                                    }
+                                },
+                                "additionalProperties": false,
+                                "required": ["guiType", "name"]
+                            },
+                            "default" : {
+                                "type" : "array",
+                                "items": {
+                                    "type" : "string"
+                                },
+                                "additionalItems": false,
+                                "minItems" : 1,
+                                "maxItems": 1,
+                                "description": "Base64url encoded source code"
+                            },
+                            "validation" : {
+                                "type" : "string",
+                                "enum" : ["pattern", "none"]
+                            },
+                            "if" : {
+                                "properties": {
+                                    "validation" : {
+                                        "const" : "pattern"
+                                    }
+                                }
+                            },
+                            "then" : {
+                                "properties": {
+                                    "pattern" : {
+                                        "type" : "string"
+                                    }
+                                }
+                            }
+                            
+                        },
+                        "required": ["metadata", "default"]
+                    }
+                ]
+            }
+        }
+    ],
+    "required": ["mode", "identifier", "metadata"]
+    }
+}

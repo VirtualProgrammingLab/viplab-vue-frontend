@@ -10,8 +10,10 @@
     <div class="sample-header p-2">
           <div class="sample-header-section">
             <h2>Teacher</h2>
-            <h3>This site will help you create a Computation Template</h3>
-
+            <h3>
+              This site will help you create a Computation Template
+              <a class="ct-docu-link" href="https://virtualprogramminglab.github.io/documentation/viplab-3.0/computation_template/" title="Go to Documentation for more Info" alt="Documentation" target="_blank"><b-icon-book>Go to Documentation for more Info</b-icon-book></a>
+            </h3>
             <b-button id="start-guide" variant="outline-primary" @click="startGuide">Start Guide</b-button>
           </div>
         </div>
@@ -299,7 +301,19 @@
                           <div v-if="copied.configuration && copied.environment != ''" class="border mb-2 p-2">
                             <div v-if="ifConfigPropertyExists('compiling.sources')">
                               <label class="mr-2">compiling.sources*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['compiling.sources']">
+                              
+                              <div class="ml-4 mr-4">
+                                <!-- set how many values the config should have -->
+                                <label for="'compiling-sources-sb-options'">How many compiling.sources should there be?</label>
+                                <b-form-spinbutton :id="'compiling-sources-sb-options'" placeholder="1" :value="getNumberofConfigFields('compiling.sources')" class="mb-2" @change="setNumberOfConfigFields('compiling.sources', $event)"></b-form-spinbutton>
+                                <!-- config-values -->
+                                <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('compiling.sources')" :key="'compiling-sources-' + index">
+                                  <!-- value -->
+                                  <label>Set values:</label>
+                                  <input type="text" class="form-control" :value="getConfigvModel('compiling.sources', index)" @input="setConfigvModel('compiling.sources', $event, index)">
+                                </div>
+                              </div>
+
                             </div>
                             <div v-if="ifConfigPropertyExists('compiling.compiler')">
                               <label class="mr-2">compiling.compiler*:</label>
@@ -311,7 +325,19 @@
                             </div>
                             <div v-if="ifConfigPropertyExists('checking.sources')">
                               <label class="mr-2">checking.sources*(must if checking should be performed):</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['checking.sources']">
+
+                              <div class="ml-4 mr-4">
+                                <!-- set how many values the config should have -->
+                                <label for="'checking.sources-sb-options'">How many checking.sources should there be?</label>
+                                <b-form-spinbutton :id="'checking.sources-sb-options'" placeholder="1" :value="getNumberofConfigFields('checking.sources')" class="mb-2" @change="setNumberOfConfigFields('checking.sources', $event)"></b-form-spinbutton>
+                                <!-- input config-values -->
+                                <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('checking.sources')" :key="'checking.sources-' + index">
+                                  <!-- value -->
+                                  <label>Set values:</label>
+                                  <input type="text" class="form-control" :value="getConfigvModel('checking.sources', index)" @input="setConfigvModel('checking.sources', $event, index)">
+                                </div>
+                              </div>
+
                             </div>
                             <div v-if="ifConfigPropertyExists('linking.flags')">
                               <label class="mr-2">linking.flags*:</label>
@@ -339,7 +365,7 @@
                             </div>
                             <div v-if="ifConfigPropertyExists('running.timelimitInSeconds')">
                               <label class="mr-2">running.timelimitInSeconds:</label>
-                              <input type="number" class="form-control" v-model="copied.configuration['running.timelimitInSeconds']">
+                              <input type="number" class="form-control" v-model.number="copied.configuration['running.timelimitInSeconds']">
                             </div>
                             <div v-if="ifConfigPropertyExists('running.commandLineArguments')">
                               <label class="mr-2">running.commandLineArguments:</label>
@@ -359,7 +385,23 @@
                             </div>
                             <div v-if="ifConfigPropertyExists('running.intermediateFilesPattern')">
                               <label class="mr-2">running.intermediateFilesPattern:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.intermediateFilesPattern']">
+                              
+                              <div class="ml-4 mr-4">
+                                <!-- set how many values the config should have -->
+                                <label for="'running.intermediateFilesPattern-sb-options'">How many running.intermediateFilesPattern should there be?</label>
+                                <b-form-spinbutton :id="'running.intermediateFilesPattern-sb-options'" placeholder="1" :value="getNumberofConfigFields('running.intermediateFilesPattern')" class="mb-2" @change="setNumberOfConfigFields('running.intermediateFilesPattern', $event)"></b-form-spinbutton>
+                                <!-- input config-values -->
+                                <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('running.intermediateFilesPattern')" :key="'running.intermediateFilesPattern-' + index">
+                                  <!-- value -->
+                                  <label>Set values:</label>
+                                  <input type="text" class="form-control" :value="getConfigvModel('running.intermediateFilesPattern', index)" @input="setConfigvModel('running.intermediateFilesPattern', $event, index)">
+                                </div>
+                              </div>
+
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.userId')">
+                              <label class="mr-2">running.userId:</label>
+                              <input type="number" class="form-control" v-model.number="copied.configuration['running.userId']">
                             </div>
                             <div v-if="ifConfigPropertyExists('resources.volume')">
                               <label class="mr-2">resources.volume:</label>
@@ -371,7 +413,7 @@
                             </div>
                             <div v-if="ifConfigPropertyExists('resources.numCPUs')">
                               <label class="mr-2">resources.numCPUs:</label>
-                              <input type="number" class="form-control" v-model="copied.configuration['resources.numCPUs']">
+                              <input type="number" class="form-control" v-model.number="copied.configuration['resources.numCPUs']">
                             </div>
                           </div>
                         </div>
@@ -439,7 +481,7 @@
                                       <input type="text" class="form-control" id="csvConfig.xlabel.label" v-model="csvConfig.xlabel.label">
                                       <!-- factor -->
                                       <label class="mr-2" for="csvConfig.xlabel.factor">factor: </label>
-                                      <input type="number" class="form-control" id="csvConfig.xlabel.factor" v-model="csvConfig.xlabel.factor">
+                                      <input type="number" class="form-control" id="csvConfig.xlabel.factor" v-model.number="csvConfig.xlabel.factor">
                                       <!-- format -->
                                       <label class="mr-2" for="csvConfig.xlabel.format">format: </label>
                                       <input type="text" class="form-control" id="csvConfig.xlabel.format" v-model="csvConfig.xlabel.format">
@@ -460,7 +502,7 @@
                                       <input type="text" class="form-control" id="csvPlot.label" v-model="csvPlot.label">
                                       <!-- factor -->
                                       <label class="mr-2" for="csvPlot.factor">factor: </label>
-                                      <input type="number" class="form-control" id="csvPlot.factor" v-model="csvPlot.factor">
+                                      <input type="number" class="form-control" id="csvPlot.factor" v-model.number="csvPlot.factor">
                                       <!-- factor -->
                                       <label class="mr-2" for="csvPlot.format">format: </label>
                                       <input type="text" class="form-control" id="csvPlot.format" v-model="csvPlot.format">
@@ -591,21 +633,21 @@
                             <div>
                               <label class="mr-2" for="selectedParameter.default">default value: </label>
                               <input v-if="selectedParameter.metadata.type == 'text'" type="text" class="form-control" id="selectedParameter.default" v-model="inputvModel">
-                              <input v-else type="number" class="form-control" id="selectedParameter.default" v-model="selectedParameter.default[0]">
+                              <input v-else type="number" class="form-control" id="selectedParameter.default" v-model.number="selectedParameter.default[0]">
                             </div>
                             <!-- type: number - min, max, step -->
                             <div v-if="selectedParameter.metadata.type == 'number'">
                               <div>
                                 <label class="mr-2" for="selectedParameter.min">min value: </label>
-                                <input type="number" class="form-control" id="selectedParameter.min" v-model="selectedParameter.min">
+                                <input type="number" class="form-control" id="selectedParameter.min" v-model.number="selectedParameter.min">
                               </div>
                               <div>
                                 <label class="mr-2" for="selectedParameter.max">max value: </label>
-                                <input type="number" class="form-control" id="selectedParameter.max" v-model="selectedParameter.max">
+                                <input type="number" class="form-control" id="selectedParameter.max" v-model.number="selectedParameter.max">
                               </div>
                               <div>
                                 <label class="mr-2" for="selectedParameter.step">step size: </label>
-                                <input type="number" class="form-control" id="selectedParameter.step" v-model="selectedParameter.step">
+                                <input type="number" class="form-control" id="selectedParameter.step" v-model.number="selectedParameter.step">
                               </div>
                             </div>
                           </div>
@@ -778,12 +820,16 @@
           </b-card>
         </b-collapse>
         </div>
-        <div class="validation-div pl-2 pr-2">
+        <div class="validation-div pl-2 pr-2 pb-2">
           <pre>
             {{ JSON.stringify(copied, null, 2) }}
           </pre>
           <b-button @click="validateJson">Validate</b-button>
           {{validationResult}}
+          <br>
+          {{validationPartParameterResult}}
+          <br>
+          {{validationArgsResult}}
         </div>
       </div>
     </div>
@@ -803,6 +849,8 @@ import base64url from "base64url";
 // for validation
 var Validator = require('jsonschema').Validator;
 import ctSchema from './json-schema/computation-template.json';
+import parameterSchema from './json-schema/parameters.json';
+
 
 export default {
   name: "app",
@@ -824,14 +872,14 @@ export default {
         "metadata": { "displayName" : "", "description": "", "output": { "viewer": [], "csv" : [], "vtk" : [] } }, 
         "environment": "Container", 
         "configuration": {
-          "running.timelimitInSeconds": "",
+          "running.timelimitInSeconds": 0,
           "running.commandLineArguments": "",
           "running.entrypoint": "",
-          "running.intermediateFilesPattern": "",
+          "running.intermediateFilesPattern": [ "" ],
           "resources.image": "",
           "resources.volume": "",
-          "resources.memory": "",
-          "resources.numCPUs": ""
+          "resources.memory": "4g",
+          "resources.numCPUs": 1
         }, 
         "files": []
       }, 
@@ -847,7 +895,10 @@ export default {
       showCommands: false,
       valueNumbers: new Map(),
       schema: ctSchema,
-      validationResult: {},
+      paramSchema: parameterSchema,
+      validationResult: "",
+      validationPartParameterResult: "",
+      validationArgsResult: "",
       steps: [
         {
           target: '#start-guide', 
@@ -1229,28 +1280,28 @@ export default {
     addConfig: function() {
       let env = this.copied.environment;
       this.$set(this.copied, "configuration", {});
-      this.$set(this.copied.configuration, "running.timelimitInSeconds", "");
+      this.$set(this.copied.configuration, "running.timelimitInSeconds", 0);
       switch (env) {
         case "C":
-          this.$set(this.copied.configuration, "compiling.sources", "test");
+          this.$set(this.copied.configuration, "compiling.sources", [ "" ]);
           this.$set(this.copied.configuration, "compiling.compiler", "");
           this.$set(this.copied.configuration, "compiling.flags", "");
-          this.$set(this.copied.configuration, "checking.sources", "");
+          this.$set(this.copied.configuration, "checking.sources", [ "" ]);
           this.$set(this.copied.configuration, "checking.forbiddenCalls", "");
           this.$set(this.copied.configuration, "linking.flags", "");
           this.$set(this.copied.configuration, "running.commandLineArguments", "");
           break;
         case "C++":
-          this.$set(this.copied.configuration, "compiling.sources", "");
+          this.$set(this.copied.configuration, "compiling.sources", [ "" ]);
           this.$set(this.copied.configuration, "compiling.compiler", "");
           this.$set(this.copied.configuration, "compiling.flags", "");
           this.$set(this.copied.configuration, "linking.flags", "");
           this.$set(this.copied.configuration, "running.commandLineArguments", "");
           break;
         case "Java":
-          this.$set(this.copied.configuration, "compiling.sources", "");
+          this.$set(this.copied.configuration, "compiling.sources", [ "" ]);
           this.$set(this.copied.configuration, "compiling.flags", "");
-          this.$set(this.copied.configuration, "checking.sources", "");
+          this.$set(this.copied.configuration, "checking.sources", [ "" ]);
           this.$set(this.copied.configuration, "checking.allowedCalls", "");
           this.$set(this.copied.configuration, "checking.forbiddenCalls", "");
           this.$set(this.copied.configuration, "running.commandLineArguments", "");
@@ -1258,23 +1309,24 @@ export default {
           this.$set(this.copied.configuration, "running.mainClass", "");
           break;
         case "Matlab":
-          this.$set(this.copied.configuration, "checking.sources", "");
+          this.$set(this.copied.configuration, "checking.sources", [ "" ]);
           this.$set(this.copied.configuration, "checking.allowedCalls", "");
           this.$set(this.copied.configuration, "running.stdinFilename", "");
           break;
         case "Octave":
-          this.$set(this.copied.configuration, "checking.sources", "");
+          this.$set(this.copied.configuration, "checking.sources", [ "" ]);
           this.$set(this.copied.configuration, "checking.allowedCalls", "");
           this.$set(this.copied.configuration, "running.stdinFilename", "");
           break;
         case "Container":
           this.$set(this.copied.configuration, "running.commandLineArguments", "");
           this.$set(this.copied.configuration, "running.entrypoint", "");
-          this.$set(this.copied.configuration, "running.intermediateFilesPattern", "");
+          this.$set(this.copied.configuration, "running.intermediateFilesPattern", [ "" ]);
+          this.$set(this.copied.configuration, "running.userId", 0);
           this.$set(this.copied.configuration, "resources.image", "");
           this.$set(this.copied.configuration, "resources.volume", "");
           this.$set(this.copied.configuration, "resources.memory", "");
-          this.$set(this.copied.configuration, "resources.numCPUs", "");
+          this.$set(this.copied.configuration, "resources.numCPUs", 1);
           break;
         case "DuMuX":
           this.$set(this.copied.configuration, "running.commandLineArguments", "");
@@ -1352,6 +1404,33 @@ export default {
         }
       }
       this.valueNumbers.set(paramId, newValue);
+      this.$forceUpdate();
+    },
+    getNumberofConfigFields: function (configName) {
+      if (this.copied.configuration[configName] == undefined) {
+        return 1;
+      } else {
+        return this.copied.configuration[configName].length;
+      }
+    },
+    setNumberOfConfigFields: function (configName, newValue) {
+      if (newValue < this.getNumberofConfigFields(configName)) {
+        this.copied.configuration[configName].pop();
+        this.$forceUpdate();
+      } else if (newValue != 1) {
+        this.copied.configuration[configName].push("");
+      }
+      this.$forceUpdate();
+    },
+    getConfigvModel: function (configName, index = 0) {
+      if (this.copied.configuration[configName].length > 0) {
+        return this.copied.configuration[configName][index];
+      }
+      return "";
+    },
+    setConfigvModel: function (configName, val, index = 0) {
+      console.log("set: " + configName + " " + val.target.value)
+      this.$set(this.copied.configuration[configName], index, val.target.value);
       this.$forceUpdate();
     },
     getSlidervModel: function (index) {
@@ -1441,7 +1520,28 @@ export default {
     },
     validateJson: function () {
       let v = new Validator();
+      // general template validation
       this.validationResult = v.validate(this.copied, this.schema);
+
+      console.log(this.validationResult)
+
+      // parameter validation
+      let files = this.copied.files;
+      for (let file in files) {
+        let parts = files[file].parts;
+        for (let part in parts) {
+          if (typeof parts[part].parameters !== "undefined") {
+            this.validationPartParameterResult = (v.validate(parts[part].parameters, this.paramSchema));
+          }
+        }
+      }
+      if (typeof this.copied.parameters !== "undefined" && this.copied.parameters !== []) {
+        this.validationArgsResult = (v.validate(this.copied.parameters, this.paramSchema));
+      }
+
+      if (typeof this.validationResult != "undefined" && typeof this.validationPartParameterResult != "undefined" && typeof this.validationArgsResult != "undefined") {
+        this.validationResult = "Template is Valid!";
+      }
     },
     /** Check if teacher-frontend was opened by a user that is signed in */
     isLoggedIn: function() {
@@ -1523,6 +1623,14 @@ body {
     color: white;
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
     font-family: "Montserrat", sans-serif;
+  }
+
+  .ct-docu-link {
+    color: white;
+  }
+
+  .ct-docu-link:hover {
+    color: #004191;
   }
 
   .header {
