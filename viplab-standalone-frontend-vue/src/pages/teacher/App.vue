@@ -15,21 +15,28 @@
               <a class="ct-docu-link" href="https://virtualprogramminglab.github.io/documentation/viplab-3.0/computation_template/" title="Go to Documentation for more Info" alt="Documentation" target="_blank"><b-icon-book>Go to Documentation for more Info</b-icon-book></a>
             </h3>
             <b-button id="start-guide" variant="outline-primary" @click="startGuide">Start Guide</b-button>
+            
+            <input
+                    type="file"
+                    ref="upload"
+                    style="display: none"
+                    @change="uploadCT"
+                    accept="application/JSON"
+                  />
+                  <b-button
+                    class="btn mt-2"
+                    id="start-guide"
+                    variant="outline-primary"
+                    @click="$refs.upload.click()"
+                    v-tooltip.top-center="'Upload of previously created template'"
+                  >
+                    Modify existing Template
+                    <b-icon icon="upload" aria-hidden="true"></b-icon>
+                  </b-button>
           </div>
         </div>
 
     <div class="main-div pl-4 pr-4">
-      
-      <!--
-      <div class="header-intro">
-        
-        <div class="header-content">
-          <h2>Teacher</h2>
-          <h3>This site will help you create a Computation Template</h3>
-
-          <b-button id="start-guide" variant="outline-primary" @click="startGuide">Start Guide</b-button>
-        </div>
-      </div>-->
 
       <div class="toggle-controls mt-2">
         <div id="toggle-left-components">
@@ -709,7 +716,7 @@
                               :readonly="false"
                               :item='{
                                 "identifier" : "Editor" + selectedParameter.identifier,
-                                "content" : ""
+                                "content" : selectedParameter.default[0]
                               }'
                               v-on:update:item="setEditorValue($event)"
                             ></ace-editor-component>
@@ -1047,7 +1054,7 @@ export default {
             "guiType" : e.data,
             "name": ""
           },
-          "default" : [],
+          "default" : [ "" ],
           "validation" : "none",
         };
       } else if (e.data === "checkbox") {
@@ -1567,7 +1574,19 @@ export default {
           this.$forceUpdate();
         } 
       }
-    }
+    },
+    /*upload existing Computation Template JSON */
+    uploadCT: function (event) {
+      var reader = new FileReader();
+      reader.onload = this.onReaderLoad;
+      reader.readAsText(event.target.files[0]);
+    },
+    /*get json from uploaded file und update DOM */
+    onReaderLoad: function (event) {
+      var obj = JSON.parse(event.target.result);
+      console.log(obj);
+      this.copied = obj;
+    },
   },
   created() {
     
