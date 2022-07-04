@@ -286,13 +286,13 @@
                                 v-model="copied.environment"
                                 @change="addConfig()"
                               >
-                                <option>C</option>
-                                <option>C++</option>
-                                <option>Java</option>
-                                <option>Matlab</option>
-                                <option>Octave</option>
+                                <option disabled=true>C</option>
+                                <option disabled=true>C++</option>
+                                <option disabled=true>Java</option>
+                                <option disabled=true>Matlab</option>
+                                <option disabled=true>Octave</option>
                                 <option>Container</option>
-                                <option>DuMuX</option>
+                                <option disabled=true>DuMuX</option>
                               </select>
                             </div>
                           </div>
