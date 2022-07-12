@@ -67,7 +67,25 @@ const store = new Vuex.Store({
     jsonTemplate: {},
     token: "",
     dataTemplate: "",
-    ws: ""
+    ws: "",
+    generatedComputationTemplate: {
+      "identifier" : "", 
+      "version" : "3.0.0", 
+      "metadata": { "displayName" : "", "description": "", "output": { "viewer": [], "csv" : [], "vtk" : [] } }, 
+      "environment": "Container", 
+      "configuration": {
+        "running.timelimitInSeconds": 0,
+        "running.commandLineArguments": "",
+        "running.entrypoint": "",
+        "running.intermediateFilesPattern": [ "" ],
+        "resources.image": "",
+        "running.userId": 0,
+        "resources.volume": "",
+        "resources.memory": "4g",
+        "resources.numCPUs": 1
+      }, 
+      "files": []
+    }
   },
   mutations: {
     updateJsonTemplate (state, newValue) {
@@ -81,6 +99,9 @@ const store = new Vuex.Store({
     },
     updateWebSocket (state, newValue) {
       state.ws = newValue;
+    },
+    updateGeneratedComputationTemplate (state, newValue) {
+      state.generatedComputationTemplate = newValue;
     }
   },
   plugins: [

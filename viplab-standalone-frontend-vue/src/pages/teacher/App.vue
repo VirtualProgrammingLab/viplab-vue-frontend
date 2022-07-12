@@ -107,167 +107,168 @@
         <!-- Graphical View of Template -->
         <div class="dnd-window" id="drag-components-here">
           <b-card no-body>
-                <b-tabs card class="files" id="component-selection" content-class="m-2" fill>
-                  
-                  <!-- Drag-and-Drop Components -->
-                  <b-tab
-                    title="Drop Here"
-                  >
-          <drop class="top-copy" @drop="onFileDrop($event)" :accepts-data="(file) => ((file  === 'file') || (file === 'commandline arguments'))">
-            <div class="template p-2" @click="openWindow($event, 'template', copied)">
+            <b-tabs card class="files" id="component-selection" content-class="m-2" fill>
               
-              <div v-for="(file, index) in copied.files" :key="file.identifier + '-' + index">
-                <drop class="copy" @drop="onPartDrop($event,file)" :accepts-data="(part) => part  === 'part'">
-                  <div class="file p-2" @click="openWindow($event, 'file', file)">
+              <!-- Drag-and-Drop Components -->
+              <b-tab title="Drop Here">
+                <drop class="top-copy" @drop="onFileDrop($event)" :accepts-data="(file) => ((file  === 'file') || (file === 'commandline arguments'))">
+                  <div class="template p-2" @click="openWindow($event, 'template', computationTemplate)">
                     
-                    <b-row align-v="stretch">
-                      <b-col cols="8">
-                        File
-                      </b-col>
-                      <b-col cols="4">
-                        <div class="text-right" @click="removeFile($event, file)">
-                          <b-icon icon="x-circle"></b-icon>
-                        </div>
-                      </b-col>
-                    </b-row>
+                    <div v-for="(file, index) in computationTemplate.files" :key="file.identifier + '-' + index">
+                      <drop class="copy" @drop="onPartDrop($event,file)" :accepts-data="(part) => part  === 'part'">
+                        <div class="file p-2" @click="openWindow($event, 'file', file)">
+                          
+                          <b-row align-v="stretch">
+                            <b-col cols="8">
+                              File
+                            </b-col>
+                            <b-col cols="4">
+                              <div class="text-right" @click="removeFile($event, file)">
+                                <b-icon icon="x-circle"></b-icon>
+                              </div>
+                            </b-col>
+                          </b-row>
 
-                    <!--<div v-for="(part, index) in file.parts" :key="index">-->
-                    <drop-list class="part-droplist" v-if="file.parts" :items="file.parts" @insert="onInsert($event, false, file)" @reorder="$event.apply(file.parts)" :accepts-data="(part) => false" :column="true">
-                      <template v-slot:item="{item}"> 
-                        <drag class="item part-drag" :key="item.identifier">           
-                          <drop class="part-border" @drop="onParameterDrop($event, item)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && item.parameters">
-                            <div class="part p-2" @click="openWindow($event, 'part', item)">
+                          <!--<div v-for="(part, index) in file.parts" :key="index">-->
+                          <drop-list class="part-droplist" v-if="file.parts" :items="file.parts" @insert="onInsert($event, false, file)" @reorder="$event.apply(file.parts)" :accepts-data="(part) => false" :column="true">
+                            <template v-slot:item="{item}"> 
+                              <drag class="item part-drag" :key="item.identifier">           
+                                <drop class="part-border" @drop="onParameterDrop($event, item)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && item.parameters">
+                                  <div class="part p-2" @click="openWindow($event, 'part', item)">
 
-                              <b-row align-v="stretch" class="mb-2">
-                                <b-col cols="8">
-                                  Part
-                                </b-col>
-                                <b-col cols="4">
-                                  <div class="text-right" @click="removePart($event, item)">
-                                    <b-icon icon="x-circle"></b-icon>
+                                    <b-row align-v="stretch" class="mb-2">
+                                      <b-col cols="8">
+                                        Part
+                                      </b-col>
+                                      <b-col cols="4">
+                                        <div class="text-right" @click="removePart($event, item)">
+                                          <b-icon icon="x-circle"></b-icon>
+                                        </div>
+                                      </b-col>
+                                    </b-row>
+                                    
+                                    <b-card v-if="item.parameters" no-body class="">
+                                      <b-card-header header-tag="header" class="p-1" role="tab">
+                                        <b-button block v-b-toggle:[paramAccordeon(item.identifier)] variant="info">
+                                          Parameters
+                                          <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
+                                          <b-icon class="when-open" icon="caret-up"></b-icon>
+                                        </b-button>
+                                      </b-card-header>
+                                      <b-collapse :id="item.identifier+'param'" visible accordion="my-accordion-1" role="tabpanel">
+                                        <b-card-body>
+                                          <drop-list class="param-droplist" v-if="item.parameters" :items="item.parameters" @insert="onInsert($event, true ,item)" @reorder="$event.apply(item.parameters)" :accepts-data="(param) => false" :column="true">
+                                            <template v-slot:item="{item}">
+                                              <drag class="item param" :key="item.identifier">
+                                                <b-container class="param-container" @click="openWindow($event, 'parameter', item)">
+                                                  
+                                                  <b-row align-v="stretch">
+                                                    <b-col cols="8">
+                                                      {{item.metadata.guiType}}
+                                                    </b-col>
+                                                    <b-col cols="4">
+                                                      <div class="text-right" @click="removeParameter($event, item)">
+                                                        <b-icon icon="x-circle"></b-icon>
+                                                      </div>
+                                                    </b-col>
+                                                  </b-row>
+                                                </b-container>
+                                              </drag>
+                                            </template>
+                                            <template v-slot:feedback="{data}">
+                                              <div class="item feedback" :key="data">{{data}}</div>
+                                            </template>
+                                          </drop-list>
+                                        </b-card-body>
+                                      </b-collapse>
+                                    </b-card>
+
+                                    <b-card no-body class="">
+                                      <b-card-header header-tag="header" class="p-1" role="tab">
+                                        <b-button block v-b-toggle:[contentAccordeon(item.identifier)] variant="info">
+                                          Content
+                                          <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
+                                          <b-icon class="when-open" icon="caret-up"></b-icon>
+                                        </b-button>
+                                      </b-card-header>
+                                      <b-collapse :id="item.identifier+'content'" visible accordion="my-accordion-2" role="tabpanel">
+                                        <b-card-body>
+                                          <div class="part-content-field">
+                                            <label class="mr-2" for="item.content">content: </label>
+                                            <ace-editor-component 
+                                              :isParameter="false" 
+                                              :isMustache="false"
+                                              :readonly="false"
+                                              :item='{
+                                                "identifier" : "Editor" + item.identifier,
+                                                "content" : item.content
+                                              }'
+                                              v-on:update:item="updateContent(item, $event)"
+                                            ></ace-editor-component>
+                                          </div>
+                                        </b-card-body>
+                                      </b-collapse>
+                                    </b-card>
                                   </div>
-                                </b-col>
-                              </b-row>
-                              
-                              <b-card v-if="item.parameters" no-body class="">
-                                <b-card-header header-tag="header" class="p-1" role="tab">
-                                  <b-button block v-b-toggle:[paramAccordeon(item.identifier)] variant="info">
-                                    Parameters
-                                    <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
-                                    <b-icon class="when-open" icon="caret-up"></b-icon>
-                                  </b-button>
-                                </b-card-header>
-                                <b-collapse :id="item.identifier+'param'" visible accordion="my-accordion-1" role="tabpanel">
-                                  <b-card-body>
-                                    <drop-list class="param-droplist" v-if="item.parameters" :items="item.parameters" @insert="onInsert($event, true ,item)" @reorder="$event.apply(item.parameters)" :accepts-data="(param) => false" :column="true">
-                                      <template v-slot:item="{item}">
-                                        <drag class="item param" :key="item.identifier">
-                                          <b-container class="param-container" @click="openWindow($event, 'parameter', item)">
-                                            
-                                            <b-row align-v="stretch">
-                                              <b-col cols="8">
-                                                {{item.metadata.guiType}}
-                                              </b-col>
-                                              <b-col cols="4">
-                                                <div class="text-right" @click="removeParameter($event, item)">
-                                                  <b-icon icon="x-circle"></b-icon>
-                                                </div>
-                                              </b-col>
-                                            </b-row>
-                                          </b-container>
-                                        </drag>
-                                      </template>
-                                      <template v-slot:feedback="{data}">
-                                        <div class="item feedback" :key="data">{{data}}</div>
-                                      </template>
-                                    </drop-list>
-                                  </b-card-body>
-                                </b-collapse>
-                              </b-card>
-
-                              <b-card no-body class="">
-                                <b-card-header header-tag="header" class="p-1" role="tab">
-                                  <b-button block v-b-toggle:[contentAccordeon(item.identifier)] variant="info">
-                                    Content
-                                    <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
-                                    <b-icon class="when-open" icon="caret-up"></b-icon>
-                                  </b-button>
-                                </b-card-header>
-                                <b-collapse :id="item.identifier+'content'" visible accordion="my-accordion-2" role="tabpanel">
-                                  <b-card-body>
-                                    <div class="part-content-field">
-                                      <label class="mr-2" for="item.content">content: </label>
-                                      <ace-editor-component 
-                                        :isParameter="false" 
-                                        :isMustache="false"
-                                        :readonly="false"
-                                        :item='{
-                                          "identifier" : "Editor" + item.identifier,
-                                          "content" : item.content
-                                        }'
-                                        v-on:update:item="updateContent(item, $event)"
-                                      ></ace-editor-component>
-                                    </div>
-                                  </b-card-body>
-                                </b-collapse>
-                              </b-card>
-                            </div>
-                          </drop> 
-                        </drag>
-                      </template>
-                      <template v-slot:feedback="{data}">
-                        <div class="item feedback" :key="data">{{data}}</div>
-                      </template>
-                    </drop-list>
-                    <!--</div>-->
-                  </div>
-                </drop> 
-              </div>
-
-              <!-- Commandline Parameters -->
-              <div v-if="copied.parameters">
-                <drop class="copy" @drop="onParameterDrop($event)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && copied.parameters">
-                  <div class="file p-2" @click="openWindow($event, 'commands', copied.parameters)">
-                  
-                    <b-row align-v="stretch">
-                      <b-col cols="10">
-                        Commandline Arguments
-                      </b-col>
-                      <b-col cols="2">
-                        <div class="text-right" @click="removeCommandlineArgs($event)">
-                          <b-icon icon="x-circle"></b-icon>
+                                </drop> 
+                              </drag>
+                            </template>
+                            <template v-slot:feedback="{data}">
+                              <div class="item feedback" :key="data">{{data}}</div>
+                            </template>
+                          </drop-list>
+                          <!--</div>-->
                         </div>
-                      </b-col>
-                    </b-row>
+                      </drop> 
+                    </div>
 
-                    <drop-list class="param-droplist" v-if="copied.parameters" :items="copied.parameters" @insert="onInsert($event, true, item)" @reorder="$event.apply(copied.parameters)" :accepts-data="(param) => false" :column="true" :key="uuid()">
-                      <template v-slot:item="{item}">
-                        <drag class="item param" :key="item.identifier">
-                          <b-container class="param-container" @click="openWindow($event, 'parameter', item)">
-                            <b-row align-v="stretch">
-                              <b-col cols="8">
-                                {{item.metadata.guiType}}
-                              </b-col>
-                              <b-col cols="4">
-                                <div class="text-right" @click="removeParameter($event, item, false)">
-                                  <b-icon icon="x-circle"></b-icon>
-                                </div>
-                              </b-col>
-                            </b-row>
-                          </b-container>
-                        </drag>
-                      </template>
-                      <template v-slot:feedback="{data}">
-                        <div class="item feedback" :key="data">{{data}}</div>
-                      </template>
-                    </drop-list>
+                    <!-- Commandline Parameters -->
+                    <div v-if="computationTemplate.parameters">
+                      <drop class="copy" @drop="onParameterDrop($event)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && computationTemplate.parameters">
+                        <div class="file p-2" @click="openWindow($event, 'commands', computationTemplate.parameters)">
+                        
+                          <b-row align-v="stretch">
+                            <b-col cols="10">
+                              Commandline Arguments
+                            </b-col>
+                            <b-col cols="2">
+                              <div class="text-right" @click="removeCommandlineArgs($event)">
+                                <b-icon icon="x-circle"></b-icon>
+                              </div>
+                            </b-col>
+                          </b-row>
 
-                  </div>
+                          <drop-list class="param-droplist" v-if="computationTemplate.parameters" :items="computationTemplate.parameters" @insert="onInsert($event, true, item)" @reorder="$event.apply(computationTemplate.parameters)" :accepts-data="(param) => false" :column="true" :key="uuid()">
+                            <template v-slot:item="{item}">
+                              <drag class="item param" :key="item.identifier">
+                                <b-container class="param-container" @click="openWindow($event, 'parameter', item)">
+                                  <b-row align-v="stretch">
+                                    <b-col cols="8">
+                                      {{item.metadata.guiType}}
+                                    </b-col>
+                                    <b-col cols="4">
+                                      <div class="text-right" @click="removeParameter($event, item, false)">
+                                        <b-icon icon="x-circle"></b-icon>
+                                      </div>
+                                    </b-col>
+                                  </b-row>
+                                </b-container>
+                              </drag>
+                            </template>
+                            <template v-slot:feedback="{data}">
+                              <div class="item feedback" :key="data">{{data}}</div>
+                            </template>
+                          </drop-list>
+
+                        </div>
+                      </drop>
+                    </div>
+                  </div>     
                 </drop>
-              </div>
-            </div>     
-          </drop>
-          </b-tab>
+              </b-tab>
+              <b-tab title="JSON Preview">
+                <pre>{{ computationTemplate }}</pre>
+              </b-tab>
             </b-tabs>
           </b-card>
         </div>
@@ -286,11 +287,11 @@
                         <!-- Environment -->
                         <div id="run-configuration">
                           <div>
-                            <label class="mr-2" for="copied.environment">environment: </label>
+                            <label class="mr-2" for="computationTemplate.environment">environment: </label>
                             <div class="dropdown form-group">
                               <select
                                 class="form-control"
-                                v-model="copied.environment"
+                                v-model="computationTemplate.environment"
                                 @change="addConfig()"
                               >
                                 <option disabled=true>C</option>
@@ -305,29 +306,29 @@
                           </div>
 
                           <!-- Configuration -->
-                          <div v-if="copied.configuration && copied.environment != ''" class="border mb-2 p-2">
-                            <div v-if="ifConfigPropertyExists('resources.image')" id="image">
+                          <div v-if="computationTemplate.configuration && computationTemplate.environment != ''" class="border mb-2 p-2">
+                            <div v-if="computationTemplate.environment == 'Container'" id="image">
                               <label class="mr-2">resources.image*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['resources.image']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['resources.image']">
                             </div>
-                            <div v-if="ifConfigPropertyExists('running.timelimitInSeconds')">
+                            <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">running.timelimitInSeconds:</label>
-                              <input type="number" class="form-control" v-model.number="copied.configuration['running.timelimitInSeconds']">
+                              <input type="number" class="form-control" v-model.number="computationTemplate.configuration['running.timelimitInSeconds']">
                             </div>
-                            <div v-if="ifConfigPropertyExists('running.commandLineArguments')">
+                            <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">running.commandLineArguments:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.commandLineArguments']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.commandLineArguments']">
                             </div>
-                            <div v-if="ifConfigPropertyExists('running.entrypoint')">
+                            <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">running.entrypoint:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.entrypoint']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.entrypoint']">
                             </div>
-                            <div v-if="ifConfigPropertyExists('running.intermediateFilesPattern')">
+                            <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">running.intermediateFilesPattern:</label>
                               <div class="ml-4 mr-4">
                                 <!-- set how many values the config should have -->
                                 <label for="'running.intermediateFilesPattern-sb-options'">How many running.intermediateFilesPattern should there be?</label>
-                                <b-form-spinbutton :id="'running.intermediateFilesPattern-sb-options'" placeholder="1" :value="getNumberofConfigFields('running.intermediateFilesPattern')" class="mb-2" @change="setNumberOfConfigFields('running.intermediateFilesPattern', $event)"></b-form-spinbutton>
+                                <b-form-spinbutton :id="'running.intermediateFilesPattern-sb-options'" placeholder="0" min="0" :value="getNumberofConfigFields('running.intermediateFilesPattern')" class="mb-2" @change="setNumberOfConfigFields('running.intermediateFilesPattern', $event)"></b-form-spinbutton>
                                 <!-- input config-values -->
                                 <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('running.intermediateFilesPattern')" :key="'running.intermediateFilesPattern-' + index">
                                   <!-- value -->
@@ -336,23 +337,24 @@
                                 </div>
                               </div>
                             </div>
-                            <div v-if="ifConfigPropertyExists('running.userId')">
+                            <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">running.userId:</label>
-                              <input type="number" class="form-control" v-model.number="copied.configuration['running.userId']">
+                              <input type="number" class="form-control" v-model.number="computationTemplate.configuration['running.userId']">
                             </div>
-                            <div v-if="ifConfigPropertyExists('resources.volume')">
+                            <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">resources.volume:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['resources.volume']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['resources.volume']">
                             </div>
-                            <div v-if="ifConfigPropertyExists('resources.memory')">
+                            <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">resources.memory:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['resources.memory']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['resources.memory']">
                             </div>
-                            <div v-if="ifConfigPropertyExists('resources.numCPUs')">
+                            <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">resources.numCPUs:</label>
-                              <input type="number" class="form-control" v-model.number="copied.configuration['resources.numCPUs']">
+                              <input type="number" class="form-control" v-model.number="computationTemplate.configuration['resources.numCPUs']">
                             </div>
 
+                            <!-- TODO Config Props need to be added if ViPLab supports other environments than Container -->
                             <div v-if="ifConfigPropertyExists('compiling.sources')">
                               <label class="mr-2">compiling.sources*:</label>
                               <div class="ml-4 mr-4">
@@ -369,11 +371,11 @@
                             </div>
                             <div v-if="ifConfigPropertyExists('compiling.compiler')">
                               <label class="mr-2">compiling.compiler*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['compiling.compiler']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['compiling.compiler']">
                             </div>
                             <div v-if="ifConfigPropertyExists('compiling.flags')">
                               <label class="mr-2">compiling.flags*(Must for C, C++, optional for Java):</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['compiling.flags']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['compiling.flags']">
                             </div>
                             <div v-if="ifConfigPropertyExists('checking.sources')">
                               <label class="mr-2">checking.sources*(must if checking should be performed):</label>
@@ -391,59 +393,59 @@
                             </div>
                             <div v-if="ifConfigPropertyExists('linking.flags')">
                               <label class="mr-2">linking.flags*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['linking.flags']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['linking.flags']">
                             </div>
                             <div v-if="ifConfigPropertyExists('running.stdinFilename')">
                               <label class="mr-2">running.stdinFilename*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.stdinFilename']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.stdinFilename']">
                             </div>
                             <div v-if="ifConfigPropertyExists('running.executable')">
                               <label class="mr-2">running.executable*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.executable']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.executable']">
                             </div>
                             <div v-if="ifConfigPropertyExists('checking.allowedCalls')">
                               <label class="mr-2">checking.allowedCalls(must if checking should be performed):</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['checking.allowedCalls']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['checking.allowedCalls']">
                             </div>
                             <div v-if="ifConfigPropertyExists('checking.forbiddenCalls')">
                               <label class="mr-2">checking.forbiddenCalls(must if checking should be performed):</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['checking.forbiddenCalls']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['checking.forbiddenCalls']">
                             </div>
                             <div v-if="ifConfigPropertyExists('running.flags')">
                               <label class="mr-2">running.flags:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.flags']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.flags']">
                             </div>
                             <div v-if="ifConfigPropertyExists('running.mainClass')">
                               <label class="mr-2">running.mainClass:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.mainClass']">
+                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.mainClass']">
                             </div>
                           </div>
                         </div>
 
                         <!-- Metadata -->
-                        <div v-if="copied.metadata">
-                          <label class="mr-2" for="copied.metadata">metadata: </label>
+                        <div v-if="computationTemplate.metadata">
+                          <label class="mr-2" for="computationTemplate.metadata">metadata: </label>
                           <!-- display name -->
                           <div>
                             <label class="mr-2">displayName:</label>
-                            <input type="text" class="form-control" v-model="copied.metadata.displayName">
+                            <input type="text" class="form-control" v-model="computationTemplate.metadata.displayName">
                           </div>
                           <!-- description -->
                           <div>
                             <label class="mr-2">description:</label>
-                            <input type="text" class="form-control" v-model="copied.metadata.description">
+                            <input type="text" class="form-control" v-model="computationTemplate.metadata.description">
                           </div>
 
                           <!-- output -->
                           <div id="define-output">
-                            <label class="mr-2" for="copied.metadata.output">output: </label>
+                            <label class="mr-2" for="computationTemplate.metadata.output">output: </label>
                             <!-- viewer -->
                             <div>
-                              <label class="mr-2" for="copied.metadata.output.viewer">viewer: </label>
+                              <label class="mr-2" for="computationTemplate.metadata.output.viewer">viewer: </label>
                               <div class="dropdown form-group">
                                   <select
                                     class="form-control"
-                                    v-model="copied.metadata.output.viewer"
+                                    v-model="computationTemplate.metadata.output.viewer"
                                     multiple
                                   >
                                     <option>Image</option>
@@ -455,12 +457,12 @@
                             </div>
                             <!-- csv -->
                             <div>
-                              <label class="mr-2" for="copied.metadata.output.csv">csv: </label>
+                              <label class="mr-2" for="computationTemplate.metadata.output.csv">csv: </label>
                               <b-button class="btn mb-3" @click="addCsvConfig()" v-tooltip.top-center="'Add Config for Group of CSV-Files'">
                                 <b-icon icon="plus" aria-hidden="true"></b-icon>
                               </b-button>
                               <div class="ml-4 mr-4">
-                                <div class="border p-2" v-for="csvConfig in copied.metadata.output.csv" :key="csvConfig.identifier">
+                                <div class="border p-2" v-for="csvConfig in computationTemplate.metadata.output.csv" :key="csvConfig.identifier">
                                   <!-- identifier -->
                                   <div>
                                     <label class="mr-2" for="csvConfig.identifier">identifier: </label>
@@ -515,12 +517,12 @@
                             </div>
                             <!-- vtk -->
                             <div>
-                              <label class="mr-2" for="copied.metadata.output.vtk">vtk: </label>
+                              <label class="mr-2" for="computationTemplate.metadata.output.vtk">vtk: </label>
                               <b-button class="btn mb-3" @click="addVtkConfig()" v-tooltip.top-center="'Add Config for Group of VTK-Files'">
                                 <b-icon icon="plus" aria-hidden="true"></b-icon>
                               </b-button>
                               <div class="ml-4 mr-4">
-                                <div class="border mb-2 p-2" v-for="vtkConfig in copied.metadata.output.vtk" :key="vtkConfig.identifier">
+                                <div class="border mb-2 p-2" v-for="vtkConfig in computationTemplate.metadata.output.vtk" :key="vtkConfig.identifier">
                                   <!-- identifier -->
                                   <div>
                                     <label class="mr-2" for="vtkConfig.identifier">identifier: </label>
@@ -561,6 +563,7 @@
                                 <option>c_cpp</option>
                                 <option>matlab</option>
                                 <option>java</option>
+                                <option></option>
                               </select>
                             </div>
                           </div>
@@ -823,9 +826,6 @@
         </b-collapse>
         </div>
         <div class="validation-div pl-2 pr-2 pb-2">
-          <pre>
-            {{ JSON.stringify(copied, null, 2) }}
-          </pre>
           <b-button @click="validateJson">Validate</b-button>
           {{validationResult}}
           <br>
@@ -883,24 +883,6 @@ export default {
       componentsFile: ["part"], 
       componentsPart: ["part"],
       componentsCommand: [],
-      copied: {
-        "identifier" : "", 
-        "version" : "3.0.0", 
-        "metadata": { "displayName" : "", "description": "", "output": { "viewer": [], "csv" : [], "vtk" : [] } }, 
-        "environment": "Container", 
-        "configuration": {
-          "running.timelimitInSeconds": 0,
-          "running.commandLineArguments": "",
-          "running.entrypoint": "",
-          "running.intermediateFilesPattern": [ "" ],
-          "resources.image": "",
-          "running.userId": 0,
-          "resources.volume": "",
-          "resources.memory": "4g",
-          "resources.numCPUs": 1
-        }, 
-        "files": []
-      }, 
       availableGuiTypes : ["input_field", "editor", "slider", "checkbox", "radio", "dropdown", "toggle"],
       preferences: true,
       selectedParameter: {},
@@ -980,10 +962,19 @@ export default {
         this.$store.commit("updateWebSocket", newValue)
       }
     },
+    computationTemplate: {
+      get () {
+        this.$forceUpdate()
+        return this.$store.state.generatedComputationTemplate;
+      },
+      set (newValue) {
+        this.$store.commit("updateGeneratedComputationTemplate", newValue)
+      }
+    },
     thereIsTemplate() {
-      for (var file in this.copied.files) {
-        for (var part in this.copied.files[file].parts) {
-          var currentPart = this.copied.files[file].parts[part]
+      for (var file in this.computationTemplate.files) {
+        for (var part in this.computationTemplate.files[file].parts) {
+          var currentPart = this.computationTemplate.files[file].parts[part]
           if (currentPart.access === "template") {
             return true;
           }
@@ -1009,11 +1000,21 @@ export default {
     },
   }, 
   watch: {
-    copied: {
+    computationTemplate: {
       handler: function () {
         // reset iFrame, if computation task is modified
         let iFrameDiv = document.getElementById("iframe-div")
         iFrameDiv.innerHTML = ""
+
+        // check if properties are empty and delete
+        for (const [key, value] of Object.entries(this.computationTemplate.configuration)) {
+          if (value == "") {
+            this.$delete(this.computationTemplate.configuration, key)
+          }
+        }
+
+        // update generated CT in Vuex-Store
+        this.$store.commit("updateGeneratedComputationTemplate", this.computationTemplate)
       },
       deep: true
     },
@@ -1064,13 +1065,13 @@ export default {
           },
           "parts": []
         };
-        this.copied.files.push(file);
+        this.computationTemplate.files.push(file);
         // add possibility to add "parts"
         this.componentsCommand = this.componentsPart;
       } else {
         // add commandline parameters
-        if (typeof this.copied.parameters === "undefined") {
-          this.copied.parameters = [];
+        if (typeof this.computationTemplate.parameters === "undefined") {
+          this.computationTemplate.parameters = [];
           // remove possibility to add commandline params
           this.componentsFiles = ["file"];
           this.$forceUpdate();
@@ -1182,7 +1183,7 @@ export default {
       if (part !== null) {
         part.parameters.push(parameter);
       } else {
-        this.copied.parameters.push(parameter);
+        this.computationTemplate.parameters.push(parameter);
       }
       this.$forceUpdate();
     },
@@ -1207,8 +1208,8 @@ export default {
         console.log("commands clicked");
         this.showCommands = true;
       } else {
-        if (this.copied.identifier == "") {
-          this.copied.identifier = this.uuid();
+        if (this.computationTemplate.identifier == "") {
+          this.computationTemplate.identifier = this.uuid();
         }
         this.showTemplate = true;
       }
@@ -1262,13 +1263,13 @@ export default {
       console.log("Delete following Parameter - " + item.metadata.guiType);
       event.stopPropagation();
       if (isInPart) {
-        for (var file in this.copied.files) {
-          for (var part in this.copied.files[file].parts) {
-            var currentPart = this.copied.files[file].parts[part];
+        for (var file in this.computationTemplate.files) {
+          for (var part in this.computationTemplate.files[file].parts) {
+            var currentPart = this.computationTemplate.files[file].parts[part];
             for (var parameter in currentPart.parameters) {
               let currentParameter = currentPart.parameters[parameter];
               if (currentParameter.identifier === item.identifier) {
-                delete this.copied.files[file].parts[part].parameters.splice(parameter, 1);
+                delete this.computationTemplate.files[file].parts[part].parameters.splice(parameter, 1);
                 this.closePreferences();
                 this.showTemplate = true;
                 this.preferences = true;
@@ -1277,10 +1278,10 @@ export default {
           }
         }
       } else {
-        for (let argument in this.copied.parameters) {
-          let currentParameter = this.copied.parameters[argument];
+        for (let argument in this.computationTemplate.parameters) {
+          let currentParameter = this.computationTemplate.parameters[argument];
           if (currentParameter.identifier === item.identifier) {
-            delete this.copied.parameters.splice(argument, 1);
+            delete this.computationTemplate.parameters.splice(argument, 1);
             this.closePreferences();
             this.showCommands = true;
             this.preferences = true;
@@ -1294,9 +1295,9 @@ export default {
      */
     removeFile: function(event, item) {
       event.stopPropagation();
-      for (let fileIndex in this.copied.files) {
-        if (this.copied.files[fileIndex].identifier == item.identifier) {
-          delete this.copied.files.splice(fileIndex, 1);
+      for (let fileIndex in this.computationTemplate.files) {
+        if (this.computationTemplate.files[fileIndex].identifier == item.identifier) {
+          delete this.computationTemplate.files.splice(fileIndex, 1);
         }
       }
       this.closePreferences();
@@ -1309,10 +1310,10 @@ export default {
      */
     removePart: function(event, item) {
       event.stopPropagation();
-      for (let fileIndex in this.copied.files) {
-        for (let partIndex in this.copied.files[fileIndex].parts) {
-          if (this.copied.files[fileIndex].parts[partIndex].identifier == item.identifier) {
-            delete this.copied.files[fileIndex].parts.splice(partIndex, 1);
+      for (let fileIndex in this.computationTemplate.files) {
+        for (let partIndex in this.computationTemplate.files[fileIndex].parts) {
+          if (this.computationTemplate.files[fileIndex].parts[partIndex].identifier == item.identifier) {
+            delete this.computationTemplate.files[fileIndex].parts.splice(partIndex, 1);
           }
         }
       }
@@ -1326,7 +1327,7 @@ export default {
      */
     removeCommandlineArgs: function(event) {
       event.stopPropagation();
-      delete this.copied.parameters;
+      delete this.computationTemplate.parameters;
       this.componentsFiles.push("commandline arguments")
       this.closePreferences();
       this.preferences = true;
@@ -1357,65 +1358,65 @@ export default {
       this.$forceUpdate();
     },
     addConfig: function() {
-      let env = this.copied.environment;
-      this.$set(this.copied, "configuration", {});
-      this.$set(this.copied.configuration, "running.timelimitInSeconds", 0);
+      let env = this.computationTemplate.environment;
+      this.$set(this.computationTemplate, "configuration", {});
+      this.$set(this.computationTemplate.configuration, "running.timelimitInSeconds", 0);
       switch (env) {
         case "C":
-          this.$set(this.copied.configuration, "compiling.sources", [ "" ]);
-          this.$set(this.copied.configuration, "compiling.compiler", "");
-          this.$set(this.copied.configuration, "compiling.flags", "");
-          this.$set(this.copied.configuration, "checking.sources", [ "" ]);
-          this.$set(this.copied.configuration, "checking.forbiddenCalls", "");
-          this.$set(this.copied.configuration, "linking.flags", "");
-          this.$set(this.copied.configuration, "running.commandLineArguments", "");
+          this.$set(this.computationTemplate.configuration, "compiling.sources", [ "" ]);
+          this.$set(this.computationTemplate.configuration, "compiling.compiler", "");
+          this.$set(this.computationTemplate.configuration, "compiling.flags", "");
+          this.$set(this.computationTemplate.configuration, "checking.sources", [ "" ]);
+          this.$set(this.computationTemplate.configuration, "checking.forbiddenCalls", "");
+          this.$set(this.computationTemplate.configuration, "linking.flags", "");
+          this.$set(this.computationTemplate.configuration, "running.commandLineArguments", "");
           break;
         case "C++":
-          this.$set(this.copied.configuration, "compiling.sources", [ "" ]);
-          this.$set(this.copied.configuration, "compiling.compiler", "");
-          this.$set(this.copied.configuration, "compiling.flags", "");
-          this.$set(this.copied.configuration, "linking.flags", "");
-          this.$set(this.copied.configuration, "running.commandLineArguments", "");
+          this.$set(this.computationTemplate.configuration, "compiling.sources", [ "" ]);
+          this.$set(this.computationTemplate.configuration, "compiling.compiler", "");
+          this.$set(this.computationTemplate.configuration, "compiling.flags", "");
+          this.$set(this.computationTemplate.configuration, "linking.flags", "");
+          this.$set(this.computationTemplate.configuration, "running.commandLineArguments", "");
           break;
         case "Java":
-          this.$set(this.copied.configuration, "compiling.sources", [ "" ]);
-          this.$set(this.copied.configuration, "compiling.flags", "");
-          this.$set(this.copied.configuration, "checking.sources", [ "" ]);
-          this.$set(this.copied.configuration, "checking.allowedCalls", "");
-          this.$set(this.copied.configuration, "checking.forbiddenCalls", "");
-          this.$set(this.copied.configuration, "running.commandLineArguments", "");
-          this.$set(this.copied.configuration, "running.flags", "");
-          this.$set(this.copied.configuration, "running.mainClass", "");
+          this.$set(this.computationTemplate.configuration, "compiling.sources", [ "" ]);
+          this.$set(this.computationTemplate.configuration, "compiling.flags", "");
+          this.$set(this.computationTemplate.configuration, "checking.sources", [ "" ]);
+          this.$set(this.computationTemplate.configuration, "checking.allowedCalls", "");
+          this.$set(this.computationTemplate.configuration, "checking.forbiddenCalls", "");
+          this.$set(this.computationTemplate.configuration, "running.commandLineArguments", "");
+          this.$set(this.computationTemplate.configuration, "running.flags", "");
+          this.$set(this.computationTemplate.configuration, "running.mainClass", "");
           break;
         case "Matlab":
-          this.$set(this.copied.configuration, "checking.sources", [ "" ]);
-          this.$set(this.copied.configuration, "checking.allowedCalls", "");
-          this.$set(this.copied.configuration, "running.stdinFilename", "");
+          this.$set(this.computationTemplate.configuration, "checking.sources", [ "" ]);
+          this.$set(this.computationTemplate.configuration, "checking.allowedCalls", "");
+          this.$set(this.computationTemplate.configuration, "running.stdinFilename", "");
           break;
         case "Octave":
-          this.$set(this.copied.configuration, "checking.sources", [ "" ]);
-          this.$set(this.copied.configuration, "checking.allowedCalls", "");
-          this.$set(this.copied.configuration, "running.stdinFilename", "");
+          this.$set(this.computationTemplate.configuration, "checking.sources", [ "" ]);
+          this.$set(this.computationTemplate.configuration, "checking.allowedCalls", "");
+          this.$set(this.computationTemplate.configuration, "running.stdinFilename", "");
           break;
         case "Container":
-          this.$set(this.copied.configuration, "running.commandLineArguments", "");
-          this.$set(this.copied.configuration, "running.entrypoint", "");
-          this.$set(this.copied.configuration, "running.intermediateFilesPattern", [ "" ]);
-          this.$set(this.copied.configuration, "running.userId", 0);
-          this.$set(this.copied.configuration, "resources.image", "");
-          this.$set(this.copied.configuration, "resources.volume", "");
-          this.$set(this.copied.configuration, "resources.memory", "");
-          this.$set(this.copied.configuration, "resources.numCPUs", 1);
+          this.$set(this.computationTemplate.configuration, "running.commandLineArguments", "");
+          this.$set(this.computationTemplate.configuration, "running.entrypoint", "");
+          this.$set(this.computationTemplate.configuration, "running.intermediateFilesPattern", [ "" ]);
+          this.$set(this.computationTemplate.configuration, "running.userId", 0);
+          this.$set(this.computationTemplate.configuration, "resources.image", "");
+          this.$set(this.computationTemplate.configuration, "resources.volume", "");
+          this.$set(this.computationTemplate.configuration, "resources.memory", "");
+          this.$set(this.computationTemplate.configuration, "resources.numCPUs", 1);
           break;
         case "DuMuX":
-          this.$set(this.copied.configuration, "running.commandLineArguments", "");
-          this.$set(this.copied.configuration, "running.executable", "");
+          this.$set(this.computationTemplate.configuration, "running.commandLineArguments", "");
+          this.$set(this.computationTemplate.configuration, "running.executable", "");
           break;
       }
     },
     /** Check if property exists in current config, or if it is undefined */
     ifConfigPropertyExists(property) {
-      let config = this.copied.configuration;
+      let config = this.computationTemplate.configuration;
       //console.log(config[property]);
       if (typeof config[property] !== "undefined") {
         return true;
@@ -1440,7 +1441,7 @@ export default {
           }
         ]
       };
-      this.copied.metadata.output.csv.push(outputConfig);
+      this.computationTemplate.metadata.output.csv.push(outputConfig);
     },
     addCsvPlot: function (csvConfig) {
       let plotConfig = {
@@ -1456,10 +1457,10 @@ export default {
         "identifier" : this.uuid(),
         "basename": "vtk-basename"
       };
-      this.copied.metadata.output.vtk.push(outputConfig);
+      this.computationTemplate.metadata.output.vtk.push(outputConfig);
     },
     updateContent: function (item, event) {
-      //this.copied.files[fileIndex].parts[partIndex].content = event
+      //this.computationTemplate.files[fileIndex].parts[partIndex].content = event
       item.content = event;
     },
     setEditorValue: function (event) {
@@ -1486,30 +1487,43 @@ export default {
       this.$forceUpdate();
     },
     getNumberofConfigFields: function (configName) {
-      if (this.copied.configuration[configName] == undefined) {
-        return 1;
+      if (this.computationTemplate.configuration[configName] == undefined) {
+        return 0;
       } else {
-        return this.copied.configuration[configName].length;
+        return this.computationTemplate.configuration[configName].length;
       }
     },
     setNumberOfConfigFields: function (configName, newValue) {
       if (newValue < this.getNumberofConfigFields(configName)) {
-        this.copied.configuration[configName].pop();
+        this.computationTemplate.configuration[configName].pop();
+        if (newValue == 0) {
+          this.$delete(this.computationTemplate.configuration, configName);
+        }
         this.$forceUpdate();
-      } else if (newValue != 1) {
-        this.copied.configuration[configName].push("");
+      } else if (newValue != 0) {
+        if (this.getNumberofConfigFields(configName) == 0) {
+          this.computationTemplate.configuration[configName] = [ "" ];
+        } else {
+          this.computationTemplate.configuration[configName].push("");
+        }
       }
       this.$forceUpdate();
     },
     getConfigvModel: function (configName, index = 0) {
-      if (this.copied.configuration[configName].length > 0) {
-        return this.copied.configuration[configName][index];
+      if (typeof this.computationTemplate.configuration[configName] != "undefined") {
+        if (this.computationTemplate.configuration[configName].length > 0) {
+          return this.computationTemplate.configuration[configName][index];
+        }
       }
       return "";
     },
     setConfigvModel: function (configName, val, index = 0) {
       console.log("set: " + configName + " " + val.target.value)
-      this.$set(this.copied.configuration[configName], index, val.target.value);
+      if (typeof this.computationTemplate.configuration[configName] != "undefined") {
+        this.$set(this.computationTemplate.configuration[configName], index, val.target.value);
+      } else {
+        this.computationTemplate.configuration[configName] = [val.target.value];
+      }
       this.$forceUpdate();
     },
     getSlidervModel: function (index) {
@@ -1603,10 +1617,10 @@ export default {
     validateJson: function () {
       let v = new Validator();
       // general template validation
-      this.validationResult = v.validate(this.copied, this.schema);
+      this.validationResult = v.validate(this.computationTemplate, this.schema);
 
       // parameter validation
-      let files = this.copied.files;
+      let files = this.computationTemplate.files;
       for (let file in files) {
         let parts = files[file].parts;
         for (let part in parts) {
@@ -1615,8 +1629,8 @@ export default {
           }
         }
       }
-      if (typeof this.copied.parameters !== "undefined" && this.copied.parameters !== []) {
-        this.validationArgsResult = (v.validate(this.copied.parameters, this.paramSchema));
+      if (typeof this.computationTemplate.parameters !== "undefined" && this.computationTemplate.parameters !== []) {
+        this.validationArgsResult = (v.validate(this.computationTemplate.parameters, this.paramSchema));
       }
 
       if (typeof this.validationResult != "undefined" && typeof this.validationPartParameterResult != "undefined" && typeof this.validationArgsResult != "undefined") {
@@ -1641,7 +1655,7 @@ export default {
       console.log(currentStep)
       if (currentStep === 0) {
         console.log('[Vue Tour] A custom nextStep callback has been called from step 2 to step 3')
-        if (Object.keys(this.copied.configuration).length === 0 && this.copied.configuration.constructor === Object) {
+        if (Object.keys(this.computationTemplate.configuration).length === 0 && this.computationTemplate.configuration.constructor === Object) {
           console.log("empty")
           let nextBtn = document.getElementsByClassName('.v-step__button-next');
           console.log(nextBtn)
@@ -1662,7 +1676,7 @@ export default {
     onReaderLoad: function (event) {
       var obj = JSON.parse(event.target.result);
       console.log(obj);
-      this.copied = obj;
+      this.computationTemplate = obj;
     },
     /** Run created template in anoter tab */
     runTemplate: function() {
@@ -1671,7 +1685,7 @@ export default {
       console.log(url);
 
       // calculate data-template for frontend-preview
-      let file = JSON.stringify(this.copied);
+      let file = JSON.stringify(this.computationTemplate);
       let dataBase64 = Base64.encode(Buffer.from(file).toString(), "utf-8");
       
       // calculate token
@@ -1681,7 +1695,7 @@ export default {
       let token = decodeURIComponent(jwt.sign({ 'viplab.computation-template.digest': codeSha256, 'iss': 'test' }, key, { algorithm: 'RS512', header: { "kid": "mykeyid" } }));
 
       // set calculated values in Vuex store
-      this.$store.commit("updateJsonTemplate", this.copied)
+      this.$store.commit("updateJsonTemplate", this.computationTemplate)
       this.$store.commit("updateToken", token);
       this.$store.commit("updateDataTemplate", dataBase64);
 
@@ -1705,7 +1719,7 @@ export default {
   },
   mounted() {
     // generate id for ct
-    this.copied.identifier = this.uuid();
+    this.computationTemplate.identifier = this.uuid();
     //this.$tours['myTour'].start()
   },
 };
