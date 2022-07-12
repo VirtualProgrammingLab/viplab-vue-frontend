@@ -56,6 +56,40 @@ const router = new VueRouter({
   routes 
 })
 
+import Vuex from 'vuex'
+Vue.use(Vuex)
+import createPersistedState from "vuex-persistedstate";
+// import createMutationsSharer from "vuex-shared-mutations";
+
+// Create a new store instance.
+const store = new Vuex.Store({
+  state: {
+    jsonTemplate: {},
+    token: "",
+    dataTemplate: "",
+    ws: ""
+  },
+  mutations: {
+    updateJsonTemplate (state, newValue) {
+      state.jsonTemplate = newValue;
+    },
+    updateToken (state, newValue) {
+      state.token = newValue;
+    },
+    updateDataTemplate (state, newValue) {
+      state.dataTemplate = newValue;
+    },
+    updateWebSocket (state, newValue) {
+      state.ws = newValue;
+    }
+  },
+  plugins: [
+    createPersistedState({
+      storage: window.sessionStorage,
+    })
+  ]
+})
+
 fetch(process.env.BASE_URL + "static/config.json?/t=currentTimestamp")
   .then((response) => response.json())
   .then((config) => {
@@ -65,6 +99,7 @@ fetch(process.env.BASE_URL + "static/config.json?/t=currentTimestamp")
         useVuex: false
       }),
       router,
+      store: store,
       render: h => h(App)
     }).$mount('#app')
   })

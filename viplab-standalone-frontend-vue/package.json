@@ -51,6 +51,8 @@
     "vue-sticky-element": "^1.1.2",
     "vue-tour": "^2.0.0",
     "vue-wait": "^1.4.8",
+    "vuex": "^3.6.2",
+    "vuex-persistedstate": "^4.1.0",
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {

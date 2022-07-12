@@ -306,69 +306,9 @@
 
                           <!-- Configuration -->
                           <div v-if="copied.configuration && copied.environment != ''" class="border mb-2 p-2">
-                            <div v-if="ifConfigPropertyExists('compiling.sources')">
-                              <label class="mr-2">compiling.sources*:</label>
-                              
-                              <div class="ml-4 mr-4">
-                                <!-- set how many values the config should have -->
-                                <label for="'compiling-sources-sb-options'">How many compiling.sources should there be?</label>
-                                <b-form-spinbutton :id="'compiling-sources-sb-options'" placeholder="1" :value="getNumberofConfigFields('compiling.sources')" class="mb-2" @change="setNumberOfConfigFields('compiling.sources', $event)"></b-form-spinbutton>
-                                <!-- config-values -->
-                                <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('compiling.sources')" :key="'compiling-sources-' + index">
-                                  <!-- value -->
-                                  <label>Set values:</label>
-                                  <input type="text" class="form-control" :value="getConfigvModel('compiling.sources', index)" @input="setConfigvModel('compiling.sources', $event, index)">
-                                </div>
-                              </div>
-
-                            </div>
-                            <div v-if="ifConfigPropertyExists('compiling.compiler')">
-                              <label class="mr-2">compiling.compiler*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['compiling.compiler']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('compiling.flags')">
-                              <label class="mr-2">compiling.flags*(Must for C, C++, optional for Java):</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['compiling.flags']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('checking.sources')">
-                              <label class="mr-2">checking.sources*(must if checking should be performed):</label>
-
-                              <div class="ml-4 mr-4">
-                                <!-- set how many values the config should have -->
-                                <label for="'checking.sources-sb-options'">How many checking.sources should there be?</label>
-                                <b-form-spinbutton :id="'checking.sources-sb-options'" placeholder="1" :value="getNumberofConfigFields('checking.sources')" class="mb-2" @change="setNumberOfConfigFields('checking.sources', $event)"></b-form-spinbutton>
-                                <!-- input config-values -->
-                                <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('checking.sources')" :key="'checking.sources-' + index">
-                                  <!-- value -->
-                                  <label>Set values:</label>
-                                  <input type="text" class="form-control" :value="getConfigvModel('checking.sources', index)" @input="setConfigvModel('checking.sources', $event, index)">
-                                </div>
-                              </div>
-
-                            </div>
-                            <div v-if="ifConfigPropertyExists('linking.flags')">
-                              <label class="mr-2">linking.flags*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['linking.flags']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('running.stdinFilename')">
-                              <label class="mr-2">running.stdinFilename*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.stdinFilename']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('running.executable')">
-                              <label class="mr-2">running.executable*:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.executable']">
-                            </div>
                             <div v-if="ifConfigPropertyExists('resources.image')" id="image">
                               <label class="mr-2">resources.image*:</label>
                               <input type="text" class="form-control" v-model="copied.configuration['resources.image']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('checking.allowedCalls')">
-                              <label class="mr-2">checking.allowedCalls(must if checking should be performed):</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['checking.allowedCalls']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('checking.forbiddenCalls')">
-                              <label class="mr-2">checking.forbiddenCalls(must if checking should be performed):</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['checking.forbiddenCalls']">
                             </div>
                             <div v-if="ifConfigPropertyExists('running.timelimitInSeconds')">
                               <label class="mr-2">running.timelimitInSeconds:</label>
@@ -378,21 +318,12 @@
                               <label class="mr-2">running.commandLineArguments:</label>
                               <input type="text" class="form-control" v-model="copied.configuration['running.commandLineArguments']">
                             </div>
-                            <div v-if="ifConfigPropertyExists('running.flags')">
-                              <label class="mr-2">running.flags:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.flags']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('running.mainClass')">
-                              <label class="mr-2">running.mainClass:</label>
-                              <input type="text" class="form-control" v-model="copied.configuration['running.mainClass']">
-                            </div>
                             <div v-if="ifConfigPropertyExists('running.entrypoint')">
                               <label class="mr-2">running.entrypoint:</label>
                               <input type="text" class="form-control" v-model="copied.configuration['running.entrypoint']">
                             </div>
                             <div v-if="ifConfigPropertyExists('running.intermediateFilesPattern')">
                               <label class="mr-2">running.intermediateFilesPattern:</label>
-                              
                               <div class="ml-4 mr-4">
                                 <!-- set how many values the config should have -->
                                 <label for="'running.intermediateFilesPattern-sb-options'">How many running.intermediateFilesPattern should there be?</label>
@@ -404,7 +335,6 @@
                                   <input type="text" class="form-control" :value="getConfigvModel('running.intermediateFilesPattern', index)" @input="setConfigvModel('running.intermediateFilesPattern', $event, index)">
                                 </div>
                               </div>
-
                             </div>
                             <div v-if="ifConfigPropertyExists('running.userId')">
                               <label class="mr-2">running.userId:</label>
@@ -421,6 +351,71 @@
                             <div v-if="ifConfigPropertyExists('resources.numCPUs')">
                               <label class="mr-2">resources.numCPUs:</label>
                               <input type="number" class="form-control" v-model.number="copied.configuration['resources.numCPUs']">
+                            </div>
+
+                            <div v-if="ifConfigPropertyExists('compiling.sources')">
+                              <label class="mr-2">compiling.sources*:</label>
+                              <div class="ml-4 mr-4">
+                                <!-- set how many values the config should have -->
+                                <label for="'compiling-sources-sb-options'">How many compiling.sources should there be?</label>
+                                <b-form-spinbutton :id="'compiling-sources-sb-options'" placeholder="1" :value="getNumberofConfigFields('compiling.sources')" class="mb-2" @change="setNumberOfConfigFields('compiling.sources', $event)"></b-form-spinbutton>
+                                <!-- config-values -->
+                                <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('compiling.sources')" :key="'compiling-sources-' + index">
+                                  <!-- value -->
+                                  <label>Set values:</label>
+                                  <input type="text" class="form-control" :value="getConfigvModel('compiling.sources', index)" @input="setConfigvModel('compiling.sources', $event, index)">
+                                </div>
+                              </div>
+                            </div>
+                            <div v-if="ifConfigPropertyExists('compiling.compiler')">
+                              <label class="mr-2">compiling.compiler*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['compiling.compiler']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('compiling.flags')">
+                              <label class="mr-2">compiling.flags*(Must for C, C++, optional for Java):</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['compiling.flags']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('checking.sources')">
+                              <label class="mr-2">checking.sources*(must if checking should be performed):</label>
+                              <div class="ml-4 mr-4">
+                                <!-- set how many values the config should have -->
+                                <label for="'checking.sources-sb-options'">How many checking.sources should there be?</label>
+                                <b-form-spinbutton :id="'checking.sources-sb-options'" placeholder="1" :value="getNumberofConfigFields('checking.sources')" class="mb-2" @change="setNumberOfConfigFields('checking.sources', $event)"></b-form-spinbutton>
+                                <!-- input config-values -->
+                                <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('checking.sources')" :key="'checking.sources-' + index">
+                                  <!-- value -->
+                                  <label>Set values:</label>
+                                  <input type="text" class="form-control" :value="getConfigvModel('checking.sources', index)" @input="setConfigvModel('checking.sources', $event, index)">
+                                </div>
+                              </div>
+                            </div>
+                            <div v-if="ifConfigPropertyExists('linking.flags')">
+                              <label class="mr-2">linking.flags*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['linking.flags']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.stdinFilename')">
+                              <label class="mr-2">running.stdinFilename*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.stdinFilename']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.executable')">
+                              <label class="mr-2">running.executable*:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.executable']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('checking.allowedCalls')">
+                              <label class="mr-2">checking.allowedCalls(must if checking should be performed):</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['checking.allowedCalls']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('checking.forbiddenCalls')">
+                              <label class="mr-2">checking.forbiddenCalls(must if checking should be performed):</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['checking.forbiddenCalls']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.flags')">
+                              <label class="mr-2">running.flags:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.flags']">
+                            </div>
+                            <div v-if="ifConfigPropertyExists('running.mainClass')">
+                              <label class="mr-2">running.mainClass:</label>
+                              <input type="text" class="form-control" v-model="copied.configuration['running.mainClass']">
                             </div>
                           </div>
                         </div>
@@ -838,6 +833,16 @@
           <br>
           {{validationArgsResult}}
         </div>
+        <div class="p-2" v-if="isLoggedIn">
+          <b-button 
+            variant="success"
+            @click="runTemplate"
+            :disabled="validateJson? false : true">
+            Execute Template
+            <b-icon icon="play" aria-hidden="true"></b-icon>
+          </b-button>
+          <div id="iframe-div"></div>
+        </div>
       </div>
     </div>
     <v-tour name="myTour" :steps="steps" :callbacks="tourCallbacks" :options="{ highlight: true }"></v-tour>
@@ -858,6 +863,11 @@ var Validator = require('jsonschema').Validator;
 import ctSchema from './json-schema/computation-template.json';
 import parameterSchema from './json-schema/parameters.json';
 
+const Base64 = require('js-base64');
+import jwks from "../../assets/jwks.private.json";
+var jwkToPem = require("jwk-to-pem");
+var jwt = require("jsonwebtoken");
+var CryptoJS = require("crypto-js");
 
 export default {
   name: "app",
@@ -884,6 +894,7 @@ export default {
           "running.entrypoint": "",
           "running.intermediateFilesPattern": [ "" ],
           "resources.image": "",
+          "running.userId": 0,
           "resources.volume": "",
           "resources.memory": "4g",
           "resources.numCPUs": 1
@@ -936,10 +947,39 @@ export default {
       ],
       tourCallbacks: {
         onNextStep: this.myCustomNextStepCallback
-      }
+      },
+      jwks: jwks
     };
   },
   computed: {
+    json: {
+      get () {
+        this.$forceUpdate()
+        return this.$store.state.jsonTemplate;
+      },
+      set (newValue) {
+        this.$store.commit("updateJsonTemplate", newValue)
+        this.$forceUpdate()
+      }
+    },
+    token: {
+      get () {
+        this.$forceUpdate()
+        return this.$store.state.token;
+      },
+      set (newValue) {
+        this.$store.commit("updateToken", newValue)
+      }
+    },
+    ws: {
+      get () {
+        this.$forceUpdate()
+        return this.$store.state.ws;
+      },
+      set (newValue) {
+        this.$store.commit("updateWebSocket", newValue)
+      }
+    },
     thereIsTemplate() {
       for (var file in this.copied.files) {
         for (var part in this.copied.files[file].parts) {
@@ -967,8 +1007,40 @@ export default {
         }
       }
     },
+  }, 
+  watch: {
+    copied: {
+      handler: function () {
+        // reset iFrame, if computation task is modified
+        let iFrameDiv = document.getElementById("iframe-div")
+        iFrameDiv.innerHTML = ""
+      },
+      deep: true
+    },
   },
   methods: {
+    // Make the function wait until the connection is made...
+    waitForSocketConnection: function(context, socket, callback) {
+      setTimeout(
+        function () {
+          if (socket.readyState === 1) {
+            console.log('Connection is made')
+            if (callback != null) {
+              callback()
+            }
+          } else {
+            console.log('wait for connection...')
+            context.waitForSocketConnection(context, socket, callback)
+          }
+        }, 5) // wait 5 milisecond for the connection...
+    },
+    sendWaiting: function(msg) {
+      this.waitForSocketConnection(this, this.ws, () => {
+        console.log('Sending ' + msg)
+        this.ws.send(msg)
+        console.log('Sent ' + msg)
+      })
+    },
     paramAccordeon(id) {
       return id + "param";
     },
@@ -1525,12 +1597,13 @@ export default {
       }
       return false;
     },
+    /**
+     * validate computation template and return whether button should be enabled
+     */
     validateJson: function () {
       let v = new Validator();
       // general template validation
       this.validationResult = v.validate(this.copied, this.schema);
-
-      console.log(this.validationResult)
 
       // parameter validation
       let files = this.copied.files;
@@ -1548,7 +1621,9 @@ export default {
 
       if (typeof this.validationResult != "undefined" && typeof this.validationPartParameterResult != "undefined" && typeof this.validationArgsResult != "undefined") {
         this.validationResult = "Template is Valid!";
+        return false;
       }
+      return true;
     },
     /** Check if teacher-frontend was opened by a user that is signed in */
     isLoggedIn: function() {
@@ -1577,6 +1652,8 @@ export default {
     },
     /*upload existing Computation Template JSON */
     uploadCT: function (event) {
+      let iFrameDiv = document.getElementById("iframe-div")
+      iFrameDiv.innerHTML = ""
       var reader = new FileReader();
       reader.onload = this.onReaderLoad;
       reader.readAsText(event.target.files[0]);
@@ -1587,9 +1664,44 @@ export default {
       console.log(obj);
       this.copied = obj;
     },
+    /** Run created template in anoter tab */
+    runTemplate: function() {
+      console.log("running template...");
+      let url = window.location.href.replace("#/teacher", "");
+      console.log(url);
+
+      // calculate data-template for frontend-preview
+      let file = JSON.stringify(this.copied);
+      let dataBase64 = Base64.encode(Buffer.from(file).toString(), "utf-8");
+      
+      // calculate token
+      var jwks = this.jwks
+      var key = decodeURIComponent(jwkToPem(jwks['keys'][0], { private: true }));
+      let codeSha256 = CryptoJS.SHA256(dataBase64).toString(CryptoJS.enc.Hex);
+      let token = decodeURIComponent(jwt.sign({ 'viplab.computation-template.digest': codeSha256, 'iss': 'test' }, key, { algorithm: 'RS512', header: { "kid": "mykeyid" } }));
+
+      // set calculated values in Vuex store
+      this.$store.commit("updateJsonTemplate", this.copied)
+      this.$store.commit("updateToken", token);
+      this.$store.commit("updateDataTemplate", dataBase64);
+
+      // authenticate with new token
+      this.ws = new WebSocket(this.$config.WEBSOCKET_API);
+      let message = JSON.stringify({ type: "authenticate", content: { jwt: this.token } });
+      this.sendWaiting(message)
+      
+      // preview ct in iFrame
+      let iFrameDiv = document.getElementById("iframe-div")
+      iFrameDiv.innerHTML = ""
+      let iFrame = document.createElement("iframe");
+      iFrameDiv.appendChild(iFrame)
+      iFrame.setAttribute("src", url)
+      iFrame.setAttribute("width", "100%")
+      iFrame.setAttribute("height", "315")
+    }
   },
   created() {
-    
+
   },
   mounted() {
     // generate id for ct
@@ -2017,6 +2129,15 @@ body {
 
   .v-tour__target--highlighted {
     box-shadow: 0 0 0 99999px rgba(0, 0, 0, .4);
+  }
+
+  #iframe-div {
+    margin-top: 0.5rem;
+  }
+
+  #iframe-div > iframe {
+    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) calc(0.25rem - 1px) calc(0.25rem - 1px);
+    border: 3px solid #6c757d;
   }
 
   @media (max-width: 799px) {

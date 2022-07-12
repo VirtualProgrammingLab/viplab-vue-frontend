@@ -562,6 +562,8 @@ import {ValidationObserver} from "vee-validate";
 
 import base64url from "base64url";
 
+//const Base64 = require('js-base64');
+
 export default {
   name: "app",
   components: {
@@ -578,11 +580,11 @@ export default {
   },
   data() {
     return {
-      json: "{}", 
-      token: "",
+      //json: "{}", 
+      //token: "",
       templates: require.context("../../input/", false, /^.*\.json$/).keys(), //get json file names from ./input folder
       numberOfInputFiles: [],
-      ws: "",
+      //ws: "",
       returnedOutputJson: "",
       returnedUnmodifiedArtifacts: "",
       outputFiles: "",
@@ -599,13 +601,89 @@ export default {
     json: {
       handler: function (val) {
         this.json = val;
+        // update Vuex Store
+        console.log("json was updated")
+        this.$store.commit("updateJsonTemplate", val);
         //console.log(this.json.files[0].parts[0].parameters[0].selected);
         this.$forceUpdate();
       },
       deep: true
+    },
+    '$route': {
+      handler: function() {
+        console.log("ROUTE - viplab - " + this.token)
+        // this.ws = new WebSocket(this.$config.WEBSOCKET_API);
+        // let message = JSON.stringify({ type: "authenticate", content: { jwt: this.token } });
+        // this.sendWaiting(message)
+
+        // this.ws.onopen = () => {
+        //   console.log("Connection is open!")
+        //   this.ws.send(
+        //     JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
+        //   );
+        // };
+        // if (this.ws.readyState  === 1) {
+        //   console.log("It is safe to send messages now")
+        // } else {
+        //   console.log("ws not open...")
+        // }
+
+        //this.executeAfterDomLoaded();
+        // let base64Template = Base64.encode(Buffer.from(JSON.stringify(this.json)).toString(), "utf-8");
+        // this.ws = new WebSocket(this.$config.WEBSOCKET_API);
+        //this.ws.onopen = () => {
+          // this.ws.send(
+          //   JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
+          // );
+          // this.ws.send(
+            // JSON.stringify({ type: "prepare-computation", content: { template: base64Template, task: this.generateComputationTask() } })
+          // );
+          // currently always enabled as soon as every part of form validates!!!
+          //document.getElementById("submit").disabled = false;
+        // };
+      },
+      deep: true,
+      immediate: true
     }
   },
   computed: {
+    json: {
+      get () {
+        this.$forceUpdate()
+        return this.$store.state.jsonTemplate;
+      },
+      set (newValue) {
+        this.$store.commit("updateJsonTemplate", newValue)
+        this.$forceUpdate()
+      }
+    },
+    token: {
+      get () {
+        this.$forceUpdate()
+        return this.$store.state.token;
+      },
+      set (newValue) {
+        this.$store.commit("updateToken", newValue)
+      }
+    },
+    dataTemplate: {
+      get () {
+        this.$forceUpdate()
+        return this.$store.state.dataTemplate;
+      },
+      set (newValue) {
+        this.$store.commit("updateDataTemplate", newValue)
+      }
+    },
+    ws: {
+      get () {
+        this.$forceUpdate()
+        return this.$store.state.ws;
+      },
+      set (newValue) {
+        this.$store.commit("updateWebSocket", newValue)
+      }
+    },
     /* return parameters section of json file */
     parsedParametersJson: function () {
       var parsed = this.json.parameters;
@@ -637,6 +715,28 @@ export default {
     }
   },
   methods: {
+    // Make the function wait until the connection is made...
+    waitForSocketConnection: function(context, socket, callback) {
+      setTimeout(
+        function () {
+          if (socket.readyState === 1) {
+            console.log('Connection is made')
+            if (callback != null) {
+              callback()
+            }
+          } else {
+            console.log('wait for connection...')
+            context.waitForSocketConnection(context, socket, callback)
+          }
+        }, 5) // wait 5 milisecond for the connection...
+    },
+    sendWaiting: function(msg) {
+      this.waitForSocketConnection(this, this.ws, () => {
+        console.log('Sending ' + msg)
+        this.ws.send(msg)
+        console.log('Sent ' + msg)
+      })
+    },
     /* set the number of input files */
     setNumberOfInputFiles: function () {
       var files = this.json.files;
@@ -648,10 +748,37 @@ export default {
     },
     /** load json from file with temp being the file name, set this.json to the content of the file and fill form_v_model */
     loadJsonFromFile: function () {
-      var appDiv = document.body;
-      var data = appDiv.getAttribute("data-template");
-      this.json = JSON.parse(base64url.decode(data));
-      this.token = appDiv.getAttribute("data-token");
+      let appDiv = document.body;
+      let data = appDiv.getAttribute("data-template");
+      let decodedjson = JSON.parse(base64url.decode(data));
+      
+      console.log(decodedjson)
+
+      console.log(Object.keys(this.$store.state.jsonTemplate).length === 0)
+      console.log(this.$store.state.jsonTemplate)
+      if (data !== "{{ data }}" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
+        console.log("1")
+        this.json = JSON.parse(base64url.decode(data));
+        // store token in Vuex store
+        this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
+        this.$store.commit("updateDataTemplate", data);
+      } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
+        console.log("2")
+        this.json = this.$store.state.jsonTemplate;
+        this.token = this.$store.state.token;
+        this.dataTemplate = this.$store.state.dataTemplate;
+      } else {
+        console.log(3)
+        this.json = {};
+        this.token = "";
+        this.dataTemplate = "";
+      }
+      
+      // store json in Vuex store
+      // this.$store.commit("updateJsonTemplate", decodedjson);
+      
+      //this.token = appDiv.getAttribute("data-token");
+      
 
       // if there are parameters in parts, set var accordingly for rendering of button
       for(var file in this.json.files) {
@@ -670,19 +797,30 @@ export default {
     },
     /** should be the first thing that is executed when DOM is loaded: setup connection to webserver */
     executeAfterDomLoaded: function () {
+      console.log("AUTHENTICATE - /viplab")
+      //let base64Template = Base64.encode(Buffer.from(JSON.stringify(this.json)).toString(), "utf-8");
+
       //this.ws = new WebSocket("ws://192.168.195.128:8083/computations");
-      this.ws = new WebSocket(this.$config.WEBSOCKET_API);
+      //this.ws = new WebSocket(this.$config.WEBSOCKET_API);
+      this.$store.commit("updateWebSocket", new WebSocket(this.$config.WEBSOCKET_API))
       //console.log("connect to ws");
-      this.ws.onopen = () => {
-        this.ws.send(
-          JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
-        );
-        this.ws.send(
-          JSON.stringify({ type: "prepare-computation", content: { template: document.body.getAttribute("data-template"), task: this.generateComputationTask() } })
-        );
-        // currently always enabled as soon as every part of form validates!!!
-        document.getElementById("submit").disabled = false;
-      };
+      
+      // this.ws.onopen = () => {
+      //   this.ws.send(
+      //     JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
+      //   );
+      //   this.ws.send(
+      //     JSON.stringify({ type: "prepare-computation", content: { template: base64Template, task: this.generateComputationTask() } })
+      //   );
+      //   // currently always enabled as soon as every part of form validates!!!
+      //   document.getElementById("submit").disabled = false;
+      // };
+      let message = JSON.stringify({ type: "authenticate", content: { jwt: this.token } });
+      this.sendWaiting(message)
+
+      let prepareMessage = JSON.stringify({ type: "prepare-computation", content: { template: this.dataTemplate, task: this.generateComputationTask() } });
+      this.sendWaiting(prepareMessage)
+
       this.ws.onmessage = (event) => {
         var data = JSON.parse(event.data);
         switch (data.type) {
@@ -722,6 +860,7 @@ export default {
         }
       };
       document.getElementById("submit").onclick = this.sendData;
+
     },
     /** create uuid for the template to be sent as request */
     uuid: function () {
@@ -757,7 +896,7 @@ export default {
       var task = {
         type: "create-computation",
         content: {
-          template: document.body.getAttribute("data-template"),
+          template: this.dataTemplate,
           task: this.generateComputationTask()
         },
       };
