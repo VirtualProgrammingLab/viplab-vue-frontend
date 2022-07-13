@@ -845,7 +845,7 @@
         </div>
       </div>
     </div>
-    <v-tour name="myTour" :steps="steps" :callbacks="tourCallbacks" :options="{ highlight: true }"></v-tour>
+    <v-tour name="myTour" :steps="steps" :options="{ highlight: true }"></v-tour>
   </div>
   </div>
 </template>
@@ -859,9 +859,10 @@ import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
 import base64url from "base64url";
 
 // for validation
-var Validator = require('jsonschema').Validator;
-import ctSchema from './json-schema/computation-template.json';
+// var Validator = require('jsonschema').Validator;
+import ctSchema from './json-schema/computation-template-container.json';
 import parameterSchema from './json-schema/parameters.json';
+import Ajv from "ajv"
 
 const Base64 = require('js-base64');
 import jwks from "../../assets/jwks.private.json";
@@ -896,9 +897,9 @@ export default {
       valueNumbers: new Map(),
       schema: ctSchema,
       paramSchema: parameterSchema,
-      validationResult: "",
-      validationPartParameterResult: "",
-      validationArgsResult: "",
+      validationResult: null,
+      validationPartParameterResult: null,
+      validationArgsResult: null,
       steps: [
         {
           target: '#start-guide', 
@@ -927,9 +928,6 @@ export default {
           }
         }
       ],
-      tourCallbacks: {
-        onNextStep: this.myCustomNextStepCallback
-      },
       jwks: jwks
     };
   },
@@ -984,7 +982,6 @@ export default {
     },
     inputvModel: {
       get: function () {
-        console.log("get vModel - " + this.selectedParameter.default[0])
         if (this.selectedParameter.default.length > 0) {
           return base64url.decode(this.selectedParameter.default[0]);
         } 
@@ -1025,21 +1022,21 @@ export default {
       setTimeout(
         function () {
           if (socket.readyState === 1) {
-            console.log('Connection is made')
+            //console.log('Connection is made')
             if (callback != null) {
               callback()
             }
           } else {
-            console.log('wait for connection...')
+            //console.log('wait for connection...')
             context.waitForSocketConnection(context, socket, callback)
           }
         }, 5) // wait 5 milisecond for the connection...
     },
     sendWaiting: function(msg) {
       this.waitForSocketConnection(this, this.ws, () => {
-        console.log('Sending ' + msg)
+        //console.log('Sending ' + msg)
         this.ws.send(msg)
-        console.log('Sent ' + msg)
+        //console.log('Sent ' + msg)
       })
     },
     paramAccordeon(id) {
@@ -1205,7 +1202,6 @@ export default {
         this.selectedFile = content;
         this.showFile = true;
       } else if (type === 'commands') {
-        console.log("commands clicked");
         this.showCommands = true;
       } else {
         if (this.computationTemplate.identifier == "") {
@@ -1213,7 +1209,6 @@ export default {
         }
         this.showTemplate = true;
       }
-      console.log("clicked");
     },
     closePreferences: function() {
       this.preferences = false;
@@ -1260,7 +1255,6 @@ export default {
      * Delete Parameter from part or command line arguments and rerender
      */
     removeParameter: function(event, item, isInPart = true) {
-      console.log("Delete following Parameter - " + item.metadata.guiType);
       event.stopPropagation();
       if (isInPart) {
         for (var file in this.computationTemplate.files) {
@@ -1464,7 +1458,6 @@ export default {
       item.content = event;
     },
     setEditorValue: function (event) {
-      console.log(event)
       this.$set(this.selectedParameter.default, 0, event);
       this.$forceUpdate();
     },
@@ -1518,7 +1511,6 @@ export default {
       return "";
     },
     setConfigvModel: function (configName, val, index = 0) {
-      console.log("set: " + configName + " " + val.target.value)
       if (typeof this.computationTemplate.configuration[configName] != "undefined") {
         this.$set(this.computationTemplate.configuration[configName], index, val.target.value);
       } else {
@@ -1615,25 +1607,37 @@ export default {
      * validate computation template and return whether button should be enabled
      */
     validateJson: function () {
-      let v = new Validator();
-      // general template validation
-      this.validationResult = v.validate(this.computationTemplate, this.schema);
+
+      const ajv = new Ajv()
+      const validate = ajv.compile(this.schema)
+      validate(this.computationTemplate)
+      console.log(validate.errors)
+      this.validationResult = validate.errors
 
       // parameter validation
       let files = this.computationTemplate.files;
+      const paramValidate = ajv.compile(this.paramSchema)
       for (let file in files) {
         let parts = files[file].parts;
         for (let part in parts) {
           if (typeof parts[part].parameters !== "undefined") {
-            this.validationPartParameterResult = (v.validate(parts[part].parameters, this.paramSchema));
+            paramValidate(parts[part].parameters)
+            console.log(paramValidate.errors)
+            this.validationPartParameterResult = paramValidate.errors;
           }
         }
       }
+
+      // commandline arguments validation
+      const commandlineValidate = ajv.compile(this.paramSchema)
       if (typeof this.computationTemplate.parameters !== "undefined" && this.computationTemplate.parameters !== []) {
-        this.validationArgsResult = (v.validate(this.computationTemplate.parameters, this.paramSchema));
+        commandlineValidate(this.computationTemplate.parameters)
+        console.log(commandlineValidate.errors)
+        this.validationArgsResult = paramValidate.errors
       }
 
-      if (typeof this.validationResult != "undefined" && typeof this.validationPartParameterResult != "undefined" && typeof this.validationArgsResult != "undefined") {
+      // if everything is valid, set validationResult to "Template is Valid!"
+      if (this.validationResult == null && this.validationPartParameterResult == null && this.validationArgsResult == null) {
         this.validationResult = "Template is Valid!";
         return false;
       }
@@ -1650,20 +1654,6 @@ export default {
     startGuide: function() {
       this.$tours['myTour'].start()
     },
-    myCustomNextStepCallback (currentStep) {
-      //console.log('[Vue Tour] A custom nextStep callback has been called on step ' + (currentStep + 1))
-      console.log(currentStep)
-      if (currentStep === 0) {
-        console.log('[Vue Tour] A custom nextStep callback has been called from step 2 to step 3')
-        if (Object.keys(this.computationTemplate.configuration).length === 0 && this.computationTemplate.configuration.constructor === Object) {
-          console.log("empty")
-          let nextBtn = document.getElementsByClassName('.v-step__button-next');
-          console.log(nextBtn)
-          
-          this.$forceUpdate();
-        } 
-      }
-    },
     /*upload existing Computation Template JSON */
     uploadCT: function (event) {
       let iFrameDiv = document.getElementById("iframe-div")
@@ -1675,14 +1665,11 @@ export default {
     /*get json from uploaded file und update DOM */
     onReaderLoad: function (event) {
       var obj = JSON.parse(event.target.result);
-      console.log(obj);
       this.computationTemplate = obj;
     },
     /** Run created template in anoter tab */
     runTemplate: function() {
-      console.log("running template...");
       let url = window.location.href.replace("#/teacher", "");
-      console.log(url);
 
       // calculate data-template for frontend-preview
       let file = JSON.stringify(this.computationTemplate);
