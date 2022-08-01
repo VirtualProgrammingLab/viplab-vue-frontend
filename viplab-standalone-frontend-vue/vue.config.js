@@ -143,7 +143,7 @@ var setParameters = function (filename) {
     var dataBase64 = Base64.encode(Buffer.from(file).toString(), "utf-8");
     var codeSha256 = CryptoJS.SHA256(dataBase64).toString(CryptoJS.enc.Hex);
 
-    token = decodeURIComponent(jwt.sign({ 'viplab.computation-template.digest': codeSha256, 'iss': 'test' }, key, { algorithm: 'RS512', header: { "kid": "mykeyid" } }));
+    token = decodeURIComponent(jwt.sign({ 'viplab.computation-template.digest': codeSha256, 'viplab.digest-replaceable': true, 'iss': 'test' }, key, { algorithm: 'RS512', header: { "kid": "mykeyid" } }));
 
     digest = codeSha256;
     dataTemplate = dataBase64;

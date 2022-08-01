@@ -39,6 +39,10 @@
                             },
                             "name" : {
                                 "type" : "string"
+                            },
+                            "description" : {
+                                "type" : "string",
+                                "description" : "Short description; Mostly a few lines. Will be shown as tooltip."
                             }
                         },
                         "additionalProperties": false,

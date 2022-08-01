@@ -1,6 +1,32 @@
 {
   "identifier": "cd39715e-55de-4563-bf8c-929d3d699953",
   "environment": "Container",
+  "metadata": {
+    "displayName": "DuMux Benchmark Case 1",
+    "description": "Case 1: Single Fracture",
+    "output": {
+        "viewer": [
+            "CSV",
+            "ParaView"
+        ],
+        "csv": [
+            {
+                "basename": "dataovertime",
+                "xlabel": {
+                    "key": "time",
+                    "label": "Time in years",
+                    "factor": 3.1709792e-8,
+                    "format": ".2f"
+                }
+            }
+        ],
+        "vtk": [
+            {
+                "basename": "case1_single_tracer_matrix"
+            } 
+        ]
+    }
+  },
   "files":   [
     { "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a1",
       "path": "params.input",

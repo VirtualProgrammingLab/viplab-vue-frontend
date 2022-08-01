@@ -611,7 +611,7 @@ export default {
     },
     '$route': {
       handler: function() {
-        console.log("ROUTE - viplab - " + this.token)
+        //console.log("ROUTE - viplab - " + this.token)
         // this.ws = new WebSocket(this.$config.WEBSOCKET_API);
         // let message = JSON.stringify({ type: "authenticate", content: { jwt: this.token } });
         // this.sendWaiting(message)
@@ -732,9 +732,9 @@ export default {
     },
     sendWaiting: function(msg) {
       this.waitForSocketConnection(this, this.ws, () => {
-        console.log('Sending ' + msg)
+        //console.log('Sending ' + msg)
         this.ws.send(msg)
-        console.log('Sent ' + msg)
+        //console.log('Sent ' + msg)
       })
     },
     /* set the number of input files */

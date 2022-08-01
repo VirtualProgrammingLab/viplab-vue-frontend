@@ -41,12 +41,9 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "id" : {
-                                        "type" : "string",
-                                        "description": "id; for later referencing, has to be unique"
-                                    },
                                     "basename" : {
                                         "type" : "string",
+                                        "minLength": 1,
                                         "description": "part of filename, that is shared by connected files"
                                     },
                                     "xlabel" : {
@@ -54,6 +51,7 @@
                                         "properties": {
                                             "key" : {
                                                 "type" : "string",
+                                                "minLength": 1,
                                                 "description": "key for x-axis given in csv header"
                                             },
                                             "label" : {
@@ -68,7 +66,8 @@
                                                 "type" : "string",
                                                 "description": "Format the x-axis values according to format string - https://github.com/d3/d3-format/blob/main/README.md#locale_format"
                                             }
-                                        }
+                                        },
+                                        "required": ["key"]
                                     },
                                     "plots" : {
                                         "type" : "array",
@@ -77,6 +76,7 @@
                                             "properties": {
                                                 "key" : {
                                                     "type" : "string",
+                                                    "minLength": 1,
                                                     "description": "key for y-axis given in csv header"
                                                 },
                                                 "label" : {
@@ -92,10 +92,13 @@
                                                     "description": "Format the y-axis values according to format string - https://github.com/d3/d3-format/blob/main/README.md#locale_format"
                                                 }
                                             }
-                                        }
+                                        },
+                                        "required": ["key"]
                                     }
-                                }
+                                },
+                                "required": ["basename"]
                             },
+                            "uniqueItems": true,
                             "additionalItems": false
                         },
                         "vtk": {
@@ -103,16 +106,15 @@
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "id" : {
-                                        "type" : "string",
-                                        "description": "id; for later referencing, has to be unique"
-                                    },
                                     "basename" : {
                                         "type" : "string",
+                                        "minLength": 1,
                                         "description": "part of filename, that is shared by connected files"
                                     }
-                                }
+                                },
+                                "required": ["basename"]
                             },
+                            "uniqueItems": true,
                             "additionalItems": false
                         }
                     }
@@ -136,7 +138,7 @@
                     },
                     "path" : {
                         "type" : "string",
-                        "pattern" : "^([A-z0-9-_+]+/?)*([A-z0-9]+[.]([A-z]+))$",
+                        "pattern" : "^([A-z0-9-_+]+/?)*([A-z0-9]+([.]([A-z]+))?)$",
                         "description": "Absolute path to file" 
                     },
                     "metadata" : {
@@ -175,10 +177,9 @@
                                             "type" : "string",
                                             "description": "Additional description of this part; To be shown in the frontend"
                                         },
-                                        "emphasis" : {
+                                        "description" : {
                                             "type" : "string",
-                                            "enum" : ["low", "medium", "high"],
-                                            "description": "Info for rendering"
+                                            "description" : "Short description; Mostly a few lines. A longer description in different formats can be put in 'elements'"
                                         }
                                     },
                                     "additionalProperties": false
