@@ -713,20 +713,31 @@ export default {
     loadJsonFromFile: function () {
       let appDiv = document.body;
       let data = appDiv.getAttribute("data-template");
+      let token = appDiv.getAttribute("data-token");
       
       if (data !== "{{ data }}" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
         this.json = JSON.parse(base64url.decode(data));
-        // store token in Vuex store
-        this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
         this.$store.commit("updateDataTemplate", data);
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
         this.json = this.$store.state.jsonTemplate;
-        this.token = this.$store.state.token;
         this.dataTemplate = this.$store.state.dataTemplate;
       } else {
         this.json = {};
-        this.token = "";
         this.dataTemplate = "";
+      }
+
+      if (token !== "{{ token }}" && this.$store.state.token.length === 0) {
+        this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
+      } else if (this.$store.state.token.length > 0) {
+        this.token = this.$store.state.token;
+      } else {
+        this.token = "";
+      }
+
+      if (this.$store.state.dataTemplate.length === 0 && data !== "{{ data }}") {
+        this.dataTemplate = data;
+      } else if (this.$store.state.dataTemplate.length === 0 && Object.keys(this.$store.state.jsonTemplate).length > 0) {
+        this.dataTemplate = base64url(JSON.stringify(this.$store.state.jsonTemplate));
       }
       
       // if there are parameters in parts, set var accordingly for rendering of button

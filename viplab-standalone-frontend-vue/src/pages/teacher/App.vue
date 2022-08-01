@@ -2445,6 +2445,7 @@ export default {
       let file = JSON.stringify(this.computationTemplate);
       let dataBase64url = base64url(Buffer.from(file).toString());
       
+      //baseUrl = "http://localhost:3000/";
       fetch(baseUrl + "sign", {
         method: 'POST',
         body: dataBase64url
