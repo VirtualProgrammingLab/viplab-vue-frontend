@@ -602,48 +602,11 @@ export default {
       handler: function (val) {
         this.json = val;
         // update Vuex Store
-        console.log("json was updated")
         this.$store.commit("updateJsonTemplate", val);
         //console.log(this.json.files[0].parts[0].parameters[0].selected);
         this.$forceUpdate();
       },
       deep: true
-    },
-    '$route': {
-      handler: function() {
-        //console.log("ROUTE - viplab - " + this.token)
-        // this.ws = new WebSocket(this.$config.WEBSOCKET_API);
-        // let message = JSON.stringify({ type: "authenticate", content: { jwt: this.token } });
-        // this.sendWaiting(message)
-
-        // this.ws.onopen = () => {
-        //   console.log("Connection is open!")
-        //   this.ws.send(
-        //     JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
-        //   );
-        // };
-        // if (this.ws.readyState  === 1) {
-        //   console.log("It is safe to send messages now")
-        // } else {
-        //   console.log("ws not open...")
-        // }
-
-        //this.executeAfterDomLoaded();
-        // let base64Template = Base64.encode(Buffer.from(JSON.stringify(this.json)).toString(), "utf-8");
-        // this.ws = new WebSocket(this.$config.WEBSOCKET_API);
-        //this.ws.onopen = () => {
-          // this.ws.send(
-          //   JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
-          // );
-          // this.ws.send(
-            // JSON.stringify({ type: "prepare-computation", content: { template: base64Template, task: this.generateComputationTask() } })
-          // );
-          // currently always enabled as soon as every part of form validates!!!
-          //document.getElementById("submit").disabled = false;
-        // };
-      },
-      deep: true,
-      immediate: true
     }
   },
   computed: {
@@ -720,12 +683,12 @@ export default {
       setTimeout(
         function () {
           if (socket.readyState === 1) {
-            console.log('Connection is made')
+            //console.log('Connection is made')
             if (callback != null) {
               callback()
             }
           } else {
-            console.log('wait for connection...')
+            //console.log('wait for connection...')
             context.waitForSocketConnection(context, socket, callback)
           }
         }, 5) // wait 5 milisecond for the connection...
@@ -750,36 +713,22 @@ export default {
     loadJsonFromFile: function () {
       let appDiv = document.body;
       let data = appDiv.getAttribute("data-template");
-      let decodedjson = JSON.parse(base64url.decode(data));
       
-      console.log(decodedjson)
-
-      console.log(Object.keys(this.$store.state.jsonTemplate).length === 0)
-      console.log(this.$store.state.jsonTemplate)
       if (data !== "{{ data }}" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
-        console.log("1")
         this.json = JSON.parse(base64url.decode(data));
         // store token in Vuex store
         this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
         this.$store.commit("updateDataTemplate", data);
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
-        console.log("2")
         this.json = this.$store.state.jsonTemplate;
         this.token = this.$store.state.token;
         this.dataTemplate = this.$store.state.dataTemplate;
       } else {
-        console.log(3)
         this.json = {};
         this.token = "";
         this.dataTemplate = "";
       }
       
-      // store json in Vuex store
-      // this.$store.commit("updateJsonTemplate", decodedjson);
-      
-      //this.token = appDiv.getAttribute("data-token");
-      
-
       // if there are parameters in parts, set var accordingly for rendering of button
       for(var file in this.json.files) {
         for(var part in this.json.files[file].parts) {
@@ -791,30 +740,12 @@ export default {
         }
       }
 
-      //console.log(this.json);
-
       this.setNumberOfInputFiles();
     },
     /** should be the first thing that is executed when DOM is loaded: setup connection to webserver */
     executeAfterDomLoaded: function () {
-      console.log("AUTHENTICATE - /viplab")
-      //let base64Template = Base64.encode(Buffer.from(JSON.stringify(this.json)).toString(), "utf-8");
-
-      //this.ws = new WebSocket("ws://192.168.195.128:8083/computations");
-      //this.ws = new WebSocket(this.$config.WEBSOCKET_API);
       this.$store.commit("updateWebSocket", new WebSocket(this.$config.WEBSOCKET_API))
-      //console.log("connect to ws");
       
-      // this.ws.onopen = () => {
-      //   this.ws.send(
-      //     JSON.stringify({ type: "authenticate", content: { jwt: this.token } })
-      //   );
-      //   this.ws.send(
-      //     JSON.stringify({ type: "prepare-computation", content: { template: base64Template, task: this.generateComputationTask() } })
-      //   );
-      //   // currently always enabled as soon as every part of form validates!!!
-      //   document.getElementById("submit").disabled = false;
-      // };
       let message = JSON.stringify({ type: "authenticate", content: { jwt: this.token } });
       this.sendWaiting(message)
 
@@ -976,9 +907,9 @@ export default {
           }
           task["arguments"] = args;
         }
-        console.log("---------- Task: ----------");
-        console.log(task);
-        console.log("----------");
+        // console.log("---------- Task: ----------");
+        // console.log(task);
+        // console.log("----------");
       }
 
       return task;
@@ -1522,7 +1453,6 @@ export default {
             let currentValue = currentParam.value || currentParam.selected;
             view[currentParam.identifier] = currentValue;
           }
-          console.log(view)
           // Substitute values in handlebars template
           const template = Handlebars.compile(handlebarsTemplate);
           var output = template(view);
@@ -1566,7 +1496,7 @@ export default {
     },
     downloadFromLink: function(dataurl) {
       let filename = dataurl.slice(dataurl.lastIndexOf("/") + 1, dataurl.length);
-      //console.log(filename);
+      
       fetch(dataurl)
         .then(response => response.arrayBuffer())
         .then(response => {

@@ -98,8 +98,8 @@ var token;
 
 var setParameters = function (filename) {
 
-    console.log(process.argv[3]);
-    console.log(process.env.VUE_APP_FILENAME);
+    //console.log(process.argv[3]);
+    //console.log(process.env.VUE_APP_FILENAME);
 
     inputTemplates = fs.readdirSync('./src/input/');
 
@@ -130,7 +130,7 @@ var setParameters = function (filename) {
                     content = fs.readFileSync("./src/input/" + contentFile + currentPart.identifier + ".txt", 'utf8');
                     currentPart.content = Base64.encode(Buffer.from(content).toString(), "utf-8");
                 } catch (err) {
-                    console.log(err);
+                    // console.log(err);
                     content = "";
                     // continue searching for files
                     continue;
