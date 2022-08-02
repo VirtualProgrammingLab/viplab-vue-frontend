@@ -18,7 +18,7 @@ jobs:
       - name: npm install, build
         run: |
           cd viplab-standalone-frontend-vue
-          npm install
+          node --max-old-space-size=8000 $(which npm) install
           npm run build
 
       - name: Upload Artifact
