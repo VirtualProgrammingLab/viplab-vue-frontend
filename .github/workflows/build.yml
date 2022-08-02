@@ -1,0 +1,29 @@
+name: "Build and Deploy"
+
+on: push
+
+jobs:
+  build-and-save-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the branch that triggered the workflow.
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      
+      - name: npm install, build
+        run: |
+          cd viplab-standalone-frontend-vue
+          npm install
+          npm run build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: |
+            viplab-standalone-frontend-vue/dist
