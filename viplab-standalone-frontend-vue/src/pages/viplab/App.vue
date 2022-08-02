@@ -1112,12 +1112,14 @@ export default {
 
       //get basenames for collections of files
       let outputConfig = [];
-      if (this.json.metadata.output !== undefined) {
-        if (this.json.metadata.output.csv !== undefined) {
-          outputConfig.concat(this.json.metadata.output.csv);
-        }
-        if (this.json.metadata.output.vtk !== undefined) {
-          outputConfig.concat(this.json.metadata.output.vtk);
+      if (typeof this.json.metadata !== 'undefined') {
+        if (this.json.metadata.output !== undefined) {
+          if (this.json.metadata.output.csv !== undefined) {
+            outputConfig.concat(this.json.metadata.output.csv);
+          }
+          if (this.json.metadata.output.vtk !== undefined) {
+            outputConfig.concat(this.json.metadata.output.vtk);
+          }
         }
       }
       /*
