@@ -600,7 +600,7 @@
                                 <b-button class="btn mb-3" @click="addCsvConfig()" v-tooltip.top-center="'Add Config for Group of CSV-Files'">
                                   <b-icon icon="plus" aria-hidden="true"></b-icon>
                                 </b-button>
-                                <div class="ml-4 mr-4 mb-2">
+                                <div class="ml-4 mr-4 mb-2" v-if="(typeof computationTemplate.metadata != 'undefined') && (typeof computationTemplate.metadata.output != 'undefined') && (typeof computationTemplate.metadata.output.csv != 'undefined')">
                                   <div class="border p-2 mb-2" v-for="(csvConfig, index) in computationTemplate.metadata.output.csv" :key="'csvConfig-'+index">
                                     <!-- basename -->
                                     <div>
@@ -759,7 +759,7 @@
                                 <b-button class="btn mb-3" @click="addVtkConfig()" v-tooltip.top-center="'Add Config for Group of VTK-Files'">
                                   <b-icon icon="plus" aria-hidden="true"></b-icon>
                                 </b-button>
-                                <div class="ml-4 mr-4">
+                                <div class="ml-4 mr-4" v-if="(typeof computationTemplate.metadata != 'undefined') && (typeof computationTemplate.metadata.output != 'undefined') && (typeof computationTemplate.metadata.output.csv != 'undefined')">
                                   <div class="border mb-2 p-2" v-for="vtkConfig in computationTemplate.metadata.output.vtk" :key="vtkConfig.identifier">
                                     <!-- basename -->
                                     <div>
@@ -1360,7 +1360,6 @@ export default {
           this.$delete(this.computationTemplate.metadata.output, "viewer")
         }
         this.$forceUpdate();
-        return this.computationTemplate.metadata.output.viewer;
       }
     },
     vModelFilePath: {
@@ -2396,11 +2395,11 @@ export default {
 
       // TODO: Should also function without metadata as it is not required
       // add metadata if missing
-      // if (typeof this.computationTemplate.metadata == "undefined") {
-      //   this.computationTemplate["metadata"] = { "displayName" : "", "description": "", "output": { "viewer": [], "csv" : [], "vtk" : [] } };
+      // if (typeof obj.metadata == "undefined") {
+      //   obj["metadata"] = { "displayName" : "", "description": "", "output": { "viewer": [], "csv" : [], "vtk" : [] } };
       // } else {
-      //   if (typeof this.computationTemplate.metadata.output == "undefined") {
-      //     this.computationTemplate.metadata["output"] = { "viewer": [], "csv" : [], "vtk" : [] };
+      //   if (typeof obj.metadata.output == "undefined") {
+      //     obj.metadata["output"] = { "viewer": [], "csv" : [], "vtk" : [] };
       //   }
       // }
       
@@ -2408,7 +2407,9 @@ export default {
       if (!isValid) {
         this.$alert("Your template is not valid. Thus, it can not be imported!", "Import Error", "error");
       } else {
-        this.computationTemplate = obj;
+        console.log(obj)
+        this.$store.commit("updateGeneratedComputationTemplate", obj)
+        //this.computationTemplate = obj
         // set number of options for configuring parameters and commandline arguments
         this.setNumbersOfOptions();
       }

@@ -66,12 +66,6 @@
   "files":   [],
   "configuration" :
     { 
-      "resources.image"  : "name://hello-world",
-      "running.intermediateFilesPattern" : [
-        "[[Wrote tracer data over time]]",
-        "[[Wrote tracer data over time 2]]",
-        "[[Wrote tracer vtk output]]",
-        "[[Wrote tracer vtk output 2]]"
-      ]
+      "resources.image"  : "name://hello-world"
     }
 }
