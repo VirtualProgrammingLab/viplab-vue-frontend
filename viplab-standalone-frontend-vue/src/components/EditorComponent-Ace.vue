@@ -41,8 +41,12 @@
 import { ValidationProvider, extend } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules';
 
-import 'ace-builds'
-import 'ace-builds/webpack-resolver'
+import ace from 'ace-builds'
+ace.config.set(
+    "basePath", 
+    "https://cdn.jsdelivr.net/npm/ace-builds@" + require('ace-builds').version + "/src-noconflict/"
+  )
+//import 'ace-builds/webpack-resolver'
 
 import base64url from "base64url";
 

@@ -4,13 +4,13 @@ const vtkChainWebpack = require("vtk.js/Utilities/config/chainWebpack");
 const path = require('path')
 const CopyPlugin = require('copy-webpack-plugin')
 
-module.exports = {
+module.exports =  {
     chainWebpack: config => {
         vtkChainWebpack(config);
     },
     // options...
     //the next 2 lines are needed, if you want to use the files in a flask app:
-    //assetsDir: './static',
+    //assetsDir: './assets',
     //indexPath: './templates/main.html',
     runtimeCompiler: true,
     pwa: {
