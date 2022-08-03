@@ -838,6 +838,13 @@ export default {
     sendData: function () {
       //console.log("send data");
 
+      // reset result variables
+      this.outputFiles = ""
+      this.returnedOutputJson = ""
+      this.returnedUnmodifiedArtifacts = ""
+
+      console.log("sendData " + this.returnedOutputJson)
+
       // start waiting
       this.$wait.start("wait for ws response");
       this.waitingResponse = true;
@@ -947,12 +954,17 @@ export default {
         document.getElementById("submit").disabled = false;
       }
 
+      console.log("displayResult " + this.returnedOutputJson)
+
       // if the first result came back, set the whole object, else, only add the new artifacts to the existing object
       // use JSON.parse(JSON.stringify(...)) to make sure a copy of the data is made, such that not only a reference is used
       if (this.returnedOutputJson === "") {
         this.returnedOutputJson = JSON.parse(JSON.stringify(result.result))
+        //this.$set(this.returnedOutputJson, JSON.parse(JSON.stringify(result.result)))
         this.returnedUnmodifiedArtifacts = JSON.parse(JSON.stringify(result.result))
+        //this.$set(this.returnedUnmodifiedArtifacts, JSON.parse(JSON.stringify(result.result)))
       } else {
+        // TODO: Muss eventuell mit this.$set gemacht werden, damit gui auch geupdated wird; nötig erst wenn intermediate results im Backend möglich
         this.returnedOutputJson.artifacts.push(JSON.parse(JSON.stringify(result.result.artifacts)));
         this.returnedUnmodifiedArtifacts.artifacts.push(JSON.parse(JSON.stringify(result.result.artifacts)))
       }
