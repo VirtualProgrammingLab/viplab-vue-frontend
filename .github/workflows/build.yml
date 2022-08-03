@@ -16,9 +16,11 @@ jobs:
           node-version: '16.14.2'
       
       - name: npm install, build
+        env: 
+          NODE_OPTIONS: "--max_old_space_size=8000"
         run: |
           cd viplab-standalone-frontend-vue
-          node --max-old-space-size=8000 $(which npm) install
+          npm install
           npm run build
 
       - name: Upload Artifact
