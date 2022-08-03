@@ -1,6 +1,9 @@
-name: "Build and Deploy"
+name: "Build and Upload"
 
-on: push
+on: 
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+'
 
 jobs:
   build-and-save-artifact:
