@@ -125,7 +125,7 @@ export default {
     },
   },
   created() {
-    this.loadJsonFromFile();
+    //this.loadJsonFromFile();
   }
 };
 </script>

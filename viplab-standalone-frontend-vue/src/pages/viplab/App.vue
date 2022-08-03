@@ -715,18 +715,26 @@ export default {
       let data = appDiv.getAttribute("data-template");
       let token = appDiv.getAttribute("data-token");
       
-      if (data !== "{{ data }}" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
+      console.log("------ loadJsonFromFile ------")
+      console.log(data)
+      console.log(base64url.decode(data))
+      console.log("------")
+
+      if (data && data !== "{{ data }}" && data !== "" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
+        console.log("1")
         this.json = JSON.parse(base64url.decode(data));
         this.$store.commit("updateDataTemplate", data);
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
+        console.log("2")
         this.json = this.$store.state.jsonTemplate;
         this.dataTemplate = this.$store.state.dataTemplate;
       } else {
+        console.log("3")
         this.json = {};
         this.dataTemplate = "";
       }
 
-      if (token !== "{{ token }}" && this.$store.state.token.length === 0) {
+      if (token && token !== "{{ token }}" && token !== "" && this.$store.state.token.length === 0) {
         this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
       } else if (this.$store.state.token.length > 0) {
         this.token = this.$store.state.token;
