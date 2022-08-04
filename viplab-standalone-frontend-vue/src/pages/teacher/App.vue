@@ -396,7 +396,7 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'RegEx-Expression in Stdout which File(s) is ready to be transferred.'"></b-icon-info-circle>
+                                    <b-icon-info-circle v-tooltip.top-center="'RegEx-Expression in Stdout which File(s) is ready to be transferred by the Backend to be displayed by the Frontend.'"></b-icon-info-circle>
                                 </div>
                               </div>
                             </div>
