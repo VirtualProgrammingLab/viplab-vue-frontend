@@ -1,0 +1,36 @@
+{
+    "identifier": "76eabbbf-b2fa-48da-37eb-f1223c00378f",
+    "version": "3.0.0",
+    "metadata": {
+        "displayName": "",
+        "description": "",
+        "output": {
+            "viewer": [],
+            "csv": [],
+            "vtk": []
+        }
+    },
+    "environment": "Container",
+    "configuration": {
+    "resources.image": "name://t",
+    "resources.memory": "4g",
+    "resources.numCPUs": 1
+    },
+    "files": [],
+    "parameters": [
+        {
+            "mode": "any",
+            "identifier": "658c0db4-91e5-3118-ae09-82f468362a0f",
+            "metadata": {
+              "guiType": "input_field",
+              "type": "text",
+              "name": "Name",
+              "description": "Add your description here..."
+            },
+            "default": [
+              "dGVzdA"
+            ],
+            "validation": "none"
+          }
+    ]
+}

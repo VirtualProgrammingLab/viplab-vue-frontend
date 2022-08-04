@@ -95,7 +95,7 @@
                     <div v-if="showCommands">
                       <div class="mb-2">Commandline Arguments:</div>
                       <transition-group name="list" tag="div">
-                        <drag v-for="n in componentsFiles.concat(componentsCommand).concat(availableGuiTypes)" :key="n" class="drag" :data="n">{{n}}</drag>
+                        <drag v-for="n in componentsFiles.concat(componentsCommand)" :key="n" class="drag" :data="n">{{n}}</drag>
                       </transition-group>
                     </div>
                   </b-tab>
@@ -890,11 +890,11 @@
                           <label class="mr-2" for="selectedParameter.identifier">identifier: </label>
                           <div class="d-flex form-group"> 
                             <div class="flex-grow-1">
-                              <input type="text" class="form-control" id="selectedParameter.identifier" v-model="selectedParameter.identifier">
+                              <input type="text" class="form-control" id="selectedParameter.identifier" v-model="vModelParameterIdentifier">
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Unique id for this parameter. This id must be valid mustach template variable. Example: __BINARY__.'"></b-icon-info-circle>
+                              <b-icon-info-circle v-tooltip.top-center="'Unique id for this parameter. This id must be valid Handlebars.js template variable. Example: __BINARY__.'"></b-icon-info-circle>
                             </div>
                           </div>
                         </div>
@@ -903,7 +903,7 @@
                           <label class="mr-2" for="selectedParameter.metadata.name">name: </label>
                           <div class="d-flex form-group"> 
                             <div class="flex-grow-1">
-                              <input type="text" class="form-control" id="selectedParameter.metadata.name" v-model="selectedParameter.metadata.name">
+                              <input type="text" class="form-control" id="selectedParameter.metadata.name" v-model="vModelParameterMetadataName">
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
@@ -916,7 +916,7 @@
                           <label class="mr-2" for="selectedParameter.metadata.description">description: </label>
                           <div class="d-flex form-group"> 
                             <div class="flex-grow-1">
-                              <input type="text" class="form-control" id="selectedParameter.metadata.description" v-model="selectedParameter.metadata.description">
+                              <input type="text" class="form-control" id="selectedParameter.metadata.description" v-model="vModelParameterMetadataDescription">
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
@@ -1197,6 +1197,7 @@ import base64url from "base64url";
 // var Validator = require('jsonschema').Validator;
 import ctSchema from './json-schema/computation-template-container.json';
 import parameterSchema from './json-schema/parameters.json';
+import commandlineArgumentsSchema from './json-schema/commandline-arguments.json';
 import Ajv from "ajv"
 
 // import $ from 'jquery';
@@ -1214,7 +1215,7 @@ export default {
       componentsFiles: ["file", "commandline arguments"],
       componentsFile: ["part"], 
       componentsPart: ["part"],
-      componentsCommand: [],
+      componentsCommand: ["checkbox", "radio", "dropdown", "toggle"],
       availableGuiTypes : ["input_field", "editor", "slider", "checkbox", "radio", "dropdown", "toggle"],
       preferences: true,
       selectedParameter: {},
@@ -1228,6 +1229,7 @@ export default {
       valueNumbers: new Map(),
       schema: ctSchema,
       paramSchema: parameterSchema,
+      commandlineArgsSchema: commandlineArgumentsSchema,
       validationResult: null,
       validationPartParameterResult: null,
       validationArgsResult: null,
@@ -1450,6 +1452,73 @@ export default {
 
         this.$forceUpdate();
       }
+    },
+    vModelParameterIdentifier: {
+      get: function () {
+        if (typeof this.selectedParameter.identifier !== "undefined") {
+          return this.selectedParameter.identifier;
+        }
+        return "";
+      },
+      set: function (val) {
+        this.$set(this.selectedParameter, "identifier", val);
+        console.log("set")
+        // if val is empty, remove object from ct
+        if (val == "") {
+          console.log("id empty")
+          this.$delete(this.selectedParameter, "identifier")
+        }
+
+        this.$forceUpdate();
+      }
+    },
+    vModelParameterMetadataName: {
+      get: function () {
+        if (typeof this.selectedParameter.metadata !== "undefined") {
+          if (typeof this.selectedParameter.metadata.name !== "undefined") {
+            return this.selectedParameter.metadata.name;
+          }
+        }
+        return "";
+      },
+      set: function (val) {
+        if (typeof this.selectedParameter.metadata === "undefined") {
+          this.$set(this.selectedParameter, "metadata", { "name": val });
+        } else {
+          this.$set(this.selectedParameter.metadata, "name", val);
+        }
+        
+        // if val is empty, remove object from ct
+        if (val == "") {
+          this.$delete(this.selectedParameter.metadata, "name")
+        }
+
+        this.$forceUpdate();
+      }
+    },
+    vModelParameterMetadataDescription: {
+      get: function () {
+        if (typeof this.selectedParameter.metadata !== "undefined") {
+          if (typeof this.selectedParameter.metadata.description !== "undefined") {
+            return this.selectedParameter.metadata.description;
+          }
+        }
+        return "";
+      },
+      set: function (val) {
+        if (typeof this.selectedParameter.metadata === "undefined") {
+          this.$set(this.selectedParameter, "metadata", { "description": val });
+        } else {
+          this.$set(this.selectedParameter.metadata, "description", val);
+        }
+        
+        // if val is empty, remove object from ct
+        if (val == "") {
+          this.$delete(this.selectedParameter.metadata, "description")
+        }
+
+        this.$forceUpdate();
+      }
     }
   }, 
   watch: {
@@ -1567,9 +1636,10 @@ export default {
           "metadata" : { 
             "guiType" : e.data,
             "type" : "",
-            "name": ""
+            "name": "Name",
+            "description": "Add your description here..."
           },
-          "default" : [],
+          "default" : [ "" ],
           "validation" : "none",
         };
       } else if (e.data === "slider") {
@@ -1578,10 +1648,11 @@ export default {
           "identifier" : this.uuid(),
           "metadata" : { 
             "guiType" : e.data,
-            "name": "",
+            "name": "Name",
+            "description": "Add your description here...",
             "vertical" : false
           },
-          "default" : [],
+          "default" : [ 0 ],
           "min": 0,
           "max" : 100,
           "step" : 1,
@@ -1593,7 +1664,8 @@ export default {
           "identifier" : this.uuid(),
           "metadata" : { 
             "guiType" : e.data,
-            "name": ""
+            "name": "Name",
+            "description": "Add your description here..."
           },
           "default" : [ "" ],
           "validation" : "none",
@@ -1604,10 +1676,18 @@ export default {
           "identifier" : this.uuid(),
           "metadata" : { 
             "guiType" : e.data,
-            "name": ""
+            "name": "Name",
+            "description": "Add your description here..."
           },
-          "options" : [],
-          "validation" : "none",
+          "options" : [
+            {
+              "value": "value",
+              "text": "label",
+              "selected": false,
+              "disabled": false
+            }
+          ],
+          "validation" : "anyof",
         };
       } else if (e.data === "radio") {
         parameter = { 
@@ -1615,10 +1695,18 @@ export default {
           "identifier" : this.uuid(),
           "metadata" : { 
             "guiType" : e.data,
-            "name": ""
+            "name": "Name",
+            "description": "Add your description here..."
           },
-          "options" : [],
-          "validation" : "none",
+          "options" : [
+            {
+              "value": "value",
+              "text": "label",
+              "selected": false,
+              "disabled": false
+            }
+          ],
+          "validation" : "oneof",
         };
       } else if (e.data === "dropdown") {
         parameter = { 
@@ -1626,10 +1714,18 @@ export default {
           "identifier" : this.uuid(),
           "metadata" : { 
             "guiType" : e.data,
-            "name": ""
+            "name": "Name",
+            "description": "Add your description here..."
           },
-          "options" : [],
-          "validation" : "none",
+          "options" : [
+            {
+              "value": "value",
+              "text": "label",
+              "selected": false,
+              "disabled": false
+            }
+          ],
+          "validation" : "oneof",
         };
       } else if (e.data === "toggle") {
         parameter = { 
@@ -1637,10 +1733,18 @@ export default {
           "identifier" : this.uuid(),
           "metadata" : { 
             "guiType" : e.data,
-            "name": ""
+            "name": "Name",
+            "description": "Add your description here..."
           },
-          "options" : [],
-          "validation" : "none",
+          "options" : [
+            {
+              "value": "value",
+              "text": "label",
+              "selected": false,
+              "disabled": false
+            }
+          ],
+          "validation" : "anyof",
         };
       } else {
         parameter = { 
@@ -2112,14 +2216,18 @@ export default {
       if (this.selectedParameter.default.length > 0) {
         return this.selectedParameter.default[index];
       }
-      return 0;
+      return NaN;
     },
     setSlidervModel: function (val, index) {
       if (typeof this.selectedParameter !== "undefined") {
-        this.$set(this.selectedParameter.default , index, Number(val.target.value));
-        this.$forceUpdate();
-        return this.slidervModel;
+        console.log(val.target.value)
+        if (val.target.value === "") {
+          this.$set(this.selectedParameter.default, index, "");
+        } else {
+          this.$set(this.selectedParameter.default, index, Number(val.target.value));
+        }
       }
+      this.$forceUpdate();
     },
     getFixedParamvModel: function (index, whatToGet = "value") {
       if (this.selectedParameter.options.length > 0) {
@@ -2145,7 +2253,6 @@ export default {
         if (typeof this.selectedParameter.options[index] == "undefined") {
           let option = {
               "value" : "",
-              "text" : "",
               "selected" : false,
               "disabled" : false
             };
@@ -2164,7 +2271,11 @@ export default {
             }
           }
         } else {
-          this.$set(this.selectedParameter.options[index] , whatToSet, val.target.value);
+          if (val.target.value === "" && whatToSet === "text") {
+            this.$delete(this.selectedParameter.options[index], "text");
+          } else {
+            this.$set(this.selectedParameter.options[index] , whatToSet, val.target.value);
+          }
         }
         // if dropdown and multiple fields are selected
         if (this.selectedParameter.metadata.guiType === "dropdown") {
@@ -2256,11 +2367,11 @@ export default {
       }
 
       // commandline arguments validation
-      const commandlineValidate = ajv.compile(this.paramSchema)
+      const commandlineValidate = ajv.compile(this.commandlineArgsSchema)
       if (typeof this.computationTemplate.parameters !== "undefined" && this.computationTemplate.parameters !== []) {
         commandlineValidate(this.computationTemplate.parameters)
         // console.log(commandlineValidate.errors)
-        this.validationArgsResult = paramValidate.errors
+        this.validationArgsResult = commandlineValidate.errors
       }
 
       // if everything is valid, set validationResult to "Template is Valid!"
@@ -2303,11 +2414,11 @@ export default {
       }
 
       // commandline arguments validation
-      const commandlineValidate = ajv.compile(this.paramSchema)
+      const commandlineValidate = ajv.compile(this.commandlineArgsSchema)
       if (typeof ct.parameters !== "undefined" && ct.parameters !== []) {
         commandlineValidate(ct.parameters)
         // console.log(commandlineValidate.errors)
-        validationArgsResult = paramValidate.errors
+        validationArgsResult = commandlineValidate.errors
       }
 
       // if everything is valid, set validationResult to "Template is Valid!"
@@ -2431,9 +2542,11 @@ export default {
         }
       }
       // set number of commandline argument-values
-      if (typeof this.computationTemplate.parameters != undefined) {
+      if (typeof this.computationTemplate.parameters !== "undefined") {
         for (let arg in this.computationTemplate.parameters) {
-          this.valueNumbers.set(this.computationTemplate.parameters[arg].identifier, this.computationTemplate.parameters[arg].options.length);
+          if (this.computationTemplate.parameters[arg].mode == "fixed") {
+            this.valueNumbers.set(this.computationTemplate.parameters[arg].identifier, this.computationTemplate.parameters[arg].options.length);
+          }
         }
       }
     },

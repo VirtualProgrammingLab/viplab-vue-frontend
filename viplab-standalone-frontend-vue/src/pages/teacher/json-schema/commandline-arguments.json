@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://virtualprogramminglab.github.io/schemas/commandline-arguments.json",
+
+    "type" : "array",
+
+    "items" : {
+        "type" : "object",
+        
+        "properties": {
+            "mode" : {
+                "const": "fixed"
+            },
+            "identifier" : {
+                    "type" : "string",
+                    "description" : "Each parameter has a unique identifier"
+            },
+            "metadata": { 
+                "type": "object",
+                "properties": {
+                    "guiType" : {
+                        "type" : "string",
+                        "enum": ["checkbox", "radio", "dropdown", "toggle"]
+                    },
+                    "name" : {
+                        "type" : "string"
+                    },
+                    "description" : {
+                        "type" : "string",
+                        "description" : "Short description; Mostly a few lines. Will be shown as tooltip."
+                    }
+                },
+                "additionalProperties": false,
+                "required": ["guiType", "name", "description"]
+            },
+            "options" : {
+                "type" : "array",
+                "items": {
+                    "type" : "object",
+                    "properties": {
+                        "value" : {
+                            "type" : "string"
+                        },
+                        "text" : {
+                            "type" : "string"
+                        },
+                        "selected" : {
+                            "type": "boolean"
+                        },
+                        "disabled" : {
+                            "type": "boolean"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["value"]
+                },
+                "additionalItems": false,
+                "minItems" : 1
+            },
+            "validation" : {
+                "type" : "string",
+                "enum" : ["anyof", "minone", "oneof"]
+            }
+        },
+        "required": ["mode", "identifier", "metadata", "options", "validation"]
+    }
+}
