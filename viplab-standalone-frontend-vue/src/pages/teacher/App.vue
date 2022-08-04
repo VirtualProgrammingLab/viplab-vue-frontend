@@ -769,7 +769,7 @@
                                         </div>
                                         <!-- Delete VTK-Config -->
                                         <div class="tooltip-icon pl-2" @click="removeConfig($event, false, vtkConfig)">
-                                            <b-icon-x-circle v-tooltip.top-center="'Delete CSV-Config.'"></b-icon-x-circle>
+                                            <b-icon-x-circle v-tooltip.top-center="'Delete VTK-Config.'"></b-icon-x-circle>
                                         </div>
                                       </div>
                                       <div class="d-flex"> 
