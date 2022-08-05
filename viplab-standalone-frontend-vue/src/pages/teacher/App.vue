@@ -1240,7 +1240,8 @@ export default {
         },
         {
           target: '#run-configuration',
-          content: 'Choose the Environment! How is your Application run? After that, Configure other parameters for the execution.'
+          content: 'Choose the Environment! How is your Application run? After that, Configure other parameters for the execution.',
+          offset: -200
         },
         {
           target: '#component-selection',
@@ -1249,6 +1250,7 @@ export default {
         {
           target: '#drag-components-here',
           content: 'By clicking on the different components in the middle-section, you can modify the configuration of each component on the right.',
+          offset: -200,
           params: {
             placement: 'top'
           }
@@ -1256,6 +1258,7 @@ export default {
         {
           target: '#define-output',
           content: 'Last, define, what the output should look like.',
+          offset: 200,
           params: {
             placement: 'top'
           }
