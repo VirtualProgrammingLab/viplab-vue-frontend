@@ -44,7 +44,7 @@
               <!-- 
               Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
               -->
-              <b-card no-body v-if="numberOfInputFiles > 0">
+              <b-card no-body v-if="numberOfInputFiles > 0 || parsedParametersJson">
                 <b-tabs card class="files" content-class="m-2" fill>
                   <b-tab
                     ref="file"
