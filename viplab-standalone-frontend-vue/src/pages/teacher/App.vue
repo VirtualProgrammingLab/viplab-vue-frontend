@@ -7,8 +7,8 @@
 
   <div id="teacher">
 
-    <div class="sample-header p-2">
-          <div class="sample-header-section">
+    <div class="teacher-header p-2">
+          <div class="teacher-header-section">
             <h2>Teacher</h2>
             <h3>
               This site will help you create a Computation Template
@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <div class="sample-section-wrap">
+      <div class="teacher-section-wrap">
       <div class="group">
 
         <!-- Components and Preferences -->
@@ -281,6 +281,7 @@
           </b-card>
         </div>
 
+        <!-- TODO: Rename labels to make everything understandable -->
         <!-- Components and Preferences -->
         <b-collapse class="select-list" id="config-collapse" visible>
           <b-card no-body>
@@ -2494,9 +2495,9 @@ body {
 
 #injected #teacher {
 
-  .sample-header {
-    position: fixed;
-    height: 200px;
+  .teacher-header {
+    /*position: fixed;*/
+    min-height: 200px;
     left: 0;
     right: 0;
     top: 0;
@@ -2511,7 +2512,7 @@ body {
     justify-content: center;
   }
 
-  .sample-header::before {
+  .teacher-header::before {
     content: "";
     position: absolute;
     top: 0;
@@ -2522,7 +2523,7 @@ body {
     opacity: 0.3;
   }
 
-  .sample-header-section {
+  .teacher-header-section {
     position: relative;
     margin-top: auto;
     margin-bottom: auto;
@@ -2577,10 +2578,10 @@ body {
   }
 
   .main-div {
-    position: relative;
+    /*position: relative;*/
     background-color: #fff;
     border-radius: calc(0.25rem - 1px);
-    top: 200px;
+    /*top: 200px;*/
   }
 
   .validation-div {
@@ -2625,7 +2626,7 @@ body {
     background-color: #fff;
   }
 
-  .sample-section-wrap {
+  .teacher-section-wrap {
     position:relative;
     background-color: #fff;
   }
@@ -2804,7 +2805,7 @@ body {
     height: 100%;
     overflow-x: hidden !important;
     right: 0;
-    top: 10px;
+    /* top: 210px; */
   }
 
   #toggle-left-components a {
