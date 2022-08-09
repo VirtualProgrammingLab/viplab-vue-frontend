@@ -458,70 +458,6 @@
                             </div>
 
                             <!-- TODO Config Props need to be added if ViPLab supports other environments than Container -->
-                            <!-- <div v-if="ifConfigPropertyExists('compiling.sources')">
-                              <label class="mr-2">compiling.sources*:</label>
-                              <div class="ml-4 mr-4"> -->
-                                <!-- set how many values the config should have -->
-                                <!--<label for="'compiling-sources-sb-options'">How many compiling.sources should there be?</label>
-                                <b-form-spinbutton :id="'compiling-sources-sb-options'" placeholder="1" :value="getNumberofConfigFields('compiling.sources')" class="mb-2" @change="setNumberOfConfigFields('compiling.sources', $event)"></b-form-spinbutton> -->
-                                <!-- config-values -->
-                                <!-- <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('compiling.sources')" :key="'compiling-sources-' + index"> -->
-                                  <!-- value -->
-                                  <!-- <label>Set values:</label>
-                                  <input type="text" class="form-control" :value="getConfigvModel('compiling.sources', index)" @input="setConfigvModel('compiling.sources', $event, index)">
-                                </div>
-                              </div>
-                            </div>
-                            <div v-if="ifConfigPropertyExists('compiling.compiler')">
-                              <label class="mr-2">compiling.compiler*:</label>
-                              <input type="text" class="form-control" v-model="computationTemplate.configuration['compiling.compiler']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('compiling.flags')">
-                              <label class="mr-2">compiling.flags*(Must for C, C++, optional for Java):</label>
-                              <input type="text" class="form-control" v-model="computationTemplate.configuration['compiling.flags']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('checking.sources')">
-                              <label class="mr-2">checking.sources*(must if checking should be performed):</label>
-                              <div class="ml-4 mr-4"> -->
-                                <!-- set how many values the config should have -->
-                                <!-- <label for="'checking.sources-sb-options'">How many checking.sources should there be?</label>
-                                <b-form-spinbutton :id="'checking.sources-sb-options'" placeholder="1" :value="getNumberofConfigFields('checking.sources')" class="mb-2" @change="setNumberOfConfigFields('checking.sources', $event)"></b-form-spinbutton> -->
-                                <!-- input config-values -->
-                                <!-- <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('checking.sources')" :key="'checking.sources-' + index"> -->
-                                  <!-- value -->
-                                  <!-- <label>Set values:</label>
-                                  <input type="text" class="form-control" :value="getConfigvModel('checking.sources', index)" @input="setConfigvModel('checking.sources', $event, index)">
-                                </div>
-                              </div>
-                            </div> -->
-                            <!-- <div v-if="ifConfigPropertyExists('linking.flags')">
-                              <label class="mr-2">linking.flags*:</label>
-                              <input type="text" class="form-control" v-model="computationTemplate.configuration['linking.flags']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('running.stdinFilename')">
-                              <label class="mr-2">running.stdinFilename*:</label>
-                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.stdinFilename']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('running.executable')">
-                              <label class="mr-2">running.executable*:</label>
-                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.executable']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('checking.allowedCalls')">
-                              <label class="mr-2">checking.allowedCalls(must if checking should be performed):</label>
-                              <input type="text" class="form-control" v-model="computationTemplate.configuration['checking.allowedCalls']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('checking.forbiddenCalls')">
-                              <label class="mr-2">checking.forbiddenCalls(must if checking should be performed):</label>
-                              <input type="text" class="form-control" v-model="computationTemplate.configuration['checking.forbiddenCalls']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('running.flags')">
-                              <label class="mr-2">running.flags:</label>
-                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.flags']">
-                            </div>
-                            <div v-if="ifConfigPropertyExists('running.mainClass')">
-                              <label class="mr-2">running.mainClass:</label>
-                              <input type="text" class="form-control" v-model="computationTemplate.configuration['running.mainClass']">
-                            </div> -->
                           </div>
                         </div>
 
@@ -1194,13 +1130,10 @@ import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
 import base64url from "base64url";
 
 // for validation
-// var Validator = require('jsonschema').Validator;
 import ctSchema from './json-schema/computation-template-container.json';
 import parameterSchema from './json-schema/parameters.json';
 import commandlineArgumentsSchema from './json-schema/commandline-arguments.json';
 import Ajv from "ajv"
-
-// import $ from 'jquery';
 
 export default {
   name: "app",
@@ -1465,10 +1398,8 @@ export default {
       },
       set: function (val) {
         this.$set(this.selectedParameter, "identifier", val);
-        console.log("set")
         // if val is empty, remove object from ct
         if (val == "") {
-          console.log("id empty")
           this.$delete(this.selectedParameter, "identifier")
         }
 
@@ -1539,13 +1470,6 @@ export default {
         }
 
         // TODO: check if metadata.output is empty and delete
-        // if (typeof this.computationTemplate.metadata.output !== "undefined") {
-        //   if ($.isEmptyObject(this.computationTemplate.metadata.output)) {
-        //     console.log("watch - output empty")
-        //     this.$delete(this.computationTemplate.metadata, "output")
-        //     this.$forceUpdate();
-        //   }
-        // }
 
         // update generated CT in Vuex-Store
         this.$store.commit("updateGeneratedComputationTemplate", this.computationTemplate)
@@ -1565,21 +1489,17 @@ export default {
       setTimeout(
         function () {
           if (socket.readyState === 1) {
-            //console.log('Connection is made')
             if (callback != null) {
               callback()
             }
           } else {
-            //console.log('wait for connection...')
             context.waitForSocketConnection(context, socket, callback)
           }
         }, 5) // wait 5 milisecond for the connection...
     },
     sendWaiting: function(msg) {
       this.waitForSocketConnection(this, this.ws, () => {
-        //console.log('Sending ' + msg)
         this.ws.send(msg)
-        //console.log('Sent ' + msg)
       })
     },
     paramAccordeon(id) {
@@ -2049,7 +1969,6 @@ export default {
     /** Check if property exists in current config, or if it is undefined */
     ifConfigPropertyExists(property) {
       let config = this.computationTemplate.configuration;
-      //console.log(config[property]);
       if (typeof config[property] !== "undefined") {
         return true;
       }
@@ -2223,7 +2142,6 @@ export default {
     },
     setSlidervModel: function (val, index) {
       if (typeof this.selectedParameter !== "undefined") {
-        console.log(val.target.value)
         if (val.target.value === "") {
           this.$set(this.selectedParameter.default, index, "");
         } else {
@@ -2355,7 +2273,6 @@ export default {
       const ajv = new Ajv()
       const validate = ajv.compile(this.schema)
       validate(this.computationTemplate)
-      // console.log(validate.errors)
       this.validationResult = validate.errors
 
       // parameter validation
@@ -2366,7 +2283,6 @@ export default {
         for (let part in parts) {
           if (typeof parts[part].parameters !== "undefined") {
             paramValidate(parts[part].parameters)
-            // console.log(paramValidate.errors)
             this.validationPartParameterResult = paramValidate.errors;
           }
         }
@@ -2376,7 +2292,6 @@ export default {
       const commandlineValidate = ajv.compile(this.commandlineArgsSchema)
       if (typeof this.computationTemplate.parameters !== "undefined" && this.computationTemplate.parameters !== []) {
         commandlineValidate(this.computationTemplate.parameters)
-        // console.log(commandlineValidate.errors)
         this.validationArgsResult = commandlineValidate.errors
       }
 
@@ -2421,7 +2336,6 @@ export default {
     onReaderLoad: function (event) {
       let obj = JSON.parse(event.target.result);
       
-
       // close preferences of previous template and show cofig of new ct in preferences-window
       this.closePreferences();
       this.preferences = true;
@@ -2477,13 +2391,7 @@ export default {
 
       // TODO: Should also function without metadata as it is not required
       // add metadata if missing
-      // if (typeof obj.metadata == "undefined") {
-      //   obj["metadata"] = { "displayName" : "", "description": "", "output": { "viewer": [], "csv" : [], "vtk" : [] } };
-      // } else {
-      //   if (typeof obj.metadata.output == "undefined") {
-      //     obj.metadata["output"] = { "viewer": [], "csv" : [], "vtk" : [] };
-      //   }
-      // }
+
       let tmp = this.computationTemplate;
       this.$store.commit("updateGeneratedComputationTemplate", obj)
       let isValid = this.validateJson(true)
@@ -2491,9 +2399,8 @@ export default {
         this.$alert("Your template is not valid. Thus, it can not be imported!", "Import Error", "error");
         this.$store.commit("updateGeneratedComputationTemplate", tmp)
       } else {
-        console.log(obj)
         this.$store.commit("updateGeneratedComputationTemplate", obj)
-        //this.computationTemplate = obj
+
         // set number of options for configuring parameters and commandline arguments
         this.setNumbersOfOptions();
       }
@@ -2575,7 +2482,6 @@ export default {
     // generate id for ct
     this.computationTemplate.identifier = this.uuid();
     this.setNumbersOfOptions();
-    //this.$tours['myTour'].start()
   },
 };
 </script>
@@ -2668,12 +2574,6 @@ body {
     padding: 10px;
 
     margin: 0 !important;
-
-    /*margin: 0 10px;
-    border-radius: 25px;
-    max-width: 1170px;
-    margin: 0 auto;
-    background-color: #fff;*/
   }
 
   .main-div {
@@ -2819,7 +2719,6 @@ body {
     margin: 20px auto 20px auto;
     position: relative;
     flex: 1;
-    /*width: 70%;*/
     cursor: pointer;
     z-index: 100;
   }
