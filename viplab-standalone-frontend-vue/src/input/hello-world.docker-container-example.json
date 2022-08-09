@@ -14,18 +14,16 @@
     { 
       "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3f", 
       "path"      : "params.ini",                              
-      "metadata"  : 
-        {  
-          "syntaxHighlighting": "ini"                   
-        },
+      "metadata"  : {  
+        "syntaxHighlighting": "ini"                   
+      },
       "parts" : 
       [
         {
           "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a1",
           "access": "template",
           "metadata": {
-            "name": "Parameter in part",
-            "emphasis": "low"
+            "name": "Parameter in part"
           },
           "parameters" : 
           [
@@ -52,10 +50,9 @@
         {
           "identifier": "ceb051d8-b50c-4814-983a-b9d703cae0c6",
           "access"    : "template",
-          "metadata"  :
-              { 
-                "name"      : "params.ini file part"
-              },
+          "metadata"  : { 
+            "name"      : "params.ini file part"
+          },
           "parameters":
           [
             {
@@ -268,18 +265,16 @@
     { 
       "identifier": "22483f42-95bf-984a-98a5-ee9485c85c31", 
       "path"      : "code.c",                              
-      "metadata"  : 
-        {  
-          "syntaxHighlighting": "c_cpp"                   
-        },
+      "metadata"  : {  
+        "syntaxHighlighting": "c_cpp"                   
+      },
       "parts" : 
       [
         {
           "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a2",
           "access": "template",
           "metadata": {
-            "name": "Parameter in part",
-            "emphasis": "low"
+            "name": "Parameter in part"
           },
           "parameters" : 
           [
@@ -300,10 +295,10 @@
       ]
     }
   ],
-  "configuration" :
-    { "resources.image"  : "name://viplab/viplab-example-image",
-      "resources.volume" : "/data/shared",
-      "resources.memory" : "1g",
-      "resources.numCPUs" : 1
-    }
+  "configuration" : { 
+    "resources.image"  : "name://viplab/viplab-example-image",
+    "resources.volume" : "/data/shared",
+    "resources.memory" : "1g",
+    "resources.numCPUs" : 1
+  }
 }

@@ -2339,8 +2339,11 @@ export default {
     /**
      * validate computation template and return whether button should be enabled
      */
-    validateJson: function () {
-      this.validationRunning = true;
+    validateJson: function (event, uploaded = false) {
+      
+      if (!uploaded) {
+        this.validationRunning = true;
+      }
       
       // reset validation
       this.validationResult = null;
@@ -2377,56 +2380,21 @@ export default {
         this.validationArgsResult = commandlineValidate.errors
       }
 
-      // if everything is valid, set validationResult to "Template is Valid!"
-      if (this.validationResult == null && this.validationPartParameterResult == null && this.validationArgsResult == null) {
-        this.validationResult = "Template is Valid!";
-        setTimeout(() => this.validationRunning = false, 2000);
-        this.classValidity = "valid-true";
-        return true;
-      }
-
-      setTimeout(() => this.validationRunning = false, 2000);
-      this.classValidity = "valid-false"
-      return false;
-    },
-    validateUpload: function(ct) {
-      let validationResult = null;
-      let validationPartParameterResult = null;
-      let validationArgsResult = null;
-
-      // ct validation
-      // TODO if environment can be more than "Container" validate depending on that
-      const ajv = new Ajv()
-      const validate = ajv.compile(this.schema)
-      validate(ct)
-      // console.log(validate.errors)
-      validationResult = validate.errors
-
-      // parameter validation
-      let files = ct.files;
-      const paramValidate = ajv.compile(this.paramSchema)
-      for (let file in files) {
-        let parts = files[file].parts;
-        for (let part in parts) {
-          if (typeof parts[part].parameters !== "undefined") {
-            paramValidate(parts[part].parameters)
-            // console.log(paramValidate.errors)
-            validationPartParameterResult = paramValidate.errors;
-          }
+      if (!uploaded) {
+        // if everything is valid, set validationResult to "Template is Valid!"
+        if (this.validationResult == null && this.validationPartParameterResult == null && this.validationArgsResult == null) {
+          this.validationResult = "Template is Valid!";
+          setTimeout(() => this.validationRunning = false, 2000);
+          this.classValidity = "valid-true";
+          return true;
         }
-      }
 
-      // commandline arguments validation
-      const commandlineValidate = ajv.compile(this.commandlineArgsSchema)
-      if (typeof ct.parameters !== "undefined" && ct.parameters !== []) {
-        commandlineValidate(ct.parameters)
-        // console.log(commandlineValidate.errors)
-        validationArgsResult = commandlineValidate.errors
-      }
-
-      // if everything is valid, set validationResult to "Template is Valid!"
-      if (validationResult == null && validationPartParameterResult == null && validationArgsResult == null) {
-        return true;
+        setTimeout(() => this.validationRunning = false, 2000);
+        this.classValidity = "valid-false"
+      } else {
+        if (this.validationResult == null && this.validationPartParameterResult == null && this.validationArgsResult == null) {
+          return true;
+        }
       }
       return false;
     },
@@ -2516,10 +2484,12 @@ export default {
       //     obj.metadata["output"] = { "viewer": [], "csv" : [], "vtk" : [] };
       //   }
       // }
-      
-      let isValid = this.validateUpload(obj)
+      let tmp = this.computationTemplate;
+      this.$store.commit("updateGeneratedComputationTemplate", obj)
+      let isValid = this.validateJson(true)
       if (!isValid) {
         this.$alert("Your template is not valid. Thus, it can not be imported!", "Import Error", "error");
+        this.$store.commit("updateGeneratedComputationTemplate", tmp)
       } else {
         console.log(obj)
         this.$store.commit("updateGeneratedComputationTemplate", obj)
