@@ -296,7 +296,7 @@
                         <!-- Environment -->
                         <div id="run-configuration">
                           
-                          <label class="mr-2" for="computationTemplate.environment">environment: </label>
+                          <label class="mr-2" for="computationTemplate.environment">Environment: </label>
                           <div class="d-flex form-group">  
                             <div class="dropdown flex-grow-1">
                               <select
@@ -324,7 +324,7 @@
                             
                             <!-- resources.image -->
                             <div v-if="computationTemplate.environment == 'Container'" id="image">
-                              <label class="mr-2">resources.image*:</label>
+                              <label class="mr-2">Docker-Image*:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('resources.image', null)" @input="setConfigvModel('resources.image', $event, null)">
@@ -338,7 +338,7 @@
 
                             <!-- running.timelimitInSeconds -->
                             <div v-if="computationTemplate.environment == 'Container'">
-                              <label class="mr-2">running.timelimitInSeconds:</label>
+                              <label class="mr-2">Time Limit for Running the Container (in Seconds):</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="number" class="form-control" :value="getConfigvModel('running.timelimitInSeconds', null)" @input="setConfigvModel('running.timelimitInSeconds', $event, null, true)">
@@ -352,7 +352,7 @@
 
                             <!-- running.commandLineArguments -->
                             <div v-if="computationTemplate.environment == 'Container'">
-                              <label class="mr-2">running.commandLineArguments:</label>
+                              <label class="mr-2">Commandline Arguments:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('running.commandLineArguments', null)" @input="setConfigvModel('running.commandLineArguments', $event, null)">
@@ -366,7 +366,7 @@
 
                             <!-- running.entrypoint -->
                             <div v-if="computationTemplate.environment == 'Container'">
-                              <label class="mr-2">running.entrypoint:</label>
+                              <label class="mr-2">Docker Entrypoint:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('running.entrypoint', null)" @input="setConfigvModel('running.entrypoint', $event, null)">
@@ -380,12 +380,12 @@
 
                             <!-- running.intermediateFilesPattern -->
                             <div v-if="computationTemplate.environment == 'Container'">
-                              <label class="mr-2">running.intermediateFilesPattern:</label>
+                              <label class="mr-2">RegEx-Pattern for Intermediate Files:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <div class="ml-4 mr-4">
                                     <!-- set how many values the config should have -->
-                                    <label for="'running.intermediateFilesPattern-sb-options'">How many running.intermediateFilesPattern should there be?</label>
+                                    <label for="'running.intermediateFilesPattern-sb-options'">How many Patterns should there be?</label>
                                     <b-form-spinbutton :id="'running.intermediateFilesPattern-sb-options'" placeholder="0" min="0" :value="getNumberofConfigFields('running.intermediateFilesPattern')" class="mb-2" @change="setNumberOfConfigFields('running.intermediateFilesPattern', $event)"></b-form-spinbutton>
                                     <!-- input config-values -->
                                     <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('running.intermediateFilesPattern')" :key="'running.intermediateFilesPattern-' + index">
@@ -404,7 +404,7 @@
                             
                             <!-- running.userId -->
                             <div v-if="computationTemplate.environment == 'Container'">
-                              <label class="mr-2">running.userId:</label>
+                              <label class="mr-2">User-Id:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="number" class="form-control" :value="getConfigvModel('running.userId', null)" @input="setConfigvModel('running.userId', $event, null, true)">
@@ -418,7 +418,7 @@
 
                             <!-- resources.volume -->
                             <div v-if="computationTemplate.environment == 'Container'">
-                              <label class="mr-2">resources.volume:</label>
+                              <label class="mr-2">Volume:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('resources.volume', null)" @input="setConfigvModel('resources.volume', $event, null)">
@@ -432,7 +432,7 @@
 
                             <!-- resources.memory -->
                             <div v-if="computationTemplate.environment == 'Container'">
-                              <label class="mr-2">resources.memory:</label>
+                              <label class="mr-2">Memory:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('resources.memory', null)" @input="setConfigvModel('resources.memory', $event, null)">
@@ -446,7 +446,7 @@
 
                             <!-- resources.numCPUs -->
                             <div v-if="computationTemplate.environment == 'Container'">
-                              <label class="mr-2">resources.numCPUs:</label>
+                              <label class="mr-2">Number of CPUs:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="number" class="form-control" :value="getConfigvModel('resources.numCPUs', null)" @input="setConfigvModel('resources.numCPUs', $event, null, true)">
@@ -464,11 +464,11 @@
 
                         <!-- Metadata -->
                         <div> <!-- v-if="computationTemplate.metadata"> -->
-                          <label class="mr-2" for="computationTemplate.metadata">metadata: </label>
+                          <label class="mr-2" for="computationTemplate.metadata">Metadata of Template: </label>
                           <div class="ml-4 mr-4">
                             <!-- display name -->
                             <div>
-                              <label class="mr-2">displayName:</label>
+                              <label class="mr-2">Name of Template:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getvModelTemplateMetadata('displayName')" @input="setvModelTemplateMetadata('displayName', $event)">
@@ -481,7 +481,7 @@
                             </div>
                             <!-- description -->
                             <div>
-                              <label class="mr-2">description:</label>
+                              <label class="mr-2">Description:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getvModelTemplateMetadata('description')" @input="setvModelTemplateMetadata('description', $event)">
@@ -496,11 +496,11 @@
 
                           <!-- output -->
                           <div id="define-output">
-                            <label class="mr-2">output: </label>
+                            <label class="mr-2">Configuration of Output: </label>
                             <div class="ml-4 mr-4">
                               <!-- viewer -->
                               <div>
-                                <label class="mr-2" for="computationTemplate.metadata.output.viewer">viewer: </label>
+                                <label class="mr-2" for="computationTemplate.metadata.output.viewer">File Types to be shown in Result: </label>
                                 <div class="d-flex form-group"> 
                                   <div class="flex-grow-1">
                                     <div class="dropdown">
@@ -527,7 +527,7 @@
                               <div>
                                 <div class="d-flex"> 
                                   <div class="flex-grow-1">
-                                    <label class="mr-2" for="computationTemplate.metadata.output.csv">csv: </label>
+                                    <label class="mr-2" for="computationTemplate.metadata.output.csv">How should CSVs be displayed? </label>
                                   </div>
                                   <!-- tooltip -->
                                   <div class="tooltip-icon pl-2">
@@ -543,7 +543,7 @@
                                     <div>
                                       <div class="d-flex"> 
                                         <div class="flex-grow-1">
-                                          <label class="mr-2" :for="csvConfig.basename">basename: </label>
+                                          <label class="mr-2" :for="csvConfig.basename">Basename to identify connected CSVs: </label>
                                         </div>
                                         <!-- Delete CSV-Config -->
                                         <div class="tooltip-icon pl-2" @click="removeConfig($event, true, csvConfig)">
@@ -562,10 +562,10 @@
                                     </div>
                                     <!-- xlabel -->
                                     <div>
-                                      <label class="mr-2" for="csvConfig.xlabel">xlabel: </label>
+                                      <label class="mr-2" for="csvConfig.xlabel">Information about X-Axis: </label>
                                       <div class="ml-4 mr-4">
                                         <!-- key -->
-                                        <label class="mr-2" for="csvConfig.xlabel.key">key: </label>
+                                        <label class="mr-2" for="csvConfig.xlabel.key">Key of X-Axis in CSV: </label>
                                         <div class="d-flex form-group"> 
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvConfig.xlabel.key" v-model="csvConfig.xlabel.key">
@@ -576,7 +576,7 @@
                                           </div>
                                         </div>
                                         <!-- label -->
-                                        <label class="mr-2" for="csvConfig.xlabel.label">label: </label>
+                                        <label class="mr-2" for="csvConfig.xlabel.label">Label for X-Axis: </label>
                                         <div class="d-flex form-group"> 
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvConfig.xlabel.label" v-model="csvConfig.xlabel.label">
@@ -587,7 +587,7 @@
                                           </div>
                                         </div>
                                         <!-- factor -->
-                                        <label class="mr-2" for="csvConfig.xlabel.factor">factor: </label>
+                                        <label class="mr-2" for="csvConfig.xlabel.factor">Factor to multiply Values: </label>
                                         <div class="d-flex form-group"> 
                                           <div class="flex-grow-1">
                                             <input type="number" class="form-control" id="csvConfig.xlabel.factor" v-model.number="csvConfig.xlabel.factor">
@@ -598,7 +598,7 @@
                                           </div>
                                         </div>
                                         <!-- format -->
-                                        <label class="mr-2" for="csvConfig.xlabel.format">format: </label>
+                                        <label class="mr-2" for="csvConfig.xlabel.format">Format of the Values: </label>
                                         <div class="d-flex form-group"> 
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvConfig.xlabel.format" v-model="csvConfig.xlabel.format">
@@ -611,24 +611,26 @@
                                       </div>
                                     </div>
                                     <!-- plots -->
-                                    <div class="d-flex"> 
+                                    <label class="mr-2" for="csvConfig.plots">Information about the Y-Axes: </label>
+                                    <div class="d-flex ml-4 mr-4"> 
                                       <div class="flex-grow-1">
-                                        <label class="mr-2" for="csvConfig.plots">plots: </label>
+                                        <label class="mr-2" for="csvConfig.plots">Define multiple Plots generated from one CSV: </label>
                                       </div>
                                       <!-- tooltip -->
                                       <div class="tooltip-icon pl-2">
                                           <b-icon-info-circle v-tooltip.top-center="'Define datasets: Provide y-axis labels for y-key given in csv. For each dataset one diagram is rendered in the result.'"></b-icon-info-circle>
                                       </div>
                                     </div>
-                                    <b-button class="btn mb-3" @click="addCsvPlot(index)" v-tooltip.top-center="'Add Y-Axis to generate Plot from CSV-Files'">
-                                      <b-icon icon="plus" aria-hidden="true"></b-icon>
-                                    </b-button>
+                                    
                                     <div class="ml-4 mr-4">
+                                      <b-button class="btn mb-3" @click="addCsvPlot(index)" v-tooltip.top-center="'Add Y-Axis to generate Plot from CSV-Files'">
+                                        <b-icon icon="plus" aria-hidden="true"></b-icon>
+                                      </b-button>
                                       <div class="border mb-2 p-2" v-for="(csvPlot, plotIndex) in csvConfig.plots" :key="csvConfig.identifier + '-plot-' + plotIndex">
                                         <!-- key -->
                                         <div class="d-flex form-group"> 
                                           <div class="flex-grow-1">
-                                            <label class="mr-2" for="csvPlot.key">key: </label>
+                                            <label class="mr-2" for="csvPlot.key">Key of Y-Axes in CSV: </label>
                                           </div>
                                           <!-- Delete CSV-Config -->
                                           <div class="tooltip-icon pl-2" @click="removePlot($event, csvConfig, csvPlot)">
@@ -645,7 +647,7 @@
                                           </div>
                                         </div>
                                         <!-- label -->
-                                        <label class="mr-2" for="csvPlot.label">label: </label>
+                                        <label class="mr-2" for="csvPlot.label">Label for Y-Axis: </label>
                                         <div class="d-flex form-group"> 
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvPlot.label" v-model="csvPlot.label">
@@ -656,7 +658,7 @@
                                           </div>
                                         </div>
                                         <!-- factor -->
-                                        <label class="mr-2" for="csvPlot.factor">factor: </label>
+                                        <label class="mr-2" for="csvPlot.factor">Factor to multiply Values: </label>
                                         <div class="d-flex form-group"> 
                                           <div class="flex-grow-1">
                                             <input type="number" class="form-control" id="csvPlot.factor" v-model.number="csvPlot.factor">
@@ -667,7 +669,7 @@
                                           </div>
                                         </div>
                                         <!-- format -->
-                                        <label class="mr-2" for="csvPlot.format">format: </label>
+                                        <label class="mr-2" for="csvPlot.format">Format of the Values: </label>
                                         <div class="d-flex form-group"> 
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvPlot.format" v-model="csvPlot.format">
@@ -686,7 +688,7 @@
                               <div>
                                 <div class="d-flex"> 
                                   <div class="flex-grow-1">
-                                    <label class="mr-2" for="computationTemplate.metadata.output.vtk">vtk: </label>
+                                    <label class="mr-2" for="computationTemplate.metadata.output.vtk">How should VTKs be displayed? </label>
                                   </div>
                                   <!-- tooltip -->
                                   <div class="tooltip-icon pl-2">
@@ -702,7 +704,7 @@
                                     <div>
                                       <div class="d-flex"> 
                                         <div class="flex-grow-1">
-                                          <label class="mr-2" for="vtkConfig.basename">basename: </label>
+                                          <label class="mr-2" for="vtkConfig.basename">Basename to identify connected VTKs: </label>
                                         </div>
                                         <!-- Delete VTK-Config -->
                                         <div class="tooltip-icon pl-2" @click="removeConfig($event, false, vtkConfig)">
@@ -731,7 +733,7 @@
                       <div v-else-if="showFile">
                         <!-- path -->
                         <div>
-                          <label class="mr-2" for="selectedFile.path">path: </label>
+                          <label class="mr-2" for="selectedFile.path">Path to File: </label>
                           <div class="d-flex form-group"> 
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedFile.path" v-model="vModelFilePath">
@@ -742,32 +744,29 @@
                             </div>
                           </div>
                         </div>
-                        <!-- metadata -->
+                        <!-- metadata syntaxHighlighting -->
                         <div>
-                          <label class="mr-2">metadata: </label>
-                          <div class="ml-4 mr-4">
-                            <div> <!--v-if="selectedFile.metadata.syntaxHighlighting">-->
-                              <label class="mr-2">syntaxHighlighting:</label>
-                              <div class="d-flex form-group"> 
-                                <div class="flex-grow-1">
-                                  <div class="dropdown">
-                                    <select
-                                      class="form-control"
-                                      v-model="vModelFileMetadataSyntaxHighlighting"
-                                    >
-                                      <option>text</option>
-                                      <option>ini</option>
-                                      <option>c_cpp</option>
-                                      <option>matlab</option>
-                                      <option>java</option>
-                                      <option></option>
-                                    </select>
-                                  </div>
+                          <div> <!--v-if="selectedFile.metadata.syntaxHighlighting">-->
+                            <label class="mr-2">Syntax Highlighting for File-Content:</label>
+                            <div class="d-flex form-group"> 
+                              <div class="flex-grow-1">
+                                <div class="dropdown">
+                                  <select
+                                    class="form-control"
+                                    v-model="vModelFileMetadataSyntaxHighlighting"
+                                  >
+                                    <option>text</option>
+                                    <option>ini</option>
+                                    <option>c_cpp</option>
+                                    <option>matlab</option>
+                                    <option>java</option>
+                                    <option></option>
+                                  </select>
                                 </div>
-                                <!-- tooltip -->
-                                <div class="tooltip-icon pl-2">
-                                  <b-icon-info-circle v-tooltip.top-center="'Mode of the ace editor. List can be found on github (https://github.com/ajaxorg/ace/tree/master/lib/ace/mode). Examples: ini, c_cpp, matlab, java.'"></b-icon-info-circle>
-                                </div>
+                              </div>
+                              <!-- tooltip -->
+                              <div class="tooltip-icon pl-2">
+                                <b-icon-info-circle v-tooltip.top-center="'Mode of the ace editor. List can be found on github (https://github.com/ajaxorg/ace/tree/master/lib/ace/mode). Examples: ini, c_cpp, matlab, java.'"></b-icon-info-circle>
                               </div>
                             </div>
                           </div>
@@ -778,7 +777,7 @@
                       <div v-else-if="showPart">
                         <!-- access -->
                         <div>
-                          <label class="mr-2" for="selectedPart.access">access: </label>
+                          <label class="mr-2" for="selectedPart.access">Define Access Level: </label>
                           <div class="d-flex form-group"> 
                             <div class="flex-grow-1">
                               <div class="dropdown">
@@ -803,17 +802,14 @@
                         </div>
                         <!-- metadata -->
                         <div>
-                          <label class="mr-2">metadata: </label>
-                          <div class="ml-4 mr-4">
-                            <label class="mr-2">name:</label>
-                            <div class="d-flex form-group"> 
-                              <div class="flex-grow-1">
-                                <input type="text" class="form-control" id="selectedPart.metadata.name" v-model="vModelPartMetadataName">
-                              </div>
-                              <!-- tooltip -->
-                              <div class="tooltip-icon pl-2">
-                                <b-icon-info-circle v-tooltip.top-center="'Additional description of this part to be shown in the Frontend.'"></b-icon-info-circle>
-                              </div>
+                          <label class="mr-2">Additional Description of Part:</label>
+                          <div class="d-flex form-group"> 
+                            <div class="flex-grow-1">
+                              <input type="text" class="form-control" id="selectedPart.metadata.name" v-model="vModelPartMetadataName">
+                            </div>
+                            <!-- tooltip -->
+                            <div class="tooltip-icon pl-2">
+                              <b-icon-info-circle v-tooltip.top-center="'Additional description of this part to be shown in the Frontend.'"></b-icon-info-circle>
                             </div>
                           </div>
                         </div>
@@ -824,7 +820,7 @@
                         
                         <!-- identifier -->
                         <div>
-                          <label class="mr-2" for="selectedParameter.identifier">identifier: </label>
+                          <label class="mr-2" for="selectedParameter.identifier">Identifier for Handlebars.js-Template: </label>
                           <div class="d-flex form-group"> 
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedParameter.identifier" v-model="vModelParameterIdentifier">
@@ -837,7 +833,7 @@
                         </div>
                         <!-- name -->
                         <div>
-                          <label class="mr-2" for="selectedParameter.metadata.name">name: </label>
+                          <label class="mr-2" for="selectedParameter.metadata.name">Name: </label>
                           <div class="d-flex form-group"> 
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedParameter.metadata.name" v-model="vModelParameterMetadataName">
@@ -850,7 +846,7 @@
                         </div>
                         <!-- description -->
                         <div>
-                          <label class="mr-2" for="selectedParameter.metadata.description">description: </label>
+                          <label class="mr-2" for="selectedParameter.metadata.description">Description: </label>
                           <div class="d-flex form-group"> 
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedParameter.metadata.description" v-model="vModelParameterMetadataDescription">
@@ -866,7 +862,7 @@
                         <div v-if="selectedParameter.metadata.guiType=='input_field'">
                           <!-- type -->
                           <div>
-                            <label class="mr-2" for="selectedParameter.metadata.type">type: </label>
+                            <label class="mr-2" for="selectedParameter.metadata.type">Field Type: </label>
                             <div class="dropdown form-group">
                               <select
                                 class="form-control"
@@ -881,23 +877,23 @@
                           <div v-if="selectedParameter.metadata.type">
                             <!-- default value -->
                             <div>
-                              <label class="mr-2" for="selectedParameter.default">default value: </label>
-                              <input v-if="selectedParameter.metadata.type == 'text'" type="text" class="form-control" id="selectedParameter.default" v-model="inputvModel">
-                              <input v-else type="number" class="form-control" id="selectedParameter.default" v-model.number="selectedParameter.default[0]">
+                              <label class="mr-2" for="selectedParameter.default">Default Value: </label>
+                              <input v-if="selectedParameter.metadata.type == 'text'" type="text" class="form-control form-group" id="selectedParameter.default" v-model="inputvModel">
+                              <input v-else type="number" class="form-control form-group" id="selectedParameter.default" v-model.number="selectedParameter.default[0]">
                             </div>
                             <!-- type: number - min, max, step -->
                             <div v-if="selectedParameter.metadata.type == 'number'">
                               <div>
-                                <label class="mr-2" for="selectedParameter.min">min value: </label>
-                                <input type="number" class="form-control" id="selectedParameter.min" v-model.number="selectedParameter.min">
+                                <label class="mr-2" for="selectedParameter.min">Minium Value: </label>
+                                <input type="number" class="form-control form-group" id="selectedParameter.min" v-model.number="selectedParameter.min">
                               </div>
                               <div>
-                                <label class="mr-2" for="selectedParameter.max">max value: </label>
-                                <input type="number" class="form-control" id="selectedParameter.max" v-model.number="selectedParameter.max">
+                                <label class="mr-2" for="selectedParameter.max">Maximum Value: </label>
+                                <input type="number" class="form-control form-group" id="selectedParameter.max" v-model.number="selectedParameter.max">
                               </div>
                               <div>
-                                <label class="mr-2" for="selectedParameter.step">step size: </label>
-                                <input type="number" class="form-control" id="selectedParameter.step" v-model.number="selectedParameter.step">
+                                <label class="mr-2" for="selectedParameter.step">Step Size: </label>
+                                <input type="number" class="form-control form-group" id="selectedParameter.step" v-model.number="selectedParameter.step">
                               </div>
                             </div>
                           </div>
@@ -906,8 +902,8 @@
                         <!-- slider -->
                         <div v-if="selectedParameter.metadata.guiType=='slider'">
                           <!-- vertical -->
-                          <label class="mr-2" for="selectedParameter.metadata.vertical">vertical: </label>
-                          <div class="radiobutton form-check custom-control custom-radio">
+                          <label class="mr-2" for="selectedParameter.metadata.vertical">How should the Slider be displayed? </label>
+                          <div class="radiobutton form-check custom-control custom-radio form-group">
                             <div>
                               <input class="form-check-input custom-control-input" id="vertical" type="radio" name="slider-vertical" value=true v-model="selectedParameter.metadata.vertical" />
                               <label class="form-check-label custom-control-label" for="vertical">vertical</label><br>
@@ -919,12 +915,12 @@
                           </div>
                         
                           <!-- default -->
-                          <div>
+                          <div class="">
                             <label class="mr-2" for="selectedParameter.default">value(s): </label>
-                            <div class="ml-4 mr-4">
+                            <div class="ml-4 mr-4 form-group">
                               <!-- set how many values the slider should have -->
                               <label for="selectedParameter.identifier + 'sb-default'">How many values should the slider have?</label>
-                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-default'" placeholder="1" :value="getNumberofFields(selectedParameter.identifier)" class="mb-2" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
+                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-default'" placeholder="1" :value="getNumberofFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
                               <!-- input slider default-values -->
                               <div class="border mb-2 p-2" v-for="(field, index) in getNumberofFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
                                 <label>Set default values for slider-value:</label>
@@ -934,25 +930,25 @@
                           </div>
                           <!-- min -->
                           <div>
-                            <label class="mr-2" for="selectedParameter.min">min value: </label>
-                            <input type="number" class="form-control" id="selectedParameter.min" v-model="selectedParameter.min">
+                            <label class="mr-2" for="selectedParameter.min">Minimum Value: </label>
+                            <input type="number" class="form-control form-group" id="selectedParameter.min" v-model="selectedParameter.min">
                           </div>
                           <!-- max -->
                           <div>
-                            <label class="mr-2" for="selectedParameter.max">max value: </label>
-                            <input type="number" class="form-control" id="selectedParameter.max" v-model="selectedParameter.max">
+                            <label class="mr-2" for="selectedParameter.max">Maximum Value: </label>
+                            <input type="number" class="form-control form-group" id="selectedParameter.max" v-model="selectedParameter.max">
                           </div>
                           <!-- step -->
                           <div>
-                            <label class="mr-2" for="selectedParameter.step">step size: </label>
-                            <input type="number" class="form-control" id="selectedParameter.step" v-model="selectedParameter.step">
+                            <label class="mr-2" for="selectedParameter.step">Step Size: </label>
+                            <input type="number" class="form-control form-group" id="selectedParameter.step" v-model="selectedParameter.step">
                           </div>
                         </div>
 
                         <!-- editor -->
-                        <div class="mb-2" v-if="selectedParameter.metadata.guiType=='editor'">
+                        <div class="form-group" v-if="selectedParameter.metadata.guiType=='editor'">
                           <div>
-                            <label class="mr-2" for="selectedParameter.default">value: </label>
+                            <label class="mr-2" for="selectedParameter.default">Value: </label>
                             <ace-editor-component 
                               :isParameter="false" 
                               :isMustache="false"
@@ -970,23 +966,23 @@
                         <div v-if="selectedParameter.metadata.guiType=='checkbox' || selectedParameter.metadata.guiType=='dropdown' || selectedParameter.metadata.guiType=='toggle'|| selectedParameter.metadata.guiType=='radio'">
                           <!-- options -->
                           <div>
-                            <label class="mr-2" for="selectedParameter.options">value(s): </label>
+                            <label class="mr-2" for="selectedParameter.options">Value(s): </label>
                             <div class="ml-4 mr-4">
                               <!-- set how many values the checkbox should have -->
                               <label for="selectedParameter.identifier + 'sb-options'">How many values should the parameter have?</label>
-                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-options'" placeholder="1" :value="getNumberofFields(selectedParameter.identifier)" class="mb-2" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
+                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-options'" placeholder="1" :value="getNumberofFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
                               
                               <!-- input option-values -->
-                              <div class="border mb-2 p-2" v-for="(field, index) in getNumberofFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
+                              <div class="border form-group p-2" v-for="(field, index) in getNumberofFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
                                 <!-- value -->
-                                <label>Set option values:</label>
-                                <input type="text" class="form-control" id="field.value" :value="getFixedParamvModel(index)" @input="setFixedParamvModel($event, index, 'value')">
+                                <label>Set value:</label>
+                                <input type="text" class="form-control form-group" id="field.value" :value="getFixedParamvModel(index)" @input="setFixedParamvModel($event, index, 'value')">
                                 <!-- text -->
-                                <label>Set option text for value:</label>
-                                <input type="text" class="form-control" id="field.text" :value="getFixedParamvModel(index, 'text')" @input="setFixedParamvModel($event, index, 'text')">
+                                <label>Set label for value (else value is used):</label>
+                                <input type="text" class="form-control form-group" id="field.text" :value="getFixedParamvModel(index, 'text')" @input="setFixedParamvModel($event, index, 'text')">
                                 <!-- selected - radio -->
                                 <label class="mr-2">Is selected? </label>
-                                <div v-if="selectedParameter.metadata.guiType=='radio'" class="radiobutton form-check custom-control custom-radio">
+                                <div v-if="selectedParameter.metadata.guiType=='radio'" class="radiobutton form-check custom-control custom-radio form-group">
                                   <div>
                                     <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'selected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=true @input="setFixedParamvModel($event, index, 'selected')" :checked="getRadioSelected(index) ? true : false" />
                                     <label class="form-check-label custom-control-label" :for="selectedParameter.identifier+'-'+index+ '-'+'selected'">selected</label><br>
@@ -997,7 +993,7 @@
                                   </div>
                                 </div>
                                 <!-- selected checkbox, dropdown, toggle -->
-                                <div v-else class="radiobutton form-check custom-control custom-radio">
+                                <div v-else class="radiobutton form-check custom-control custom-radio form-group">
                                   <div>
                                     <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'selected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=true @input="setFixedParamvModel($event, index, 'selected')" :checked="getFixedParamvModel(index, 'selected')? true : false"/>
                                     <label class="form-check-label custom-control-label" :for="selectedParameter.identifier+'-'+index+ '-'+'selected'">selected</label><br>
@@ -1026,7 +1022,7 @@
                           
                         <!-- Validation -->
                         <div>
-                          <label class="mr-2" for="selectedParameter.validation">validation: </label>
+                          <label class="mr-2" for="selectedParameter.validation">Validation: </label>
                           
                           <!-- mode: any -->
                           <div v-if="selectedParameter.mode === 'any'">
