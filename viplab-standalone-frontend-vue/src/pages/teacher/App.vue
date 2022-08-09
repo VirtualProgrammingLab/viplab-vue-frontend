@@ -896,6 +896,13 @@
                                 <input type="number" class="form-control form-group" id="selectedParameter.step" v-model.number="selectedParameter.step">
                               </div>
                             </div>
+                            <!-- type: text - maxlength -->
+                            <div v-if="selectedParameter.metadata.type == 'text'">
+                              <div>
+                                <label class="mr-2" for="selectedParameter.maxlength">Maximum Text Length: </label>
+                                <input type="number" class="form-control form-group" id="selectedParameter.maxlength" v-model.number="selectedParameter.maxlength">
+                              </div>
+                            </div>
                           </div>
                         </div>
 
