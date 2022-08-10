@@ -380,7 +380,7 @@
 
                             <!-- running.intermediateFilesPattern -->
                             <div v-if="computationTemplate.environment == 'Container'">
-                              <label class="mr-2">RegEx-Pattern for Intermediate Files:</label>
+                              <label class="mr-2">RegEx-Pattern for Intermediate Result Files:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
                                   <div class="ml-4 mr-4">
@@ -397,7 +397,7 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'RegEx-Expression in Stdout which File(s) is ready to be transferred by the Backend to be displayed by the Frontend.'"></b-icon-info-circle>
+                                    <b-icon-info-circle v-tooltip.top-center="'If there are result-files, that are generated step by step, the Backend needs to be notified whether a file was written. This is done by using a RegEx-Expression. The Backend searches for those patterns in Stdout, to find files which are ready to be transferred to the Frontend, so that the results can be displayed.'"></b-icon-info-circle>
                                 </div>
                               </div>
                             </div>
