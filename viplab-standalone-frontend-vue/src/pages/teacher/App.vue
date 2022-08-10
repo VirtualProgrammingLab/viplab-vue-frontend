@@ -1118,6 +1118,17 @@
           </b-button>
           <div id="iframe-div"></div>
         </div>
+        <div class="pl-2 pr-2 pb-2">
+          <b-button 
+            @click="downloadCT"
+            v-tooltip.top-center="'Download Computation Template'">
+            Download Computation Template 
+            <b-icon
+              icon="download"
+              aria-hidden="true"
+            ></b-icon>
+          </b-button>
+        </div>
       </div>
     </div>
     <v-tour name="myTour" :steps="steps" :options="{ highlight: true }"></v-tour>
@@ -2506,47 +2517,70 @@ export default {
     },
     /** Run created template in another tab */
     runTemplate: function() {
-      let url = window.location
-      let baseUrl = url.protocol + "//" + url.host + "/"
+      if (this.validateJson()) {
+        let url = window.location
+        let baseUrl = url.protocol + "//" + url.host + "/"
 
-      // calculate data-template for frontend-preview
-      let file = JSON.stringify(this.computationTemplate);
-      let dataBase64url = base64url(Buffer.from(file).toString());
-      
-      //baseUrl = "http://localhost:3000/";
-      fetch(baseUrl + "sign", {
-        method: 'POST',
-        body: dataBase64url
-      }).then(response => {
-        if(response.ok){
-          return response.json();  
-        }
-          throw new Error('Request failed!');
-      }, networkError => {
-        console.log(networkError.message);
-      }).then(jsonResponse => {
-        // get token from sign-endpoint
-        let token = jsonResponse.token;
-          
-        // set all values in Vuex store
-        this.$store.commit("updateJsonTemplate", this.computationTemplate)
-        this.$store.commit("updateToken", token);
-        this.$store.commit("updateDataTemplate", dataBase64url);
-
-        // authenticate with new token
-        this.ws = new WebSocket(this.$config.WEBSOCKET_API);
-        let message = JSON.stringify({ type: "authenticate", content: { jwt: token } });
-        this.sendWaiting(message)
+        // calculate data-template for frontend-preview
+        let file = JSON.stringify(this.computationTemplate);
+        let dataBase64url = base64url(Buffer.from(file).toString());
         
-        // preview ct in iFrame
-        let iFrameDiv = document.getElementById("iframe-div")
-        iFrameDiv.innerHTML = ""
-        let iFrame = document.createElement("iframe");
-        iFrameDiv.appendChild(iFrame)
-        iFrame.setAttribute("src", url.href.replace("#/teacher", ""))
-        iFrame.setAttribute("width", "100%")
-        iFrame.setAttribute("height", "315")
-      })
+        //baseUrl = "http://localhost:3000/";
+        fetch(baseUrl + "sign", {
+          method: 'POST',
+          body: dataBase64url
+        }).then(response => {
+          if(response.ok){
+            return response.json();  
+          }
+            throw new Error('Request failed!');
+        }, networkError => {
+          console.log(networkError.message);
+        }).then(jsonResponse => {
+          // get token from sign-endpoint
+          let token = jsonResponse.token;
+            
+          // set all values in Vuex store
+          this.$store.commit("updateJsonTemplate", this.computationTemplate)
+          this.$store.commit("updateToken", token);
+          this.$store.commit("updateDataTemplate", dataBase64url);
+
+          // authenticate with new token
+          this.ws = new WebSocket(this.$config.WEBSOCKET_API);
+          let message = JSON.stringify({ type: "authenticate", content: { jwt: token } });
+          this.sendWaiting(message)
+          
+          // preview ct in iFrame
+          let iFrameDiv = document.getElementById("iframe-div")
+          iFrameDiv.innerHTML = ""
+          let iFrame = document.createElement("iframe");
+          iFrameDiv.appendChild(iFrame)
+          iFrame.setAttribute("src", url.href.replace("#/teacher", ""))
+          iFrame.setAttribute("width", "100%")
+          iFrame.setAttribute("height", "315")
+        })
+      } else {
+        this.$alert("Your template is not valid. Thus, it can not be executed!", "Execution Error", "error");
+      }
+    },
+    downloadCT: function() {
+      console.log("clicked")
+      let isValid = this.validateJson();
+
+      if (isValid) {
+        var dataStr =
+          "data:text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(this.computationTemplate));
+        let exportName = this.computationTemplate.identifier;
+        var downloadAnchorNode = document.createElement("a");
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", exportName + ".json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+      } else {
+        this.$alert("Your template is not valid. Thus, it can not be saved!", "Download Error", "error");
+      }
     }
   },
   created() {
