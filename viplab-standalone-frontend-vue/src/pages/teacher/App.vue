@@ -107,7 +107,7 @@
         <!-- Graphical View of Template -->
         <div class="dnd-window" id="drag-components-here">
           <b-card no-body>
-            <b-tabs card class="files" id="component-selection" content-class="m-2" fill>
+            <b-tabs card class="files" content-class="m-2" fill>
               
               <!-- Drag-and-Drop Components -->
               <b-tab title="Drop Here">
@@ -1188,7 +1188,7 @@ export default {
         },
         {
           target: '#run-configuration',
-          content: 'Choose the Environment! How is your Application run? After that, Configure other parameters for the execution.',
+          content: 'Choose the Environment! How is your Application run? After that, configure other parameters for the execution.',
           offset: -200
         },
         {
@@ -1196,8 +1196,16 @@ export default {
           content: 'Add components, like files, parts of files and gui-elements to your template by dragging and dropping them to the middle-section.'
         },
         {
+          target: '#component-selection',
+          content: 'For example: Drag-and-drop a file to add an input-file, or display code-snippets to the user.'
+        },
+        {
+          target: '#component-selection',
+          content: 'Additionally, if you want the user to modify the commandline arguments for execution, you can drag-and-drop the commandline argument-element. Then add GUI-elements to specify possible values the user can select from.'
+        },
+        {
           target: '#drag-components-here',
-          content: 'By clicking on the different components in the middle-section, you can modify the configuration of each component on the right.',
+          content: 'By clicking on the different components in the middle-section, you can modify the configuration of each component on the right/bottom.',
           offset: -200,
           params: {
             placement: 'top'
@@ -1206,7 +1214,7 @@ export default {
         {
           target: '#define-output',
           content: 'Last, define, what the output should look like.',
-          offset: 200,
+          offset: -200,
           params: {
             placement: 'top'
           }
