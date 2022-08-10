@@ -878,8 +878,8 @@
                             <!-- default value -->
                             <div>
                               <label class="mr-2" for="selectedParameter.default">Default Value: </label>
-                              <input v-if="selectedParameter.metadata.type == 'text'" type="text" class="form-control form-group" id="selectedParameter.default" v-model="inputvModel">
-                              <input v-else type="number" class="form-control form-group" id="selectedParameter.default" v-model.number="selectedParameter.default[0]">
+                              <input v-if="selectedParameter.metadata.type == 'text'" type="text" class="form-control form-group" id="selectedParameter.default" v-model="vModelInputFieldText">
+                              <input v-else class="form-control form-group" id="selectedParameter.default" v-model="vModelInputFieldNumber">
                             </div>
                             <!-- type: number - min, max, step -->
                             <div v-if="selectedParameter.metadata.type == 'number'">
@@ -900,7 +900,7 @@
                             <div v-if="selectedParameter.metadata.type == 'text'">
                               <div>
                                 <label class="mr-2" for="selectedParameter.maxlength">Maximum Text Length: </label>
-                                <input type="number" class="form-control form-group" id="selectedParameter.maxlength" v-model.number="selectedParameter.maxlength">
+                                <input class="form-control form-group" id="selectedParameter.maxlength" v-model="vModelParameterMaxlength">
                               </div>
                             </div>
                           </div>
@@ -1254,7 +1254,7 @@ export default {
       }
       return false;
     },
-    inputvModel: {
+    vModelInputFieldText: {
       get: function () {
         if (this.selectedParameter.default.length > 0) {
           return base64url.decode(this.selectedParameter.default[0]);
@@ -1265,8 +1265,41 @@ export default {
         if (typeof this.selectedParameter !== "undefined") {
           this.$set(this.selectedParameter.default , 0, base64url(val));
           this.$forceUpdate();
-          return this.inputvModel;
         }
+      }
+    },
+    vModelInputFieldNumber: {
+      get: function () {
+        if (this.selectedParameter.default.length > 0) {
+          return this.selectedParameter.default[0];
+        } 
+        return "";
+      },
+      set: function (val) {
+
+        let newValue = parseFloat(val);
+          
+        if (isNaN(newValue)) {
+          // set to old value, if input was not null
+          if (typeof this.selectedParameter !== "undefined" && val !== "") {
+            newValue = this.selectedParameter.default[0];
+          // set to old value if new char was string not number
+          } else if (typeof this.selectedParameter != "undefined" && val.length > 0) {
+            newValue = this.selectedParameter.default[0];
+          // else set value to null
+          } else {
+            newValue = null;
+          }
+        }
+
+        if (typeof this.selectedParameter !== "undefined") {
+          this.$set(this.selectedParameter.default, 0, newValue);
+        }
+
+        if (newValue == null) {
+          this.$delete(this.selectedParameter.default, 0)
+        }
+        this.$forceUpdate();
       }
     },
     vModelOutputViewer: {
@@ -1453,6 +1486,40 @@ export default {
         // if val is empty, remove object from ct
         if (val == "") {
           this.$delete(this.selectedParameter.metadata, "description")
+        }
+
+        this.$forceUpdate();
+      }
+    }, 
+    vModelParameterMaxlength: {
+      get: function () {
+        if (typeof this.selectedParameter.maxlength !== "undefined") {
+          return this.selectedParameter.maxlength;
+        }
+        return "";
+      },
+      set: function (val) {
+
+        let newValue = parseFloat(val);
+          
+        if (isNaN(newValue)) {
+          // set to old value, if input was not null
+          if (typeof this.selectedParameter !== "undefined" && val !== "") {
+            newValue = this.selectedParameter.maxlength;
+          // set to old value if new char was string not number
+          } else if (typeof this.selectedParameter != "undefined" && val.length > 0) {
+            newValue = this.selectedParameter.maxlength;
+          // else set value to null
+          } else {
+            newValue = null;
+          }
+        }
+
+        this.$set(this.selectedParameter, "maxlength", newValue);
+        
+        // if val is empty, remove object from ct
+        if (val == "") {
+          this.$delete(this.selectedParameter, "maxlength")
         }
 
         this.$forceUpdate();
@@ -1876,10 +1943,13 @@ export default {
     adjustInputType: function(item) {
       let type = item.metadata.type;
       if (type == "text") {
-        delete item["min"];
-        delete item["max"];
-        delete item["step"];
+        this.$delete(item, "min");
+        this.$delete(item, "max");
+        this.$delete(item, "step");
+      } else if (type == "number") {
+        this.$delete(item, "maxlength");
       }
+      this.$set(item.default, 0, "");
     },
     /**
      * validation - type: pattern
