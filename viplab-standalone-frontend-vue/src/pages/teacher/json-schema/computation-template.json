@@ -176,11 +176,6 @@
                                         "name" : {
                                             "type" : "string",
                                             "description": "Additional description of this part; To be shown in the frontend"
-                                        },
-                                        "emphasis" : {
-                                            "type" : "string",
-                                            "enum" : ["low", "medium", "high"],
-                                            "description": "Info for rendering"
                                         }
                                     },
                                     "additionalProperties": false

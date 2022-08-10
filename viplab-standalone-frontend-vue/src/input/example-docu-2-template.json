@@ -21,8 +21,7 @@
           "identifier": "part-contains-slider",
           "access": "template",
           "metadata": {
-            "description": "Parameter in part",
-            "emphasis": "low"
+            "description": "Parameter in part"
           },
           "parameters" : 
           [
