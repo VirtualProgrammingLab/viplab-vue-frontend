@@ -580,8 +580,6 @@ export default {
   },
   data() {
     return {
-      //json: "{}", 
-      //token: "",
       templates: require.context("../../input/", false, /^.*\.json$/).keys(), //get json file names from ./input folder
       numberOfInputFiles: [],
       //ws: "",
@@ -603,7 +601,6 @@ export default {
         this.json = val;
         // update Vuex Store
         this.$store.commit("updateJsonTemplate", val);
-        //console.log(this.json.files[0].parts[0].parameters[0].selected);
         this.$forceUpdate();
       },
       deep: true
@@ -657,17 +654,6 @@ export default {
       var parsed = this.json.files;
       return parsed;
     },
-    /* return result artifacts for download-links without the csv and vtk files that are downloadable from their respectable view */
-    /*returnedArtifactsWOvtkCsv: function() {
-      let artifacts = this.returnedOutputJson.artifacts;
-      let newArtifacts = [];
-      for(var i = 0; i < artifacts.length; i++) {
-        if(artifacts[i].MIMEtype != 'application/vnd.kitware' && artifacts[i].MIMEtype != 'text/csv') {
-          newArtifacts.push(artifacts[i]);
-        }
-      }
-      return newArtifacts;
-    }*/
     showHeader: function() {
       if (typeof this.json.metadata !== 'undefined') {
         if (typeof this.json.metadata.displayName !== 'undefined' || typeof this.json.metadata.description !== 'undefined') {
@@ -683,21 +669,17 @@ export default {
       setTimeout(
         function () {
           if (socket.readyState === 1) {
-            //console.log('Connection is made')
             if (callback != null) {
               callback()
             }
           } else {
-            //console.log('wait for connection...')
             context.waitForSocketConnection(context, socket, callback)
           }
         }, 5) // wait 5 milisecond for the connection...
     },
     sendWaiting: function(msg) {
       this.waitForSocketConnection(this, this.ws, () => {
-        //console.log('Sending ' + msg)
         this.ws.send(msg)
-        //console.log('Sent ' + msg)
       })
     },
     /* set the number of input files */
@@ -705,7 +687,6 @@ export default {
       var files = this.json.files;
       for (var file in files) {
         var parts = files[file].parts;
-        //console.log(parts.length);
         this.numberOfInputFiles = parts.length;
       }
     },
@@ -714,11 +695,6 @@ export default {
       let appDiv = document.body;
       let data = appDiv.getAttribute("data-template");
       let token = appDiv.getAttribute("data-token");
-      
-      console.log("------ loadJsonFromFile ------")
-      console.log(data)
-      console.log(base64url.decode(data))
-      console.log("------")
 
       if (data && data !== "{{ data }}" && data !== "" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
         console.log("1")
@@ -836,7 +812,6 @@ export default {
     },
     /** send data to webserver for requesting the solution */
     sendData: function () {
-      //console.log("send data");
 
       // reset result variables
       this.outputFiles = ""
@@ -894,24 +869,12 @@ export default {
                 if ((currentParam.metadata.guiType === "slider" && value.length == 1) || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "number" && Array.isArray(value))) {
                   value = value[0];
                 }
-                
-                /*
-                console.log("----------");
-                console.log("Param value before sending");
-                console.log(currentParam.metadata.guiType + " - " + value);
-                console.log(value);
-                console.log("----------");
-                */
+
                 generatedContent[currentParam.identifier] = value;
-                //console.log(generatedContent)
+                
               }
               let contentBase64 = base64url(JSON.stringify(generatedContent));
-              /*
-              console.log("----------");
-              console.log("contentBase64:");
-              console.log(contentBase64);
-              console.log("----------");
-              */
+              
               file.parts.push({
                 identifier: this.json.files[fileIndex].parts[part].identifier,
                 content: contentBase64,
@@ -933,9 +896,6 @@ export default {
           }
           task["arguments"] = args;
         }
-        // console.log("---------- Task: ----------");
-        // console.log(task);
-        // console.log("----------");
       }
 
       return task;
@@ -960,99 +920,12 @@ export default {
       // use JSON.parse(JSON.stringify(...)) to make sure a copy of the data is made, such that not only a reference is used
       if (this.returnedOutputJson === "") {
         this.returnedOutputJson = JSON.parse(JSON.stringify(result.result))
-        //this.$set(this.returnedOutputJson, JSON.parse(JSON.stringify(result.result)))
         this.returnedUnmodifiedArtifacts = JSON.parse(JSON.stringify(result.result))
-        //this.$set(this.returnedUnmodifiedArtifacts, JSON.parse(JSON.stringify(result.result)))
       } else {
         // TODO: Muss eventuell mit this.$set gemacht werden, damit gui auch geupdated wird; nötig erst wenn intermediate results im Backend möglich
         this.returnedOutputJson.artifacts.push(JSON.parse(JSON.stringify(result.result.artifacts)));
         this.returnedUnmodifiedArtifacts.artifacts.push(JSON.parse(JSON.stringify(result.result.artifacts)))
       }
-
-      // additional results for testing
-      /*
-      this.returnedOutputJson.artifacts.push(
-        {
-          "type" : "s3file",
-          "identifier" : "aa3c1cf9-c02d-4694-902c-93c298d68d02",
-          "MIMEtype": "application/x-vgfc",
-          "path": "/test/vipplot.vgfc",
-          "url": "http://localhost:4040/vipplot.vgfc"
-        }
-      );
-      this.returnedOutputJson.artifacts.push(
-        {
-          "type" : "s3file",
-          "identifier" : "ab3c1cf9-c02d-4694-902c-93c298d68d02",
-          "MIMEtype": "application/x-vgfc",
-          "path": "/test/dumux-out.vgfc",
-          "url": "http://localhost:4040/dumux-out.vgfc"
-        }
-      );
-      this.returnedOutputJson.artifacts.push(
-        {
-          "type" : "s3file",
-          "identifier" : "bb3c1cf9-c02d-4694-902c-93c298d68d02",
-          "MIMEtype": "application/x-vgf",
-          "path": "/test/vipplot.vgf",
-          "url": "http://localhost:4040/vipplot.vgf"
-        }
-      );
-      this.returnedOutputJson.artifacts.push(
-        {
-          "type" : "file",
-          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68d02",
-          "MIMEtype": "text/plain",
-          "path": "/test/text.c",
-          "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
-        }
-      );
-      this.returnedUnmodifiedArtifacts.artifacts.push(
-        {
-          "type" : "s3file",
-          "identifier" : "aa3c1cf9-c02d-4694-902c-93c298d68d02",
-          "MIMEtype": "application/x-vgfc",
-          "path": "/test/vipplot.vgfc",
-          "url": "http://localhost:4040/vipplot.vgfc"
-        }
-      );
-      this.returnedUnmodifiedArtifacts.artifacts.push(
-        {
-          "type" : "s3file",
-          "identifier" : "bb3c1cf9-c02d-4694-902c-93c298d68d02",
-          "MIMEtype": "application/x-vgf",
-          "path": "/test/vipplot.vgf",
-          "url": "http://localhost:4040/vipplot.vgf"
-        }
-      );
-      this.returnedUnmodifiedArtifacts.artifacts.push(
-        {
-          "type" : "file",
-          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68d02",
-          "MIMEtype": "text/plain",
-          "path": "/test/text.c",
-          "content": "dm9pZCBiYXIoKSB7IC8qIFNjaHJlaWJlbiBTaWUgaGllciBDb2RlLCBkZXIgImJhciIgYXVzZ2lidC4gKi8KCn0K"
-        }
-      );
-
-      this.returnedOutputJson.artifacts.push(
-        {
-          "type" : "file",
-          "identifier" : "cc3c1cf9-c02d-4694-902c-93c298d68d02",
-          "MIMEtype": "text/uri-list",
-          "path": "/test/uri-list.txt",
-          "content": "aHR0cDovL2xvY2FsaG9zdDo4MDgxL3Rlc3QucGRmDQpodHRwOi8vbG9jYWxob3N0OjgwODEvdGVzdC50eHQNCmh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS92b3lhZ2VyLnBuZw"
-        }
-      );
-      this.returnedUnmodifiedArtifacts.artifacts.push(
-        {
-          "type" : "file",
-          "identifier" : "aa3c1cf9-c02d-4694-902c-93c298d68d02",
-          "MIMEtype": "application/uri-list",
-          "path": "/test/uri-list.txt",
-          "content": "aHR0cDovL2xvY2FsaG9zdDo4MDgxL3Rlc3QucGRmDQpodHRwOi8vbG9jYWxob3N0OjgwODEvdGVzdC50eHQNCmh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS92b3lhZ2VyLnBuZw"
-        }
-      );*/
 
       // filter result such that only specified results are displayed
       let viewer = [];
@@ -1092,8 +965,6 @@ export default {
         });
       }
 
-      //console.log(this.returnedOutputJson.artifacts);
-      
       // process vtk-files with base64-content
       this.returnedOutputJson.artifacts.forEach(function(item) {
         if (item.MIMEtype == "application/vnd.kitware") {
@@ -1142,12 +1013,7 @@ export default {
           }
         }
       }
-      /*
-      console.log("----------")
-      console.log("outputConfig:");
-      console.log(outputConfig);
-      console.log("----------")
-      */
+      
       if (outputConfig.length > 0) {
         let basenames = [];
         for (var out = 0; out < outputConfig.length; out++) {
@@ -1194,7 +1060,6 @@ export default {
         }
 
         // If config contains output, that wasn't sent: remove from connectedVtks so ot isn't shown in gui
-        //console.log(connectedVtks);
         let tmpConnectedFiles = {};
         for (let fileGroupKey in connectedVtks) {
           let value = connectedVtks[fileGroupKey]
@@ -1219,17 +1084,10 @@ export default {
           this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
         }
       }
-      /*
-      console.log("----------");
-      console.log("returnedOutputJson");
-      console.log(this.returnedOutputJson)
-      console.log("----------");
-      */
       
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = base64url.decode(result.result.output.stdout);
       this.errorFiles = base64url.decode(result.result.output.stderr);
-      //console.log(this.outputFiles);
     }, 
     /** get content from s3 if it is an image, process differently */
     async getContentFromS3(url, image) {
@@ -1246,8 +1104,6 @@ export default {
         test = await response.text();
       }
       
-      //console.log("Response from the fetch: ", test);
-
       if (response.status >= 200 && response.status < 300) {
           return Promise.resolve(test);
       } else {
@@ -1380,7 +1236,6 @@ export default {
     /*get json from uploaded file und update DOM */
     onReaderLoad: function (event) {
       var obj = JSON.parse(event.target.result);
-      //console.log(obj);
       // apply changes to current json
       let templateId = obj.template;
       if (templateId == this.json.identifier) {
@@ -1411,7 +1266,6 @@ export default {
                 //this.json.files[f].parts[oldp].content = obj.parts[p].content;
                 this.$set(this.json.files[f].parts[oldp], "content", obj.parts[p].content);
                 this.$forceUpdate();
-                //console.log("Upload - " + this.json.files[f].parts[oldp].content);
                 // set parameters of parts
                 for(let oldPara in this.json.files[f].parts[oldp].parameters) {
                   let currentParamJson = this.json.files[f].parts[oldp].parameters[oldPara];
@@ -1422,7 +1276,6 @@ export default {
                         this.$set(currentParamJson, "selected", currentParamObj.selected);
                       } else {
                         this.$set(currentParamJson, "value", currentParamObj.value);
-                        
                       }
                     }
                   }
@@ -1458,10 +1311,8 @@ export default {
           }
         }
         if (currentParameter.metadata.guiType === "radio" || (currentParameter.metadata.guiType === "dropdown" && !currentParameter.multiple) || (currentParameter.metadata.guiType === "input_field")) {
-          //curr.selected = arr[0];
           this.$set(currentParameter, "selected", arr[0]);
         } else {
-          //curr.selected = arr;
           this.$set(currentParameter, "selected", arr);
         }
         
@@ -1554,15 +1405,7 @@ export default {
   },
   created() {
     this.loadJsonFromFile();
-    /*for (var file in this.json.files) {
-      for (var part in this.json.files[file].parts) {
-        for (var param in this.json.files[file].parts[part].parameters) {
-          var currentParam = this.json.files[file].parts[part].parameters[param];
-          //console.log(currentParam);
-          //console.log("test" + JSON.parse(currentParam).mode);
-        }
-      }
-    }*/
+    
     // parse the parameters and add items for generating the gui and modifing the content
     // first: modify parameters section
     for (var parameter in this.json.parameters) {
@@ -1629,16 +1472,10 @@ body {
     -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
     padding: 10px;
-    /*margin: 0 10px;
-    border-radius: 25px;
-    max-width: 1170px;
-    margin: 0 auto;
-    background-color: #fff;*/
   }
 
   .flex-container {
     display: flex;
-    /*flex-direction: row;*/
     justify-content: center;
   }
 
@@ -1670,7 +1507,6 @@ body {
     border: 1px solid #ddd;
     border-radius: calc(0.25rem - 1px);
     padding: 10px;
-    /*margin-bottom: 10px;*/
   }
 
   .item-name {
