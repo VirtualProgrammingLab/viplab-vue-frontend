@@ -698,7 +698,7 @@
                                 <b-button class="btn mb-3" @click="addVtkConfig()" v-tooltip.top-center="'Add Config for Group of VTK-Files'">
                                   <b-icon icon="plus" aria-hidden="true"></b-icon>
                                 </b-button>
-                                <div class="ml-4 mr-4" v-if="(typeof computationTemplate.metadata != 'undefined') && (typeof computationTemplate.metadata.output != 'undefined') && (typeof computationTemplate.metadata.output.csv != 'undefined')">
+                                <div class="ml-4 mr-4" v-if="(typeof computationTemplate.metadata != 'undefined') && (typeof computationTemplate.metadata.output != 'undefined') && (typeof computationTemplate.metadata.output.vtk != 'undefined')">
                                   <div class="border mb-2 p-2" v-for="vtkConfig in computationTemplate.metadata.output.vtk" :key="vtkConfig.identifier">
                                     <!-- basename -->
                                     <div>
@@ -1353,6 +1353,12 @@ export default {
         } else {
           this.$delete(this.computationTemplate.metadata.output, "viewer")
         }
+
+        // delete metadata.output if empty
+        if (typeof this.computationTemplate.metadata.output.viewer == "undefined" && typeof this.computationTemplate.metadata.output.csv == "undefined" && typeof this.computationTemplate.metadata.output.vtk == "undefined") {
+          this.$delete(this.computationTemplate.metadata, "output")
+        }
+
         this.$forceUpdate();
       }
     },
@@ -1939,6 +1945,12 @@ export default {
           this.$forceUpdate();
         }
       }
+
+      // delete metadata.output if empty
+      if (typeof this.computationTemplate.metadata.output.viewer == "undefined" && typeof this.computationTemplate.metadata.output.csv == "undefined" && typeof this.computationTemplate.metadata.output.vtk == "undefined") {
+        this.$delete(this.computationTemplate.metadata, "output")
+      }
+      
       this.$forceUpdate();
     },
     removePlot: function(event, csv, plotConf) {

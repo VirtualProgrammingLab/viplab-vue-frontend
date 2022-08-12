@@ -144,7 +144,7 @@
         }
     ],
     "configuration": {
-        "resources.image": "git.iws.uni-stuttgart.de:4567/dumux-pub/berre2020:latest",
+        "resources.image": "name://git.iws.uni-stuttgart.de:4567/dumux-pub/berre2020:latest",
         "resources.volume": "/data/shared",
         "resources.memory": "4g",
         "resources.numCPUs": 1,
