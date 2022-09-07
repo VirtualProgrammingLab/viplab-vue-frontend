@@ -5,7 +5,27 @@
     "displayName" : "Parameters Example",  
     "description" : "This is a 'Hello World' example showing the usage of parameters. Please introduce yourself so that the Hello World-Container can print your information...",
     "output" : {
-      "viewer" : ["CSV", "ParaView", "Image"]
+      "viewer" : ["CSV", "ParaView", "Image"],
+      "csv" : [
+        {
+          "basename": "coffee-consumption",
+          "xlabel": {
+            "key": "year",
+            "label": "Time in years",
+            "format": ".0d"
+          },
+          "plots": [
+            {
+              "key": "women",
+              "label": "Cups of Coffee per Woman"
+            },
+            {
+              "key": "men",
+              "label": "Cups of Coffee per Man"
+            }
+          ]
+        }
+      ]
     }
   },
   "environment" : "Container", 
@@ -256,9 +276,51 @@
               "max": 100,
               "step": 1,
               "validation": "range"
+            },
+            {
+              "mode" : "fixed",
+              "identifier" : "__earth__", 
+              "metadata" : {
+                "guiType": "radio",
+                "name": "Earthling",
+                "description" : "Are you an earthling?"
+              },
+              "options": [
+                {
+                  "text" : "Earthling",
+                  "value" : "true",
+                  "selected" : true
+                },
+                {
+                  "text" : "Alien",
+                  "value" : "false"
+                }
+              ],
+              "validation": "oneof"
+            },
+            {
+              "mode" : "fixed",
+              "identifier" : "__cow__", 
+              "metadata" : {
+                "guiType": "radio",
+                "name": "Muuuuh like a Cow",
+                "description" : "Select if you muuuuuuh!"
+              },
+              "options": [
+                { 
+                  "text" : "Muh",
+                  "value" : "true",
+                  "selected" : true
+                },
+                {
+                  "text" : "Kikirikiii",
+                  "value" : "false"
+                }
+              ],
+              "validation": "oneof"
             }
           ],
-          "content"   : "W2Fib3V0IHlvdV0NCmxpa2VkVGhpbmdzPXt7I2VhY2ggX19jaGVja2JveF9ffX17eyNpZiBAbGFzdH19e3sufX17e2Vsc2V9fXt7Ln19LCB7ey9pZn19e3svZWFjaH19DQpmYXZvcml0ZVBMPXt7X19yYWRpb0J1dHRvbl9ffX0NCmZyaWRnZT17e19fZHJvcGRvd25TaW5nbGVfX319DQpkYW5jaW5nPXt7I2VhY2ggX19kcm9wZG93bk11bHRpcGxlX199fXt7I2lmIEBsYXN0fX17ey59fXt7ZWxzZX19e3sufX0sIHt7L2lmfX17ey9lYWNofX0NCmRpc2xpa2VkVGhpbmdzPXt7I2VhY2ggX190b2dnbGVfX319e3sjaWYgQGxhc3R9fXt7Ln19e3tlbHNlfX17ey59fSwge3svaWZ9fXt7L2VhY2h9fQ0KcmFuZG9tTnVtYmVycz17eyNlYWNoIF9fc2xpZGVyTXVsdGlwbGVfX319e3sjaWYgQGxhc3R9fXt7Ln19e3tlbHNlfX17ey59fSwge3svaWZ9fXt7L2VhY2h9fQ0KbmFtZT17e3tfX2lucHV0VGV4dFdPTWF4bGVuZ3RoX199fX0NCmNocmlzdG1hc1dpc2g9e3tfX2lucHV0VGV4dFdNYXhsZW5ndGhfX319DQphZ2U9e3tfX2lucHV0TnVtYmVyX199fQ"
+          "content"   : "W2Fib3V0IHlvdV0NCmxpa2VkVGhpbmdzPXt7I2VhY2ggX19jaGVja2JveF9ffX17eyNpZiBAbGFzdH19e3sufX17e2Vsc2V9fXt7Ln19LCB7ey9pZn19e3svZWFjaH19DQpmYXZvcml0ZVBMPXt7X19yYWRpb0J1dHRvbl9ffX0NCmZyaWRnZT17e19fZHJvcGRvd25TaW5nbGVfX319DQpkYW5jaW5nPXt7I2VhY2ggX19kcm9wZG93bk11bHRpcGxlX199fXt7I2lmIEBsYXN0fX17ey59fXt7ZWxzZX19e3sufX0sIHt7L2lmfX17ey9lYWNofX0NCmRpc2xpa2VkVGhpbmdzPXt7I2VhY2ggX190b2dnbGVfX319e3sjaWYgQGxhc3R9fXt7Ln19e3tlbHNlfX17ey59fSwge3svaWZ9fXt7L2VhY2h9fQ0KcmFuZG9tTnVtYmVycz17eyNlYWNoIF9fc2xpZGVyTXVsdGlwbGVfX319e3sjaWYgQGxhc3R9fXt7Ln19e3tlbHNlfX17ey59fSwge3svaWZ9fXt7L2VhY2h9fQ0KbmFtZT17e3tfX2lucHV0VGV4dFdPTWF4bGVuZ3RoX199fX0NCmNocmlzdG1hc1dpc2g9e3tfX2lucHV0VGV4dFdNYXhsZW5ndGhfX319DQphZ2U9e3tfX2lucHV0TnVtYmVyX199fQ0KZWFydGhsaW5nPXt7X19lYXJ0aF9ffX0NCm11aD17e19fY293X199fQ"
         }
       ]
     },

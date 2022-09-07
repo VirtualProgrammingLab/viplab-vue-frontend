@@ -1001,15 +1001,18 @@ export default {
       var artifacts = this.returnedOutputJson.artifacts;
       //let created = false;
 
+      // sort result artifacts alphabetically to make sure that connected files are in correct order
+      artifacts.sort((a,b) => (a.path > b.path) ? 1 : ((b.path > a.path) ? -1 : 0))
+
       //get basenames for collections of files
       let outputConfig = [];
       if (typeof this.json.metadata !== 'undefined') {
         if (this.json.metadata.output !== undefined) {
           if (this.json.metadata.output.csv !== undefined) {
-            outputConfig.concat(this.json.metadata.output.csv);
+            outputConfig = outputConfig.concat(this.json.metadata.output.csv);
           }
           if (this.json.metadata.output.vtk !== undefined) {
-            outputConfig.concat(this.json.metadata.output.vtk);
+            outputConfig = outputConfig.concat(this.json.metadata.output.vtk);
           }
         }
       }
@@ -1080,7 +1083,7 @@ export default {
         
         // add vtk/csv collections
         let connectedFilesKeys = Object.keys(connectedVtks);
-        for(var c = 0; c <connectedFilesKeys.length; c++){
+        for(var c = 0; c < connectedFilesKeys.length; c++){
           this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
         }
       }
