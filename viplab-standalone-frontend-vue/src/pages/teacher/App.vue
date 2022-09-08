@@ -1623,7 +1623,7 @@ export default {
         };
         this.computationTemplate.files.push(file);
         // add possibility to add "parts"
-        this.componentsCommand = this.componentsPart;
+        this.componentsCommand = this.componentsPart.concat(this.componentsCommand);
       } else {
         // add commandline parameters
         if (typeof this.computationTemplate.parameters === "undefined") {
@@ -1890,6 +1890,12 @@ export default {
       this.closePreferences();
       this.preferences = true;
       this.showTemplate = true;
+
+      // if there are no files, remove ability to add parts
+      if (this.computationTemplate.files.length == 0) {
+        this.componentsCommand = ["checkbox", "radio", "dropdown", "toggle"]
+      }
+
       this.$forceUpdate();
     },
     /**
