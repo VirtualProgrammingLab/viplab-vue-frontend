@@ -68,34 +68,78 @@
                   <b-tab
                     title="Components"
                   >
+
+                    <!-- TODO: Add tooltips to the components-->
                     <div v-if="showTemplate">
                       <div class="mb-2">Template:</div>
                       <transition-group name="list" tag="div">
-                        <drag v-for="n in componentsFiles" :key="n" class="drag" :data="n">{{n}}</drag>
+                        <drag v-for="n in componentsFiles" :key="n" class="drag" :data="n">
+                          {{n}}
+                          <div class="tooltip-icon pl-2">
+                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'commandline arguments'" v-tooltip.top-center="'Drop this to the middle-section, if you want to let the user set values of commandline arguments.'"></b-icon-info-circle>
+                          </div>
+                        </drag>
                       </transition-group>
                     </div>
                     <div v-if="showFile">
                       <div class="mb-2">File:</div>
                       <transition-group name="list" tag="div">
-                        <drag v-for="n in componentsFiles.concat(componentsFile)" :key="n" class="drag" :data="n">{{n}}</drag>
+                        <drag v-for="n in componentsFiles.concat(componentsFile)" :key="n" class="drag" :data="n">
+                          {{n}}
+                          <div class="tooltip-icon pl-2">
+                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'commandline arguments'" v-tooltip.top-center="'Drop this to the middle-section, if you want to let the user set values of commandline arguments.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'part'" v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"></b-icon-info-circle>
+                          </div>
+                        </drag>
                       </transition-group>
                     </div>
                     <div v-if="showPart && !thereIsTemplate">
                       <div class="mb-2">Part:</div>
                       <transition-group name="list" tag="div">
-                        <drag v-for="n in componentsFiles.concat(componentsFile)" :key="n" class="drag" :data="n">{{n}}</drag>
+                        <drag v-for="n in componentsFiles.concat(componentsFile)" :key="n" class="drag" :data="n">
+                          {{n}}
+                          <div class="tooltip-icon pl-2">
+                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'part'" v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"></b-icon-info-circle>
+                          </div>
+                        </drag>
                       </transition-group>
                     </div>
                     <div v-if="showPart && thereIsTemplate">
                       <div class="mb-2">Part:</div>
                       <transition-group name="list" tag="div">
-                        <drag v-for="n in componentsFiles.concat(componentsPart).concat(availableGuiTypes)" :key="n" class="drag" :data="n">{{n}}</drag>
+                        <drag v-for="n in componentsFiles.concat(componentsPart).concat(availableGuiTypes)" :key="n" class="drag" :data="n">
+                          {{n}}
+                          <div class="tooltip-icon pl-2">
+                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'part'" v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'checkbox'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a checkox.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'radio'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a radio-button.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'dropdown'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a dropdown.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'toggle'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a toggle-button.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'input_field'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using an input_field.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'editor'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using an editor.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'slider'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a slider.'"></b-icon-info-circle>
+                          </div>
+                        </drag>
                       </transition-group>
                     </div>
                     <div v-if="showCommands">
                       <div class="mb-2">Commandline Arguments:</div>
                       <transition-group name="list" tag="div">
-                        <drag v-for="n in componentsFiles.concat(componentsCommand)" :key="n" class="drag" :data="n">{{n}}</drag>
+                        <drag v-for="n in componentsFiles.concat(componentsCommand)" :key="n" class="drag" :data="n">
+                          {{n}}
+                          <div class="tooltip-icon pl-2">
+                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'part'" v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'checkbox'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a checkox.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'radio'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a radio-button.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'dropdown'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a dropdown.'"></b-icon-info-circle>
+                            <b-icon-info-circle v-if="n === 'toggle'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a toggle-button.'"></b-icon-info-circle>
+                          </div>
+                        </drag>
                       </transition-group>
                     </div>
                   </b-tab>
