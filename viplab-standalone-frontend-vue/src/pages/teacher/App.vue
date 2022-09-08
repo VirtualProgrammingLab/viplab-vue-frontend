@@ -407,7 +407,7 @@
                               <label class="mr-2">User-Id:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
-                                  <input type="number" class="form-control" :value="getConfigvModel('running.userId', null)" @input="setConfigvModel('running.userId', $event, null, true)">
+                                  <input type="text" class="form-control" :value="getConfigvModel('running.userId', null)" @input="setConfigvModel('running.userId', $event, null, true)">
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
@@ -449,11 +449,25 @@
                               <label class="mr-2">Number of CPUs:</label>
                               <div class="d-flex form-group"> 
                                 <div class="flex-grow-1">
-                                  <input type="number" class="form-control" :value="getConfigvModel('resources.numCPUs', null)" @input="setConfigvModel('resources.numCPUs', $event, null, true)">
+                                  <input type="text" class="form-control" :value="getConfigvModel('resources.numCPUs', null)" @input="setConfigvModel('resources.numCPUs', $event, null, true)">
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
                                     <b-icon-info-circle v-tooltip.top-center="'Number of CPUs for the Container.'"></b-icon-info-circle>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- resources.diskSpace -->
+                            <div v-if="computationTemplate.environment == 'Container'">
+                              <label class="mr-2">Limit of Disk Space:</label>
+                              <div class="d-flex form-group"> 
+                                <div class="flex-grow-1">
+                                  <input type="text" class="form-control" :value="getConfigvModel('resources.diskSpace', null)" @input="setConfigvModel('resources.diskSpace', $event, null, true)">
+                                </div>
+                                <!-- tooltip -->
+                                <div class="tooltip-icon pl-2">
+                                    <b-icon-info-circle v-tooltip.top-center="'Disk space limit for the Container.'"></b-icon-info-circle>
                                 </div>
                               </div>
                             </div>
@@ -2216,19 +2230,25 @@ export default {
           newValue = parseFloat(val.target.value);
           if(isNaN(newValue)) {
             // set to old value, if input was not null
-            if (typeof this.computationTemplate.configuration[configName] != "undefined" && val.target.value !== "") {
+            console.log(val.target.value)
+            if (typeof this.computationTemplate.configuration[configName] !== "undefined" && val.target.value !== "") {
+              console.log("case 1")
               newValue = this.computationTemplate.configuration[configName];
             // set to old value if new char was string not number
-            } else if (typeof this.computationTemplate.configuration[configName] != "undefined") {
-              newValue = this.computationTemplate.configuration[configName];
+            } else if (typeof this.computationTemplate.configuration[configName] !== "undefined" && val.target.value === "") {
+              console.log("case 2")
+              newValue = null//this.computationTemplate.configuration[configName];
             // else set value to null
             } else {
+              console.log("case 3")
               newValue = null;
             }
           }
         } else {
           newValue = val.target.value;
         }
+
+        console.log(newValue)
         
         // set existing value or create config-element and set it
         if (typeof this.computationTemplate.configuration[configName] != "undefined") {

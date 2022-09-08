@@ -270,6 +270,10 @@
                 "resources.numCPUs" : { 
                     "type" : "integer",
                     "description": "Optional; for Container. Number of CPUs for the container"
+                },
+                "resources.diskSpace" : { 
+                    "type" : "integer",
+                    "description": "Optional; for Container. Disk space limit for the container"
                 }
             },
             "additionalProperties": false,
