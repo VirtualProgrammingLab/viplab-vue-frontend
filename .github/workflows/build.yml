@@ -1,4 +1,4 @@
-name: "Build and Upload"
+name: "Build and Release"
 
 on: 
   push:
@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-save-artifact:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       # Checkout the branch that triggered the workflow.
       - name: Checkout
@@ -26,9 +28,7 @@ jobs:
           npm install
           npm run build
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+      - name: Create Release
+        uses: ncipollo/release-action@v1
         with:
-          name: dist
-          path: |
-            viplab-standalone-frontend-vue/dist
+          artifacts: "viplab-standalone-frontend-vue/dist"
