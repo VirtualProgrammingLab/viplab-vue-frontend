@@ -585,7 +585,7 @@ export default {
     return {
       templates: require.context("../../input/", false, /^.*\.json$/).keys(), //get json file names from ./input folder
       numberOfInputFiles: [],
-      //ws: "",
+      computationId: "",
       returnedOutputJson: "",
       returnedUnmodifiedArtifacts: "",
       outputFiles: "",
@@ -845,9 +845,10 @@ export default {
       var cancel = {
         type: "cancel-computation",
         content: {
-          template: this.dataTemplate
+          computation: this.computationId
         },
       };
+      console.log(cancel)
       this.ws.send(JSON.stringify(cancel));
       // stop waiting
       this.$wait.end("wait for ws response");
@@ -922,6 +923,7 @@ export default {
       console.log("computation:");
       console.log(computation);
       console.log("----------")
+      this.computationId = computation.id
     },
     /** process the result before displaying it in the DOM */
     displayResult: function (result) {
