@@ -848,7 +848,6 @@ export default {
           computation: this.computationId
         },
       };
-      console.log(cancel)
       this.ws.send(JSON.stringify(cancel));
       // stop waiting
       this.$wait.end("wait for ws response");
