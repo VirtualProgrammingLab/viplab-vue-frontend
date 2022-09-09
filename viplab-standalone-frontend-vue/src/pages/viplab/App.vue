@@ -23,6 +23,9 @@
 
       <v-wait for="wait for ws response">
         <BlockUI :message="statusMessage.message" slot="waiting">
+          <b-button class="mb-2" variant="outline-danger" @click="stopComputation">
+            <b-icon-x-circle v-tooltip.top-center="'Cancel Computation.'"></b-icon-x-circle>
+          </b-button>
           <spring-spinner
             class="wait-spinner"
             :animation-duration="3000"
@@ -836,6 +839,19 @@ export default {
       this.ws.send(JSON.stringify(task));
 
       return false;
+    },
+    stopComputation: function() {
+      // send cancel-message to websocket
+      var cancel = {
+        type: "cancel-computation",
+        content: {
+          template: this.dataTemplate
+        },
+      };
+      this.ws.send(JSON.stringify(cancel));
+      // stop waiting
+      this.$wait.end("wait for ws response");
+      this.waitingResponse = false;
     },
     generateComputationTask: function() {
       let task = {
