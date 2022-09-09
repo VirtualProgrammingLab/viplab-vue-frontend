@@ -6,23 +6,10 @@
     "description": "Case 1: Single Fracture",
     "output": {
         "viewer": [
-            "CSV",
-            "ParaView"
-        ],
-        "csv": [
-            {
-                "basename": "dataovertime",
-                "xlabel": {
-                    "key": "time",
-                    "label": "Time in years",
-                    "factor": 3.1709792e-8,
-                    "format": ".2f"
-                }
-            }
         ],
         "vtk": [
             {
-                "basename": "case1_single_tracer_matrix"
+                "basename": "1ptestfv"
             } 
         ]
     }

@@ -257,11 +257,12 @@
                       <ansi-output :divId="'stderr-div'" :content="errorFiles"></ansi-output>
                     </div>
                   </b-tab>
-
+                  <!-- TODO: Only show tabs if necessary-->
                   <b-tab
                     title="Files"
                     ref="artifact"
                     class="artifact"
+                    v-if="returnedOutputJson.artifacts.length > 0"
                   >
                     <div id="fileList" class="mt-2" v-if="outputFiles !== ''">
                       <h3>Files</h3>
@@ -505,6 +506,7 @@
                     title="Downloads"
                     ref="artifact"
                     class="artifact"
+                    v-if="returnedUnmodifiedArtifacts.artifacts.length > 0"
                   >
                     <div id="downloadFiles">
                       <h3>Files to Download</h3>
@@ -1104,6 +1106,14 @@ export default {
           this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
         }
       }
+
+      // filter returnedOutputJson to only include displayable results
+      this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
+        let displayableMIMEtypes = ["text/plain", "text/uri-list", "image/png", "image/jpeg", "application/x-vgf", "application/x-vgf3", "application/x-vgfc", "application/vnd.kitware", "application/json"];
+        if (displayableMIMEtypes.includes(value.MIMEtype)) {
+          return value;
+        }
+      });
       
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = base64url.decode(result.result.output.stdout);
