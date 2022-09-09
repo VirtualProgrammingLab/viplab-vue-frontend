@@ -28,7 +28,14 @@ jobs:
           npm install
           npm run build
 
+      - name: Archive dist
+        uses: thedoctor0/zip-release@main
+        with:
+          type: 'zip'
+          filename: 'dist.zip'
+          path: 'viplab-standalone-frontend-vue/dist'
+
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "viplab-standalone-frontend-vue/dist"
+          artifacts: "dist.zip"
