@@ -942,9 +942,11 @@ export default {
         this.returnedUnmodifiedArtifacts = JSON.parse(JSON.stringify(result.result))
       } else {
         // TODO: Muss eventuell mit this.$set gemacht werden, damit gui auch geupdated wird; nötig erst wenn intermediate results im Backend möglich
-        this.returnedOutputJson.artifacts.push(JSON.parse(JSON.stringify(result.result.artifacts)));
-        this.returnedUnmodifiedArtifacts.artifacts.push(JSON.parse(JSON.stringify(result.result.artifacts)))
+        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)));
+        this.returnedUnmodifiedArtifacts.artifacts = this.returnedUnmodifiedArtifacts.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)))
       }
+
+      this.returnedUnmodifiedArtifacts.artifacts.sort((a,b) => (a.path > b.path) ? 1 : ((b.path > a.path) ? -1 : 0))
 
       // filter result such that only specified results are displayed
       let viewer = [];
@@ -1109,7 +1111,7 @@ export default {
 
       // filter returnedOutputJson to only include displayable results
       this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
-        let displayableMIMEtypes = ["text/plain", "text/uri-list", "image/png", "image/jpeg", "application/x-vgf", "application/x-vgf3", "application/x-vgfc", "application/vnd.kitware", "application/json"];
+        let displayableMIMEtypes = ["text/plain", "text/csv", "text/uri-list", "image/png", "image/jpeg", "application/x-vgf", "application/x-vgf3", "application/x-vgfc", "application/vnd.kitware", "application/json"];
         if (displayableMIMEtypes.includes(value.MIMEtype)) {
           return value;
         }

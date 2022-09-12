@@ -1,0 +1,34 @@
+{
+    "identifier": "06fe1cab-0a1a-430a-91c5-badf539189a5",
+    "version": "3.0.0",
+    "metadata": {
+        "displayName": "Leap Year Tester",
+        "description": "Check whether a year is a leap year."
+    },
+    "environment": "Container",
+    "files":   [
+        { 
+            "identifier": "22701b37-0a8f-405c-a89b-c31be7cd4b89",
+            "path": "run.py",
+            "metadata" : { 
+                "syntaxHighlighting": "python"
+            },
+            "parts": [
+                {
+                    "identifier": "ceb051d8-b50c-4814-983a-b9d703cae0c6",
+                    "access": "modifiable",
+                    "metadata": { 
+                        "name": "Code for checking year"
+                    },
+                    "content": "IyB5ZWFyIHRvIGNoZWNrDQp5ZWFyID0gMjAyMA0KDQojIGlmIHllYXIgY2FuIGJlIGRpdmlkZWQgYnkgNDAwIGFuZCAxMDAsIA0KIyBpdCBpcyBsZWFwIHllYXINCmlmICh5ZWFyICUgNDAwID09IDApIGFuZCAoeWVhciAlIDEwMCA9PSAwKToNCiAgICBwcmludCh5ZWFyLCAiaXMgYSBsZWFwIHllYXIiKQ0KDQojIGlmIHllYXIgY2FuIGJlIGRpdmlkZWQgYnkgNCwgYnV0IG5vdCBieSAxMDAsIA0KIyBpdCBpcyBhIGxlYXAgeWVhcg0KZWxpZiAoeWVhciAlIDQgPT0wKSBhbmQgKHllYXIgJSAxMDAgIT0gMCk6DQogICAgcHJpbnQoeWVhciwgImlzIGEgbGVhcCB5ZWFyIikNCg0KIyBlbHNlOiB5ZWFyIGlzIG5vdCBsZWFwIHllYXINCmVsc2U6DQogICAgcHJpbnQoeWVhciwgImlzIG5vdCBhIGxlYXAgeWVhciIp"
+                }
+            ] 
+        }
+    ],
+    "configuration" : { 
+        "resources.image": "name://leap-year-tester", 
+        "resources.volume": "/data/shared",
+        "resources.memory": "1g",
+        "resources.numCPUs": 1
+    }
+}

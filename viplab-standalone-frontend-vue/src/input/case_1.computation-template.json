@@ -38,6 +38,15 @@
             "vtk": [
                 {
                     "basename": "case1_single_tracer_matrix"
+                },
+                {
+                    "basename": "case1_single_tracer_fracture"
+                },
+                {
+                    "basename": "case1_single_onep_matrix"
+                },
+                {
+                    "basename": "case1_single_onep_fracture"
                 } 
             ]
         }
