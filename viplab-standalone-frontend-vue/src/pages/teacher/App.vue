@@ -798,7 +798,7 @@
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Absolute path to file. It is not allowed to start with /.'"></b-icon-info-circle>
+                              <b-icon-info-circle v-tooltip.top-center="'Relative path to file. It is not allowed to start with /. The path is relative to the path you entered in the configurtion under resources.volume.'"></b-icon-info-circle>
                             </div>
                           </div>
                         </div>

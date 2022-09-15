@@ -275,8 +275,9 @@ export default {
     async renderNewFile() {
       var inputFileUrl = this.files[this.fileIndex];
 
-      var lastIndex = inputFileUrl.lastIndexOf('/');
-      let inputFile = inputFileUrl.substr(lastIndex + 1);
+      let url = new URL(inputFileUrl).pathname
+      var lastIndex = url.lastIndexOf('/');
+      let inputFile = url.substr(lastIndex + 1);
 
       // initialize buffer for the ITK reader
       vtkITKPolyDataReader.setReadPolyDataArrayBufferFromITK(

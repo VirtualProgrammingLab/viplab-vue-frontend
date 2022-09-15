@@ -397,14 +397,13 @@
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
-                                  <Promised :promise="getContentFromS3(artifact.url, false)">
-                                    <!-- Use the "pending" slot to display a loading message -->
-                                    <template v-slot:pending>
-                                      <p>Loading...</p>
-                                    </template>
-                                    <!-- The default scoped slot will be used as the result -->
-                                    <template v-slot="data">
-                                      <div>
+                                  <div v-if="promiseError.get(artifact.url)">
+                                    Error: {{ promiseError.get(artifact.url).message }}
+                                  </div>
+                                  <div v-else-if="isLoading.get(artifact.url)">
+                                    Loading...
+                                  </div>
+                                  <div v-else-if="!isLoading.get(artifact.url)">
                                       <ace-editor-component 
                                         :isParameter="false" 
                                         :isMustache="false"
@@ -412,17 +411,13 @@
                                         :lang="(artifact.MIMEtype == 'application/json') ? 'json' : 'text'"
                                         :item='{
                                           "identifier" : "Editor" + artifact.identifier,
-                                          "content" : base64url(data),
+                                          "content" : s3Contents.get(artifact.url),
                                           "path" : artifact.path
                                         }'
                                         :ref="artifact.path"
                                       ></ace-editor-component>
-                                      </div>
-                                    </template>
-                                    <template v-slot:rejected="error">
-                                      <p>Error: {{ error.message }}</p>
-                                    </template>
-                                  </Promised>
+                                  </div>
+                                    
                                 </div>
                                 <div v-else-if="artifact.MIMEtype == 'text/csv'">
                                   <div v-if="artifact.plots">
@@ -445,40 +440,26 @@
                                   </div>
                                 </div>
                                 <div v-else-if="artifact.MIMEtype == 'image/png' || artifact.MIMEtype == 'image/jpeg'">
-                                  <Promised :promise="getContentFromS3(artifact.url, true)">
-                                    <!-- Use the "pending" slot to display a loading message -->
-                                    <template v-slot:pending>
-                                      <p>Loading...</p>
-                                    </template>
-                                    <!-- The default scoped slot will be used as the result -->
-                                    <template v-slot="data">
-                                      <img 
-                                        :src="data" 
-                                        :ref="artifact.path"/>
-                                    </template>
-                                    <template v-slot:rejected="error">
-                                      <p>Error: {{ error.message }}</p>
-                                    </template>
-                                  </Promised>
+                                  <img 
+                                    :src="artifact.url" 
+                                    :ref="artifact.path"/>
                                 </div>
                                 <div v-else>
-                                  <Promised :promise="getContentFromS3(artifact.url, false)">
-                                    <!-- Use the "pending" slot to display a loading message -->
-                                    <template v-slot:pending>
-                                      <p>Loading...</p>
-                                    </template>
-                                    <!-- The default scoped slot will be used as the result -->
-                                    <template v-slot="data">
-                                      <!-- Render ViPLabGraphics whose files need to be downloaded from S3 -->
-                                      <!-- show viplab grid plot -->
-                                      <div>
+
+                                  <div v-if="promiseError.get(artifact.url)">
+                                    Error: {{ promiseError.get(artifact.url).message }}
+                                  </div>
+                                  <div v-else-if="isLoading.get(artifact.url)">
+                                    Loading...
+                                  </div>
+                                  <div v-else-if="!isLoading.get(artifact.url)">
+                                    <div>
                                         <div
                                           v-if="artifact.MIMEtype === 'application/x-vgfc'"
                                           ref="outPartcontent"
                                           class="outPartcontent"
                                         >
-                                          
-                                          <grid-plot :plotData="data"></grid-plot>
+                                          <grid-plot :plotData="s3Contents.get(artifact.url)"></grid-plot>
                                         </div>
                                         <!-- show viplab 2d plot -->
                                         <div
@@ -486,14 +467,11 @@
                                           ref="outPartcontent"
                                           class="outPartcontent"
                                         >
-                                          <plot-2d :plotData="data"></plot-2d>
+                                          <plot-2d :plotData="s3Contents.get(artifact.url)"></plot-2d>
                                         </div>
                                       </div>
-                                    </template>
-                                    <template v-slot:rejected="error">
-                                      <p>Error: {{ error.message }}</p>
-                                    </template>
-                                  </Promised>
+                                  </div>
+                                  
                                 </div>
                               </div>  
                             </b-tab>
@@ -559,8 +537,6 @@ import CsvPlot from '../../components/csv-plots/CsvPlot.vue';
 
 import AnsiOutput from "../../components/AnsiOutput.vue";
 
-import {Promised} from "vue-promised";
-
 const Handlebars = require('handlebars');
 
 import {ValidationObserver} from "vee-validate";
@@ -578,7 +554,6 @@ export default {
     VtkComponent,
     Plot2d,
     CsvPlot,
-    Promised,
     ValidationObserver,
     AceEditorComponent,
     AnsiOutput
@@ -597,7 +572,10 @@ export default {
       asForm: true,
       isPartParameters: 0,
       waitingResponse: false, 
-      statusMessage: { "timestamp" : "2022-04-21T06:30+01:00", "message" : "Waiting..."}
+      statusMessage: { "timestamp" : "2022-04-21T06:30+01:00", "message" : "Waiting..."},
+      s3Contents: new Map(),
+      isLoading: new Map(),
+      promiseError: new Map(),
     };
   },
   watch: {
@@ -666,7 +644,7 @@ export default {
         }
       }
       return false;
-    }
+    },
   },
   methods: {
     // Make the function wait until the connection is made...
@@ -707,8 +685,13 @@ export default {
         this.$store.commit("updateDataTemplate", data);
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
         console.log("2")
-        this.json = this.$store.state.jsonTemplate;
-        this.dataTemplate = this.$store.state.dataTemplate;
+        if (data && (data === "{{ data }}" || data === "")) {
+          this.json = this.$store.state.jsonTemplate;
+          this.dataTemplate = this.$store.state.dataTemplate;
+        } else {
+          this.json = JSON.parse(base64url.decode(data));
+          this.$store.commit("updateDataTemplate", data);
+        }
       } else {
         console.log("3")
         this.json = {};
@@ -718,7 +701,11 @@ export default {
       if (token && token !== "{{ token }}" && token !== "" && this.$store.state.token.length === 0) {
         this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
       } else if (this.$store.state.token.length > 0) {
-        this.token = this.$store.state.token;
+        if (token && (token === "{{ token }}" || token === "")) {
+          this.token = this.$store.state.token;
+        } else {
+          this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
+        }
       } else {
         this.token = "";
       }
@@ -933,8 +920,6 @@ export default {
         document.getElementById("submit").disabled = false;
       }
 
-      console.log("displayResult " + this.returnedOutputJson)
-
       // if the first result came back, set the whole object, else, only add the new artifacts to the existing object
       // use JSON.parse(JSON.stringify(...)) to make sure a copy of the data is made, such that not only a reference is used
       if (this.returnedOutputJson === "") {
@@ -1116,32 +1101,51 @@ export default {
           return value;
         }
       });
+
+      for(let a in this.returnedOutputJson.artifacts) {
+        let currentArtifact = this.returnedOutputJson.artifacts[a]
+        if (currentArtifact.type === "s3file") {
+          if (currentArtifact.MIMEtype === "text/plain" || currentArtifact.MIMEtype === "application/json") {
+            this.getContentFromS3(currentArtifact.url)
+          } else if (currentArtifact.MIMEtype === "application/x-vgf" || currentArtifact.MIMEtype === "application/x-vgf3" || currentArtifact.MIMEtype === "application/x-vgfc") {
+            this.getContentFromS3(currentArtifact.url, true)
+          }
+        }
+      }
       
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = base64url.decode(result.result.output.stdout);
       this.errorFiles = base64url.decode(result.result.output.stderr);
     }, 
-    /** get content from s3 if it is an image, process differently */
-    async getContentFromS3(url, image) {
-      const response = await fetch(url, {
-        method: 'GET',
-      });
-      var test = null;
-      if (image) {
-        test = await response.blob().then(imageBlob => {
-          let imagesrc = URL.createObjectURL(imageBlob);
-          return imagesrc;
+    /** get content from s3 */
+    async getContentFromS3(url, isViPLabGraphics = false) {
+      this.isLoading.set(url, true)
+      this.promiseError.set(url, null)
+      
+      fetch(url, { method: 'GET'})
+        .then((response) => {
+          if (response.ok) {
+            return response.text();
+          }
+          throw new Error('Something went wrong');
+        })
+        .then((responseText) => {
+          if (!isViPLabGraphics) {
+            this.s3Contents.set(url, base64url(responseText));
+          } else {
+            this.s3Contents.set(url, responseText);
+          }
+        })
+        .catch((error) => {
+          console.log("catch")
+          this.promiseError.set(url, error);
+          
+        })
+        .finally(() => {
+          this.isLoading.set(url, false);
+          this.$forceUpdate();
         });
-      } else {
-        test = await response.text();
-      }
-      
-      if (response.status >= 200 && response.status < 300) {
-          return Promise.resolve(test);
-      } else {
-          return Promise.reject(new Error("Unable to complete request for: " + url));
-      }   
-      
+
     }, 
     /**  return base64 image src for img-tag*/
     imagesrc: function (base64Image, mimetype) {
@@ -1433,7 +1437,7 @@ export default {
       let availableMIMEtypes = ["text/plain", "text/uri-list", "application/json", "image/png", "image/jpeg", "application/x-vgf", "application/x-vgf3", "application/x-vgfc", "text/csv", "application/vnd.kitware"]
       let filtered = artifactsArray.filter(artifact => (availableMIMEtypes.indexOf(artifact.MIMEtype) > -1));
       return filtered;
-    }
+    },
   },
   created() {
     this.loadJsonFromFile();
