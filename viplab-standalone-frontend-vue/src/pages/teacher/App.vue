@@ -149,7 +149,7 @@
         </b-collapse>
 
         <!-- Graphical View of Template -->
-        <div class="dnd-window" id="drag-components-here">
+        <div class="dnd-window" id="drag-components-here" :key="signifyChange">
           <b-card no-body>
             <b-tabs card class="files" content-class="m-2" fill>
               
@@ -235,7 +235,7 @@
                                           <b-icon class="when-open" icon="caret-up"></b-icon>
                                         </b-button>
                                       </b-card-header>
-                                      <b-collapse :id="item.identifier+'content'" visible accordion="my-accordion-2" role="tabpanel">
+                                      <b-collapse :id="item.identifier +'content'" visible accordion="my-accordion-2" role="tabpanel">
                                         <b-card-body>
                                           <div class="part-content-field">
                                             <div class="d-flex"> 
@@ -1279,7 +1279,8 @@ export default {
         }
       ],
       validationRunning: false,
-      classValidity: ""
+      classValidity: "",
+      signifyChange: true,
     };
   },
   computed: {
@@ -1318,6 +1319,14 @@ export default {
       },
       set (newValue) {
         this.$store.commit("updateGeneratedComputationTemplate", newValue)
+      }
+    },
+    modifiedByTeacher : {
+      get () {
+        return this.$store.state.modifiedByTeacher;
+      },
+      set (newValue) {
+        this.$store.commit("updateModifiedByTeacher", newValue)
       }
     },
     thereIsTemplate() {
@@ -1633,6 +1642,8 @@ export default {
         this.validationPartParameterResult = null;
         this.validationArgsResult = null;
         this.validationRunning = false; 
+
+        this.$forceUpdate()
       },
       deep: true
     },
@@ -2567,7 +2578,9 @@ export default {
       // TODO: Should also function without metadata as it is not required
       // add metadata if missing
 
+      // save current template, as it will be overwritten to perform validation
       let tmp = this.computationTemplate;
+      // set generatedTemplate/computationTemplate so validation can be performed
       this.$store.commit("updateGeneratedComputationTemplate", obj)
       let isValid = this.validateJson(true)
       if (!isValid) {
@@ -2575,7 +2588,7 @@ export default {
         this.$store.commit("updateGeneratedComputationTemplate", tmp)
       } else {
         this.$store.commit("updateGeneratedComputationTemplate", obj)
-
+        this.signifyChange = !this.signifyChange
         // set number of options for configuring parameters and commandline arguments
         this.setNumbersOfOptions();
       }
@@ -2615,7 +2628,7 @@ export default {
         let file = JSON.stringify(this.computationTemplate);
         let dataBase64url = base64url(Buffer.from(file).toString());
         
-        //baseUrl = "http://localhost:3000/";
+        baseUrl = "http://localhost:3000/";
         fetch(baseUrl + "sign", {
           method: 'POST',
           body: dataBase64url
@@ -2629,8 +2642,9 @@ export default {
         }).then(jsonResponse => {
           // get token from sign-endpoint
           let token = jsonResponse.token;
-            
+          
           // set all values in Vuex store
+          this.$store.commit("updateModifiedByTeacher", true);
           this.$store.commit("updateJsonTemplate", this.computationTemplate)
           this.$store.commit("updateToken", token);
           this.$store.commit("updateDataTemplate", dataBase64url);

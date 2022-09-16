@@ -85,7 +85,8 @@ const store = new Vuex.Store({
         "resources.numCPUs": 1
       }, 
       "files": []
-    }
+    },
+    modifiedByTeacher: false,
   },
   mutations: {
     updateJsonTemplate (state, newValue) {
@@ -102,6 +103,9 @@ const store = new Vuex.Store({
     },
     updateGeneratedComputationTemplate (state, newValue) {
       state.generatedComputationTemplate = newValue;
+    },
+    updateModifiedByTeacher (state, newValue) {
+      state.modifiedByTeacher = newValue;
     }
   },
   plugins: [

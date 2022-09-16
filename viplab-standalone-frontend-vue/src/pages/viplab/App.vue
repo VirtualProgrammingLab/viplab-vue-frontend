@@ -627,6 +627,14 @@ export default {
         this.$store.commit("updateWebSocket", newValue)
       }
     },
+    modifiedByTeacher : {
+      get () {
+        return this.$store.state.modifiedByTeacher;
+      },
+      set (newValue) {
+        this.$store.commit("updateModifiedByTeacher", newValue)
+      }
+    },
     /* return parameters section of json file */
     parsedParametersJson: function () {
       var parsed = this.json.parameters;
@@ -685,9 +693,10 @@ export default {
         this.$store.commit("updateDataTemplate", data);
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
         console.log("2")
-        if (data && (data === "{{ data }}" || data === "")) {
+        if (data && (data === "{{ data }}" || data === "") || this.modifiedByTeacher) {
           this.json = this.$store.state.jsonTemplate;
           this.dataTemplate = this.$store.state.dataTemplate;
+          this.$store.commit("updateModifiedByTeacher", false);
         } else {
           this.json = JSON.parse(base64url.decode(data));
           this.$store.commit("updateDataTemplate", data);
