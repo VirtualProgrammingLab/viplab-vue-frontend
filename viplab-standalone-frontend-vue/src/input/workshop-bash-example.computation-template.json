@@ -1,0 +1,47 @@
+{
+    "identifier": "cd39715e-55de-4563-bf8c-929d3d699953",
+    "environment": "Container",
+    "metadata": {
+    "displayName": "Workshop Example",
+    "description": "Using Bash",
+    "output": {
+        "viewer": [
+            "Image",
+            "CSV"
+        ]
+    }
+    },
+    "files":   [],
+    "parameters": [
+        {
+            "mode": "fixed",
+            "identifier": "__scale__",
+            "metadata": {
+                "guiType": "dropdown",
+                "name": "Scale",
+                "description" : "Select value for scale"
+            },
+            "options": [
+                {
+                    "value": "0.05",
+                    "selected": true
+                },
+                {
+                    "value": "0.5"
+                },
+                {
+                    "value": "1"
+                }
+            ],
+            "validation": "oneof"
+        }
+    ],
+    "configuration" :
+    { "resources.image": "name://example_snakemake", 
+        "resources.volume": "/my_simulation",
+        "resources.memory": "1g",
+        "resources.numCPUs": 1,
+        "running.entrypoint": "./automation.sh",
+        "running.commandLineArguments": "{{__scale__}}"
+    }
+}

@@ -1,0 +1,79 @@
+{
+    "identifier": "cd39715e-55de-4563-bf8c-929d3d699953",
+    "environment": "Container",
+    "metadata": {
+        "displayName": "Workshop Example",
+        "description": "Using Snakemake",
+        "output": {
+            "viewer": [
+                "Image",
+                "CSV"
+            ],
+            "csv": [
+                {
+                    "basename": "plot_data",
+                    "xlabel": {
+                        "key": "function",
+                        "label": "Function"
+                    },
+                    "plots": [
+                        {
+                        "key": "vtkValidPointMask",
+                        "label": "vtkValidPointMask"
+                        },
+                        {
+                            "key": "arc_length",
+                            "label": "arc_lenght"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "files":   [
+    { 
+        "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a1",
+        "path": "input.yml",
+        "metadata": { 
+            "syntaxHighlighting": "ini"
+        },
+        "parts": [
+            {
+                "identifier": "5fa346f4-85e2-4e16-9cc6-11c82a7d3265",
+                "access": "template",
+                "metadata": { 
+                    "description": "input file"
+                },
+                "parameters": [
+                    {
+                        "mode": "any",
+                        "identifier": "__scale__",
+                        "metadata": {
+                            "guiType": "slider",
+                            "name": "Scale",
+                            "vertical": false,
+                            "description" : "Enter value for scale"
+                        },
+                        "default": [
+                            0.05
+                        ],
+                        "min": 0.05,
+                        "max": 10,
+                        "step": 0.01,
+                        "validation": "range"
+                    }
+                ],
+                "content": "c2NhbGU6IHt7X19zY2FsZV9ffX0NCg"
+            }
+        ] 
+    }
+    ],
+    "configuration" :
+    {   "resources.image": "name://example_snakemake", 
+        "resources.volume": "/my_simulation",
+        "resources.memory": "1g",
+        "resources.numCPUs": 1,
+        "running.entrypoint": "snakemake",
+        "running.commandLineArguments": "--cores 1"
+    }
+}

@@ -182,7 +182,7 @@
 
       <div 
         class="side-to-side-div flex-right m-2 pt-5 pb-5"
-        v-if="!asForm || outputFiles !== ''"
+        v-if="!asForm || (outputFiles !== '' || errorFiles !== '' || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0))"
         >
         <div class="sticky-div form-group mb-5 ml-5 mr-5">
           <h2>OutputFiles</h2>
@@ -226,12 +226,12 @@
             </b-card>
           </div>
 
-          <div class="my-2">
+          <div class="mt-2">
             <v-wait for="wait for ws response">
 
               <b-card
                 no-body
-                v-if="outputFiles !== '' || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0)"
+                v-if="outputFiles !== '' || errorFiles !== '' || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0)"
                 fill
               >
                 <b-tabs card class="files" content-class="m-2" lazy>
@@ -240,6 +240,7 @@
                     title="Stdout"
                     ref="artifact"
                     class="artifact"
+                    v-if="outputFiles !== ''"
                   >
                     <div id="stdout" v-if="outputFiles !== ''">
                       <h3>Stdout</h3>
@@ -252,7 +253,7 @@
                     ref="artifact"
                     class="artifact"
                   >
-                    <div id="stderr" v-if="outputFiles !== ''">
+                    <div id="stderr" v-if="errorFiles !== ''">
                       <h3>Stderr</h3>
                       <ansi-output :divId="'stderr-div'" :content="errorFiles"></ansi-output>
                     </div>
@@ -264,7 +265,7 @@
                     class="artifact"
                     v-if="returnedOutputJson.artifacts.length > 0"
                   >
-                    <div id="fileList" class="mt-2" v-if="outputFiles !== ''">
+                    <div id="fileList" class="mt-2" v-if="returnedOutputJson !== ''">
                       <h3>Files</h3>
                       <div class="fileViewer">
                         <b-card
@@ -780,7 +781,7 @@ export default {
             console.error(data);
         }
 
-        if (this.outputFiles !== "") {
+        if (this.outputFiles !== "" || this.errorFiles !== "" || this.returnedOutputJson != "") {
           // stop waiting
           this.$wait.end("wait for ws response");
           this.waitingResponse = false;
@@ -928,7 +929,7 @@ export default {
       if (result.result.status == "final") {
         document.getElementById("submit").disabled = false;
       }
-
+      
       // if the first result came back, set the whole object, else, only add the new artifacts to the existing object
       // use JSON.parse(JSON.stringify(...)) to make sure a copy of the data is made, such that not only a reference is used
       if (this.returnedOutputJson === "") {
@@ -1031,6 +1032,10 @@ export default {
           }
         }
       }
+
+      console.log("--- oc ---")
+      console.log(outputConfig)
+      console.log("---")
       
       if (outputConfig.length > 0) {
         let basenames = [];
@@ -1040,6 +1045,7 @@ export default {
           if (!basenames.includes(currentBasename)) {
             basenames.push(currentBasename);
           }
+          console.log(currentBasename)
 
           if(!connectedVtks[currentBasename]) {
             connectedVtks[currentBasename] = {};
@@ -1057,7 +1063,7 @@ export default {
             let path = artifacts[a].path;
             let lastIndex = path.lastIndexOf('/');
             let filenamePart = path.substr(lastIndex + 1, path.length);
-            
+            console.log(filenamePart)
             for (var base = 0; base < basenames.length; base++) {
               let currentBasename = basenames[base];
               // filename has to start with basename
@@ -1123,8 +1129,8 @@ export default {
       }
       
       //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
-      this.outputFiles = base64url.decode(result.result.output.stdout);
-      this.errorFiles = base64url.decode(result.result.output.stderr);
+      this.outputFiles = this.outputFiles.concat(base64url.decode(result.result.output.stdout));
+      this.errorFiles = this.errorFiles.concat(base64url.decode(result.result.output.stderr));
     }, 
     /** get content from s3 */
     async getContentFromS3(url, isViPLabGraphics = false) {

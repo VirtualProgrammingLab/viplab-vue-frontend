@@ -996,17 +996,17 @@
                           <!-- min -->
                           <div>
                             <label class="mr-2" for="selectedParameter.min">Minimum Value: </label>
-                            <input type="number" class="form-control form-group" id="selectedParameter.min" v-model="selectedParameter.min">
+                            <input type="number" class="form-control form-group" id="selectedParameter.min" v-model.number="selectedParameter.min">
                           </div>
                           <!-- max -->
                           <div>
                             <label class="mr-2" for="selectedParameter.max">Maximum Value: </label>
-                            <input type="number" class="form-control form-group" id="selectedParameter.max" v-model="selectedParameter.max">
+                            <input type="number" class="form-control form-group" id="selectedParameter.max" v-model.number="selectedParameter.max">
                           </div>
                           <!-- step -->
                           <div>
                             <label class="mr-2" for="selectedParameter.step">Step Size: </label>
-                            <input type="number" class="form-control form-group" id="selectedParameter.step" v-model="selectedParameter.step">
+                            <input type="number" class="form-control form-group" id="selectedParameter.step" v-model.number="selectedParameter.step">
                           </div>
                         </div>
 
@@ -2287,15 +2287,12 @@ export default {
             // set to old value, if input was not null
             console.log(val.target.value)
             if (typeof this.computationTemplate.configuration[configName] !== "undefined" && val.target.value !== "") {
-              console.log("case 1")
               newValue = this.computationTemplate.configuration[configName];
             // set to old value if new char was string not number
             } else if (typeof this.computationTemplate.configuration[configName] !== "undefined" && val.target.value === "") {
-              console.log("case 2")
               newValue = null//this.computationTemplate.configuration[configName];
             // else set value to null
             } else {
-              console.log("case 3")
               newValue = null;
             }
           }
@@ -2331,7 +2328,12 @@ export default {
         if (val.target.value === "") {
           this.$set(this.selectedParameter.default, index, "");
         } else {
-          this.$set(this.selectedParameter.default, index, Number(val.target.value));
+          console.log(val.target.value)
+          if (val.target.value === "0.0") {
+            this.$set(this.selectedParameter.default, index, val.target.value);
+          } else {
+            this.$set(this.selectedParameter.default, index, parseFloat(val.target.value));
+          }
         }
       }
       this.$forceUpdate();
