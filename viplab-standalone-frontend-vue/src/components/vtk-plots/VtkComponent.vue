@@ -435,7 +435,7 @@ export default {
   beforeCreate() {
     // TODO: Is there a better solution for this?
     // before creation change the path of the itk modules such that they can be moved to the dist/js-folder upon build
-    itkConfig.itkModulesPath = "js/itk"//"../static/js/vue";
+    itkConfig.itkModulesPath = this.$config.ITK_PATH;
   }
 };
 </script>

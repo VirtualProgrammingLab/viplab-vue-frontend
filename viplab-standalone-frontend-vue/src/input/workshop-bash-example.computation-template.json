@@ -37,7 +37,7 @@
         }
     ],
     "configuration" :
-    { "resources.image": "name://example_snakemake", 
+    { "resources.image": "name://example_bash", 
         "resources.volume": "/my_simulation",
         "resources.memory": "1g",
         "resources.numCPUs": 1,

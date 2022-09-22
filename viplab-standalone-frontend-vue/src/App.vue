@@ -90,16 +90,13 @@ export default {
       console.log(Object.keys(this.$store.state.jsonTemplate).length === 0)
       console.log(this.$store.state.jsonTemplate)
       if (data !== "{{ data }}" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
-        console.log("1")
         this.json = JSON.parse(base64url.decode(data));
         // store token in Vuex store
         this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
-        console.log("2")
         this.json = this.$store.state.jsonTemplate;
         this.token = this.$store.state.token;
       } else {
-        console.log(3)
         this.json = {};
         this.token = "";
       }

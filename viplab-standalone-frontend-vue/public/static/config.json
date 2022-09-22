@@ -1,4 +1,5 @@
 {
     "WEBSOCKET_API": "wss://localhost/computations",
-    "IS_STUDENT": false
+    "IS_STUDENT": false,
+    "ITK_PATH": "js/itk"
 }
