@@ -9,7 +9,6 @@
 
     <div class="teacher-header p-2">
           <div class="teacher-header-section">
-            <h2>Teacher</h2>
             <h3>
               This site will help you create a Computation Template
               <a class="ct-docu-link" href="https://virtualprogramminglab.github.io/documentation/viplab-3.0/computation_template/" title="Go to Documentation for more Info" alt="Documentation" target="_blank"><b-icon-book>Go to Documentation for more Info</b-icon-book></a>

@@ -689,11 +689,9 @@ export default {
       let token = appDiv.getAttribute("data-token");
 
       if (data && data !== "{{ data }}" && data !== "" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
-        console.log("1")
         this.json = JSON.parse(base64url.decode(data));
         this.$store.commit("updateDataTemplate", data);
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
-        console.log("2")
         if (data && (data === "{{ data }}" || data === "") || this.modifiedByTeacher) {
           this.json = this.$store.state.jsonTemplate;
           this.dataTemplate = this.$store.state.dataTemplate;
@@ -703,7 +701,6 @@ export default {
           this.$store.commit("updateDataTemplate", data);
         }
       } else {
-        console.log("3")
         this.json = {};
         this.dataTemplate = "";
       }
@@ -1032,10 +1029,6 @@ export default {
           }
         }
       }
-
-      console.log("--- oc ---")
-      console.log(outputConfig)
-      console.log("---")
       
       if (outputConfig.length > 0) {
         let basenames = [];
@@ -1045,7 +1038,6 @@ export default {
           if (!basenames.includes(currentBasename)) {
             basenames.push(currentBasename);
           }
-          console.log(currentBasename)
 
           if(!connectedVtks[currentBasename]) {
             connectedVtks[currentBasename] = {};
@@ -1063,7 +1055,7 @@ export default {
             let path = artifacts[a].path;
             let lastIndex = path.lastIndexOf('/');
             let filenamePart = path.substr(lastIndex + 1, path.length);
-            console.log(filenamePart)
+            
             for (var base = 0; base < basenames.length; base++) {
               let currentBasename = basenames[base];
               // filename has to start with basename
@@ -1152,7 +1144,6 @@ export default {
           }
         })
         .catch((error) => {
-          console.log("catch")
           this.promiseError.set(url, error);
           
         })
