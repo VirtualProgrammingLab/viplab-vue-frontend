@@ -23,9 +23,11 @@
 
       <v-wait for="wait for ws response">
         <BlockUI :message="statusMessage.message" slot="waiting">
+          <!-- TODO: Uncomment if cancel-message is implemented in middleware and backend
           <b-button class="mb-2" variant="outline-danger" @click="stopComputation">
             <b-icon-x-circle v-tooltip.top-center="'Cancel Computation.'"></b-icon-x-circle>
           </b-button>
+          -->
           <spring-spinner
             class="wait-spinner"
             :animation-duration="3000"
