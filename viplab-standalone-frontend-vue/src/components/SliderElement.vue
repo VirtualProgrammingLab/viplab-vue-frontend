@@ -1,11 +1,11 @@
 <template>
   <div class="slider-component">
     <div class ="item-name">{{slider.metadata.name}}:</div>
-    <div v-if="slider.value.length > 1">
-        <vue-slider multiple v-model="vModel" :min="slider.min" :max="slider.max" :interval="slider.step" :direction="sliderDirection(slider)" style="height: 300px;[slider.metadata.vertical ? {'height': '300px'} : {}]"></vue-slider>
+    <div v-if="slider.value.length > 1" :class="slider.metadata.vertical? 'mt-3' : 'mt-5'">
+        <vue-slider v-model="vModel" :min="slider.min" :max="slider.max" :interval="slider.step" :direction="sliderDirection(slider)" style="height: 300px;[slider.metadata.vertical ? {'height': '300px'} : {}]" tooltip="always" :tooltipPlacement="slider.metadata.vertical? 'right' : 'top'"></vue-slider>
     </div>
-    <div v-else>
-        <vue-slider v-model="vModel" :min="slider.min" :max="slider.max" :interval="slider.step" :direction="sliderDirection(slider)" :style="[slider.metadata.vertical ? {'height': '300px'} : {}]"></vue-slider>
+    <div v-else :class="slider.metadata.vertical? 'mt-3' : 'mt-5'">
+        <vue-slider v-model="vModel" :min="slider.min" :max="slider.max" :interval="slider.step" :direction="sliderDirection(slider)" :style="[slider.metadata.vertical ? {'height': '300px'} : {}]" tooltip="always" :tooltipPlacement="slider.metadata.vertical? 'right' : 'top'"></vue-slider>
     </div>
   </div>
 </template>
