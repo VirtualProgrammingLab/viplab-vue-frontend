@@ -281,5 +281,5 @@
         }
     },
     "additionalProperties": false,
-    "required" : ["identifier", "environment"]
+    "required" : ["identifier", "environment", "configuration"]
 }

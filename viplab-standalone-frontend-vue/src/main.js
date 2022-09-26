@@ -81,7 +81,7 @@ const store = new Vuex.Store({
         "resources.image": "",
         "running.userId": 0,
         "resources.volume": "",
-        "resources.memory": "4g",
+        "resources.memory": "64mb",
         "resources.numCPUs": 1
       }, 
       "files": []
