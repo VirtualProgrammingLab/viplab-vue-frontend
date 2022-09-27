@@ -276,6 +276,7 @@
                           fill
                         >
                           <b-tabs card class="files" content-class="m-2" lazy>
+                            <!-- TODO: Filename verwenden -->
                             <b-tab
                               :title="'OutputFile ' + artifactParent_index"
                               ref="artifact"
@@ -697,7 +698,7 @@ export default {
         if (data && (data === "{{ data }}" || data === "") || this.modifiedByTeacher) {
           this.json = this.$store.state.jsonTemplate;
           this.dataTemplate = this.$store.state.dataTemplate;
-          this.$store.commit("updateModifiedByTeacher", false);
+          
         } else {
           this.json = JSON.parse(base64url.decode(data));
           this.$store.commit("updateDataTemplate", data);
@@ -710,14 +711,17 @@ export default {
       if (token && token !== "{{ token }}" && token !== "" && this.$store.state.token.length === 0) {
         this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
       } else if (this.$store.state.token.length > 0) {
-        if (token && (token === "{{ token }}" || token === "")) {
+        if (token && (token === "{{ token }}" || token === "") || this.modifiedByTeacher) {
           this.token = this.$store.state.token;
+          
         } else {
           this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
         }
       } else {
         this.token = "";
       }
+
+      this.$store.commit("updateModifiedByTeacher", false);
 
       if (this.$store.state.dataTemplate.length === 0 && data !== "{{ data }}") {
         this.dataTemplate = data;

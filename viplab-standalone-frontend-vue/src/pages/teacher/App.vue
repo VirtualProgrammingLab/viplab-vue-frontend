@@ -2629,7 +2629,7 @@ export default {
         let file = JSON.stringify(this.computationTemplate);
         let dataBase64url = base64url(Buffer.from(file).toString());
         
-        //baseUrl = "http://localhost:3000/";
+        baseUrl = "http://localhost:3000/";
         fetch(baseUrl + "sign", {
           method: 'POST',
           body: dataBase64url
@@ -2651,9 +2651,9 @@ export default {
           this.$store.commit("updateDataTemplate", dataBase64url);
 
           // authenticate with new token
-          this.ws = new WebSocket(this.$config.WEBSOCKET_API);
+          /*this.ws = new WebSocket(this.$config.WEBSOCKET_API);
           let message = JSON.stringify({ type: "authenticate", content: { jwt: token } });
-          this.sendWaiting(message)
+          this.sendWaiting(message)*/
           
           // preview ct in iFrame
           let iFrameDiv = document.getElementById("iframe-div")
