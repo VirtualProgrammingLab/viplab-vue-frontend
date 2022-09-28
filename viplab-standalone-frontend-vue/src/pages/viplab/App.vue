@@ -236,7 +236,7 @@
                 v-if="outputFiles !== '' || errorFiles !== '' || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0)"
                 fill
               >
-                <b-tabs card class="files" content-class="m-2" lazy>
+                <b-tabs card class="files" content-class="m-2">
                   
                   <b-tab
                     title="Stdout"
