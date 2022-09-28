@@ -278,11 +278,11 @@
                           <b-tabs card class="files" content-class="m-2" lazy>
                             <!-- TODO: Filename verwenden -->
                             <b-tab
-                              :title="'OutputFile ' + artifactParent_index"
+                              :title="artifact.basename || artifact.path"
                               ref="artifact"
                               class="artifact"
                               v-for="(
-                                artifact, artifactParent_index
+                                artifact
                               ) in filteredArtifacts(returnedOutputJson.artifacts)"
                               :key="artifact.identifier"
                             >
@@ -1048,6 +1048,7 @@ export default {
           if(!connectedVtks[currentBasename]) {
             connectedVtks[currentBasename] = {};
             connectedVtks[currentBasename].type = "s3file";
+            connectedVtks[currentBasename].basename = currentBasename;
             connectedVtks[currentBasename].urlsOrContents = [];
             connectedVtks[currentBasename].plots = currentConfig.plots;
             connectedVtks[currentBasename].xlabel = currentConfig.xlabel;
@@ -1069,6 +1070,7 @@ export default {
                 //console.log(currentBasename + " - " + filenamePart);
                 connectedVtks[currentBasename].type = artifacts[a].type;
                 connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
+                connectedVtks[currentBasename].basename = currentBasename;
                 if (artifacts[a].url) {
                   connectedVtks[currentBasename].urlsOrContents.push(artifacts[a].url);
                 } else {
