@@ -1185,9 +1185,9 @@ export default {
         } else if (item.identifier == identifier) {
           // handle files that were downloaded from s3
           var itemContent = "";
-          if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png"  || item.MIMEtype === "image/jpeg" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vnd.kitware") {
+          //if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png"  || item.MIMEtype === "image/jpeg" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vnd.kitware") {
             itemContent = item.url;
-          }
+          //}
           content = itemContent;
         }
       });
@@ -1207,7 +1207,7 @@ export default {
             elem.click();
             document.body.removeChild(elem);
           });
-      } else if (((mimetype === "image/png" ||  mimetype === "image/jpeg") && content.includes("blob:http")) || ((mimetype === "text/plain" || mimetype === "image/png" || mimetype === "image/jpeg" || mimetype === "text/csv" || mimetype === "application/vnd.kitware") && content.startsWith("http"))) {
+      } else if (((mimetype === "image/png" ||  mimetype === "image/jpeg") && content.includes("blob:http")) || content.startsWith("http")) {
         // handle files that were downloaded from s3
         blob = await fetch(content).then(response => response.blob());
       } else {
