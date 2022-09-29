@@ -13,17 +13,13 @@
                 {
                     "basename": "plot_data",
                     "xlabel": {
-                        "key": "function",
-                        "label": "Function"
+                        "key": "arc_length",
+                        "label": "arc_length"
                     },
                     "plots": [
                         {
-                        "key": "vtkValidPointMask",
-                        "label": "vtkValidPointMask"
-                        },
-                        {
-                            "key": "arc_length",
-                            "label": "arc_lenght"
+                            "key": "function",
+                            "label": "function"
                         }
                     ]
                 }

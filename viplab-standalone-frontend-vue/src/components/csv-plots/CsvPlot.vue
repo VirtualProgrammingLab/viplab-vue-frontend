@@ -131,25 +131,36 @@ export default {
           keys.forEach(element => obj[element].push(row[element]));
         }
 
+        let xkey = keys[0];
+        if (this.labelProp.key !== undefined) {
+          if (keys[0] !== this.labelProp.key) {
+            xkey = this.labelProp.key
+          }
+        }
+        
+        console.log(xkey)
+
         // multiply x-axis by factor if given
         if (this.labelProp.factor !== undefined) {
-          for (let j = 0; j < obj[(keys[0])].length; j++) {
-              obj[(keys[0])][j] = obj[(keys[0])][j] * this.labelProp.factor
+          for (let j = 0; j < obj[(xkey)].length; j++) {
+              obj[(xkey)][j] = obj[(xkey)][j] * this.labelProp.factor
           }
         }
 
+        delete keys[xkey]
+
         // create traces to be rendered later; the first column is always x; the others are ys
-        for (var k = 1; k < keys.length; k++) {
+        for (var k = 0; k < keys.length; k++) {
           if (this.datasetProp.key) {
             // multiply y-axis by factor if given
             if(keys[k] === this.datasetProp.key) {
               if (this.datasetProp.factor !== undefined) {
-                for (let j = 0; j < obj[(keys[0])].length; j++) {
+                for (let j = 0; j < obj[(xkey)].length; j++) {
                   obj[(keys[k])][j] = obj[(keys[k])][j] * this.datasetProp.factor
                 }
               }
               let trace = {
-                x: obj[(keys[0])],
+                x: obj[(xkey)],
                 y: obj[(keys[k])],
                 name: this.datasetProp.label
               }
@@ -157,7 +168,7 @@ export default {
             }
           } else {
             let trace = {
-              x: obj[(keys[0])],
+              x: obj[(xkey)],
               y: obj[(keys[k])],
               name:  keys[k]
             }
@@ -176,7 +187,7 @@ export default {
           title: title,
           xaxis: {
             title: {
-              text: this.labelProp.label || keys[0]
+              text: this.labelProp.label || xkey
             },
             tickformat: xformat 
           },
