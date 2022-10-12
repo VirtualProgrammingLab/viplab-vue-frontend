@@ -1,8 +1,14 @@
 <template>
     <div class="ansi-output-component">
         <div class="ansi-editor d-flex flex-row">
-            <div class="line-numbers-div text-center" :id="divId+'-lines'"></div>
-            <div class="console-output pl-1 pr-1" :id="divId+'-content'"></div>
+            <div class="line-numbers-div text-center" :id="divId+'-lines'">
+                <pre><span v-for="index in lines.length" :key="index">{{index}}<br/></span></pre>
+            </div>
+            <div class="console-output pl-1 pr-1" :id="divId+'-content'">
+                <!-- pre needed to not squeeze white space, i.e., for asci graphics -->
+                <pre><span v-for="(line, index) in lines" :key="index" 
+                      v-html="line"></span></pre>
+            </div>
         </div>
     </div>
 </template>
@@ -16,32 +22,50 @@ export default {
         divId: String,
         content: String
     },
-    methods: {
-        setAnsiOutput: function() {
-            let ansi_up = new AU.default;
-
-            //var txt  = "\n\n\x1B[1;33;40m 33;40  \x1B[1;33;41m 33;41  \x1B[1;33;42m 33;42  \x1B[1;33;43m 33;43  \x1B[1;33;44m 33;44  \x1B[1;33;45m 33;45  \x1B[1;33;46m 33;46  \x1B[1m\x1B[0\n\n\x1B[1;33;42m >> Tests OK\n\n"
-            //var txt= "\u001b[31mHelloWorld";
-
-            
-            let lines = this.content.split(/\r?\n/);
-            lines = lines.filter(function (el) {
-                return el != null //&& el !== "" && el !== " ";
-            });
-
-            for (let line in lines) {
-                let html = ansi_up.ansi_to_html(lines[line]);
-                let cdiv = document.getElementById(this.divId+"-content");
-                cdiv.innerHTML +=  "<span>" + html + "<br> </span>";
-                let linesdiv = document.getElementById(this.divId+"-lines");
-                let linenumber = parseInt(line) + 1;
-                linesdiv.innerHTML +=  linenumber + "<br>";
-            }
-            
+    data() {
+        return {
+            /* TODO: adjust height of stdout to height of right tab,
+                    maybe need computed variable for that;
+                    in css below height can be "v-bind(height)"
+            height: '300px', */
+            ansi: undefined,
+            lines: []
         }
     },
+    watch: {
+        content: function (concat_content, old_content) {
+            if (concat_content === '') {
+                // should never come to that branch; instead component is mounted again
+                // when content resets
+                console.log('Clearing out content of ansioutput');
+                this.lines = []
+            } else {
+                const new_content = concat_content.substring(old_content.length);
+                this.renderContent(new_content);
+            }
+        }
+    },
+    /* TODO: would be nice feature
+    updated () {
+    // auto-scroll to the bottom when the DOM is updated
+    this.$el.scrollTop = this.$el.scrollHeight
+    }, */
+    beforeMount() {
+        this.ansi = new AU.default;
+    },
     mounted() {
-        this.setAnsiOutput();
+        this.renderContent(this.content);
+        //console.log("ansi in mounted")
+    },
+    methods: {
+        renderContent: function(content) {
+            //console.log(this.lines.length);
+            const new_lines = content.split(/\r?\n/);
+            for (let line_idx in new_lines) {
+                this.lines.push(this.ansi.ansi_to_html(
+                    new_lines[line_idx]) + '<br/>');
+            }
+        }
     }
 };
 </script>
@@ -49,8 +73,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .ansi-output-component {
-    height: 250px;
-    font-family: Consolas;
+    min-height: 250px;
+    height: 325px;
+    font-family: monospace;
     font-size: inherit;
     line-height: 2;
     border: 1px solid #ddd;

@@ -165,7 +165,7 @@
                   <b-button v-if="$config.IS_STUDENT" class="btn mr-2 btn-row" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
                     <font-awesome-icon icon="save" />
                   </b-button>
-                  <b-button class="btn btn-row" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'">
+                  <b-button class="btn btn-row" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'" @click="sendData">
                     <b-icon v-if="!waitingResponse" icon="play" aria-hidden="true"></b-icon>
                     <v-wait for="wait for ws response">
                       <spring-spinner
@@ -790,7 +790,7 @@ export default {
           this.waitingResponse = false;
         }
       };
-      document.getElementById("submit").onclick = this.sendData;
+      //document.getElementById("submit").onclick = this.sendData;
 
     },
     /** create uuid for the template to be sent as request */
@@ -820,14 +820,11 @@ export default {
 
       // reset result variables
       this.outputFiles = ""
+      this.errorFiles = ""
       this.returnedOutputJson = ""
       this.returnedUnmodifiedArtifacts = ""
 
-      console.log("sendData " + this.returnedOutputJson)
-
-      // start waiting
-      this.$wait.start("wait for ws response");
-      this.waitingResponse = true;
+      console.log("sendData " + this.outputFiles)
 
       document.getElementById("submit").disabled = true;
       var task = {
@@ -839,6 +836,10 @@ export default {
       };
 
       this.ws.send(JSON.stringify(task));
+
+      // start waiting
+      this.$wait.start("wait for ws response");
+      this.waitingResponse = true;
 
       return false;
     },
