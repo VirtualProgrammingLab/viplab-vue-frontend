@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      csvs: this.csvsProp,
+      csvs: this.csvsProp, // this is bad! csvs will never get updated!!
       fileIndex: 0,
       data: [],
       layout: {
@@ -137,8 +137,6 @@ export default {
             xkey = this.labelProp.key
           }
         }
-        
-        console.log(xkey)
 
         // multiply x-axis by factor if given
         if (this.labelProp.factor !== undefined) {
@@ -146,9 +144,10 @@ export default {
               obj[(xkey)][j] = obj[(xkey)][j] * this.labelProp.factor
           }
         }
-
-        delete keys[xkey]
-
+        let xkey_ind = keys.indexOf(xkey)
+        if (xkey_ind > -1) {
+          keys.splice(xkey_ind, 1);
+        }
         // create traces to be rendered later; the first column is always x; the others are ys
         for (var k = 0; k < keys.length; k++) {
           if (this.datasetProp.key) {
@@ -177,6 +176,7 @@ export default {
         }
 
         // set x-Axis label and title
+        // TODO: allow title in metadata? (id in dumux web-app)
         let lastIndex = this.csvs[this.fileIndex].lastIndexOf('/');
         let title = ((this.areUrlsProp) ? this.csvs[this.fileIndex].substr(lastIndex + 1, this.csvs[this.fileIndex].length) : "Graph");
         let xformat = (this.labelProp.format) ? this.labelProp.format : ".1f"
