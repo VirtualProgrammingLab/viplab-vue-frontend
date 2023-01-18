@@ -807,27 +807,29 @@
                             <label class="mr-2">Syntax Highlighting for File-Content:</label>
                             <div class="d-flex form-group"> 
                               <div class="flex-grow-1">
-                                <div class="dropdown">
-                                  <select
-                                    class="form-control"
-                                    v-model="vModelFileMetadataSyntaxHighlighting"
-                                  >
-                                    <option>text</option>
-                                    <option>ini</option>
-                                    <option>c_cpp</option>
-                                    <option>matlab</option>
-                                    <option>java</option>
-                                    <option></option>
-                                  </select>
-                                </div>
+                                <input type="text" class="form-control" id="selectedFile.syntaxHighlighting"
+                                 v-model="vModelFileMetadataSyntaxHighlighting">
                               </div>
                               <!-- tooltip -->
                               <div class="tooltip-icon pl-2">
-                                <b-icon-info-circle v-tooltip.top-center="'Mode of the ace editor. List can be found on github (https://github.com/ajaxorg/ace/tree/master/lib/ace/mode). Examples: ini, c_cpp, matlab, java.'"></b-icon-info-circle>
+                                <b-icon-info-circle v-tooltip.top-center="'Mode of the ace editor. List can be found on github (https://github.com/ajaxorg/ace/tree/master/src/mode). Examples: ini, c_cpp, matlab, java.'"></b-icon-info-circle>
                               </div>
                             </div>
                           </div>
                         </div>
+                        <div>  <!-- description -->
+                            <label class="mr-2">Description:</label>
+                            <div class="d-flex form-group">
+                              <div class="flex-grow-1">
+                                <input type="text" class="form-control" id="selectedFile.description" v-model="vModelFileMetadataDescription">
+                              </div>
+                              <!-- tooltip -->
+                              <div class="tooltip-icon pl-2">
+                                  <b-icon-info-circle v-tooltip.top-center="'Short description of Computation Template shown in Frontend.'"></b-icon-info-circle>
+                              </div>
+                            </div>
+                        </div>
+
                       </div>
 
                       <!-- Part Data -->
@@ -862,7 +864,7 @@
                           <label class="mr-2">Additional Description of Part:</label>
                           <div class="d-flex form-group"> 
                             <div class="flex-grow-1">
-                              <input type="text" class="form-control" id="selectedPart.metadata.name" v-model="vModelPartMetadataName">
+                              <input type="text" class="form-control" id="selectedPart.metadata.description" v-model="vModelPartMetadataName">
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
@@ -1457,15 +1459,41 @@ export default {
         if (typeof this.selectedFile.metadata == "undefined") { 
           this.$set(this.selectedFile, "metadata", { });
         }
-        if (typeof this.selectedFile.metadata.syntaxHighlighting !== "undefined") {
-          this.$set(this.selectedFile.metadata, "syntaxHighlighting", val);
-        } else {
-          this.$set(this.selectedFile, "metadata", { "syntaxHighlighting": val});
-        }
+        this.$set(this.selectedFile.metadata, "syntaxHighlighting", val);
 
         // if val is empty, remove object from ct
         if (val == "") {
-          this.$delete(this.selectedFile, "metadata")
+          this.$delete(this.selectedFile.metadata, "syntaxHighlighting");
+          if (Object.keys(this.selectedFile.metadata).length == 0) {
+            this.$delete(this.selectedFile, "metadata");
+          }
+        }
+
+        this.$forceUpdate();
+      }
+    },
+    vModelFileMetadataDescription: {
+      get: function () {
+        if (typeof this.selectedFile.metadata != "undefined") {
+          if (typeof this.selectedFile.metadata.description != "undefined") {
+            return this.selectedFile.metadata.description;
+          }
+        }
+        return "";
+      },
+      set: function (val) {
+        // if file-metadata object does not exist, create it
+        if (typeof this.selectedFile.metadata == "undefined") {
+          this.$set(this.selectedFile, "metadata", { });
+        }
+        this.$set(this.selectedFile.metadata, "description", val);
+
+        // if val is empty, remove object from ct
+        if (val == "") {
+          this.$delete(this.selectedFile.metadata, "description");
+          if (Object.keys(this.selectedFile.metadata).length == 0) {
+            this.$delete(this.selectedFile, "metadata");
+          }
         }
 
         this.$forceUpdate();
@@ -1492,26 +1520,29 @@ export default {
     vModelPartMetadataName: {
       get: function () {
         if (typeof this.selectedPart.metadata !== "undefined") {
-          if (typeof this.selectedPart.metadata.name !== "undefined") {
-            return this.selectedPart.metadata.name;
+          if (typeof this.selectedPart.metadata.description !== "undefined") {
+            return this.selectedPart.metadata.description;
           }
         }
         return "";
       },
       set: function (val) {
         if (typeof this.selectedPart.metadata !== "undefined") {
-          this.$set(this.selectedPart.metadata, "name", "")
+          this.$set(this.selectedPart.metadata, "description", "")
         } else {
-          this.$set(this.selectedPart, "metadata", {"name": ""})
+          this.$set(this.selectedPart, "metadata", {"description": ""})
         }
 
-        if (typeof this.selectedPart.metadata.name !== "undefined") {
-          this.$set(this.selectedPart.metadata, "name", val);
+        if (typeof this.selectedPart.metadata.description !== "undefined") {
+          this.$set(this.selectedPart.metadata, "description", val);
         }
 
         // if val is empty, remove object from ct
         if (val == "") {
-          this.$delete(this.selectedPart, "metadata")
+          this.$delete(this.selectedPart.metadata, "description");
+          if (Object.keys(this.selectedPart.metadata).length == 0) {
+            this.$delete(this.selectedPart, "metadata");
+          }
         }
 
         this.$forceUpdate();
@@ -1707,9 +1738,6 @@ export default {
       let part = {
         "identifier" : this.uuid(),
         "access" : "modifiable",
-        "metadata" : {
-          "name" : "New Part",
-        },
         "content" : ""
       }
       file.parts.push(part);

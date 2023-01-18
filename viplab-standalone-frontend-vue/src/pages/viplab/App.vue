@@ -43,7 +43,7 @@
         <form @submit.prevent="sendData">
           <div class="form-group ml-5 mr-5 ">
 
-            <h2 v-if="parsedFilesJson">InputFiles</h2>
+            <h2 v-if="parsedFilesJson">Input Files</h2>
 
             <div class="cards" >
               <!-- 
@@ -56,10 +56,12 @@
                     class="file"
                     v-for="(file, fileIndex) in parsedFilesJson"
                     :key="file.identifier"
-                    :title="getFilename(file.path)"
                     @click="tabClicked"
                   >
-                    
+                  <template slot='title'>
+                   {{ getFilename(file.path) }}
+                      <b-icon-info-circle class="pl-1" v-tooltip.top-center="file.metadata.description" v-if="file.metadata && file.metadata.description"></b-icon-info-circle>
+                  </template>
                     <div
                       class="part"
                       v-for="(part, partIndex) in file.parts"
@@ -72,8 +74,8 @@
                         v-if="
                           part.access !== 'template' && numberOfInputFiles > 0
                         "
-                      > 
-                        <h3 class="mt-3" v-if="(part.access == 'visible' || part.access == 'modifiable') && part.metadata.description">{{part.metadata.description}}</h3>
+                      >
+                        <div class="desc-file-part" v-if="(part.access != 'invisible') && part.metadata && part.metadata.description">{{part.metadata.description}}</div>
                         <div v-if="part.access == 'visible'">
                           <ace-editor-component 
                             :isParameter="false" 
@@ -102,6 +104,7 @@
                         class="part-parameters"
                         v-if="part.parameters && part.access == 'template'"
                       >
+                      <div class="desc-file-part mb-2" v-if="part.metadata && part.metadata.description">{{part.metadata.description}}</div>
                         <!--<h2>Parameters</h2>-->
                         <parameters
                           :parameters="part.parameters">
@@ -187,22 +190,22 @@
         v-if="!asForm || (outputFiles !== '' || errorFiles !== '' || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0))"
         >
         <div class="sticky-div form-group mb-5 ml-5 mr-5">
-          <h2>OutputFiles</h2>
+          <h2>Output Files</h2>
 
           <!-- Render Handlebar Templates with the filled in Parameters -->
           <div v-if="!asForm">
             <b-card no-body v-if="numberOfInputFiles > 0">
               <b-tabs card class="files" content-class="m-2" fill>
                 <b-tab
-                  :title="file.metadata.name"
+                  :title="getFilename(file.path)"
                   ref="file"
                   class="file"
                   v-for="file in parsedFilesJson"
                   :key="file.identifier"
                   @click="tabClicked"
                 >
-                  <div class="item-name mb-2">
-                    Adjust values using the form-fields
+                  <div class="desc-file-part mb-2">
+                    Adjust values using the form fields in the Input Files panel
                   </div>
                   <div
                     class="part mb-3"
@@ -1562,6 +1565,11 @@ body {
 
   .item-name {
     font-weight: bold;
+    font-size: 14pt;
+  }
+
+  .desc-file-part {
+    font-style: italic;
     font-size: 14pt;
   }
 
