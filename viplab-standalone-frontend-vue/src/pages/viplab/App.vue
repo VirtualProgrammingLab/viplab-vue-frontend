@@ -77,7 +77,7 @@
                         <div v-if="part.access == 'visible'">
                           <ace-editor-component 
                             :isParameter="false" 
-                            :isMustache="false"
+                            :isHandlebar="false"
                             :readonly="true"
                             :item="part"
                             :lang="file.metadata.syntaxHighlighting"
@@ -88,7 +88,7 @@
                         <div v-else-if="part.access == 'modifiable'">
                           <ace-editor-component 
                             :isParameter="false" 
-                            :isMustache="false"
+                            :isHandlebar="false"
                             :readonly="false"
                             :item="part"
                             :lang="file.metadata.syntaxHighlighting"
@@ -189,7 +189,7 @@
         <div class="sticky-div form-group mb-5 ml-5 mr-5">
           <h2>OutputFiles</h2>
 
-          <!-- Render Mustache Templates with the filled in Parameters -->
+          <!-- Render Handlebar Templates with the filled in Parameters -->
           <div v-if="!asForm">
             <b-card no-body v-if="numberOfInputFiles > 0">
               <b-tabs card class="files" content-class="m-2" fill>
@@ -212,7 +212,7 @@
                     <div v-if="part.parameters && part.access == 'template'">
                       <ace-editor-component 
                         :isParameter="false" 
-                        :isMustache="true"
+                        :isHandlebar="true"
                         :readonly="true"
                         :item='{
                             "identifier" : generateHandlebarsDivId(part.identifier),
@@ -294,7 +294,7 @@
                                 >
                                   <ace-editor-component 
                                     :isParameter="false" 
-                                    :isMustache="false"
+                                    :isHandlebar="false"
                                     :readonly="true"
                                     :lang="(artifact.MIMEtype == 'application/json') ? 'json' : 'text'"
                                     :item='{
@@ -410,7 +410,7 @@
                                   <div v-else-if="!isLoading.get(artifact.url)">
                                       <ace-editor-component 
                                         :isParameter="false" 
-                                        :isMustache="false"
+                                        :isHandlebar="false"
                                         :readonly="true"
                                         :lang="(artifact.MIMEtype == 'application/json') ? 'json' : 'text'"
                                         :item='{
@@ -1369,12 +1369,12 @@ export default {
         
       }
     },
-    // switch between the form (to modify the parameters) and the mustache template with the filled out parameters
+    // switch between the form (to modify the parameters) and the handlebar template with the filled out parameters
     switchParameterView: function() {
       this.asForm = !this.asForm;
       
     },
-    // fill in content of mustache template with selected parameter values return it
+    // fill in content of handlebar template with selected parameter values return it
     showHandlebarsTemplate(part, forSend = false) {
       // To disable Mustache HTML-escaping behaviour, use three curly brackets, instead of two!
       // If the template should be displayed

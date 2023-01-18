@@ -248,7 +248,7 @@
                                             </div>
                                             <ace-editor-component 
                                               :isParameter="false" 
-                                              :isMustache="false"
+                                              :isHandlebar="false"
                                               :readonly="false"
                                               :item='{
                                                 "identifier" : "Editor" + item.identifier,
@@ -416,7 +416,7 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'Executable to run inside the Container. For Container: Can contain mustache template syntax for injecting PARAM_IDs.'"></b-icon-info-circle>
+                                    <b-icon-info-circle v-tooltip.top-center="'Executable to run inside the Container. For Container: Can contain handlebar template syntax for injecting PARAM_IDs.'"></b-icon-info-circle>
                                 </div>
                               </div>
                             </div>
@@ -1015,7 +1015,7 @@
                             <label class="mr-2" for="selectedParameter.default">Value: </label>
                             <ace-editor-component 
                               :isParameter="false" 
-                              :isMustache="false"
+                              :isHandlebar="false"
                               :readonly="false"
                               :item='{
                                 "identifier" : "Editor" + selectedParameter.identifier,

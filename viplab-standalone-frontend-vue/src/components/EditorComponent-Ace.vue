@@ -80,7 +80,7 @@ export default {
     item: Object,
     readonly: Boolean,
     isParameter: Boolean,
-    isMustache: Boolean, 
+    isHandlebar: Boolean, 
     lang: String,
     startLineNumber: Number
   },
@@ -116,7 +116,7 @@ export default {
             } else {
               this.vModel = base64url.decode(val.value);
             }
-          } else if (this.isMustache) {
+          } else if (this.isHandlebar) {
             this.vModel = val.content;
           } else {
             this.vModel = base64url.decode(val.content);
@@ -149,7 +149,7 @@ export default {
         } else {
           this.vModel = base64url.decode(this.editor.value);
         }
-      } else if (this.isMustache) {
+      } else if (this.isHandlebar) {
         this.vModel = this.editor.content;
       } else {
         this.vModel = base64url.decode(this.editor.content);
@@ -201,7 +201,7 @@ export default {
           if (this.isParameter) {
             this.$set(this.editor , "value", this.vModel);
             this.editor.value = [base64url(this.vModel)];
-          } else if (this.isMustache) {
+          } else if (this.isHandlebar) {
             this.$set(this.editor , "content", this.vModel);
             this.editor.content = this.vModel;
           } else {

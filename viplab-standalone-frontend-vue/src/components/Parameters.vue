@@ -30,7 +30,7 @@
         <div class="form-item" v-if="isEditor(item) && item.value">
           <ace-editor-component 
             :isParameter="true" 
-            :isMustache="false"
+            :isHandlebar="false"
             :readonly="false"
             :item="item"
           ></ace-editor-component>
