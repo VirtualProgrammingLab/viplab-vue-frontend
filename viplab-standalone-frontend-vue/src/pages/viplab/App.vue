@@ -105,7 +105,6 @@
                         v-if="part.parameters && part.access == 'template'"
                       >
                       <div class="desc-file-part mb-2" v-if="part.metadata && part.metadata.description">{{part.metadata.description}}</div>
-                        <!--<h2>Parameters</h2>-->
                         <parameters
                           :parameters="part.parameters">
                         </parameters>
@@ -119,16 +118,12 @@
                   </b-tab>
                   <b-tab v-if="parsedParametersJson" title="Parameters">
                     <!-- render parameters section of the json -->
-                    
-                    <!--<form>-->
                       <div class="form-group">
                         <h2 v-if="parsedParametersJson">Commandline Parameters</h2>
                         <parameters
                           :parameters="parsedParametersJson"
                         ></parameters>
                       </div>
-                    <!--</form>-->
-                    
                   </b-tab>
                 </b-tabs>
               </b-card>
@@ -248,7 +243,6 @@
                     v-if="outputFiles !== ''"
                   >
                     <div id="stdout" v-if="outputFiles !== ''">
-                      <h3>Stdout</h3>
                       <ansi-output :divId="'stdout-div'" :content="outputFiles"></ansi-output>
                     </div>
                   </b-tab>
@@ -259,19 +253,17 @@
                     class="artifact"
                   >
                     <div id="stderr" v-if="errorFiles !== ''">
-                      <h3>Stderr</h3>
                       <ansi-output :divId="'stderr-div'" :content="errorFiles"></ansi-output>
                     </div>
                   </b-tab>
                   <!-- TODO: Only show tabs if necessary-->
                   <b-tab
-                    title="Files"
+                    title="Visualizations"
                     ref="artifact"
                     class="artifact"
                     v-if="returnedOutputJson.artifacts.length > 0"
                   >
                     <div id="fileList" class="mt-2" v-if="returnedOutputJson !== ''">
-                      <h3>Files</h3>
                       <div class="fileViewer">
                         <b-card
                           no-body
@@ -1381,6 +1373,7 @@ export default {
     showHandlebarsTemplate(part, forSend = false) {
       // To disable Mustache HTML-escaping behaviour, use three curly brackets, instead of two!
       // If the template should be displayed
+      // TODO: is this still needed in handlebars?
       if(!this.asForm || forSend){
         if (part.content !== "") {
           var handlebarsTemplate = base64url.decode(part.content);
@@ -1504,6 +1497,10 @@ body {
   .header-content {
     text-align: center;
     width: 50%;
+  }
+
+  .header-content h4 {
+    width: 100%
   }
 
   .sticky-button {

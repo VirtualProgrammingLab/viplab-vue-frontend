@@ -10,7 +10,7 @@
       "identifier": "c21a6ffd-9747-46f7-9d99-9ae9167bbc33",
       "path": "input-graphics.txt",
       "metadata": {
-        "name": "Config File for graphics generation",
+        "description": "Config File for graphics generation",
         "MIMEtype": "text/plain",
         "syntaxHighlighting": "c_cpp"
       },
@@ -132,7 +132,7 @@
       "identifier": "c95c3c66-84cf-4ba3-a77e-cabdc616caea",
       "path": "input-csv.txt",
       "metadata": {
-        "name": "Config file for csv generation",
+        "description": "Config file for csv generation",
         "MIMEtype": "text/plain",
         "syntaxHighlighting": "c_cpp"
       },

@@ -43,7 +43,7 @@
           "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a1",
           "access": "template",
           "metadata": {
-            "name": "Parameter in part"
+            "description": "Parameter in part"
           },
           "parameters" : 
           [
@@ -71,7 +71,7 @@
           "identifier": "ceb051d8-b50c-4814-983a-b9d703cae0c6",
           "access"    : "template",
           "metadata"  : { 
-            "name"      : "params.ini file part"
+            "description"      : "params.ini file part"
           },
           "parameters":
           [
@@ -336,7 +336,7 @@
           "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a2",
           "access": "template",
           "metadata": {
-            "name": "Parameter in part"
+            "description": "Parameter in part"
           },
           "parameters" : 
           [

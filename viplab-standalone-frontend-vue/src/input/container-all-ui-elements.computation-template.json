@@ -11,7 +11,7 @@
       "identifier": "be2f68da-c6d3-4bac-985f-2f039915e9dd",
       "path": "config.ini",
       "metadata": {
-        "name": "config file for the all-ui-container",
+        "description": "config file for the all-ui-container",
         "MIMEtype": "text/plain",
         "syntaxHighlighting": "c_cpp"
       },

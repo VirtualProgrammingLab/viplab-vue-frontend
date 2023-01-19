@@ -186,6 +186,10 @@
                             "MIMEtype" : {
                                 "type": "string",
                                 "description": "MIMEtype of the content. Examples: text/plain, text/html, text/uri-list, application/x-vgf, application/x-vgf3, application/x-vgfc. Descriptions: text/uri-list: links to websides to be presented in SC; application/x-vgf: generated graphics output in 'ViP graphics format'; application/x-vgf3: generated graphics output in 'ViP graphics format 3D'; application/x-vgfc: generated graphics output in 'ViP graphics format contour plot'"
+                            },
+                            "description" : {
+                                "type": "string",
+                                "description": "Additional information about the file, e.g. what it is used for."
                             }
                         },
                         "additionalProperties": false
@@ -208,9 +212,9 @@
                                     "type" : "object",
                                     "description": "Contains information mainly for the frontend",
                                     "properties": {
-                                        "name" : {
+                                        "description" : {
                                             "type" : "string",
-                                            "description": "Additional description of this part; To be shown in the frontend"
+                                            "description": "Additional information about this part, e.g., what it is about; can also be a headline."
                                         }
                                     },
                                     "additionalProperties": false

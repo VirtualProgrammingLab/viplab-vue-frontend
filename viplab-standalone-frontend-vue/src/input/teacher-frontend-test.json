@@ -21,7 +21,7 @@
                     "identifier": "aa4c795a-2091-80ff-aa7c-be9e030b4a57",
                     "access": "template",
                     "metadata": {
-                        "name": "New Part"
+                        "description": "New Part"
                     },
                     "content": "W2ludHJvZHVjdGlvbl0NCm5hbWU9e3tkMTE1ZDAwOS0zNWM0LTM5MWEtN2JiNy05YjFiMTUxM2RjZTN9fQ",
                     "parameters": 

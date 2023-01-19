@@ -803,33 +803,31 @@
                         </div>
                         <!-- metadata syntaxHighlighting -->
                         <div>
-                          <div> <!--v-if="selectedFile.metadata.syntaxHighlighting">-->
-                            <label class="mr-2">Syntax Highlighting for File-Content:</label>
-                            <div class="d-flex form-group"> 
-                              <div class="flex-grow-1">
-                                <input type="text" class="form-control" id="selectedFile.syntaxHighlighting"
-                                 v-model="vModelFileMetadataSyntaxHighlighting">
-                              </div>
-                              <!-- tooltip -->
-                              <div class="tooltip-icon pl-2">
-                                <b-icon-info-circle v-tooltip.top-center="'Mode of the ace editor. List can be found on github (https://github.com/ajaxorg/ace/tree/master/src/mode). Examples: ini, c_cpp, matlab, java.'"></b-icon-info-circle>
-                              </div>
+                          <label class="mr-2">Syntax Highlighting for File-Content:</label>
+                          <div class="d-flex form-group"> 
+                            <div class="flex-grow-1">
+                              <input type="text" class="form-control" id="selectedFile.syntaxHighlighting"
+                               v-model="vModelFileMetadataSyntaxHighlighting">
+                            </div>
+                            <!-- tooltip -->
+                            <div class="tooltip-icon pl-2">
+                              <b-icon-info-circle v-tooltip.top-center="'Mode of the ace editor. List can be found on github (https://github.com/ajaxorg/ace/tree/master/src/mode). Examples: ini, c_cpp, matlab, java.'"></b-icon-info-circle>
                             </div>
                           </div>
                         </div>
                         <div>  <!-- description -->
-                            <label class="mr-2">Description:</label>
-                            <div class="d-flex form-group">
-                              <div class="flex-grow-1">
-                                <input type="text" class="form-control" id="selectedFile.description" v-model="vModelFileMetadataDescription">
-                              </div>
-                              <!-- tooltip -->
-                              <div class="tooltip-icon pl-2">
-                                  <b-icon-info-circle v-tooltip.top-center="'Short description of Computation Template shown in Frontend.'"></b-icon-info-circle>
-                              </div>
+                          <label class="mr-2">Description:</label>
+                          <div class="d-flex form-group">
+                            <div class="flex-grow-1">
+                              <input type="text" class="form-control" id="selectedFile.description"
+                               v-model="vModelFileMetadataDescription">
                             </div>
+                            <!-- tooltip -->
+                            <div class="tooltip-icon pl-2">
+                              <b-icon-info-circle v-tooltip.top-center="'Additional information about the file, e.g. what it is used for. It is shown in the Frontend as tooltip behind the filename.'"></b-icon-info-circle>
+                            </div>
+                          </div>
                         </div>
-
                       </div>
 
                       <!-- Part Data -->

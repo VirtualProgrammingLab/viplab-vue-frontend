@@ -30,7 +30,9 @@
                         },
                         {
                             "key": "fluxAcrossOutlet",
-                            "label": "Flux across outlet in kg/(s m^2)"
+                            "label": "Flux across outlet in mg/(s m^2)",
+                            "factor": 1E6,
+                            "format": ".2f"
                         }
                     ]
                 }
@@ -64,7 +66,7 @@
                     "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a2",
                     "access": "template",
                     "metadata": {
-                        "name": "Parameters for Execution of Case 1"
+                        "description": "Parameters for Execution of Case 1"
                     },
                     "parameters": [
                         {

@@ -190,8 +190,7 @@
                             "description" : {
                                 "type": "string",
                                 "description": "Additional information about the file, e.g. what it is used for."
-                             }
-
+                            }
                         },
                         "additionalProperties": false
                     },

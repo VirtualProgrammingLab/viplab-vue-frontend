@@ -10,7 +10,7 @@
       "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3e",
       "path": "code.c",
       "metadata": {
-        "name": "C-Code",
+        "description": "C-Code",
         "MIMEtype": "text/plain",
         "syntaxHighlighting": "c_cpp"
       },
@@ -45,7 +45,7 @@
       "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3f",
       "path": "code.c",
       "metadata": {
-        "name": "Even more C-Code",
+        "description": "Even more C-Code",
         "MIMEtype": "text/plain",
         "syntaxHighlighting": "c_cpp"
       },
