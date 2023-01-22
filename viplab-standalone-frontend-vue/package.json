@@ -39,7 +39,7 @@
     "v-tooltip": "^2.1.3",
     "vee-validate": "^3.4.13",
     "vtk.js": "^26.0.0",
-    "vue": "~2.6.0",
+    "vue": "~3.2.45",
     "vue-blockui": "^1.1.7",
     "vue-demi": "^0.11.3",
     "vue-easy-dnd": "^1.19.0",
