@@ -53,7 +53,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  routes 
+  routes
 })
 
 import Vuex from 'vuex'
@@ -69,10 +69,10 @@ const store = new Vuex.Store({
     dataTemplate: "",
     ws: "",
     generatedComputationTemplate: {
-      "identifier" : "", 
-      "version" : "3.0.0", 
-      "metadata": { "displayName" : "", "description": "" }, 
-      "environment": "Container", 
+      "identifier" : "",
+      "version" : "3.0.0",
+      "metadata": { "displayName" : "", "description": "" },
+      "environment": "Container",
       "configuration": {
         "running.timelimitInSeconds": 0,
         "running.commandLineArguments": "",
@@ -83,7 +83,7 @@ const store = new Vuex.Store({
         "resources.volume": "",
         "resources.memory": "64mb",
         "resources.numCPUs": 1
-      }, 
+      },
       "files": []
     },
     modifiedByTeacher: false,

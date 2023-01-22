@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/viplab-standalone-frontend-vue'
+    schedule:
+      interval: 'weekly'

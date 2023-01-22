@@ -1,5 +1,4 @@
-# base image: latest 16er version, with 18, build breaks
-FROM node:16.14.2-alpine
+FROM node:18.13.0-alpine
 
 # set working directory
 WORKDIR /app

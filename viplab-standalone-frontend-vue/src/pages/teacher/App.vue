@@ -14,7 +14,7 @@
               <a class="ct-docu-link" href="https://virtualprogramminglab.github.io/documentation/viplab-3.0/computation_template/" title="Go to Documentation for more Info" alt="Documentation" target="_blank"><b-icon-book>Go to Documentation for more Info</b-icon-book></a>
             </h3>
             <b-button id="start-guide" variant="outline-primary" @click="startGuide">Start Guide</b-button>
-            
+
             <input
                     type="file"
                     ref="upload"
@@ -62,7 +62,7 @@
         <b-collapse class="select-list" id="components-collapse" visible>
           <b-card no-body>
                 <b-tabs card class="files" id="component-selection" content-class="m-2" fill>
-                  
+
                   <!-- Drag-and-Drop Components -->
                   <b-tab
                     title="Components"
@@ -151,16 +151,16 @@
         <div class="dnd-window" id="drag-components-here" :key="signifyChange">
           <b-card no-body>
             <b-tabs card class="files" content-class="m-2" fill>
-              
+
               <!-- Drag-and-Drop Components -->
               <b-tab title="Drop Here">
                 <drop class="top-copy" @drop="onFileDrop($event)" :accepts-data="(file) => ((file  === 'file') || (file === 'commandline arguments'))">
                   <div class="template p-2" @click="openWindow($event, 'template', computationTemplate)">
-                    
+
                     <div v-for="(file, index) in computationTemplate.files" :key="file.identifier + '-' + index">
                       <drop class="copy" @drop="onPartDrop($event,file)" :accepts-data="(part) => part  === 'part'">
                         <div class="file p-2" @click="openWindow($event, 'file', file)">
-                          
+
                           <b-row align-v="stretch">
                             <b-col cols="8">
                               File
@@ -174,8 +174,8 @@
 
                           <!--<div v-for="(part, index) in file.parts" :key="index">-->
                           <drop-list class="part-droplist" v-if="file.parts" :items="file.parts" @insert="onInsert($event, false, file)" @reorder="$event.apply(file.parts)" :accepts-data="(part) => false" :column="true">
-                            <template v-slot:item="{item}"> 
-                              <drag class="item part-drag" :key="item.identifier">           
+                            <template v-slot:item="{item}">
+                              <drag class="item part-drag" :key="item.identifier">
                                 <drop class="part-border" @drop="onParameterDrop($event, item)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && item.parameters">
                                   <div class="part p-2" @click="openWindow($event, 'part', item)">
 
@@ -189,7 +189,7 @@
                                         </div>
                                       </b-col>
                                     </b-row>
-                                    
+
                                     <b-card v-if="item.parameters" no-body class="">
                                       <b-card-header header-tag="header" class="p-1" role="tab">
                                         <b-button block v-b-toggle:[paramAccordeon(item.identifier)] variant="info">
@@ -204,7 +204,7 @@
                                             <template v-slot:item="{item}">
                                               <drag class="item param" :key="item.identifier">
                                                 <b-container class="param-container p-2" @click="openWindow($event, 'parameter', item)">
-                                                  
+
                                                   <b-row align-v="stretch">
                                                     <b-col cols="8">
                                                       {{item.metadata.guiType}}
@@ -237,7 +237,7 @@
                                       <b-collapse :id="item.identifier +'content'" visible accordion="my-accordion-2" role="tabpanel">
                                         <b-card-body>
                                           <div class="part-content-field">
-                                            <div class="d-flex"> 
+                                            <div class="d-flex">
                                               <div class="flex-grow-1">
                                                 <label class="mr-2" for="item.content">content: </label>
                                               </div>
@@ -261,7 +261,7 @@
                                       </b-collapse>
                                     </b-card>
                                   </div>
-                                </drop> 
+                                </drop>
                               </drag>
                             </template>
                             <template v-slot:feedback="{data}">
@@ -270,14 +270,14 @@
                           </drop-list>
                           <!--</div>-->
                         </div>
-                      </drop> 
+                      </drop>
                     </div>
 
                     <!-- Commandline Parameters -->
                     <div v-if="computationTemplate.parameters">
                       <drop class="copy" @drop="onParameterDrop($event)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && computationTemplate.parameters">
                         <div class="file p-2" @click="openWindow($event, 'commands', computationTemplate.parameters)">
-                        
+
                           <b-row align-v="stretch">
                             <b-col cols="10">
                               Commandline Arguments
@@ -314,7 +314,7 @@
                         </div>
                       </drop>
                     </div>
-                  </div>     
+                  </div>
                 </drop>
               </b-tab>
               <b-tab title="JSON Preview">
@@ -338,9 +338,9 @@
 
                         <!-- Environment -->
                         <div id="run-configuration">
-                          
+
                           <label class="mr-2" for="computationTemplate.environment">Environment: </label>
-                          <div class="d-flex form-group">  
+                          <div class="d-flex form-group">
                             <div class="dropdown flex-grow-1">
                               <select
                                 class="form-control"
@@ -364,11 +364,11 @@
 
                           <!-- Configuration -->
                           <div v-if="typeof computationTemplate.configuration != 'undefined' && computationTemplate.environment != ''" class="border mb-2 p-2">
-                            
+
                             <!-- resources.image -->
                             <div v-if="computationTemplate.environment == 'Container'" id="image">
                               <label class="mr-2">Docker-Image*:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('resources.image', null)" @input="setConfigvModel('resources.image', $event, null)">
                                 </div>
@@ -382,7 +382,7 @@
                             <!-- running.timelimitInSeconds -->
                             <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">Time Limit for Running the Container (in Seconds):</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="number" class="form-control" :value="getConfigvModel('running.timelimitInSeconds', null)" @input="setConfigvModel('running.timelimitInSeconds', $event, null, true)">
                                 </div>
@@ -396,7 +396,7 @@
                             <!-- running.commandLineArguments -->
                             <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">Commandline Arguments:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('running.commandLineArguments', null)" @input="setConfigvModel('running.commandLineArguments', $event, null)">
                                 </div>
@@ -410,7 +410,7 @@
                             <!-- running.entrypoint -->
                             <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">Docker Entrypoint:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('running.entrypoint', null)" @input="setConfigvModel('running.entrypoint', $event, null)">
                                 </div>
@@ -424,7 +424,7 @@
                             <!-- running.intermediateFilesPattern -->
                             <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">RegEx-Pattern for Intermediate Result Files:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <div class="ml-4 mr-4">
                                     <!-- set how many values the config should have -->
@@ -444,11 +444,11 @@
                                 </div>
                               </div>
                             </div>
-                            
+
                             <!-- running.userId -->
                             <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">User-Id:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('running.userId', null)" @input="setConfigvModel('running.userId', $event, null, true)">
                                 </div>
@@ -462,7 +462,7 @@
                             <!-- resources.volume -->
                             <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">Volume:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('resources.volume', null)" @input="setConfigvModel('resources.volume', $event, null)">
                                 </div>
@@ -476,7 +476,7 @@
                             <!-- resources.memory -->
                             <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">Memory:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('resources.memory', null)" @input="setConfigvModel('resources.memory', $event, null)">
                                 </div>
@@ -490,7 +490,7 @@
                             <!-- resources.numCPUs -->
                             <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">Number of CPUs:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('resources.numCPUs', null)" @input="setConfigvModel('resources.numCPUs', $event, null, true)">
                                 </div>
@@ -504,7 +504,7 @@
                             <!-- resources.diskSpace -->
                             <div v-if="computationTemplate.environment == 'Container'">
                               <label class="mr-2">Limit of Disk Space:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('resources.diskSpace', null)" @input="setConfigvModel('resources.diskSpace', $event, null, true)">
                                 </div>
@@ -526,7 +526,7 @@
                             <!-- display name -->
                             <div>
                               <label class="mr-2">Name of Template:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getvModelTemplateMetadata('displayName')" @input="setvModelTemplateMetadata('displayName', $event)">
                                 </div>
@@ -539,7 +539,7 @@
                             <!-- description -->
                             <div>
                               <label class="mr-2">Description:</label>
-                              <div class="d-flex form-group"> 
+                              <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getvModelTemplateMetadata('description')" @input="setvModelTemplateMetadata('description', $event)">
                                 </div>
@@ -558,7 +558,7 @@
                               <!-- viewer -->
                               <div>
                                 <label class="mr-2" for="computationTemplate.metadata.output.viewer">File Types to be shown in Result: </label>
-                                <div class="d-flex form-group"> 
+                                <div class="d-flex form-group">
                                   <div class="flex-grow-1">
                                     <div class="dropdown">
                                       <select
@@ -582,7 +582,7 @@
                               </div>
                               <!-- csv -->
                               <div>
-                                <div class="d-flex"> 
+                                <div class="d-flex">
                                   <div class="flex-grow-1">
                                     <label class="mr-2" for="computationTemplate.metadata.output.csv">How should CSVs be displayed? </label>
                                   </div>
@@ -598,7 +598,7 @@
                                   <div class="border p-2 mb-2" v-for="(csvConfig, index) in computationTemplate.metadata.output.csv" :key="'csvConfig-'+index">
                                     <!-- basename -->
                                     <div>
-                                      <div class="d-flex"> 
+                                      <div class="d-flex">
                                         <div class="flex-grow-1">
                                           <label class="mr-2" :for="csvConfig.basename">Basename to identify connected CSVs: </label>
                                         </div>
@@ -607,7 +607,7 @@
                                             <b-icon-x-circle v-tooltip.top-center="'Delete CSV-Config.'"></b-icon-x-circle>
                                         </div>
                                       </div>
-                                      <div class="d-flex form-group"> 
+                                      <div class="d-flex form-group">
                                         <div class="flex-grow-1">
                                           <input type="text" class="form-control" id="csvConfig.basename" v-model="csvConfig.basename">
                                         </div>
@@ -623,7 +623,7 @@
                                       <div class="ml-4 mr-4">
                                         <!-- key -->
                                         <label class="mr-2" for="csvConfig.xlabel.key">Key of X-Axis in CSV: </label>
-                                        <div class="d-flex form-group"> 
+                                        <div class="d-flex form-group">
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvConfig.xlabel.key" v-model="csvConfig.xlabel.key">
                                           </div>
@@ -634,7 +634,7 @@
                                         </div>
                                         <!-- label -->
                                         <label class="mr-2" for="csvConfig.xlabel.label">Label for X-Axis: </label>
-                                        <div class="d-flex form-group"> 
+                                        <div class="d-flex form-group">
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvConfig.xlabel.label" v-model="csvConfig.xlabel.label">
                                           </div>
@@ -645,7 +645,7 @@
                                         </div>
                                         <!-- factor -->
                                         <label class="mr-2" for="csvConfig.xlabel.factor">Factor to multiply Values: </label>
-                                        <div class="d-flex form-group"> 
+                                        <div class="d-flex form-group">
                                           <div class="flex-grow-1">
                                             <input type="number" class="form-control" id="csvConfig.xlabel.factor" v-model.number="csvConfig.xlabel.factor">
                                           </div>
@@ -656,7 +656,7 @@
                                         </div>
                                         <!-- format -->
                                         <label class="mr-2" for="csvConfig.xlabel.format">Format of the Values: </label>
-                                        <div class="d-flex form-group"> 
+                                        <div class="d-flex form-group">
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvConfig.xlabel.format" v-model="csvConfig.xlabel.format">
                                           </div>
@@ -669,7 +669,7 @@
                                     </div>
                                     <!-- plots -->
                                     <label class="mr-2" for="csvConfig.plots">Information about the Y-Axes: </label>
-                                    <div class="d-flex ml-4 mr-4"> 
+                                    <div class="d-flex ml-4 mr-4">
                                       <div class="flex-grow-1">
                                         <label class="mr-2" for="csvConfig.plots">Define multiple Plots generated from one CSV: </label>
                                       </div>
@@ -678,14 +678,14 @@
                                           <b-icon-info-circle v-tooltip.top-center="'Define datasets: Provide y-axis labels for y-key given in csv. For each dataset one diagram is rendered in the result.'"></b-icon-info-circle>
                                       </div>
                                     </div>
-                                    
+
                                     <div class="ml-4 mr-4">
                                       <b-button class="btn mb-3" @click="addCsvPlot(index)" v-tooltip.top-center="'Add Y-Axis to generate Plot from CSV-Files'">
                                         <b-icon icon="plus" aria-hidden="true"></b-icon>
                                       </b-button>
                                       <div class="border mb-2 p-2" v-for="(csvPlot, plotIndex) in csvConfig.plots" :key="csvConfig.identifier + '-plot-' + plotIndex">
                                         <!-- key -->
-                                        <div class="d-flex form-group"> 
+                                        <div class="d-flex form-group">
                                           <div class="flex-grow-1">
                                             <label class="mr-2" for="csvPlot.key">Key of Y-Axes in CSV: </label>
                                           </div>
@@ -694,7 +694,7 @@
                                               <b-icon-x-circle v-tooltip.top-center="'Delete CSV-Config.'"></b-icon-x-circle>
                                           </div>
                                         </div>
-                                        <div class="d-flex form-group"> 
+                                        <div class="d-flex form-group">
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvPlot.key" v-model="csvPlot.key">
                                           </div>
@@ -705,7 +705,7 @@
                                         </div>
                                         <!-- label -->
                                         <label class="mr-2" for="csvPlot.label">Label for Y-Axis: </label>
-                                        <div class="d-flex form-group"> 
+                                        <div class="d-flex form-group">
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvPlot.label" v-model="csvPlot.label">
                                           </div>
@@ -716,7 +716,7 @@
                                         </div>
                                         <!-- factor -->
                                         <label class="mr-2" for="csvPlot.factor">Factor to multiply Values: </label>
-                                        <div class="d-flex form-group"> 
+                                        <div class="d-flex form-group">
                                           <div class="flex-grow-1">
                                             <input type="number" class="form-control" id="csvPlot.factor" v-model.number="csvPlot.factor">
                                           </div>
@@ -727,7 +727,7 @@
                                         </div>
                                         <!-- format -->
                                         <label class="mr-2" for="csvPlot.format">Format of the Values: </label>
-                                        <div class="d-flex form-group"> 
+                                        <div class="d-flex form-group">
                                           <div class="flex-grow-1">
                                             <input type="text" class="form-control" id="csvPlot.format" v-model="csvPlot.format">
                                           </div>
@@ -743,7 +743,7 @@
                               </div>
                               <!-- vtk -->
                               <div>
-                                <div class="d-flex"> 
+                                <div class="d-flex">
                                   <div class="flex-grow-1">
                                     <label class="mr-2" for="computationTemplate.metadata.output.vtk">How should VTKs be displayed? </label>
                                   </div>
@@ -759,7 +759,7 @@
                                   <div class="border mb-2 p-2" v-for="vtkConfig in computationTemplate.metadata.output.vtk" :key="vtkConfig.identifier">
                                     <!-- basename -->
                                     <div>
-                                      <div class="d-flex"> 
+                                      <div class="d-flex">
                                         <div class="flex-grow-1">
                                           <label class="mr-2" for="vtkConfig.basename">Basename to identify connected VTKs: </label>
                                         </div>
@@ -768,7 +768,7 @@
                                             <b-icon-x-circle v-tooltip.top-center="'Delete VTK-Config.'"></b-icon-x-circle>
                                         </div>
                                       </div>
-                                      <div class="d-flex"> 
+                                      <div class="d-flex">
                                         <div class="flex-grow-1">
                                           <input type="text" class="form-control" id="vtkConfig.basename" v-model="vtkConfig.basename">
                                         </div>
@@ -791,7 +791,7 @@
                         <!-- path -->
                         <div>
                           <label class="mr-2" for="selectedFile.path">Path to File: </label>
-                          <div class="d-flex form-group"> 
+                          <div class="d-flex form-group">
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedFile.path" v-model="vModelFilePath">
                             </div>
@@ -835,7 +835,7 @@
                         <!-- access -->
                         <div>
                           <label class="mr-2" for="selectedPart.access">Define Access Level: </label>
-                          <div class="d-flex form-group"> 
+                          <div class="d-flex form-group">
                             <div class="flex-grow-1">
                               <div class="dropdown">
                                 <select
@@ -860,7 +860,7 @@
                         <!-- metadata -->
                         <div>
                           <label class="mr-2">Additional Description of Part:</label>
-                          <div class="d-flex form-group"> 
+                          <div class="d-flex form-group">
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedPart.metadata.description" v-model="vModelPartMetadataName">
                             </div>
@@ -874,11 +874,11 @@
 
                       <!-- Show Parameter Preferences -->
                       <div v-else-if="showParameter">
-                        
+
                         <!-- identifier -->
                         <div>
                           <label class="mr-2" for="selectedParameter.identifier">Identifier for Handlebars.js-Template: </label>
-                          <div class="d-flex form-group"> 
+                          <div class="d-flex form-group">
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedParameter.identifier" v-model="vModelParameterIdentifier">
                             </div>
@@ -891,7 +891,7 @@
                         <!-- name -->
                         <div>
                           <label class="mr-2" for="selectedParameter.metadata.name">Name: </label>
-                          <div class="d-flex form-group"> 
+                          <div class="d-flex form-group">
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedParameter.metadata.name" v-model="vModelParameterMetadataName">
                             </div>
@@ -904,7 +904,7 @@
                         <!-- description -->
                         <div>
                           <label class="mr-2" for="selectedParameter.metadata.description">Description: </label>
-                          <div class="d-flex form-group"> 
+                          <div class="d-flex form-group">
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedParameter.metadata.description" v-model="vModelParameterMetadataDescription">
                             </div>
@@ -977,7 +977,7 @@
                               <label class="form-check-label custom-control-label" for="horizontal">horizontal</label><br>
                             </div>
                           </div>
-                        
+
                           <!-- default -->
                           <div class="">
                             <label class="mr-2" for="selectedParameter.default">value(s): </label>
@@ -1035,7 +1035,7 @@
                               <!-- set how many values the checkbox should have -->
                               <label for="selectedParameter.identifier + 'sb-options'">How many values should the parameter have?</label>
                               <b-form-spinbutton :id="selectedParameter.identifier + 'sb-options'" placeholder="1" :value="getNumberofFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
-                              
+
                               <!-- input option-values -->
                               <div class="border form-group p-2" v-for="(field, index) in getNumberofFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
                                 <!-- value -->
@@ -1083,15 +1083,15 @@
                             </div>
                           </div>
                         </div>
-                          
+
                         <!-- Validation -->
                         <div>
                           <label class="mr-2" for="selectedParameter.validation">Validation: </label>
-                          
+
                           <!-- mode: any -->
                           <div v-if="selectedParameter.mode === 'any'">
-                            
-                            <div class="d-flex form-group"> 
+
+                            <div class="d-flex form-group">
                               <div class="flex-grow-1">
                                 <div class="dropdown">
                                   <select
@@ -1121,7 +1121,7 @@
 
                           <!-- mode: fixed -->
                           <div v-else>
-                            <div class="d-flex form-group"> 
+                            <div class="d-flex form-group">
                               <div class="flex-grow-1">
                                 <div class="dropdown">
                                   <select
@@ -1151,7 +1151,7 @@
         <div class="validation-div pl-2 pr-2 pb-2">
           <b-button @click="validateJson">Validate</b-button>
           <div class="validation-result-div">
-            
+
             <b-card v-if="validationRunning" class="p-2">
               <b-skeleton animation="wave" width="85%"></b-skeleton>
               <b-skeleton animation="wave" width="55%"></b-skeleton>
@@ -1166,7 +1166,7 @@
           </div>
         </div>
         <div class="p-2" v-if="isLoggedIn">
-          <b-button 
+          <b-button
             variant="success"
             @click="runTemplate"
             :disabled="validateJson? false : true">
@@ -1176,10 +1176,10 @@
           <div id="iframe-div"></div>
         </div>
         <div class="pl-2 pr-2 pb-2">
-          <b-button 
+          <b-button
             @click="downloadCT"
             v-tooltip.top-center="'Download Computation Template'">
-            Download Computation Template 
+            Download Computation Template
             <b-icon
               icon="download"
               aria-hidden="true"
@@ -1218,7 +1218,7 @@ export default {
   data() {
     return {
       componentsFiles: ["file", "commandline arguments"],
-      componentsFile: ["part"], 
+      componentsFile: ["part"],
       componentsPart: ["part"],
       componentsCommand: ["checkbox", "radio", "dropdown", "toggle"],
       availableGuiTypes : ["input_field", "editor", "slider", "checkbox", "radio", "dropdown", "toggle"],
@@ -1228,7 +1228,7 @@ export default {
       selectedFile: {},
       showTemplate: true,
       showFile: false,
-      showPart: false, 
+      showPart: false,
       showParameter: false,
       showCommands: false,
       valueNumbers: new Map(),
@@ -1240,7 +1240,7 @@ export default {
       validationArgsResult: null,
       steps: [
         {
-          target: '#start-guide', 
+          target: '#start-guide',
           content: `Tour the <strong>ViPLab Computation Template Generator</strong>!`
         },
         {
@@ -1343,7 +1343,7 @@ export default {
       get: function () {
         if (this.selectedParameter.default.length > 0) {
           return base64url.decode(this.selectedParameter.default[0]);
-        } 
+        }
         return "";
       },
       set: function (val) {
@@ -1357,13 +1357,13 @@ export default {
       get: function () {
         if (this.selectedParameter.default.length > 0) {
           return this.selectedParameter.default[0];
-        } 
+        }
         return "";
       },
       set: function (val) {
 
         let newValue = parseFloat(val);
-          
+
         if (isNaN(newValue)) {
           // set to old value, if input was not null
           if (typeof this.selectedParameter !== "undefined" && val !== "") {
@@ -1393,20 +1393,20 @@ export default {
           if (typeof this.computationTemplate.metadata.output != "undefined") {
             if (typeof this.computationTemplate.metadata.output.viewer != "undefined") {
               return this.computationTemplate.metadata.output.viewer;
-            } 
+            }
           }
         }
         return [];
       },
       set: function (val) {
         // create objects (metadata, output, viewer) if not set yet
-        if (typeof this.computationTemplate.metadata == "undefined") { 
+        if (typeof this.computationTemplate.metadata == "undefined") {
           this.$set(this.computationTemplate, "metadata", { });
         }
-        if (typeof this.computationTemplate.metadata.output == "undefined") { 
+        if (typeof this.computationTemplate.metadata.output == "undefined") {
           this.$set(this.computationTemplate.metadata, "output", { });
         }
-        if (typeof this.computationTemplate.metadata.output.viewer == "undefined") { 
+        if (typeof this.computationTemplate.metadata.output.viewer == "undefined") {
           this.$set(this.computationTemplate.metadata.output, "viewer", []);
         }
 
@@ -1414,7 +1414,7 @@ export default {
         if (val.length > 1 || (val.length === 1 && val[0] !== "")) {
           if (typeof this.computationTemplate.metadata.output.viewer !== "undefined") {
             this.$set(this.computationTemplate.metadata.output, "viewer", val);
-          } 
+          }
         // delete viewer-object if user doesn't want special formats
         } else {
           this.$delete(this.computationTemplate.metadata.output, "viewer")
@@ -1430,7 +1430,7 @@ export default {
     },
     vModelFilePath: {
       get: function () {
-        if (typeof this.selectedFile.path != "undefined") { 
+        if (typeof this.selectedFile.path != "undefined") {
           return this.selectedFile.path;
         }
         return "";
@@ -1448,13 +1448,13 @@ export default {
         if (typeof this.selectedFile.metadata != "undefined") {
           if (typeof this.selectedFile.metadata.syntaxHighlighting != "undefined") {
             return this.selectedFile.metadata.syntaxHighlighting;
-          } 
+          }
         }
         return "";
       },
       set: function (val) {
         // if file-metadata object does not exist, create it
-        if (typeof this.selectedFile.metadata == "undefined") { 
+        if (typeof this.selectedFile.metadata == "undefined") {
           this.$set(this.selectedFile, "metadata", { });
         }
         this.$set(this.selectedFile.metadata, "syntaxHighlighting", val);
@@ -1514,7 +1514,7 @@ export default {
         this.$forceUpdate();
         return this.selectedPart.access;
       }
-    }, 
+    },
     vModelPartMetadataName: {
       get: function () {
         if (typeof this.selectedPart.metadata !== "undefined") {
@@ -1578,7 +1578,7 @@ export default {
         } else {
           this.$set(this.selectedParameter.metadata, "name", val);
         }
-        
+
         // if val is empty, remove object from ct
         if (val == "") {
           this.$delete(this.selectedParameter.metadata, "name")
@@ -1602,7 +1602,7 @@ export default {
         } else {
           this.$set(this.selectedParameter.metadata, "description", val);
         }
-        
+
         // if val is empty, remove object from ct
         if (val == "") {
           this.$delete(this.selectedParameter.metadata, "description")
@@ -1610,7 +1610,7 @@ export default {
 
         this.$forceUpdate();
       }
-    }, 
+    },
     vModelParameterMaxlength: {
       get: function () {
         if (typeof this.selectedParameter.maxlength !== "undefined") {
@@ -1621,7 +1621,7 @@ export default {
       set: function (val) {
 
         let newValue = parseFloat(val);
-          
+
         if (isNaN(newValue)) {
           // set to old value, if input was not null
           if (typeof this.selectedParameter !== "undefined" && val !== "") {
@@ -1636,7 +1636,7 @@ export default {
         }
 
         this.$set(this.selectedParameter, "maxlength", newValue);
-        
+
         // if val is empty, remove object from ct
         if (val == "") {
           this.$delete(this.selectedParameter, "maxlength")
@@ -1645,7 +1645,7 @@ export default {
         this.$forceUpdate();
       }
     }
-  }, 
+  },
   watch: {
     computationTemplate: {
       handler: function () {
@@ -1669,7 +1669,7 @@ export default {
         this.validationResult = null;
         this.validationPartParameterResult = null;
         this.validationArgsResult = null;
-        this.validationRunning = false; 
+        this.validationRunning = false;
 
         this.$forceUpdate()
       },
@@ -1711,8 +1711,8 @@ export default {
     onFileDrop(e) {
       if (e.data === "file") {
         let file = {
-          "identifier" : this.uuid(), 
-          "path" : "", 
+          "identifier" : this.uuid(),
+          "path" : "",
           "metadata" : {
             "syntaxHighlighting" : "text"
           },
@@ -1730,7 +1730,7 @@ export default {
           this.$forceUpdate();
         }
       }
-      
+
     },
     onPartDrop(e, file) {
       let part = {
@@ -1743,10 +1743,10 @@ export default {
     onParameterDrop(e, part = null) {
       let parameter = {};
       if (e.data === "input_field") {
-        parameter = { 
+        parameter = {
           "mode" : "any",
           "identifier" : this.uuid(),
-          "metadata" : { 
+          "metadata" : {
             "guiType" : e.data,
             "type" : "",
             "name": "Name",
@@ -1756,10 +1756,10 @@ export default {
           "validation" : "none",
         };
       } else if (e.data === "slider") {
-        parameter = { 
+        parameter = {
           "mode" : "any",
           "identifier" : this.uuid(),
-          "metadata" : { 
+          "metadata" : {
             "guiType" : e.data,
             "name": "Name",
             "description": "Add your description here...",
@@ -1772,10 +1772,10 @@ export default {
           "validation" : "none",
         };
       } else if (e.data === "editor") {
-        parameter = { 
+        parameter = {
           "mode" : "any",
           "identifier" : this.uuid(),
-          "metadata" : { 
+          "metadata" : {
             "guiType" : e.data,
             "name": "Name",
             "description": "Add your description here..."
@@ -1784,10 +1784,10 @@ export default {
           "validation" : "none",
         };
       } else if (e.data === "checkbox") {
-        parameter = { 
+        parameter = {
           "mode" : "fixed",
           "identifier" : this.uuid(),
-          "metadata" : { 
+          "metadata" : {
             "guiType" : e.data,
             "name": "Name",
             "description": "Add your description here..."
@@ -1803,10 +1803,10 @@ export default {
           "validation" : "anyof",
         };
       } else if (e.data === "radio") {
-        parameter = { 
+        parameter = {
           "mode" : "fixed",
           "identifier" : this.uuid(),
-          "metadata" : { 
+          "metadata" : {
             "guiType" : e.data,
             "name": "Name",
             "description": "Add your description here..."
@@ -1822,10 +1822,10 @@ export default {
           "validation" : "oneof",
         };
       } else if (e.data === "dropdown") {
-        parameter = { 
+        parameter = {
           "mode" : "fixed",
           "identifier" : this.uuid(),
-          "metadata" : { 
+          "metadata" : {
             "guiType" : e.data,
             "name": "Name",
             "description": "Add your description here..."
@@ -1841,10 +1841,10 @@ export default {
           "validation" : "oneof",
         };
       } else if (e.data === "toggle") {
-        parameter = { 
+        parameter = {
           "mode" : "fixed",
           "identifier" : this.uuid(),
-          "metadata" : { 
+          "metadata" : {
             "guiType" : e.data,
             "name": "Name",
             "description": "Add your description here..."
@@ -1860,8 +1860,8 @@ export default {
           "validation" : "anyof",
         };
       } else {
-        parameter = { 
-          "identifier" : this.uuid(), 
+        parameter = {
+          "identifier" : this.uuid(),
           "metadata" : { "guiType" : e.data}}
       }
       // if part in set, add parameter to part, else add it to commanline parameters
@@ -1937,7 +1937,7 @@ export default {
       } else if (selectedPart.access !== "template") {
         delete selectedPart.parameters;
       }
-    }, 
+    },
     /**
      * Delete Parameter from part or command line arguments and rerender
      */
@@ -2032,7 +2032,7 @@ export default {
       for (let configItem in configObject) {
         if (configObject[configItem].basename == config.basename) {
           this.$delete(configObject, configItem)
-          
+
           // if csv-object is empty, delete it
           if (configObject.length === 0) {
             if (isCsv) {
@@ -2050,7 +2050,7 @@ export default {
       if (typeof this.computationTemplate.metadata.output.viewer == "undefined" && typeof this.computationTemplate.metadata.output.csv == "undefined" && typeof this.computationTemplate.metadata.output.vtk == "undefined") {
         this.$delete(this.computationTemplate.metadata, "output")
       }
-      
+
       this.$forceUpdate();
     },
     removePlot: function(event, csv, plotConf) {
@@ -2193,13 +2193,13 @@ export default {
           }
         ]
       };
-      if (typeof this.computationTemplate.metadata == "undefined") { 
+      if (typeof this.computationTemplate.metadata == "undefined") {
         this.$set(this.computationTemplate, "metadata", { });
       }
-      if (typeof this.computationTemplate.metadata.output == "undefined") { 
+      if (typeof this.computationTemplate.metadata.output == "undefined") {
         this.$set(this.computationTemplate.metadata, "output", { });
       }
-      if (typeof this.computationTemplate.metadata.output.csv == "undefined") { 
+      if (typeof this.computationTemplate.metadata.output.csv == "undefined") {
         this.$set(this.computationTemplate.metadata.output, "csv", []);
       }
       this.computationTemplate.metadata.output.csv.push(outputConfig);
@@ -2209,7 +2209,7 @@ export default {
         "key" : "y-key",
         "label" : "y-label"
       };
-      if (typeof this.computationTemplate.metadata.output.csv[csvConfigIndex].plots == "undefined") { 
+      if (typeof this.computationTemplate.metadata.output.csv[csvConfigIndex].plots == "undefined") {
         this.$set(this.computationTemplate.metadata.output.csv[csvConfigIndex], "plots", []);
       }
       this.computationTemplate.metadata.output.csv[csvConfigIndex].plots.push(plotConfig);
@@ -2218,13 +2218,13 @@ export default {
       let outputConfig = {
         "basename": "vtk-basename"
       };
-      if (typeof this.computationTemplate.metadata == "undefined") { 
+      if (typeof this.computationTemplate.metadata == "undefined") {
         this.$set(this.computationTemplate, "metadata", { });
       }
-      if (typeof this.computationTemplate.metadata.output == "undefined") { 
+      if (typeof this.computationTemplate.metadata.output == "undefined") {
         this.$set(this.computationTemplate.metadata, "output", { });
       }
-      if (typeof this.computationTemplate.metadata.output.vtk == "undefined") { 
+      if (typeof this.computationTemplate.metadata.output.vtk == "undefined") {
         this.$set(this.computationTemplate.metadata.output, "vtk", []);
       }
       this.computationTemplate.metadata.output.vtk.push(outputConfig);
@@ -2326,7 +2326,7 @@ export default {
         }
 
         console.log(newValue)
-        
+
         // set existing value or create config-element and set it
         if (typeof this.computationTemplate.configuration[configName] != "undefined") {
           this.$set(this.computationTemplate.configuration, configName, newValue);
@@ -2439,12 +2439,12 @@ export default {
       return false;
     },
     getvModelTemplateMetadata: function (propertyName) {
-        if (typeof this.computationTemplate.metadata == "undefined") { 
+        if (typeof this.computationTemplate.metadata == "undefined") {
           this.$set(this.computationTemplate, "metadata", { });
         }
         if (typeof this.computationTemplate.metadata[propertyName] != "undefined") {
           return this.computationTemplate.metadata[propertyName];
-        } 
+        }
         return "";
       },
     setvModelTemplateMetadata: function (propertyName, val) {
@@ -2471,11 +2471,11 @@ export default {
      * validate computation template and return whether button should be enabled
      */
     validateJson: function (event, uploaded = false) {
-      
+
       if (!uploaded) {
         this.validationRunning = true;
       }
-      
+
       // reset validation
       this.validationResult = null;
       this.validationPartParameterResult = null;
@@ -2548,7 +2548,7 @@ export default {
     /*get json from uploaded file und update DOM */
     onReaderLoad: function (event) {
       let obj = JSON.parse(event.target.result);
-      
+
       // close preferences of previous template and show cofig of new ct in preferences-window
       this.closePreferences();
       this.preferences = true;
@@ -2578,13 +2578,13 @@ export default {
             // if access is already set to template
             if (typeof obj.files[file].parts[part].access !== "undefined") {
               if (obj.files[file].parts[part].access === "template") {
-                // add parameters 
+                // add parameters
                 if (typeof obj.files[file].parts[part].parameters == "undefined") {
                   this.$set(obj.files[file].parts[part], "parameters", [])
-                } 
+                }
               }
             }
-            
+
           }
         }
       } else {
@@ -2619,7 +2619,7 @@ export default {
         // set number of options for configuring parameters and commandline arguments
         this.setNumbersOfOptions();
       }
-      
+
       this.$forceUpdate();
     },
     setNumbersOfOptions: function() {
@@ -2654,14 +2654,14 @@ export default {
         // calculate data-template for frontend-preview
         let file = JSON.stringify(this.computationTemplate);
         let dataBase64url = base64url(Buffer.from(file).toString());
-        
+
         //baseUrl = "http://localhost:3000/";
         fetch(baseUrl + "sign", {
           method: 'POST',
           body: dataBase64url
         }).then(response => {
           if(response.ok){
-            return response.json();  
+            return response.json();
           }
             throw new Error('Request failed!');
         }, networkError => {
@@ -2669,7 +2669,7 @@ export default {
         }).then(jsonResponse => {
           // get token from sign-endpoint
           let token = jsonResponse.token;
-          
+
           // set all values in Vuex store
           this.$store.commit("updateModifiedByTeacher", true);
           this.$store.commit("updateJsonTemplate", this.computationTemplate)
@@ -2680,7 +2680,7 @@ export default {
           /*this.ws = new WebSocket(this.$config.WEBSOCKET_API);
           let message = JSON.stringify({ type: "authenticate", content: { jwt: token } });
           this.sendWaiting(message)*/
-          
+
           // preview ct in iFrame
           let iFrameDiv = document.getElementById("iframe-div")
           iFrameDiv.innerHTML = ""
@@ -3006,7 +3006,7 @@ body {
   .list-leave-active {
     position: absolute;
   }
-  
+
   .part-content-field {
     padding: 10px 10px 10px 10px;
   }
@@ -3057,7 +3057,7 @@ body {
 
     left: -70px;
     border-radius: 5px 5px 5px 5px;
-    
+
     transform: rotate(-90deg);
     /* Legacy vendor prefixes that you probably don't need... */
     /* Safari */
@@ -3162,23 +3162,23 @@ body {
     }
   }
 
-  .validation-result-div pre { 
+  .validation-result-div pre {
     margin: 0;
   }
 
-  .validation-result-div .valid-false { 
+  .validation-result-div .valid-false {
     background: rgba(139, 0, 0, 0.2);
   }
 
-  .validation-result-div .valid-false pre { 
+  .validation-result-div .valid-false pre {
     color: darkred;
   }
 
-  .validation-result-div .valid-true { 
+  .validation-result-div .valid-true {
     background: rgba(0, 100, 0, 0.2);
   }
 
-  .validation-result-div .valid-true pre { 
+  .validation-result-div .valid-true pre {
     color: darkgreen;
   }
 

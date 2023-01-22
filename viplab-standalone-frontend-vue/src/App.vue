@@ -12,7 +12,7 @@
           {{ json.metadata.description }}
         </div>
         <div class="item-name">
-          Go To Teacher-View: 
+          Go To Teacher-View:
           <router-link to="/teacher">Go to Teacher-View</router-link>
         </div>
         <div class="item-name">
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+global.Buffer = global.Buffer || require('buffer').Buffer;
 import base64url from "base64url";
 //const Base64 = require('js-base64');
 
@@ -84,7 +85,7 @@ export default {
       let appDiv = document.body;
       let data = appDiv.getAttribute("data-template");
       let decodedjson = JSON.parse(base64url.decode(data));
-      
+
       console.log(decodedjson)
 
       console.log(Object.keys(this.$store.state.jsonTemplate).length === 0)
@@ -100,12 +101,12 @@ export default {
         this.json = {};
         this.token = "";
       }
-      
+
       // store json in Vuex store
       // this.$store.commit("updateJsonTemplate", decodedjson);
-      
+
       //this.token = appDiv.getAttribute("data-token");
-      
+
 
       // if there are parameters in parts, set var accordingly for rendering of button
       for(var file in this.json.files) {
@@ -173,6 +174,6 @@ body {
     font-weight: bold;
     font-size: 14pt;
   }
-  
+
 }
 </style>

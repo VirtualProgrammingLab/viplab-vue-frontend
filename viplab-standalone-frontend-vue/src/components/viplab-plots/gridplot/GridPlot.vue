@@ -14,7 +14,7 @@
 <script>
 import * as Parser from "../parse.js";
 
-import { Plotly } from 'vue-plotly';
+import { Plotly } from '@rleys/vue-plotly-basic';
 
 export default {
   name: 'GridPlot',
@@ -53,11 +53,11 @@ export default {
     this.datasetList = parseTest.parseValues(testJson);
     this.minColor = parseTest.getMinColor();
     this.maxColor = parseTest.getMaxColor();
-    
+
     for (var i = 0; i < this.datasetList[0].getWidth(); i++) {
       this.xArray.push(this.datasetList[0].getXMin() * 1 + (i * ((this.datasetList[0].getXMax() - this.datasetList[0].getXMin())/this.datasetList[0].getWidth())));
     }
-    
+
     for (i = 0; i < this.datasetList[0].getHeight(); i++) {
       this.yArray.push(this.datasetList[0].getYMin() * 1 + (i * ((this.datasetList[0].getYMax() - this.datasetList[0].getYMin())/this.datasetList[0].getHeight())));
     }
@@ -65,7 +65,7 @@ export default {
     this.create2dGitterplot();
 
     this.layout = {
-      
+
       title: this.datasetList[0].getLabel(),
       scene: {
         camera: {
@@ -73,7 +73,7 @@ export default {
         },
         xaxis: {
           range: [this.datasetList[0].getXMin(), this.datasetList[0].getXMax()],
-          
+
         },
         yaxis: {
         range: [this.datasetList[0].getYMin(), this.datasetList[0].getYMax()],
@@ -84,7 +84,7 @@ export default {
       }
     }
   },
-  methods: { 
+  methods: {
     onChange(event) {
       //console.log(event.target.value);
       if (event.target.value === "2DGitterplot") {
@@ -115,22 +115,22 @@ export default {
 
       for (var j = 0; j < this.datasetList[0].getData()[0].length; j++) {
         Array.prototype.push.apply(xScatterArray, this.xArray);
-        
+
       }
 
       for (j = 0; j < this.datasetList[0].getData().length; j++) {
         Array.prototype.push.apply(yScatterArray, this.yArray);
       }
-  
+
       var zScatterArray = new Array();
       for(var i = 0; i < this.datasetList[0].getData().length; i++) {
         zScatterArray = zScatterArray.concat(this.datasetList[0].getData()[i]);
       }
       yScatterArray.sort(function(a, b){return a - b});
-      
+
       this.data = [{
         x: xScatterArray,
-        y: yScatterArray, 
+        y: yScatterArray,
         z: zScatterArray,
         mode: 'markers',
         marker: {
@@ -170,7 +170,7 @@ export default {
           showscale: false
         }];
     },
-  } 
+  }
 }
 </script>
 

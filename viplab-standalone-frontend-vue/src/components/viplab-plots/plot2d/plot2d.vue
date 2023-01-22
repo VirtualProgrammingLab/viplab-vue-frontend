@@ -34,7 +34,7 @@
 <script>
 import * as LinePlotParser from "./LinePlotParser.js";
 
-import { Plotly } from "vue-plotly";
+import { Plotly } from "@rleys/vue-plotly-basic";
 
 export default {
   name: "Plot2d",

@@ -37,8 +37,8 @@
 
 <script>
 
-import { Plotly } from "vue-plotly";
-import plotlyjs from "plotly.js";
+import { Plotly } from '@rleys/vue-plotly-basic'
+import plotlyjs from "plotly.js"
 
 import base64url from "base64url";
 
@@ -88,14 +88,14 @@ export default {
     } else {
       this.loadBase64Data(this.csvs[this.fileIndex]);
     }
-    
+
   },
   methods: {
     //"http://localhost:8080/" + inputFile
     loadData: function(context) {
-        //plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){ 
-        //plotlyjs.d3.csv("http://localhost:8080/plotly-test.csv", function(data){ 
-        plotlyjs.d3.csv(context.csvs[context.fileIndex], function(data){   
+        //plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){
+        //plotlyjs.d3.csv("http://localhost:8080/plotly-test.csv", function(data){
+        plotlyjs.d3.csv(context.csvs[context.fileIndex], function(data){
           context.processData(data);
         });
     },
@@ -189,13 +189,13 @@ export default {
             title: {
               text: this.labelProp.label || xkey
             },
-            tickformat: xformat 
+            tickformat: xformat
           },
           yaxis: {
             title: {
               text: ytext
             },
-            tickformat: yformat 
+            tickformat: yformat
           }
         }
 
