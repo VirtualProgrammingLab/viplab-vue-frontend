@@ -3,7 +3,7 @@
     <div
       id="app"
     >
-      
+
     <!-- header -->
     <div class="header m-2 p-5" v-if="showHeader">
       <div class="header-content">
@@ -46,7 +46,7 @@
             <h2 v-if="parsedFilesJson">Input Files</h2>
 
             <div class="cards" >
-              <!-- 
+              <!--
               Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
               -->
               <b-card no-body v-if="numberOfInputFiles > 0 || parsedParametersJson">
@@ -77,8 +77,8 @@
                       >
                         <div class="desc-file-part" v-if="(part.access != 'invisible') && part.metadata && part.metadata.description">{{part.metadata.description}}</div>
                         <div v-if="part.access == 'visible'">
-                          <ace-editor-component 
-                            :isParameter="false" 
+                          <ace-editor-component
+                            :isParameter="false"
                             :isHandlebar="false"
                             :readonly="true"
                             :item="part"
@@ -88,8 +88,8 @@
                           ></ace-editor-component>
                         </div>
                         <div v-else-if="part.access == 'modifiable'">
-                          <ace-editor-component 
-                            :isParameter="false" 
+                          <ace-editor-component
+                            :isParameter="false"
                             :isHandlebar="false"
                             :readonly="false"
                             :item="part"
@@ -108,7 +108,7 @@
                         <parameters
                           :parameters="part.parameters">
                         </parameters>
-                        
+
                       </div>
                     </div>
                     <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right" @click="switchParameterView()" v-tooltip.top-center="asForm? 'View File' : 'Modify Parameters'">
@@ -176,11 +176,11 @@
                   </b-button>
                 </div>
               </div>
-            
+
         </validation-observer>
       </div>
 
-      <div 
+      <div
         class="side-to-side-div flex-right m-2 pt-5 pb-5"
         v-if="!asForm || (outputFiles !== '' || errorFiles !== '' || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0))"
         >
@@ -208,8 +208,8 @@
                     :key="part.identifier"
                   >
                     <div v-if="part.parameters && part.access == 'template'">
-                      <ace-editor-component 
-                        :isParameter="false" 
+                      <ace-editor-component
+                        :isParameter="false"
                         :isHandlebar="true"
                         :readonly="true"
                         :item='{
@@ -235,7 +235,7 @@
                 fill
               >
                 <b-tabs card class="files" content-class="m-2">
-                  
+
                   <b-tab
                     title="Stdout"
                     ref="artifact"
@@ -287,8 +287,8 @@
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
-                                  <ace-editor-component 
-                                    :isParameter="false" 
+                                  <ace-editor-component
+                                    :isParameter="false"
                                     :isHandlebar="false"
                                     :readonly="true"
                                     :lang="(artifact.MIMEtype == 'application/json') ? 'json' : 'text'"
@@ -304,7 +304,7 @@
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
-                                  Links: 
+                                  Links:
                                   <ul>
                                       <li v-for="(link, link_index) in getLinks(artifact.content)" :key="'uri' + artifact.identifier + link_index">
                                         <div class="d-flex justify-content-between">
@@ -342,7 +342,7 @@
                                 >
                                   <div v-if="artifact.plots">
                                     <div v-for="plot in artifact.plots" :key="plot.key">
-                                      <csv-plot 
+                                      <csv-plot
                                         :csvsProp=artifact.urlsOrContents
                                         :areUrlsProp="false"
                                         :datasetProp=plot
@@ -351,7 +351,7 @@
                                     </div>
                                   </div>
                                   <div v-else>
-                                    <csv-plot 
+                                    <csv-plot
                                       :csvsProp=[artifact.content]
                                       :areUrlsProp="false"
                                       :datasetProp={}
@@ -403,8 +403,8 @@
                                     Loading...
                                   </div>
                                   <div v-else-if="!isLoading.get(artifact.url)">
-                                      <ace-editor-component 
-                                        :isParameter="false" 
+                                      <ace-editor-component
+                                        :isParameter="false"
                                         :isHandlebar="false"
                                         :readonly="true"
                                         :lang="(artifact.MIMEtype == 'application/json') ? 'json' : 'text'"
@@ -416,12 +416,12 @@
                                         :ref="artifact.path"
                                       ></ace-editor-component>
                                   </div>
-                                    
+
                                 </div>
                                 <div v-else-if="artifact.MIMEtype == 'text/csv'">
                                   <div v-if="artifact.plots">
                                     <div v-for="plot in artifact.plots" :key="plot.key">
-                                      <csv-plot 
+                                      <csv-plot
                                         :csvsProp=artifact.urlsOrContents
                                         :areUrlsProp="true"
                                         :datasetProp=plot
@@ -430,7 +430,7 @@
                                     </div>
                                   </div>
                                   <div v-else>
-                                    <csv-plot 
+                                    <csv-plot
                                       :csvsProp=[artifact.url]
                                       :areUrlsProp="true"
                                       :datasetProp={}
@@ -439,8 +439,8 @@
                                   </div>
                                 </div>
                                 <div v-else-if="artifact.MIMEtype == 'image/png' || artifact.MIMEtype == 'image/jpeg'">
-                                  <img 
-                                    :src="artifact.url" 
+                                  <img
+                                    :src="artifact.url"
                                     :ref="artifact.path"/>
                                 </div>
                                 <div v-else>
@@ -470,9 +470,9 @@
                                         </div>
                                       </div>
                                   </div>
-                                  
+
                                 </div>
-                              </div>  
+                              </div>
                             </b-tab>
                           </b-tabs>
                         </b-card>
@@ -519,33 +519,30 @@
 
 <script>
 // import Ace
-import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
+import { SpringSpinner } from 'epic-spinners';
+import { ValidationObserver } from 'vee-validate';
+import base64url from 'base64url';
+import AceEditorComponent from '../../components/EditorComponent-Ace.vue';
 
-//own components
-import Parameters from "../../components/Parameters.vue";
+// own components
+import Parameters from '../../components/Parameters.vue';
 
-import { SpringSpinner } from 'epic-spinners'
+import GridPlot from '../../components/viplab-plots/gridplot/GridPlot.vue';
 
-import GridPlot from "../../components/viplab-plots/gridplot/GridPlot.vue";
+// import $ from 'jquery';
 
-//import $ from 'jquery';
-
-import VtkComponent from "../../components/vtk-plots/VtkComponent.vue";
+import VtkComponent from '../../components/vtk-plots/VtkComponent.vue';
 import Plot2d from '../../components/viplab-plots/plot2d/plot2d.vue';
 import CsvPlot from '../../components/csv-plots/CsvPlot.vue';
 
-import AnsiOutput from "../../components/AnsiOutput.vue";
+import AnsiOutput from '../../components/AnsiOutput.vue';
 
 const Handlebars = require('handlebars');
 
-import {ValidationObserver} from "vee-validate";
-
-import base64url from "base64url";
-
-//const Base64 = require('js-base64');
+// const Base64 = require('js-base64');
 
 export default {
-  name: "app",
+  name: 'app',
   components: {
     SpringSpinner,
     Parameters,
@@ -555,23 +552,23 @@ export default {
     CsvPlot,
     ValidationObserver,
     AceEditorComponent,
-    AnsiOutput
+    AnsiOutput,
   },
   data() {
     return {
-      templates: require.context("../../input/", false, /^.*\.json$/).keys(), //get json file names from ./input folder
+      templates: require.context('../../input/', false, /^.*\.json$/).keys(), // get json file names from ./input folder
       numberOfInputFiles: [],
-      computationId: "",
-      returnedOutputJson: "",
-      returnedUnmodifiedArtifacts: "",
-      outputFiles: "",
-      errorFiles: "",
+      computationId: '',
+      returnedOutputJson: '',
+      returnedUnmodifiedArtifacts: '',
+      outputFiles: '',
+      errorFiles: '',
       maximized: false,
       file: null,
       asForm: true,
       isPartParameters: 0,
-      waitingResponse: false, 
-      statusMessage: { "timestamp" : "2022-04-21T06:30+01:00", "message" : "Waiting..."},
+      waitingResponse: false,
+      statusMessage: { timestamp: '2022-04-21T06:30+01:00', message: 'Waiting...' },
       s3Contents: new Map(),
       isLoading: new Map(),
       promiseError: new Map(),
@@ -579,72 +576,72 @@ export default {
   },
   watch: {
     json: {
-      handler: function (val) {
+      handler(val) {
         this.json = val;
         // update Vuex Store
-        this.$store.commit("updateJsonTemplate", val);
+        this.$store.commit('updateJsonTemplate', val);
         this.$forceUpdate();
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   computed: {
     json: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.jsonTemplate;
       },
-      set (newValue) {
-        this.$store.commit("updateJsonTemplate", newValue)
-        this.$forceUpdate()
-      }
+      set(newValue) {
+        this.$store.commit('updateJsonTemplate', newValue);
+        this.$forceUpdate();
+      },
     },
     token: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.token;
       },
-      set (newValue) {
-        this.$store.commit("updateToken", newValue)
-      }
+      set(newValue) {
+        this.$store.commit('updateToken', newValue);
+      },
     },
     dataTemplate: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.dataTemplate;
       },
-      set (newValue) {
-        this.$store.commit("updateDataTemplate", newValue)
-      }
+      set(newValue) {
+        this.$store.commit('updateDataTemplate', newValue);
+      },
     },
     ws: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.ws;
       },
-      set (newValue) {
-        this.$store.commit("updateWebSocket", newValue)
-      }
+      set(newValue) {
+        this.$store.commit('updateWebSocket', newValue);
+      },
     },
-    modifiedByTeacher : {
-      get () {
+    modifiedByTeacher: {
+      get() {
         return this.$store.state.modifiedByTeacher;
       },
-      set (newValue) {
-        this.$store.commit("updateModifiedByTeacher", newValue)
-      }
+      set(newValue) {
+        this.$store.commit('updateModifiedByTeacher', newValue);
+      },
     },
     /* return parameters section of json file */
-    parsedParametersJson: function () {
-      var parsed = this.json.parameters;
+    parsedParametersJson() {
+      const parsed = this.json.parameters;
       return parsed;
     },
     /* return files section of json file */
-    parsedFilesJson: function () {
-      var parsed = this.json.files;
+    parsedFilesJson() {
+      const parsed = this.json.files;
       return parsed;
     },
-    showHeader: function() {
+    showHeader() {
       if (typeof this.json.metadata !== 'undefined') {
         if (typeof this.json.metadata.displayName !== 'undefined' || typeof this.json.metadata.description !== 'undefined') {
           return true;
@@ -655,80 +652,77 @@ export default {
   },
   methods: {
     // Make the function wait until the connection is made...
-    waitForSocketConnection: function(context, socket, callback) {
-      setTimeout(
-        function () {
-          if (socket.readyState === 1) {
-            if (callback != null) {
-              callback()
-            }
-          } else {
-            context.waitForSocketConnection(context, socket, callback)
+    waitForSocketConnection(context, socket, callback) {
+      setTimeout(() => {
+        if (socket.readyState === 1) {
+          if (callback != null) {
+            callback();
           }
-        }, 5) // wait 5 milisecond for the connection...
+        } else {
+          context.waitForSocketConnection(context, socket, callback);
+        }
+      }, 5); // wait 5 milisecond for the connection...
     },
-    sendWaiting: function(msg) {
+    sendWaiting(msg) {
       this.waitForSocketConnection(this, this.ws, () => {
-        this.ws.send(msg)
-      })
+        this.ws.send(msg);
+      });
     },
     /* set the number of input files */
-    setNumberOfInputFiles: function () {
-      var files = this.json.files;
-      for (var file in files) {
-        var parts = files[file].parts;
+    setNumberOfInputFiles() {
+      const { files } = this.json;
+      for (const file in files) {
+        const { parts } = files[file];
         this.numberOfInputFiles = parts.length;
       }
     },
     /** load json from file with temp being the file name, set this.json to the content of the file and fill form_v_model */
-    loadJsonFromFile: function () {
-      let appDiv = document.body;
-      let data = appDiv.getAttribute("data-template");
-      let token = appDiv.getAttribute("data-token");
+    loadJsonFromFile() {
+      const appDiv = document.body;
+      const data = appDiv.getAttribute('data-template');
+      const token = appDiv.getAttribute('data-token');
 
-      if (data && data !== "{{ data }}" && data !== "" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
+      if (data && data !== '{{ data }}' && data !== '' && Object.keys(this.$store.state.jsonTemplate).length === 0) {
         this.json = JSON.parse(base64url.decode(data));
-        this.$store.commit("updateDataTemplate", data);
+        this.$store.commit('updateDataTemplate', data);
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
-        if (data && (data === "{{ data }}" || data === "") || this.modifiedByTeacher) {
+        if (data && (data === '{{ data }}' || data === '') || this.modifiedByTeacher) {
           this.json = this.$store.state.jsonTemplate;
           this.dataTemplate = this.$store.state.dataTemplate;
-          
         } else {
           this.json = JSON.parse(base64url.decode(data));
-          this.$store.commit("updateDataTemplate", data);
+          this.$store.commit('updateDataTemplate', data);
         }
       } else {
         this.json = {};
-        this.dataTemplate = "";
+        this.dataTemplate = '';
       }
 
-      if (token && token !== "{{ token }}" && token !== "" && this.$store.state.token.length === 0) {
-        this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
+      if (token && token !== '{{ token }}' && token !== '' && this.$store.state.token.length === 0) {
+        this.$store.commit('updateToken', appDiv.getAttribute('data-token'));
       } else if (this.$store.state.token.length > 0) {
-        if (token && (token === "{{ token }}" || token === "") || this.modifiedByTeacher) {
+        if (token && (token === '{{ token }}' || token === '') || this.modifiedByTeacher) {
           this.token = this.$store.state.token;
-          
         } else {
-          this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
+          this.$store.commit('updateToken', appDiv.getAttribute('data-token'));
         }
       } else {
-        this.token = "";
+        this.token = '';
       }
 
-      this.$store.commit("updateModifiedByTeacher", false);
+      this.$store.commit('updateModifiedByTeacher', false);
 
-      if (this.$store.state.dataTemplate.length === 0 && data !== "{{ data }}") {
+      if (this.$store.state.dataTemplate.length === 0 && data !== '{{ data }}') {
         this.dataTemplate = data;
       } else if (this.$store.state.dataTemplate.length === 0 && Object.keys(this.$store.state.jsonTemplate).length > 0) {
         this.dataTemplate = base64url(JSON.stringify(this.$store.state.jsonTemplate));
       }
-      
+
       // if there are parameters in parts, set var accordingly for rendering of button
-      for(var file in this.json.files) {
-        for(var part in this.json.files[file].parts) {
-          var parti = this.json.files[file].parts[part]
-          if(parti.access == "template" && parti.parameters) {
+      for (const file in this.json.files) {
+        for (const part in this.json.files[file].parts) {
+          const parti = this.json.files[file].parts[part];
+          if (parti.access == 'template' && parti.parameters) {
             this.isPartParameters++;
             break;
           }
@@ -738,40 +732,40 @@ export default {
       this.setNumberOfInputFiles();
     },
     /** should be the first thing that is executed when DOM is loaded: setup connection to webserver */
-    executeAfterDomLoaded: function () {
-      this.$store.commit("updateWebSocket", new WebSocket(this.$config.WEBSOCKET_API))
-      
-      let message = JSON.stringify({ type: "authenticate", content: { jwt: this.token } });
-      this.sendWaiting(message)
+    executeAfterDomLoaded() {
+      this.$store.commit('updateWebSocket', new WebSocket(this.$config.WEBSOCKET_API));
 
-      let prepareMessage = JSON.stringify({ type: "prepare-computation", content: { template: this.dataTemplate, task: this.generateComputationTask() } });
-      this.sendWaiting(prepareMessage)
+      const message = JSON.stringify({ type: 'authenticate', content: { jwt: this.token } });
+      this.sendWaiting(message);
+
+      const prepareMessage = JSON.stringify({ type: 'prepare-computation', content: { template: this.dataTemplate, task: this.generateComputationTask() } });
+      this.sendWaiting(prepareMessage);
 
       this.ws.onmessage = (event) => {
-        var data = JSON.parse(event.data);
+        const data = JSON.parse(event.data);
         switch (data.type) {
-          case "computation":
+          case 'computation':
             this.displayComputation(data.content);
             break;
-          case "prepared-computation":
-            console.log(event.data)
+          case 'prepared-computation':
+            console.log(event.data);
             break;
-          case "result":
+          case 'result':
             this.displayResult(data.content);
-            console.log(data.content)
+            console.log(data.content);
             break;
-          case "system-status":
+          case 'system-status':
             // Check if date is newer than the one from the previous message
             // Set message-variable so that info-message can be displayed in the progress bar
             // If status is warning or error, stop progress bar, show error message to user and re-enable run-button
             if (new Date(this.statusMessage.timestamp) < new Date(data.content.timestamp)) {
               this.statusMessage = data.content;
-              if (this.statusMessage.status !== "info") {
+              if (this.statusMessage.status !== 'info') {
                 // stop waiting/ progress bar
-                this.$wait.end("wait for ws response");
+                this.$wait.end('wait for ws response');
                 this.waitingResponse = false;
                 // show error in popup
-                this.$alert(this.statusMessage.message, "", this.statusMessage.status);
+                this.$alert(this.statusMessage.message, '', this.statusMessage.status);
               }
             }
             break;
@@ -779,116 +773,113 @@ export default {
             console.error(data);
         }
 
-        if (this.outputFiles !== "" || this.errorFiles !== "" || this.returnedOutputJson != "") {
+        if (this.outputFiles !== '' || this.errorFiles !== '' || this.returnedOutputJson != '') {
           // stop waiting
-          this.$wait.end("wait for ws response");
+          this.$wait.end('wait for ws response');
           this.waitingResponse = false;
         }
       };
-      //document.getElementById("submit").onclick = this.sendData;
-
+      // document.getElementById("submit").onclick = this.sendData;
     },
     /** create uuid for the template to be sent as request */
-    uuid: function () {
+    uuid() {
       function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
           .toString(16)
           .substring(1);
       }
       return (
-        s4() +
-        s4() +
-        "-" +
-        s4() +
-        "-" +
-        s4() +
-        "-" +
-        s4() +
-        "-" +
-        s4() +
-        s4() +
-        s4()
+        `${s4()
+        + s4()
+        }-${
+          s4()
+        }-${
+          s4()
+        }-${
+          s4()
+        }-${
+          s4()
+        }${s4()
+        }${s4()}`
       );
     },
     /** send data to webserver for requesting the solution */
-    sendData: function () {
-
+    sendData() {
       // reset result variables
-      this.outputFiles = ""
-      this.errorFiles = ""
-      this.returnedOutputJson = ""
-      this.returnedUnmodifiedArtifacts = ""
+      this.outputFiles = '';
+      this.errorFiles = '';
+      this.returnedOutputJson = '';
+      this.returnedUnmodifiedArtifacts = '';
 
-      console.log("sendData " + this.outputFiles)
+      console.log(`sendData ${this.outputFiles}`);
 
-      document.getElementById("submit").disabled = true;
-      var task = {
-        type: "create-computation",
+      document.getElementById('submit').disabled = true;
+      const task = {
+        type: 'create-computation',
         content: {
           template: this.dataTemplate,
-          task: this.generateComputationTask()
+          task: this.generateComputationTask(),
         },
       };
 
       this.ws.send(JSON.stringify(task));
 
       // start waiting
-      this.$wait.start("wait for ws response");
+      this.$wait.start('wait for ws response');
       this.waitingResponse = true;
 
       return false;
     },
-    stopComputation: function() {
+    stopComputation() {
       // send cancel-message to websocket
-      var cancel = {
-        type: "cancel-computation",
+      const cancel = {
+        type: 'cancel-computation',
         content: {
-          computation: this.computationId
+          computation: this.computationId,
         },
       };
       this.ws.send(JSON.stringify(cancel));
       // stop waiting
-      this.$wait.end("wait for ws response");
+      this.$wait.end('wait for ws response');
       this.waitingResponse = false;
     },
-    generateComputationTask: function() {
-      let task = {
-            template: this.json.identifier,
-            identifier: this.uuid(),
-            files: [],
-          };
-      
+    generateComputationTask() {
+      const task = {
+        template: this.json.identifier,
+        identifier: this.uuid(),
+        files: [],
+      };
+
       if (this.$refs.file != null) {
-        for (var fileIndex in this.json.files) {
-          let file = { identifier: this.json.files[fileIndex].identifier, parts: [] };
-          for (var part in this.json.files[fileIndex].parts) {
+        for (const fileIndex in this.json.files) {
+          const file = { identifier: this.json.files[fileIndex].identifier, parts: [] };
+          for (const part in this.json.files[fileIndex].parts) {
             // for access modifiable or access template, where the content is available
-            if (this.json.files[fileIndex].parts[part].access === "modifiable") {
+            if (this.json.files[fileIndex].parts[part].access === 'modifiable') {
               file.parts.push({
                 identifier: this.json.files[fileIndex].parts[part].identifier,
                 content: this.json.files[fileIndex].parts[part].content,
               });
             // Generate json for access template parameters, if there is no content given
-            } else if (this.json.files[fileIndex].parts[part].access === "template") {
-              var generatedContent = JSON.parse("{}");
-              for (let paramIndex in this.json.files[fileIndex].parts[part].parameters) {
-                let currentParam = this.json.files[fileIndex].parts[part].parameters[paramIndex];
+            } else if (this.json.files[fileIndex].parts[part].access === 'template') {
+              const generatedContent = JSON.parse('{}');
+              for (const paramIndex in this.json.files[fileIndex].parts[part].parameters) {
+                const currentParam = this.json.files[fileIndex].parts[part].parameters[paramIndex];
                 let value = currentParam.value || currentParam.selected;
-                
-                /* If parameter is editor or text-input, add prefix to signal to websocket-api, that value is base64url-encoded*/
-                if (currentParam.metadata.guiType === "editor" || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "text")) {
-                  value = "base64:" + value
+
+                /* If parameter is editor or text-input, add prefix to signal to websocket-api, that value is base64url-encoded */
+                if (currentParam.metadata.guiType === 'editor' || (currentParam.metadata.guiType === 'input_field' && currentParam.metadata.type === 'text')) {
+                  value = `base64:${value}`;
                 }
                 /* If Parameter is single-value slider or input_field of type number, use string/number as result, instead of array */
-                if ((currentParam.metadata.guiType === "slider" && value.length == 1) || (currentParam.metadata.guiType === "input_field" && currentParam.metadata.type === "number" && Array.isArray(value))) {
+                if ((currentParam.metadata.guiType === 'slider' && value.length == 1) || (currentParam.metadata.guiType === 'input_field' && currentParam.metadata.type === 'number' && Array.isArray(value))) {
                   value = value[0];
                 }
 
                 generatedContent[currentParam.identifier] = value;
-                
               }
-              let contentBase64 = base64url(JSON.stringify(generatedContent));
-              
+              const contentBase64 = base64url(JSON.stringify(generatedContent));
+
               file.parts.push({
                 identifier: this.json.files[fileIndex].parts[part].identifier,
                 content: contentBase64,
@@ -899,96 +890,94 @@ export default {
         }
 
         // Add arguments to task - only fixed-value parameters!
-        if (Object.prototype.hasOwnProperty.call(this.json, "parameters")) {
-          let args = JSON.parse("{}");
-          let parametersJson = this.json.parameters;
-          for (let paramIndex in parametersJson) {
-            let currentParam = parametersJson[paramIndex];
-            let value = currentParam.value || currentParam.selected;
-            
+        if (Object.prototype.hasOwnProperty.call(this.json, 'parameters')) {
+          const args = JSON.parse('{}');
+          const parametersJson = this.json.parameters;
+          for (const paramIndex in parametersJson) {
+            const currentParam = parametersJson[paramIndex];
+            const value = currentParam.value || currentParam.selected;
+
             args[currentParam.identifier] = value;
           }
-          task["arguments"] = args;
+          task.arguments = args;
         }
       }
 
       return task;
     },
     /** log the computation */
-    displayComputation: function (computation) {
-      console.log("----------")
-      console.log("computation:");
+    displayComputation(computation) {
+      console.log('----------');
+      console.log('computation:');
       console.log(computation);
-      console.log("----------")
-      this.computationId = computation.id
+      console.log('----------');
+      this.computationId = computation.id;
     },
     /** process the result before displaying it in the DOM */
-    displayResult: function (result) {
-
-      if (result.result.status == "final") {
-        document.getElementById("submit").disabled = false;
+    displayResult(result) {
+      if (result.result.status == 'final') {
+        document.getElementById('submit').disabled = false;
       }
-      
+
       // if the first result came back, set the whole object, else, only add the new artifacts to the existing object
       // use JSON.parse(JSON.stringify(...)) to make sure a copy of the data is made, such that not only a reference is used
-      if (this.returnedOutputJson === "") {
-        this.returnedOutputJson = JSON.parse(JSON.stringify(result.result))
-        this.returnedUnmodifiedArtifacts = JSON.parse(JSON.stringify(result.result))
+      if (this.returnedOutputJson === '') {
+        this.returnedOutputJson = JSON.parse(JSON.stringify(result.result));
+        this.returnedUnmodifiedArtifacts = JSON.parse(JSON.stringify(result.result));
       } else {
         // TODO: Muss eventuell mit this.$set gemacht werden, damit gui auch geupdated wird; nötig erst wenn intermediate results im Backend möglich
         this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)));
-        this.returnedUnmodifiedArtifacts.artifacts = this.returnedUnmodifiedArtifacts.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)))
+        this.returnedUnmodifiedArtifacts.artifacts = this.returnedUnmodifiedArtifacts.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)));
       }
 
-      this.returnedUnmodifiedArtifacts.artifacts.sort((a,b) => (a.path > b.path) ? 1 : ((b.path > a.path) ? -1 : 0))
+      this.returnedUnmodifiedArtifacts.artifacts.sort((a, b) => ((a.path > b.path) ? 1 : ((b.path > a.path) ? -1 : 0)));
 
       // filter result such that only specified results are displayed
       let viewer = [];
       if (typeof this.json.metadata !== 'undefined') {
         if (typeof this.json.metadata.output !== 'undefined') {
           if (typeof this.json.metadata.output.viewer !== 'undefined') {
-            viewer  = this.json.metadata.output.viewer;
+            viewer = this.json.metadata.output.viewer;
           }
         }
       }
-      if (!viewer.includes("Image")) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
-          if (value.MIMEtype !== "image/png" || value.MIMEtype !== "image/jpeg") {
+      if (!viewer.includes('Image')) {
+        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
+          if (value.MIMEtype !== 'image/png' || value.MIMEtype !== 'image/jpeg') {
             return value;
           }
         });
       }
-      if (!viewer.includes("ParaView")) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
-          if (value.MIMEtype !== "application/vnd.kitware") {
+      if (!viewer.includes('ParaView')) {
+        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
+          if (value.MIMEtype !== 'application/vnd.kitware') {
             return value;
           }
         });
       }
-      if (!viewer.includes("ViPLabGraphics")) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
-          if ((value.MIMEtype !== "application/x-vgf") && (value.MIMEtype !== "application/x-vgf3") && (value.MIMEtype !== "application/x-vgfc")) {
+      if (!viewer.includes('ViPLabGraphics')) {
+        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
+          if ((value.MIMEtype !== 'application/x-vgf') && (value.MIMEtype !== 'application/x-vgf3') && (value.MIMEtype !== 'application/x-vgfc')) {
             return value;
           }
         });
       }
-      if (!viewer.includes("CSV")) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
-          if (value.MIMEtype !== "text/csv") {
+      if (!viewer.includes('CSV')) {
+        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
+          if (value.MIMEtype !== 'text/csv') {
             return value;
           }
         });
       }
 
       // process vtk-files with base64-content
-      this.returnedOutputJson.artifacts.forEach(function(item) {
-        if (item.MIMEtype == "application/vnd.kitware") {
-          
+      this.returnedOutputJson.artifacts.forEach((item) => {
+        if (item.MIMEtype == 'application/vnd.kitware') {
           if (item.content) {
             // generate Object-URLs of the base64url encoded content
             const byteCharacters = base64url.decode(item.content);
             const byteArrays = [];
-            let sliceSize = 512;
+            const sliceSize = 512;
 
             for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
               const slice = byteCharacters.slice(offset, offset + sliceSize);
@@ -1002,9 +991,9 @@ export default {
               byteArrays.push(byteArray);
             }
 
-            const blob = new Blob(byteArrays, {type: "application/vnd.kitware"});
+            const blob = new Blob(byteArrays, { type: 'application/vnd.kitware' });
             // generate file from blob to retain the file name with the correct extension (for usage in vtk-component)
-            const file = new File([blob], "earth.vtp")
+            const file = new File([blob], 'earth.vtp');
             const blobUrl = URL.createObjectURL(file);
             item.content = blobUrl;
           }
@@ -1013,13 +1002,13 @@ export default {
 
       // process connected vtu/vtk & csv files
       let connectedVtks = {};
-      var artifacts = this.returnedOutputJson.artifacts;
-      //let created = false;
+      let { artifacts } = this.returnedOutputJson;
+      // let created = false;
 
       // sort result artifacts alphabetically to make sure that connected files are in correct order
-      artifacts.sort((a,b) => (a.path > b.path) ? 1 : ((b.path > a.path) ? -1 : 0))
+      artifacts.sort((a, b) => ((a.path > b.path) ? 1 : ((b.path > a.path) ? -1 : 0)));
 
-      //get basenames for collections of files
+      // get basenames for collections of files
       let outputConfig = [];
       if (typeof this.json.metadata !== 'undefined') {
         if (this.json.metadata.output !== undefined) {
@@ -1031,39 +1020,38 @@ export default {
           }
         }
       }
-      
+
       if (outputConfig.length > 0) {
-        let basenames = [];
-        for (var out = 0; out < outputConfig.length; out++) {
-          let currentConfig = outputConfig[out];
-          let currentBasename = currentConfig.basename;
+        const basenames = [];
+        for (let out = 0; out < outputConfig.length; out++) {
+          const currentConfig = outputConfig[out];
+          const currentBasename = currentConfig.basename;
           if (!basenames.includes(currentBasename)) {
             basenames.push(currentBasename);
           }
 
-          if(!connectedVtks[currentBasename]) {
+          if (!connectedVtks[currentBasename]) {
             connectedVtks[currentBasename] = {};
-            connectedVtks[currentBasename].type = "s3file";
+            connectedVtks[currentBasename].type = 's3file';
             connectedVtks[currentBasename].basename = currentBasename;
             connectedVtks[currentBasename].urlsOrContents = [];
             connectedVtks[currentBasename].plots = currentConfig.plots;
             connectedVtks[currentBasename].xlabel = currentConfig.xlabel;
           }
-          
         }
 
         // group results according to the available basenames
-        for(var a = 0; a < artifacts.length; a++) {
-          if((artifacts[a].MIMEtype == "application/vnd.kitware" || artifacts[a].MIMEtype == "text/csv") && !artifacts[a].artifacts){
-            let path = artifacts[a].path;
-            let lastIndex = path.lastIndexOf('/');
-            let filenamePart = path.substr(lastIndex + 1, path.length);
-            
-            for (var base = 0; base < basenames.length; base++) {
-              let currentBasename = basenames[base];
+        for (let a = 0; a < artifacts.length; a++) {
+          if ((artifacts[a].MIMEtype == 'application/vnd.kitware' || artifacts[a].MIMEtype == 'text/csv') && !artifacts[a].artifacts) {
+            const { path } = artifacts[a];
+            const lastIndex = path.lastIndexOf('/');
+            const filenamePart = path.substr(lastIndex + 1, path.length);
+
+            for (let base = 0; base < basenames.length; base++) {
+              const currentBasename = basenames[base];
               // filename has to start with basename
               if (filenamePart.startsWith(currentBasename)) {
-                //console.log(currentBasename + " - " + filenamePart);
+                // console.log(currentBasename + " - " + filenamePart);
                 connectedVtks[currentBasename].type = artifacts[a].type;
                 connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
                 connectedVtks[currentBasename].basename = currentBasename;
@@ -1075,14 +1063,13 @@ export default {
                 artifacts[a].inCollection = true;
               }
             }
-
           }
         }
 
         // If config contains output, that wasn't sent: remove from connectedVtks so ot isn't shown in gui
-        let tmpConnectedFiles = {};
-        for (let fileGroupKey in connectedVtks) {
-          let value = connectedVtks[fileGroupKey]
+        const tmpConnectedFiles = {};
+        for (const fileGroupKey in connectedVtks) {
+          const value = connectedVtks[fileGroupKey];
           if (value.urlsOrContents.length > 0) {
             tmpConnectedFiles[fileGroupKey] = connectedVtks[fileGroupKey];
           }
@@ -1091,49 +1078,49 @@ export default {
 
         // delete all vtk and csv artifacts that are part of a collection
         artifacts = this.returnedOutputJson.artifacts;
-        var b = artifacts.length;
-        while(b--){
-          if(artifacts[b].inCollection) {
+        let b = artifacts.length;
+        while (b--) {
+          if (artifacts[b].inCollection) {
             artifacts.splice(b, 1);
           }
         }
-        
+
         // add vtk/csv collections
-        let connectedFilesKeys = Object.keys(connectedVtks);
-        for(var c = 0; c < connectedFilesKeys.length; c++){
+        const connectedFilesKeys = Object.keys(connectedVtks);
+        for (let c = 0; c < connectedFilesKeys.length; c++) {
           this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
         }
       }
 
       // filter returnedOutputJson to only include displayable results
-      this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(function (value) {
-        let displayableMIMEtypes = ["text/plain", "text/csv", "text/uri-list", "image/png", "image/jpeg", "application/x-vgf", "application/x-vgf3", "application/x-vgfc", "application/vnd.kitware", "application/json"];
+      this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
+        const displayableMIMEtypes = ['text/plain', 'text/csv', 'text/uri-list', 'image/png', 'image/jpeg', 'application/x-vgf', 'application/x-vgf3', 'application/x-vgfc', 'application/vnd.kitware', 'application/json'];
         if (displayableMIMEtypes.includes(value.MIMEtype)) {
           return value;
         }
       });
 
-      for(let a in this.returnedOutputJson.artifacts) {
-        let currentArtifact = this.returnedOutputJson.artifacts[a]
-        if (currentArtifact.type === "s3file") {
-          if (currentArtifact.MIMEtype === "text/plain" || currentArtifact.MIMEtype === "application/json") {
-            this.getContentFromS3(currentArtifact.url)
-          } else if (currentArtifact.MIMEtype === "application/x-vgf" || currentArtifact.MIMEtype === "application/x-vgf3" || currentArtifact.MIMEtype === "application/x-vgfc") {
-            this.getContentFromS3(currentArtifact.url, true)
+      for (const a in this.returnedOutputJson.artifacts) {
+        const currentArtifact = this.returnedOutputJson.artifacts[a];
+        if (currentArtifact.type === 's3file') {
+          if (currentArtifact.MIMEtype === 'text/plain' || currentArtifact.MIMEtype === 'application/json') {
+            this.getContentFromS3(currentArtifact.url);
+          } else if (currentArtifact.MIMEtype === 'application/x-vgf' || currentArtifact.MIMEtype === 'application/x-vgf3' || currentArtifact.MIMEtype === 'application/x-vgfc') {
+            this.getContentFromS3(currentArtifact.url, true);
           }
         }
       }
-      
-      //TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
+
+      // TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.outputFiles.concat(base64url.decode(result.result.output.stdout));
       this.errorFiles = this.errorFiles.concat(base64url.decode(result.result.output.stderr));
-    }, 
+    },
     /** get content from s3 */
     async getContentFromS3(url, isViPLabGraphics = false) {
-      this.isLoading.set(url, true)
-      this.promiseError.set(url, null)
-      
-      fetch(url, { method: 'GET'})
+      this.isLoading.set(url, true);
+      this.promiseError.set(url, null);
+
+      fetch(url, { method: 'GET' })
         .then((response) => {
           if (response.ok) {
             return response.text();
@@ -1149,72 +1136,70 @@ export default {
         })
         .catch((error) => {
           this.promiseError.set(url, error);
-          
         })
         .finally(() => {
           this.isLoading.set(url, false);
           this.$forceUpdate();
         });
-
-    }, 
-    /**  return base64 image src for img-tag*/
-    imagesrc: function (base64Image, mimetype) {
-      var base64 = base64Image.replaceAll("-", "+").replaceAll("_", "/")
+    },
+    /**  return base64 image src for img-tag */
+    imagesrc(base64Image, mimetype) {
+      const base64 = base64Image.replaceAll('-', '+').replaceAll('_', '/');
       if (base64.length % 4 != 0) {
-          base64.concat("=".repeat(4 - (base64.length % 4)))
+        base64.concat('='.repeat(4 - (base64.length % 4)));
       }
-      if (mimetype === "image/jpeg") {
-        return "data:image/jpeg;base64," + base64;
+      if (mimetype === 'image/jpeg') {
+        return `data:image/jpeg;base64,${base64}`;
       }
-      return "data:image/png;base64," + base64;
+      return `data:image/png;base64,${base64}`;
     },
     /** Save file locally on click from the user */
     async save(filename, identifier, mimetype) {
-      var content = "";
+      let content = '';
       this.returnedUnmodifiedArtifacts.artifacts.forEach((item) => {
         if (item.identifier == identifier && item.content) {
-          if (item.MIMEtype !== "image/png" && item.MIMEtype !== "image/jpeg") {
+          if (item.MIMEtype !== 'image/png' && item.MIMEtype !== 'image/jpeg') {
             content = base64url.decode(item.content);
           } else {
             content = item.content;
           }
         } else if (item.identifier == identifier) {
           // handle files that were downloaded from s3
-          var itemContent = "";
-          //if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png"  || item.MIMEtype === "image/jpeg" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vnd.kitware") {
-            itemContent = item.url;
-          //}
+          let itemContent = '';
+          // if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png"  || item.MIMEtype === "image/jpeg" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vnd.kitware") {
+          itemContent = item.url;
+          // }
           content = itemContent;
         }
       });
-      
+
       let downloadNecessary = true;
-      var blob = "";
-      if ((mimetype === "image/png" || mimetype === "image/jpeg") && !(content.includes("blob:http")) && !(content.startsWith("http"))) {
+      let blob = '';
+      if ((mimetype === 'image/png' || mimetype === 'image/jpeg') && !(content.includes('blob:http')) && !(content.startsWith('http'))) {
         downloadNecessary = false;
-        let base64 = this.imagesrc(content, mimetype)
+        const base64 = this.imagesrc(content, mimetype);
         fetch(base64)
-          .then(res => res.blob())
-          .then(blob => {
-            let elem = window.document.createElement("a");
+          .then((res) => res.blob())
+          .then((blob) => {
+            const elem = window.document.createElement('a');
             elem.href = window.URL.createObjectURL(blob);
             elem.download = filename;
             document.body.appendChild(elem);
             elem.click();
             document.body.removeChild(elem);
           });
-      } else if (((mimetype === "image/png" ||  mimetype === "image/jpeg") && content.includes("blob:http")) || content.startsWith("http")) {
+      } else if (((mimetype === 'image/png' || mimetype === 'image/jpeg') && content.includes('blob:http')) || content.startsWith('http')) {
         // handle files that were downloaded from s3
-        blob = await fetch(content).then(response => response.blob());
+        blob = await fetch(content).then((response) => response.blob());
       } else {
-        blob = new Blob([content], { mimetype: mimetype });
+        blob = new Blob([content], { mimetype });
       }
 
       if (downloadNecessary) {
         if (window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveBlob(blob, filename);
         } else {
-          var elem = window.document.createElement("a");
+          const elem = window.document.createElement('a');
           elem.href = window.URL.createObjectURL(blob);
           elem.download = filename;
           document.body.appendChild(elem);
@@ -1225,18 +1210,18 @@ export default {
       return false;
     },
     /** Maximize the window, meaning that the two collumns are displayed underneath each other */
-    maximize: function () {
+    maximize() {
       this.maximized = !this.maximized;
     },
-    /*download Computation Task JSON Message */
-    download: function () {
+    /* download Computation Task JSON Message */
+    download() {
       // first, generate the computation task json message
-      var taskJson = new Object();
+      const taskJson = new Object();
       taskJson.template = this.json.identifier;
-      var args = [];
-      for (var i in this.json.parameters) {
-        var param = this.json.parameters[i];
-        var arg = new Object();
+      const args = [];
+      for (const i in this.json.parameters) {
+        const param = this.json.parameters[i];
+        const arg = new Object();
         if (param.selected) {
           arg.identifier = param.identifier;
           arg.value = param.selected;
@@ -1245,16 +1230,16 @@ export default {
           arg.value = param.value;
         } else {
           arg.identifier = param.identifier;
-          arg.value = "";
+          arg.value = '';
         }
         args.push(arg);
       }
       taskJson.arguments = args;
-      var parts = [];
-      for (var j in this.json.files) {
-        for (var k in this.json.files[j].parts) {
-          var currentPart = this.json.files[j].parts[k];
-          if (currentPart.access != "visible") {
+      const parts = [];
+      for (const j in this.json.files) {
+        for (const k in this.json.files[j].parts) {
+          const currentPart = this.json.files[j].parts[k];
+          if (currentPart.access != 'visible') {
             parts.push(currentPart);
           }
         }
@@ -1262,36 +1247,34 @@ export default {
       taskJson.parts = parts;
 
       // now download json
-      var dataStr =
-        "data:text/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(taskJson));
-      let exportName = this.json.identifier;
-      var downloadAnchorNode = document.createElement("a");
-      downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", exportName + ".json");
+      const dataStr = `data:text/json;charset=utf-8,${
+        encodeURIComponent(JSON.stringify(taskJson))}`;
+      const exportName = this.json.identifier;
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute('href', dataStr);
+      downloadAnchorNode.setAttribute('download', `${exportName}.json`);
       document.body.appendChild(downloadAnchorNode); // required for firefox
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
     },
-    /*upload Computation Task JSON Message */
-    upload: function (event) {
-      var reader = new FileReader();
+    /* upload Computation Task JSON Message */
+    upload(event) {
+      const reader = new FileReader();
       reader.onload = this.onReaderLoad;
       reader.readAsText(event.target.files[0]);
     },
-    /*get json from uploaded file und update DOM */
-    onReaderLoad: function (event) {
-      var obj = JSON.parse(event.target.result);
+    /* get json from uploaded file und update DOM */
+    onReaderLoad(event) {
+      const obj = JSON.parse(event.target.result);
       // apply changes to current json
-      let templateId = obj.template;
+      const templateId = obj.template;
       if (templateId == this.json.identifier) {
-        
         // parse parameters/arguments
-        for (let a in obj.arguments) {
-          let currentArg = obj.arguments[a];
-          let argId = currentArg.identifier;
-          let argValue = currentArg.value;
-          let currentParam = this.json.parameters[a];
+        for (const a in obj.arguments) {
+          const currentArg = obj.arguments[a];
+          const argId = currentArg.identifier;
+          const argValue = currentArg.value;
+          const currentParam = this.json.parameters[a];
           if (argId == currentParam.identifier) {
             if (currentParam.selected) {
               currentParam.selected = argValue;
@@ -1302,26 +1285,26 @@ export default {
         }
 
         // parse parts
-        for (let p in obj.parts) {
-          let currentPart = obj.parts[p];
-          let partId = currentPart.identifier;
-          for (let f in this.json.files) {
-            for (let oldp in this.json.files[f].parts) {
+        for (const p in obj.parts) {
+          const currentPart = obj.parts[p];
+          const partId = currentPart.identifier;
+          for (const f in this.json.files) {
+            for (const oldp in this.json.files[f].parts) {
               if (this.json.files[f].parts[oldp].identifier == partId) {
                 // set content of parts
-                //this.json.files[f].parts[oldp].content = obj.parts[p].content;
-                this.$set(this.json.files[f].parts[oldp], "content", obj.parts[p].content);
+                // this.json.files[f].parts[oldp].content = obj.parts[p].content;
+                this.$set(this.json.files[f].parts[oldp], 'content', obj.parts[p].content);
                 this.$forceUpdate();
                 // set parameters of parts
-                for(let oldPara in this.json.files[f].parts[oldp].parameters) {
-                  let currentParamJson = this.json.files[f].parts[oldp].parameters[oldPara];
-                  for(let newPara in obj.parts[p].parameters) {
-                    let currentParamObj = obj.parts[p].parameters[newPara];
+                for (const oldPara in this.json.files[f].parts[oldp].parameters) {
+                  const currentParamJson = this.json.files[f].parts[oldp].parameters[oldPara];
+                  for (const newPara in obj.parts[p].parameters) {
+                    const currentParamObj = obj.parts[p].parameters[newPara];
                     if (currentParamObj.identifier == currentParamJson.identifier) {
                       if (currentParamJson.selected) {
-                        this.$set(currentParamJson, "selected", currentParamObj.selected);
+                        this.$set(currentParamJson, 'selected', currentParamObj.selected);
                       } else {
-                        this.$set(currentParamJson, "value", currentParamObj.value);
+                        this.$set(currentParamJson, 'value', currentParamObj.value);
                       }
                     }
                   }
@@ -1332,8 +1315,8 @@ export default {
         }
       }
     },
-    /**For the sticky play button: emit a scroll event when files tab is changed, so that the sticky-button is reloaded in the right place */
-    tabClicked: function () {
+    /** For the sticky play button: emit a scroll event when files tab is changed, so that the sticky-button is reloaded in the right place */
+    tabClicked() {
       window.scrollTo(window.scrollX, window.scrollY - 1);
       window.scrollTo(window.scrollX, window.scrollY + 1);
     },
@@ -1341,128 +1324,125 @@ export default {
      * Add value element for parameters of mode any
      * else add selected elements for parameters of mode fixed
      */
-    parseParametersForGuiGeneration: function(currentParameter) {
-      var mode = currentParameter.mode;
+    parseParametersForGuiGeneration(currentParameter) {
+      const { mode } = currentParameter;
       // add value-item to parameters with mode == any
-      if (mode === "any") {
-        //create reactive object value in curr with curr.default as content
-        this.$set(currentParameter, "value", currentParameter.default);
+      if (mode === 'any') {
+        // create reactive object value in curr with curr.default as content
+        this.$set(currentParameter, 'value', currentParameter.default);
       } else {
         // add selected-item to parameters with mode == fixed
-        var arr = [];
-        var options = currentParameter.options;
-        for (var i in options) {
+        const arr = [];
+        const { options } = currentParameter;
+        for (const i in options) {
           if (options[i].selected) {
             arr.push(options[i].value);
           }
         }
-        if (currentParameter.metadata.guiType === "radio" || (currentParameter.metadata.guiType === "dropdown" && !currentParameter.multiple) || (currentParameter.metadata.guiType === "input_field")) {
-          this.$set(currentParameter, "selected", arr[0]);
+        if (currentParameter.metadata.guiType === 'radio' || (currentParameter.metadata.guiType === 'dropdown' && !currentParameter.multiple) || (currentParameter.metadata.guiType === 'input_field')) {
+          this.$set(currentParameter, 'selected', arr[0]);
         } else {
-          this.$set(currentParameter, "selected", arr);
+          this.$set(currentParameter, 'selected', arr);
         }
-        
       }
     },
     // switch between the form (to modify the parameters) and the handlebar template with the filled out parameters
-    switchParameterView: function() {
+    switchParameterView() {
       this.asForm = !this.asForm;
-      
     },
     // fill in content of handlebar template with selected parameter values return it
     showHandlebarsTemplate(part, forSend = false) {
       // To disable Mustache HTML-escaping behaviour, use three curly brackets, instead of two!
       // If the template should be displayed
       // TODO: is this still needed in handlebars?
-      if(!this.asForm || forSend){
-        if (part.content !== "") {
-          var handlebarsTemplate = base64url.decode(part.content);
-          var view = {};
+      if (!this.asForm || forSend) {
+        if (part.content !== '') {
+          const handlebarsTemplate = base64url.decode(part.content);
+          const view = {};
           // Get values that will be substituted into the template
-          for(var p in part.parameters) {
-            let currentParam = part.parameters[p];
-            let currentValue = currentParam.value || currentParam.selected;
+          for (const p in part.parameters) {
+            const currentParam = part.parameters[p];
+            const currentValue = currentParam.value || currentParam.selected;
             view[currentParam.identifier] = currentValue;
           }
           // Substitute values in handlebars template
           const template = Handlebars.compile(handlebarsTemplate);
-          var output = template(view);
+          const output = template(view);
           return output;
-        } else {
-          /** Get Content from separate file*/
-          return "";
         }
+        /** Get Content from separate file */
+        return '';
       }
-    }, 
+    },
     generateHandlebarsDivId(partId) {
-      return "handlebars" + partId;
+      return `handlebars${partId}`;
     },
     /** get filename from part for displaying it as the tab-name */
-    getFilename: function(path) {
+    getFilename(path) {
       let filename = path;
       if (path.includes('/')) {
-        filename = path.slice(path.lastIndexOf('/') + 1, path.length); 
+        filename = path.slice(path.lastIndexOf('/') + 1, path.length);
       }
       return filename;
     },
-    updateContent: function (fileIndex, partIndex, event) {
-      this.json.files[fileIndex].parts[partIndex].content = event
+    updateContent(fileIndex, partIndex, event) {
+      this.json.files[fileIndex].parts[partIndex].content = event;
     },
-    calculateFirstLineNumber: function (allParts, partIndex) {
+    calculateFirstLineNumber(allParts, partIndex) {
       let firstLine = 1;
       if (partIndex > 0) {
         for (let previousPartIndex = 0; previousPartIndex < partIndex; previousPartIndex++) {
-          let previousPart = allParts[previousPartIndex];
-          let decodedPreviousContent = base64url.decode(previousPart.content);
-          let lines = decodedPreviousContent.split(/\r\n|\r|\n/).length;
+          const previousPart = allParts[previousPartIndex];
+          const decodedPreviousContent = base64url.decode(previousPart.content);
+          const lines = decodedPreviousContent.split(/\r\n|\r|\n/).length;
           firstLine += lines;
         }
       }
       return firstLine;
     },
-    getLinks: function(base64UriContent) {
-      let decodedString = base64url.decode(base64UriContent);
-      let uriArray = decodedString.split("\n");
+    getLinks(base64UriContent) {
+      const decodedString = base64url.decode(base64UriContent);
+      const uriArray = decodedString.split('\n');
       return uriArray;
     },
-    downloadFromLink: function(dataurl) {
-      let filename = dataurl.slice(dataurl.lastIndexOf("/") + 1, dataurl.length);
-      
+    downloadFromLink(dataurl) {
+      const filename = dataurl.slice(dataurl.lastIndexOf('/') + 1, dataurl.length);
+
       fetch(dataurl)
-        .then(response => response.arrayBuffer())
-        .then(response => {
-          const blob = new Blob([response], {type: 'application/octet-stream'})
-          const link = document.createElement("a");
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
+        .then((response) => response.arrayBuffer())
+        .then((response) => {
+          const blob = new Blob([response], { type: 'application/octet-stream' });
+          const link = document.createElement('a');
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
           link.href = URL.createObjectURL(blob);
           link.download = filename;
           link.click();
           link.remove();
           // in case the Blob uses a lot of memory
           setTimeout(() => URL.revokeObjectURL(link.href), 7000);
-      })
-      .catch(console.error);
+        })
+        .catch(console.error);
     },
-    filteredArtifacts: function(artifactsArray) {
-      let availableMIMEtypes = ["text/plain", "text/uri-list", "application/json", "image/png", "image/jpeg", "application/x-vgf", "application/x-vgf3", "application/x-vgfc", "text/csv", "application/vnd.kitware"]
-      let filtered = artifactsArray.filter(artifact => (availableMIMEtypes.indexOf(artifact.MIMEtype) > -1));
+    filteredArtifacts(artifactsArray) {
+      const availableMIMEtypes = ['text/plain', 'text/uri-list', 'application/json', 'image/png', 'image/jpeg', 'application/x-vgf', 'application/x-vgf3', 'application/x-vgfc', 'text/csv', 'application/vnd.kitware'];
+      const filtered = artifactsArray.filter((artifact) => (availableMIMEtypes.indexOf(artifact.MIMEtype) > -1));
       return filtered;
     },
   },
   created() {
     this.loadJsonFromFile();
-    
+
     // parse the parameters and add items for generating the gui and modifing the content
     // first: modify parameters section
-    for (var parameter in this.json.parameters) {
+    for (const parameter in this.json.parameters) {
       var curr = this.json.parameters[parameter];
       this.parseParametersForGuiGeneration(curr);
     }
     // then: modify the parameters inside the parts
-    for (var fileInd in this.json.files) {
-      for (var partInd in this.json.files[fileInd].parts) {
-        for (var paramInd in this.json.files[fileInd].parts[partInd].parameters) {
+    for (const fileInd in this.json.files) {
+      for (const partInd in this.json.files[fileInd].parts) {
+        for (const paramInd in this.json.files[fileInd].parts[partInd].parameters) {
           curr = this.json.files[fileInd].parts[partInd].parameters[paramInd];
           this.parseParametersForGuiGeneration(curr);
         }
@@ -1584,7 +1564,7 @@ body {
     /* Grundfläche */
     position: absolute;
     cursor: pointer;
-    
+
     bottom: 0;
     left: 2em;
     width: 3.5em;
@@ -1741,7 +1721,7 @@ body {
   visibility: visible;
   opacity: 1;
   transition: opacity .15s;
-} 
+}
 
 /*Style button in popup */
   .swal2-styled {

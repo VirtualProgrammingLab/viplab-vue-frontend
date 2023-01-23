@@ -16,40 +16,40 @@ import 'vue-slider-component/theme/default.css';
 
 export default {
   components: {
-    VueSlider
+    VueSlider,
   },
   name: 'SliderElement',
   props: {
     item: Object,
     parent_index: Number,
-  }, 
+  },
   computed: {
     vModel: {
-      get: function () {
+      get() {
         return this.item.value;
       },
-      set: function (val) {
-        this.$set(this.item , "value", val);
+      set(val) {
+        this.$set(this.item, 'value', val);
         this.$forceUpdate();
         return this.vModel;
-      }
+      },
     },
   },
   data() {
     return {
-      slider: this.item
-    }
+      slider: this.item,
+    };
   },
   methods: {
     /** parse slider direction for the usage in the vue-slider */
-    sliderDirection: function(sliderItem){
-      if(sliderItem.metadata.vertical){
-        return "ttb";
+    sliderDirection(sliderItem) {
+      if (sliderItem.metadata.vertical) {
+        return 'ttb';
       }
-    return "ltr";
-    }, 
-  }
-}
+      return 'ltr';
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

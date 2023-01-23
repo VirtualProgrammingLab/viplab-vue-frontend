@@ -47,25 +47,25 @@ export default {
   props: {
     item: Object,
     parent_index: Number,
-  }, 
+  },
   computed: {
     vModel: {
-      get: function () {
+      get() {
         return this.item.selected;
       },
-      set: function (val) {
-        this.$set(this.item , "selected", val);
+      set(val) {
+        this.$set(this.item, 'selected', val);
         this.$forceUpdate();
         return this.vModel;
-      }
+      },
     },
   },
   data() {
     return {
-      rad: this.item
-    }
-  }, 
-}
+      rad: this.item,
+    };
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

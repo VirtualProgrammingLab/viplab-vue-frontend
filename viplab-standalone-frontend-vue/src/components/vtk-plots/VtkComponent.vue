@@ -82,33 +82,33 @@
 </template>
 
 <script>
-import VueSlider from "vue-slider-component";
-import "vue-slider-component/theme/default.css";
+import VueSlider from 'vue-slider-component';
+import 'vue-slider-component/theme/default.css';
 
-import "vtk.js/Sources/Rendering/Profiles/Geometry";
+import 'vtk.js/Sources/Rendering/Profiles/Geometry';
 
-import vtkFullScreenRenderWindow from "vtk.js/Sources/Rendering/Misc/FullScreenRenderWindow";
-import vtkActor from "vtk.js/Sources/Rendering/Core/Actor";
-import vtkMapper from "vtk.js/Sources/Rendering/Core/Mapper";
-import vtkColorTransferFunction from "vtk.js/Sources/Rendering/Core/ColorTransferFunction";
+import vtkFullScreenRenderWindow from 'vtk.js/Sources/Rendering/Misc/FullScreenRenderWindow';
+import vtkActor from 'vtk.js/Sources/Rendering/Core/Actor';
+import vtkMapper from 'vtk.js/Sources/Rendering/Core/Mapper';
+import vtkColorTransferFunction from 'vtk.js/Sources/Rendering/Core/ColorTransferFunction';
 
 import {
   ColorMode,
   ScalarMode,
-} from "vtk.js/Sources/Rendering/Core/Mapper/Constants";
-import vtkColorMaps from "vtk.js/Sources/Rendering/Core/ColorTransferFunction/ColorMaps";
+} from 'vtk.js/Sources/Rendering/Core/Mapper/Constants';
+import vtkColorMaps from 'vtk.js/Sources/Rendering/Core/ColorTransferFunction/ColorMaps';
 
 // Force the loading of HttpDataAccessHelper to support gzip decompression
 // import "vtk.js/Sources/IO/Core/DataAccessHelper/HttpDataAccessHelper";
 
 // IO
-import vtkITKPolyDataReader from "vtk.js/Sources/IO/Misc/ITKPolyDataReader";
-import readPolyDataArrayBuffer from "itk/readPolyDataArrayBuffer.js";
+import vtkITKPolyDataReader from 'vtk.js/Sources/IO/Misc/ITKPolyDataReader';
+import readPolyDataArrayBuffer from 'itk/readPolyDataArrayBuffer';
 
-import itkConfig from "itk/itkConfig"
+import itkConfig from 'itk/itkConfig';
 
 export default {
-  name: "VtkComponent",
+  name: 'VtkComponent',
   components: {
     VueSlider,
   },
@@ -123,27 +123,27 @@ export default {
       renderer: Object,
       renderWindow: Object,
       actor: Object,
-      representation: "1:2:0",
+      representation: '1:2:0',
       representationOptions: [
         {
-          label: "Wireframe",
-          value: "1:1:0",
+          label: 'Wireframe',
+          value: '1:1:0',
         },
         {
-          label: "Surface",
-          value: "1:2:0",
+          label: 'Surface',
+          value: '1:2:0',
         },
         {
-          label: "Surface with Edges",
-          value: "1:2:1",
+          label: 'Surface with Edges',
+          value: '1:2:1',
         },
       ],
-      opacityVModel: "100",
-      color: ":",
+      opacityVModel: '100',
+      color: ':',
       colorByOptions: [
         {
-          value: ":",
-          label: "Solid color",
+          value: ':',
+          label: 'Solid color',
         },
       ],
       mapper: Object,
@@ -165,20 +165,20 @@ export default {
       this.renderNewFile();
 
       // reset v-model values for upper form
-      /*this.representation = "1:2:0";
+      /* this.representation = "1:2:0";
       this.color = ":";
-      this.opacityVModel = "100";*/
+      this.opacityVModel = "100"; */
     },
   },
   methods: {
     // set onchange hooks
-    representationOnChange: function (event) {
+    representationOnChange(event) {
       this.latestRepresentationEvent = event;
       const representation = event.target.value;
 
       // apply representation
       const [visibility, repr, edgeVisibility] = representation
-        .split(":")
+        .split(':')
         .map(Number);
       this.actor.getProperty().setRepresentation(repr);
       this.actor.getProperty().setEdgeVisibility(edgeVisibility);
@@ -186,43 +186,42 @@ export default {
 
       this.renderWindow.render();
     },
-    opacitySliderOnChange: function (value) {
+    opacitySliderOnChange(value) {
       this.latestOpacityEvent = value;
       const opacity = Number(value) / 100;
 
-      //apply opacity
+      // apply opacity
       this.actor.getProperty().setOpacity(opacity);
 
       this.renderWindow.render();
     },
-    handleColorByOnChange: function (event) {
+    handleColorByOnChange(event) {
       this.latestColorEvent = event;
       const color = event.target.value;
       const mapperConfig = this.getMapperConfig(color);
-      //console.log(mapperConfig);
+      // console.log(mapperConfig);
       this.mapper.set(mapperConfig);
       this.applyPreset();
 
       this.renderWindow.render();
     },
-    getMapperConfig: function (value) {
-      const [location, colorByArrayName] = value.split(":");
-      //console.log(location);
-      const interpolateScalarsBeforeMapping = location === "PointData";
+    getMapperConfig(value) {
+      const [location, colorByArrayName] = value.split(':');
+      // console.log(location);
+      const interpolateScalarsBeforeMapping = location === 'PointData';
       let colorMode = ColorMode.DEFAULT;
       let scalarMode = ScalarMode.DEFAULT;
       const scalarVisibility = location.length > 0;
       if (scalarVisibility) {
         const dataArray = this.source[`get${location}`]().getArrayByName(colorByArrayName);
         const newDataRange = dataArray.getRange();
-        //console.log(newDataRange);
+        // console.log(newDataRange);
         this.dataRange[0] = newDataRange[0];
         this.dataRange[1] = newDataRange[1];
         colorMode = ColorMode.MAP_SCALARS;
-        scalarMode =
-          location === "PointData"
-            ? ScalarMode.USE_POINT_FIELD_DATA
-            : ScalarMode.USE_CELL_FIELD_DATA;
+        scalarMode = location === 'PointData'
+          ? ScalarMode.USE_POINT_FIELD_DATA
+          : ScalarMode.USE_CELL_FIELD_DATA;
       }
 
       return {
@@ -233,31 +232,31 @@ export default {
         scalarVisibility,
       };
     },
-    applyPreset: function () {
-      const defaultLutName = "erdc_rainbow_bright";
+    applyPreset() {
+      const defaultLutName = 'erdc_rainbow_bright';
       const preset = vtkColorMaps.getPresetByName(defaultLutName);
       this.lookupTable.applyColorMap(preset);
       this.lookupTable.setMappingRange(this.dataRange[0], this.dataRange[1]);
       this.lookupTable.updateRange();
-      //console.log(this.lookupTable);
+      // console.log(this.lookupTable);
     },
-    decreaseFileIndex: function () {
+    decreaseFileIndex() {
       this.fileIndex = Math.max(this.fileIndex - 1, 0);
       return this.fileIndex;
     },
-    increaseFileIndex: function () {
+    increaseFileIndex() {
       this.fileIndex = Math.min(this.fileIndex + 1, this.files.length - 1);
       return this.fileIndex;
     },
-    resetFileIndex: function () {
+    resetFileIndex() {
       this.fileIndex = 0;
       return this.fileIndex;
     },
-    setMaxFileIndex: function () {
+    setMaxFileIndex() {
       this.fileIndex = this.files.length - 1;
       return this.fileIndex;
     },
-    setEnableAutoPlay: function () {
+    setEnableAutoPlay() {
       this.enableAutoPlay = !this.enableAutoPlay;
       return this.enableAutoPlay;
     },
@@ -273,55 +272,51 @@ export default {
       this.renderNewFile();
     },
     async renderNewFile() {
-      var inputFileUrl = this.files[this.fileIndex];
+      const inputFileUrl = this.files[this.fileIndex];
 
-      let url = new URL(inputFileUrl).pathname
-      var lastIndex = url.lastIndexOf('/');
-      let inputFile = url.substr(lastIndex + 1);
+      const url = new URL(inputFileUrl).pathname;
+      const lastIndex = url.lastIndexOf('/');
+      const inputFile = url.substr(lastIndex + 1);
 
       // initialize buffer for the ITK reader
       vtkITKPolyDataReader.setReadPolyDataArrayBufferFromITK(
-        readPolyDataArrayBuffer
+        readPolyDataArrayBuffer,
       );
-      
-      //let myRequest = new Request("http://localhost:8080/" + inputFile);
-      let myRequest = new Request(inputFileUrl);
-      //let myRequest = new Request("http://localhost:8080/cow.vtp");
-      
+
+      // let myRequest = new Request("http://localhost:8080/" + inputFile);
+      const myRequest = new Request(inputFileUrl);
+      // let myRequest = new Request("http://localhost:8080/cow.vtp");
+
       const reader = await fetch(myRequest, {
-          method: 'GET',
-        })
-        .then(function (response) {
+        method: 'GET',
+      })
+        .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           return response.blob();
         })
-        .then(function (response) {
-          
-          const readRawData = ({ fileName, data }) => {
-            
-            return new Promise((resolve, reject) => {
-              const sourceType = null;
-              const reader = vtkITKPolyDataReader.newInstance();
-              
-              // if file was fetched from a blob-url (created from base64-content, in App.vue), get filename from File-response-object
-              if (!fileName.endsWith(".vtu") && !fileName.endsWith(".vtp")) {
-                fileName = response.name;
-              }
-              reader.setFileName(fileName);
-              try {
-                const ds = reader.parseAsArrayBuffer(data);
-                Promise.resolve(ds)
-                  .then((dataset) =>
-                    resolve({ dataset, reader, sourceType, name: fileName })
-                  )
-                  .catch(reject);
-              } catch (e) {
-                reject(e);
-              }
-            });
-          };
+        .then((response) => {
+          const readRawData = ({ fileName, data }) => new Promise((resolve, reject) => {
+            const sourceType = null;
+            const reader = vtkITKPolyDataReader.newInstance();
+
+            // if file was fetched from a blob-url (created from base64-content, in App.vue), get filename from File-response-object
+            if (!fileName.endsWith('.vtu') && !fileName.endsWith('.vtp')) {
+              fileName = response.name;
+            }
+            reader.setFileName(fileName);
+            try {
+              const ds = reader.parseAsArrayBuffer(data);
+              Promise.resolve(ds)
+                .then((dataset) => resolve({
+                  dataset, reader, sourceType, name: fileName,
+                }))
+                .catch(reject);
+            } catch (e) {
+              reject(e);
+            }
+          });
 
           return new Promise((resolve, reject) => {
             const io = new FileReader();
@@ -347,7 +342,7 @@ export default {
 
       this.applyPreset();
 
-      this.colorByOptions = [{ value: ":", label: "Solid color" }].concat(
+      this.colorByOptions = [{ value: ':', label: 'Solid color' }].concat(
         this.source
           .getPointData()
           .getArrays()
@@ -361,7 +356,7 @@ export default {
           .map((a) => ({
             label: `(c) ${a.getName()}`,
             value: `CellData:${a.getName()}`,
-          }))
+          })),
       );
 
       const table = this.lookupTable;
@@ -382,44 +377,44 @@ export default {
       this.renderer.resetCamera();
       this.renderWindow.render();
 
-      //set color, representation, opacity in case it was already set on another connected file
-      if(this.latestRepresentationEvent != null) {
+      // set color, representation, opacity in case it was already set on another connected file
+      if (this.latestRepresentationEvent != null) {
         this.representationOnChange(this.latestRepresentationEvent);
       }
-      if(this.latestOpacityEvent != null) {
+      if (this.latestOpacityEvent != null) {
         this.opacitySliderOnChange(this.latestOpacityEvent);
       }
-      if(this.latestColorEvent != null) {
+      if (this.latestColorEvent != null) {
         this.handleColorByOnChange(this.latestColorEvent);
       }
     },
-    watchAutoPlayOrPause: function () {
+    watchAutoPlayOrPause() {
       if (this.enableAutoPlay) {
-        this.interval = setInterval(function() {
+        this.interval = setInterval(() => {
           this.increaseFileIndex();
-        }.bind(this), 1000);
+        }, 1000);
       } else {
         clearInterval(this.interval);
       }
     },
     async download(event) {
-      //console.log(event);
+      // console.log(event);
       event.preventDefault();
 
-      //TODO: Unterscheidung: files in content als Base64 => so wie hier
+      // TODO: Unterscheidung: files in content als Base64 => so wie hier
       //    über S3 einfach diese URL zurück geben
-      //generate objectUrl of blob of the currently displayed file
+      // generate objectUrl of blob of the currently displayed file
       const inputFile = this.files[this.fileIndex];
-      let myRequest = new Request(inputFile);
+      const myRequest = new Request(inputFile);
       const blob = await fetch(myRequest)
-        .then(function (response) {
+        .then((response) => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           return response.blob();
         })
-        .then(function (myBlob) {
-          var objectURL = URL.createObjectURL(myBlob);
+        .then((myBlob) => {
+          const objectURL = URL.createObjectURL(myBlob);
           return objectURL.toString();
         });
 
@@ -429,14 +424,14 @@ export default {
     },
   },
   async mounted() {
-    //console.log("vtk-component mounted");
+    // console.log("vtk-component mounted");
     await this.renderFile(this);
   },
   beforeCreate() {
     // TODO: Is there a better solution for this?
     // before creation change the path of the itk modules such that they can be moved to the dist/js-folder upon build
     itkConfig.itkModulesPath = this.$config.ITK_PATH;
-  }
+  },
 };
 </script>
 

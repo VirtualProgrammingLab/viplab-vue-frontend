@@ -34,85 +34,85 @@
 </template>
 
 <script>
+import base64url from 'base64url';
+
 global.Buffer = global.Buffer || require('buffer').Buffer;
-import base64url from "base64url";
-//const Base64 = require('js-base64');
+// const Base64 = require('js-base64');
 
 export default {
-  name: "app",
+  name: 'app',
   components: {
   },
   data() {
     return {
-      templates: require.context("./input/", false, /^.*\.json$/).keys(), //get json file names from ./input folder
+      templates: require.context('./input/', false, /^.*\.json$/).keys(), // get json file names from ./input folder
     };
   },
   computed: {
     json: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.jsonTemplate;
       },
-      set (newValue) {
-        this.$store.commit("updateJsonTemplate", newValue)
-        this.$forceUpdate()
-      }
+      set(newValue) {
+        this.$store.commit('updateJsonTemplate', newValue);
+        this.$forceUpdate();
+      },
     },
     token: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.token;
       },
-      set (newValue) {
-        this.$store.commit("updateToken", newValue)
-        this.$forceUpdate()
-      }
+      set(newValue) {
+        this.$store.commit('updateToken', newValue);
+        this.$forceUpdate();
+      },
     },
     ws: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.ws;
       },
-      set (newValue) {
-        this.$store.commit("updateWebSocket", newValue)
-        this.$forceUpdate()
-      }
+      set(newValue) {
+        this.$store.commit('updateWebSocket', newValue);
+        this.$forceUpdate();
+      },
     },
   },
   methods: {
     /** load json from file with temp being the file name, set this.json to the content of the file and fill form_v_model */
-    loadJsonFromFile: function () {
-      let appDiv = document.body;
-      let data = appDiv.getAttribute("data-template");
-      let decodedjson = JSON.parse(base64url.decode(data));
+    loadJsonFromFile() {
+      const appDiv = document.body;
+      const data = appDiv.getAttribute('data-template');
+      const decodedjson = JSON.parse(base64url.decode(data));
 
-      console.log(decodedjson)
+      console.log(decodedjson);
 
-      console.log(Object.keys(this.$store.state.jsonTemplate).length === 0)
-      console.log(this.$store.state.jsonTemplate)
-      if (data !== "{{ data }}" && Object.keys(this.$store.state.jsonTemplate).length === 0) {
+      console.log(Object.keys(this.$store.state.jsonTemplate).length === 0);
+      console.log(this.$store.state.jsonTemplate);
+      if (data !== '{{ data }}' && Object.keys(this.$store.state.jsonTemplate).length === 0) {
         this.json = JSON.parse(base64url.decode(data));
         // store token in Vuex store
-        this.$store.commit("updateToken", appDiv.getAttribute("data-token"));
+        this.$store.commit('updateToken', appDiv.getAttribute('data-token'));
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
         this.json = this.$store.state.jsonTemplate;
         this.token = this.$store.state.token;
       } else {
         this.json = {};
-        this.token = "";
+        this.token = '';
       }
 
       // store json in Vuex store
       // this.$store.commit("updateJsonTemplate", decodedjson);
 
-      //this.token = appDiv.getAttribute("data-token");
-
+      // this.token = appDiv.getAttribute("data-token");
 
       // if there are parameters in parts, set var accordingly for rendering of button
-      for(var file in this.json.files) {
-        for(var part in this.json.files[file].parts) {
-          var parti = this.json.files[file].parts[part]
-          if(parti.access == "template" && parti.parameters) {
+      for (const file in this.json.files) {
+        for (const part in this.json.files[file].parts) {
+          const parti = this.json.files[file].parts[part];
+          if (parti.access == 'template' && parti.parameters) {
             this.isPartParameters++;
             break;
           }
@@ -121,8 +121,8 @@ export default {
     },
   },
   created() {
-    //this.loadJsonFromFile();
-  }
+    // this.loadJsonFromFile();
+  },
 };
 </script>
 

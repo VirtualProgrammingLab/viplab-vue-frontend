@@ -20,66 +20,64 @@ import { required } from 'vee-validate/dist/rules';
 
 extend('required', {
   ...required,
-  message: 'This field is required'
+  message: 'This field is required',
 });
 
-extend('toggleOneOf', value => {
-  //console.log("toggle oneof " + value);
+extend('toggleOneOf', (value) => {
+  // console.log("toggle oneof " + value);
   if (value.length > 0 && value.length == 1) {
     return true;
   }
-  return 'Only choose one!'
+  return 'Only choose one!';
 });
 
-extend('toggleMinOne', value => {
-  //console.log("toggle minone " + value);
+extend('toggleMinOne', (value) => {
+  // console.log("toggle minone " + value);
   if (value.length >= 1) {
     return true;
   }
-  return 'Choose one or more!'
+  return 'Choose one or more!';
 });
 
 export default {
   name: 'ToggleButton',
   components: {
-    ValidationProvider
+    ValidationProvider,
   },
   props: {
     item: Object,
-    parent_index: Number
-  }, 
+    parent_index: Number,
+  },
   computed: {
     vModel: {
-      get: function () {
+      get() {
         return this.item.selected;
       },
-      set: function (val) {
-        this.$set(this.item , "selected", val);
+      set(val) {
+        this.$set(this.item, 'selected', val);
         this.$forceUpdate();
         return this.vModel;
-      }
+      },
     },
-    onlyone: function() {
-      if(this.toggl.validation === "onlyone") {
-        return true;
-      } else {
-        return false;
-      }
-    }, 
-    minone: function() {
-      if(this.toggl.validation === "minone") {
-        return true;
-      } else {
+    onlyone() {
+      if (this.toggl.validation === 'onlyone') {
         return true;
       }
+      return false;
+    },
+    minone() {
+      if (this.toggl.validation === 'minone') {
+        return true;
+      }
+      return true;
     },
   },
   data() {
     return {
-      toggl: this.item
-    }
-  }
-}
+      toggl: this.item,
+    };
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

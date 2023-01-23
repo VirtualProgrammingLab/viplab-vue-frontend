@@ -246,8 +246,8 @@
                                                   <b-icon-info-circle v-tooltip.top-center="'Content, that will be base64url-encoded automatically. Can contain Handlebars.js expressions with PARAM_IDs (identifiers) if the access type of this part is template.'"></b-icon-info-circle>
                                               </div>
                                             </div>
-                                            <ace-editor-component 
-                                              :isParameter="false" 
+                                            <ace-editor-component
+                                              :isParameter="false"
                                               :isHandlebar="false"
                                               :readonly="false"
                                               :item='{
@@ -804,7 +804,7 @@
                         <!-- metadata syntaxHighlighting -->
                         <div>
                           <label class="mr-2">Syntax Highlighting for File-Content:</label>
-                          <div class="d-flex form-group"> 
+                          <div class="d-flex form-group">
                             <div class="flex-grow-1">
                               <input type="text" class="form-control" id="selectedFile.syntaxHighlighting"
                                v-model="vModelFileMetadataSyntaxHighlighting">
@@ -1013,8 +1013,8 @@
                         <div class="form-group" v-if="selectedParameter.metadata.guiType=='editor'">
                           <div>
                             <label class="mr-2" for="selectedParameter.default">Value: </label>
-                            <ace-editor-component 
-                              :isParameter="false" 
+                            <ace-editor-component
+                              :isParameter="false"
                               :isHandlebar="false"
                               :readonly="false"
                               :item='{
@@ -1194,34 +1194,33 @@
 </template>
 
 <script>
-import { Drag, Drop, DropList } from "vue-easy-dnd";
+import { Drag, Drop, DropList } from 'vue-easy-dnd';
 
 // import Ace
-import AceEditorComponent from "../../components/EditorComponent-Ace.vue"
-
-import base64url from "base64url";
+import base64url from 'base64url';
+import Ajv from 'ajv';
+import AceEditorComponent from '../../components/EditorComponent-Ace.vue';
 
 // for validation
 import ctSchema from './json-schema/computation-template-container.json';
 import parameterSchema from './json-schema/parameters.json';
 import commandlineArgumentsSchema from './json-schema/commandline-arguments.json';
-import Ajv from "ajv"
 
 export default {
-  name: "app",
+  name: 'app',
   components: {
     Drag,
     Drop,
     DropList,
-    AceEditorComponent
+    AceEditorComponent,
   },
   data() {
     return {
-      componentsFiles: ["file", "commandline arguments"],
-      componentsFile: ["part"],
-      componentsPart: ["part"],
-      componentsCommand: ["checkbox", "radio", "dropdown", "toggle"],
-      availableGuiTypes : ["input_field", "editor", "slider", "checkbox", "radio", "dropdown", "toggle"],
+      componentsFiles: ['file', 'commandline arguments'],
+      componentsFile: ['part'],
+      componentsPart: ['part'],
+      componentsCommand: ['checkbox', 'radio', 'dropdown', 'toggle'],
+      availableGuiTypes: ['input_field', 'editor', 'slider', 'checkbox', 'radio', 'dropdown', 'toggle'],
       preferences: true,
       selectedParameter: {},
       selectedPart: {},
@@ -1241,98 +1240,98 @@ export default {
       steps: [
         {
           target: '#start-guide',
-          content: `Tour the <strong>ViPLab Computation Template Generator</strong>!`
+          content: 'Tour the <strong>ViPLab Computation Template Generator</strong>!',
         },
         {
           target: '#run-configuration',
           content: 'Choose the Environment! How is your Application run? After that, configure other parameters for the execution.',
-          offset: -200
+          offset: -200,
         },
         {
           target: '#component-selection',
-          content: 'Add components, like files, parts of files and gui-elements to your template by dragging and dropping them to the middle-section.'
+          content: 'Add components, like files, parts of files and gui-elements to your template by dragging and dropping them to the middle-section.',
         },
         {
           target: '#component-selection',
-          content: 'For example: Drag-and-drop a file to add an input-file, or display code-snippets to the user.'
+          content: 'For example: Drag-and-drop a file to add an input-file, or display code-snippets to the user.',
         },
         {
           target: '#component-selection',
-          content: 'Additionally, if you want the user to modify the commandline arguments for execution, you can drag-and-drop the commandline argument-element. Then add GUI-elements to specify possible values the user can select from.'
+          content: 'Additionally, if you want the user to modify the commandline arguments for execution, you can drag-and-drop the commandline argument-element. Then add GUI-elements to specify possible values the user can select from.',
         },
         {
           target: '#drag-components-here',
           content: 'By clicking on the different components in the middle-section, you can modify the configuration of each component on the right/bottom.',
           offset: -200,
           params: {
-            placement: 'top'
-          }
+            placement: 'top',
+          },
         },
         {
           target: '#define-output',
           content: 'Last, define, what the output should look like.',
           offset: -200,
           params: {
-            placement: 'top'
-          }
-        }
+            placement: 'top',
+          },
+        },
       ],
       validationRunning: false,
-      classValidity: "",
+      classValidity: '',
       signifyChange: true,
     };
   },
   computed: {
     json: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.jsonTemplate;
       },
-      set (newValue) {
-        this.$store.commit("updateJsonTemplate", newValue)
-        this.$forceUpdate()
-      }
+      set(newValue) {
+        this.$store.commit('updateJsonTemplate', newValue);
+        this.$forceUpdate();
+      },
     },
     token: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.token;
       },
-      set (newValue) {
-        this.$store.commit("updateToken", newValue)
-      }
+      set(newValue) {
+        this.$store.commit('updateToken', newValue);
+      },
     },
     ws: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.ws;
       },
-      set (newValue) {
-        this.$store.commit("updateWebSocket", newValue)
-      }
+      set(newValue) {
+        this.$store.commit('updateWebSocket', newValue);
+      },
     },
     computationTemplate: {
-      get () {
-        this.$forceUpdate()
+      get() {
+        this.$forceUpdate();
         return this.$store.state.generatedComputationTemplate;
       },
-      set (newValue) {
-        this.$store.commit("updateGeneratedComputationTemplate", newValue)
-      }
+      set(newValue) {
+        this.$store.commit('updateGeneratedComputationTemplate', newValue);
+      },
     },
-    modifiedByTeacher : {
-      get () {
+    modifiedByTeacher: {
+      get() {
         return this.$store.state.modifiedByTeacher;
       },
-      set (newValue) {
-        this.$store.commit("updateModifiedByTeacher", newValue)
-      }
+      set(newValue) {
+        this.$store.commit('updateModifiedByTeacher', newValue);
+      },
     },
     thereIsTemplate() {
-      for (var file in this.computationTemplate.files) {
-        for (var part in this.computationTemplate.files[file].parts) {
-          var currentPart = this.computationTemplate.files[file].parts[part]
-          if (currentPart.access === "template") {
+      for (const file in this.computationTemplate.files) {
+        for (const part in this.computationTemplate.files[file].parts) {
+          const currentPart = this.computationTemplate.files[file].parts[part];
+          if (currentPart.access === 'template') {
             return true;
           }
         }
@@ -1340,36 +1339,35 @@ export default {
       return false;
     },
     vModelInputFieldText: {
-      get: function () {
+      get() {
         if (this.selectedParameter.default.length > 0) {
           return base64url.decode(this.selectedParameter.default[0]);
         }
-        return "";
+        return '';
       },
-      set: function (val) {
-        if (typeof this.selectedParameter !== "undefined") {
-          this.$set(this.selectedParameter.default , 0, base64url(val));
+      set(val) {
+        if (typeof this.selectedParameter !== 'undefined') {
+          this.$set(this.selectedParameter.default, 0, base64url(val));
           this.$forceUpdate();
         }
-      }
+      },
     },
     vModelInputFieldNumber: {
-      get: function () {
+      get() {
         if (this.selectedParameter.default.length > 0) {
           return this.selectedParameter.default[0];
         }
-        return "";
+        return '';
       },
-      set: function (val) {
-
+      set(val) {
         let newValue = parseFloat(val);
 
         if (isNaN(newValue)) {
           // set to old value, if input was not null
-          if (typeof this.selectedParameter !== "undefined" && val !== "") {
+          if (typeof this.selectedParameter !== 'undefined' && val !== '') {
             newValue = this.selectedParameter.default[0];
           // set to old value if new char was string not number
-          } else if (typeof this.selectedParameter != "undefined" && val.length > 0) {
+          } else if (typeof this.selectedParameter !== 'undefined' && val.length > 0) {
             newValue = this.selectedParameter.default[0];
           // else set value to null
           } else {
@@ -1377,257 +1375,256 @@ export default {
           }
         }
 
-        if (typeof this.selectedParameter !== "undefined") {
+        if (typeof this.selectedParameter !== 'undefined') {
           this.$set(this.selectedParameter.default, 0, newValue);
         }
 
         if (newValue == null) {
-          this.$delete(this.selectedParameter.default, 0)
+          this.$delete(this.selectedParameter.default, 0);
         }
         this.$forceUpdate();
-      }
+      },
     },
     vModelOutputViewer: {
-      get: function () {
-        if (typeof this.computationTemplate.metadata != "undefined") {
-          if (typeof this.computationTemplate.metadata.output != "undefined") {
-            if (typeof this.computationTemplate.metadata.output.viewer != "undefined") {
+      get() {
+        if (typeof this.computationTemplate.metadata !== 'undefined') {
+          if (typeof this.computationTemplate.metadata.output !== 'undefined') {
+            if (typeof this.computationTemplate.metadata.output.viewer !== 'undefined') {
               return this.computationTemplate.metadata.output.viewer;
             }
           }
         }
         return [];
       },
-      set: function (val) {
+      set(val) {
         // create objects (metadata, output, viewer) if not set yet
-        if (typeof this.computationTemplate.metadata == "undefined") {
-          this.$set(this.computationTemplate, "metadata", { });
+        if (typeof this.computationTemplate.metadata === 'undefined') {
+          this.$set(this.computationTemplate, 'metadata', { });
         }
-        if (typeof this.computationTemplate.metadata.output == "undefined") {
-          this.$set(this.computationTemplate.metadata, "output", { });
+        if (typeof this.computationTemplate.metadata.output === 'undefined') {
+          this.$set(this.computationTemplate.metadata, 'output', { });
         }
-        if (typeof this.computationTemplate.metadata.output.viewer == "undefined") {
-          this.$set(this.computationTemplate.metadata.output, "viewer", []);
+        if (typeof this.computationTemplate.metadata.output.viewer === 'undefined') {
+          this.$set(this.computationTemplate.metadata.output, 'viewer', []);
         }
 
         // set viewer if the user wants to have special output formats
-        if (val.length > 1 || (val.length === 1 && val[0] !== "")) {
-          if (typeof this.computationTemplate.metadata.output.viewer !== "undefined") {
-            this.$set(this.computationTemplate.metadata.output, "viewer", val);
+        if (val.length > 1 || (val.length === 1 && val[0] !== '')) {
+          if (typeof this.computationTemplate.metadata.output.viewer !== 'undefined') {
+            this.$set(this.computationTemplate.metadata.output, 'viewer', val);
           }
         // delete viewer-object if user doesn't want special formats
         } else {
-          this.$delete(this.computationTemplate.metadata.output, "viewer")
+          this.$delete(this.computationTemplate.metadata.output, 'viewer');
         }
 
         // delete metadata.output if empty
-        if (typeof this.computationTemplate.metadata.output.viewer == "undefined" && typeof this.computationTemplate.metadata.output.csv == "undefined" && typeof this.computationTemplate.metadata.output.vtk == "undefined") {
-          this.$delete(this.computationTemplate.metadata, "output")
+        if (typeof this.computationTemplate.metadata.output.viewer === 'undefined' && typeof this.computationTemplate.metadata.output.csv === 'undefined' && typeof this.computationTemplate.metadata.output.vtk === 'undefined') {
+          this.$delete(this.computationTemplate.metadata, 'output');
         }
 
         this.$forceUpdate();
-      }
+      },
     },
     vModelFilePath: {
-      get: function () {
-        if (typeof this.selectedFile.path != "undefined") {
+      get() {
+        if (typeof this.selectedFile.path !== 'undefined') {
           return this.selectedFile.path;
         }
-        return "";
+        return '';
       },
-      set: function (val) {
-        this.$set(this.selectedFile, "path", val);
-        if (val == "") {
-          this.$delete(this.selectedFile, "path")
+      set(val) {
+        this.$set(this.selectedFile, 'path', val);
+        if (val == '') {
+          this.$delete(this.selectedFile, 'path');
         }
         this.$forceUpdate();
-      }
+      },
     },
     vModelFileMetadataSyntaxHighlighting: {
-      get: function () {
-        if (typeof this.selectedFile.metadata != "undefined") {
-          if (typeof this.selectedFile.metadata.syntaxHighlighting != "undefined") {
+      get() {
+        if (typeof this.selectedFile.metadata !== 'undefined') {
+          if (typeof this.selectedFile.metadata.syntaxHighlighting !== 'undefined') {
             return this.selectedFile.metadata.syntaxHighlighting;
           }
         }
-        return "";
+        return '';
       },
-      set: function (val) {
+      set(val) {
         // if file-metadata object does not exist, create it
-        if (typeof this.selectedFile.metadata == "undefined") {
-          this.$set(this.selectedFile, "metadata", { });
+        if (typeof this.selectedFile.metadata === 'undefined') {
+          this.$set(this.selectedFile, 'metadata', { });
         }
-        this.$set(this.selectedFile.metadata, "syntaxHighlighting", val);
+        this.$set(this.selectedFile.metadata, 'syntaxHighlighting', val);
 
         // if val is empty, remove object from ct
-        if (val == "") {
-          this.$delete(this.selectedFile.metadata, "syntaxHighlighting");
+        if (val == '') {
+          this.$delete(this.selectedFile.metadata, 'syntaxHighlighting');
           if (Object.keys(this.selectedFile.metadata).length == 0) {
-            this.$delete(this.selectedFile, "metadata");
+            this.$delete(this.selectedFile, 'metadata');
           }
         }
 
         this.$forceUpdate();
-      }
+      },
     },
     vModelFileMetadataDescription: {
-      get: function () {
-        if (typeof this.selectedFile.metadata != "undefined") {
-          if (typeof this.selectedFile.metadata.description != "undefined") {
+      get() {
+        if (typeof this.selectedFile.metadata !== 'undefined') {
+          if (typeof this.selectedFile.metadata.description !== 'undefined') {
             return this.selectedFile.metadata.description;
           }
         }
-        return "";
+        return '';
       },
-      set: function (val) {
+      set(val) {
         // if file-metadata object does not exist, create it
-        if (typeof this.selectedFile.metadata == "undefined") {
-          this.$set(this.selectedFile, "metadata", { });
+        if (typeof this.selectedFile.metadata === 'undefined') {
+          this.$set(this.selectedFile, 'metadata', { });
         }
-        this.$set(this.selectedFile.metadata, "description", val);
+        this.$set(this.selectedFile.metadata, 'description', val);
 
         // if val is empty, remove object from ct
-        if (val == "") {
-          this.$delete(this.selectedFile.metadata, "description");
+        if (val == '') {
+          this.$delete(this.selectedFile.metadata, 'description');
           if (Object.keys(this.selectedFile.metadata).length == 0) {
-            this.$delete(this.selectedFile, "metadata");
+            this.$delete(this.selectedFile, 'metadata');
           }
         }
 
         this.$forceUpdate();
-      }
+      },
     },
     vModelPartAccess: {
-      get: function () {
-        if (typeof this.selectedPart.access !== "undefined") {
+      get() {
+        if (typeof this.selectedPart.access !== 'undefined') {
           return this.selectedPart.access;
-        } else {
-          this.$set(this.selectedPart, "access", "")
         }
-        return "";
+        this.$set(this.selectedPart, 'access', '');
+
+        return '';
       },
-      set: function (val) {
-        if (typeof this.selectedPart.access !== "undefined") {
-          this.$set(this.selectedPart, "access", val);
+      set(val) {
+        if (typeof this.selectedPart.access !== 'undefined') {
+          this.$set(this.selectedPart, 'access', val);
         }
 
         this.$forceUpdate();
         return this.selectedPart.access;
-      }
+      },
     },
     vModelPartMetadataName: {
-      get: function () {
-        if (typeof this.selectedPart.metadata !== "undefined") {
-          if (typeof this.selectedPart.metadata.description !== "undefined") {
+      get() {
+        if (typeof this.selectedPart.metadata !== 'undefined') {
+          if (typeof this.selectedPart.metadata.description !== 'undefined') {
             return this.selectedPart.metadata.description;
           }
         }
-        return "";
+        return '';
       },
-      set: function (val) {
-        if (typeof this.selectedPart.metadata !== "undefined") {
-          this.$set(this.selectedPart.metadata, "description", "")
+      set(val) {
+        if (typeof this.selectedPart.metadata !== 'undefined') {
+          this.$set(this.selectedPart.metadata, 'description', '');
         } else {
-          this.$set(this.selectedPart, "metadata", {"description": ""})
+          this.$set(this.selectedPart, 'metadata', { description: '' });
         }
 
-        if (typeof this.selectedPart.metadata.description !== "undefined") {
-          this.$set(this.selectedPart.metadata, "description", val);
+        if (typeof this.selectedPart.metadata.description !== 'undefined') {
+          this.$set(this.selectedPart.metadata, 'description', val);
         }
 
         // if val is empty, remove object from ct
-        if (val == "") {
-          this.$delete(this.selectedPart.metadata, "description");
+        if (val == '') {
+          this.$delete(this.selectedPart.metadata, 'description');
           if (Object.keys(this.selectedPart.metadata).length == 0) {
-            this.$delete(this.selectedPart, "metadata");
+            this.$delete(this.selectedPart, 'metadata');
           }
         }
 
         this.$forceUpdate();
-      }
+      },
     },
     vModelParameterIdentifier: {
-      get: function () {
-        if (typeof this.selectedParameter.identifier !== "undefined") {
+      get() {
+        if (typeof this.selectedParameter.identifier !== 'undefined') {
           return this.selectedParameter.identifier;
         }
-        return "";
+        return '';
       },
-      set: function (val) {
-        this.$set(this.selectedParameter, "identifier", val);
+      set(val) {
+        this.$set(this.selectedParameter, 'identifier', val);
         // if val is empty, remove object from ct
-        if (val == "") {
-          this.$delete(this.selectedParameter, "identifier")
+        if (val == '') {
+          this.$delete(this.selectedParameter, 'identifier');
         }
 
         this.$forceUpdate();
-      }
+      },
     },
     vModelParameterMetadataName: {
-      get: function () {
-        if (typeof this.selectedParameter.metadata !== "undefined") {
-          if (typeof this.selectedParameter.metadata.name !== "undefined") {
+      get() {
+        if (typeof this.selectedParameter.metadata !== 'undefined') {
+          if (typeof this.selectedParameter.metadata.name !== 'undefined') {
             return this.selectedParameter.metadata.name;
           }
         }
-        return "";
+        return '';
       },
-      set: function (val) {
-        if (typeof this.selectedParameter.metadata === "undefined") {
-          this.$set(this.selectedParameter, "metadata", { "name": val });
+      set(val) {
+        if (typeof this.selectedParameter.metadata === 'undefined') {
+          this.$set(this.selectedParameter, 'metadata', { name: val });
         } else {
-          this.$set(this.selectedParameter.metadata, "name", val);
+          this.$set(this.selectedParameter.metadata, 'name', val);
         }
 
         // if val is empty, remove object from ct
-        if (val == "") {
-          this.$delete(this.selectedParameter.metadata, "name")
+        if (val == '') {
+          this.$delete(this.selectedParameter.metadata, 'name');
         }
 
         this.$forceUpdate();
-      }
+      },
     },
     vModelParameterMetadataDescription: {
-      get: function () {
-        if (typeof this.selectedParameter.metadata !== "undefined") {
-          if (typeof this.selectedParameter.metadata.description !== "undefined") {
+      get() {
+        if (typeof this.selectedParameter.metadata !== 'undefined') {
+          if (typeof this.selectedParameter.metadata.description !== 'undefined') {
             return this.selectedParameter.metadata.description;
           }
         }
-        return "";
+        return '';
       },
-      set: function (val) {
-        if (typeof this.selectedParameter.metadata === "undefined") {
-          this.$set(this.selectedParameter, "metadata", { "description": val });
+      set(val) {
+        if (typeof this.selectedParameter.metadata === 'undefined') {
+          this.$set(this.selectedParameter, 'metadata', { description: val });
         } else {
-          this.$set(this.selectedParameter.metadata, "description", val);
+          this.$set(this.selectedParameter.metadata, 'description', val);
         }
 
         // if val is empty, remove object from ct
-        if (val == "") {
-          this.$delete(this.selectedParameter.metadata, "description")
+        if (val == '') {
+          this.$delete(this.selectedParameter.metadata, 'description');
         }
 
         this.$forceUpdate();
-      }
+      },
     },
     vModelParameterMaxlength: {
-      get: function () {
-        if (typeof this.selectedParameter.maxlength !== "undefined") {
+      get() {
+        if (typeof this.selectedParameter.maxlength !== 'undefined') {
           return this.selectedParameter.maxlength;
         }
-        return "";
+        return '';
       },
-      set: function (val) {
-
+      set(val) {
         let newValue = parseFloat(val);
 
         if (isNaN(newValue)) {
           // set to old value, if input was not null
-          if (typeof this.selectedParameter !== "undefined" && val !== "") {
+          if (typeof this.selectedParameter !== 'undefined' && val !== '') {
             newValue = this.selectedParameter.maxlength;
           // set to old value if new char was string not number
-          } else if (typeof this.selectedParameter != "undefined" && val.length > 0) {
+          } else if (typeof this.selectedParameter !== 'undefined' && val.length > 0) {
             newValue = this.selectedParameter.maxlength;
           // else set value to null
           } else {
@@ -1635,35 +1632,35 @@ export default {
           }
         }
 
-        this.$set(this.selectedParameter, "maxlength", newValue);
+        this.$set(this.selectedParameter, 'maxlength', newValue);
 
         // if val is empty, remove object from ct
-        if (val == "") {
-          this.$delete(this.selectedParameter, "maxlength")
+        if (val == '') {
+          this.$delete(this.selectedParameter, 'maxlength');
         }
 
         this.$forceUpdate();
-      }
-    }
+      },
+    },
   },
   watch: {
     computationTemplate: {
-      handler: function () {
+      handler() {
         // reset iFrame, if computation task is modified
-        let iFrameDiv = document.getElementById("iframe-div")
-        iFrameDiv.innerHTML = ""
+        const iFrameDiv = document.getElementById('iframe-div');
+        iFrameDiv.innerHTML = '';
 
         // check if properties are empty and delete
         for (const [key, value] of Object.entries(this.computationTemplate.configuration)) {
-          if (value == "") {
-            this.$delete(this.computationTemplate.configuration, key)
+          if (value == '') {
+            this.$delete(this.computationTemplate.configuration, key);
           }
         }
 
         // TODO: check if metadata.output is empty and delete
 
         // update generated CT in Vuex-Store
-        this.$store.commit("updateGeneratedComputationTemplate", this.computationTemplate)
+        this.$store.commit('updateGeneratedComputationTemplate', this.computationTemplate);
 
         // reset validation as is is no longer up-to-date
         this.validationResult = null;
@@ -1671,35 +1668,34 @@ export default {
         this.validationArgsResult = null;
         this.validationRunning = false;
 
-        this.$forceUpdate()
+        this.$forceUpdate();
       },
-      deep: true
+      deep: true,
     },
   },
   methods: {
     // Make the function wait until the connection is made...
-    waitForSocketConnection: function(context, socket, callback) {
-      setTimeout(
-        function () {
-          if (socket.readyState === 1) {
-            if (callback != null) {
-              callback()
-            }
-          } else {
-            context.waitForSocketConnection(context, socket, callback)
+    waitForSocketConnection(context, socket, callback) {
+      setTimeout(() => {
+        if (socket.readyState === 1) {
+          if (callback != null) {
+            callback();
           }
-        }, 5) // wait 5 milisecond for the connection...
+        } else {
+          context.waitForSocketConnection(context, socket, callback);
+        }
+      }, 5); // wait 5 milisecond for the connection...
     },
-    sendWaiting: function(msg) {
+    sendWaiting(msg) {
       this.waitForSocketConnection(this, this.ws, () => {
-        this.ws.send(msg)
-      })
+        this.ws.send(msg);
+      });
     },
     paramAccordeon(id) {
-      return id + "param";
+      return `${id}param`;
     },
     contentAccordeon(id) {
-      return id + "content";
+      return `${id}content`;
     },
     onInsert(event, isPart, part) {
       if (isPart) {
@@ -1709,160 +1705,160 @@ export default {
       }
     },
     onFileDrop(e) {
-      if (e.data === "file") {
-        let file = {
-          "identifier" : this.uuid(),
-          "path" : "",
-          "metadata" : {
-            "syntaxHighlighting" : "text"
+      if (e.data === 'file') {
+        const file = {
+          identifier: this.uuid(),
+          path: '',
+          metadata: {
+            syntaxHighlighting: 'text',
           },
-          "parts": []
+          parts: [],
         };
         this.computationTemplate.files.push(file);
         // add possibility to add "parts"
         this.componentsCommand = this.componentsPart.concat(this.componentsCommand);
       } else {
         // add commandline parameters
-        if (typeof this.computationTemplate.parameters === "undefined") {
+        if (typeof this.computationTemplate.parameters === 'undefined') {
           this.computationTemplate.parameters = [];
           // remove possibility to add commandline params
-          this.componentsFiles = ["file"];
+          this.componentsFiles = ['file'];
           this.$forceUpdate();
         }
       }
-
     },
     onPartDrop(e, file) {
-      let part = {
-        "identifier" : this.uuid(),
-        "access" : "modifiable",
-        "content" : ""
-      }
+      const part = {
+        identifier: this.uuid(),
+        access: 'modifiable',
+        content: '',
+      };
       file.parts.push(part);
     },
     onParameterDrop(e, part = null) {
       let parameter = {};
-      if (e.data === "input_field") {
+      if (e.data === 'input_field') {
         parameter = {
-          "mode" : "any",
-          "identifier" : this.uuid(),
-          "metadata" : {
-            "guiType" : e.data,
-            "type" : "",
-            "name": "Name",
-            "description": "Add your description here..."
+          mode: 'any',
+          identifier: this.uuid(),
+          metadata: {
+            guiType: e.data,
+            type: '',
+            name: 'Name',
+            description: 'Add your description here...',
           },
-          "default" : [ "" ],
-          "validation" : "none",
+          default: [''],
+          validation: 'none',
         };
-      } else if (e.data === "slider") {
+      } else if (e.data === 'slider') {
         parameter = {
-          "mode" : "any",
-          "identifier" : this.uuid(),
-          "metadata" : {
-            "guiType" : e.data,
-            "name": "Name",
-            "description": "Add your description here...",
-            "vertical" : false
+          mode: 'any',
+          identifier: this.uuid(),
+          metadata: {
+            guiType: e.data,
+            name: 'Name',
+            description: 'Add your description here...',
+            vertical: false,
           },
-          "default" : [ 0 ],
-          "min": 0,
-          "max" : 100,
-          "step" : 1,
-          "validation" : "none",
+          default: [0],
+          min: 0,
+          max: 100,
+          step: 1,
+          validation: 'none',
         };
-      } else if (e.data === "editor") {
+      } else if (e.data === 'editor') {
         parameter = {
-          "mode" : "any",
-          "identifier" : this.uuid(),
-          "metadata" : {
-            "guiType" : e.data,
-            "name": "Name",
-            "description": "Add your description here..."
+          mode: 'any',
+          identifier: this.uuid(),
+          metadata: {
+            guiType: e.data,
+            name: 'Name',
+            description: 'Add your description here...',
           },
-          "default" : [ "" ],
-          "validation" : "none",
+          default: [''],
+          validation: 'none',
         };
-      } else if (e.data === "checkbox") {
+      } else if (e.data === 'checkbox') {
         parameter = {
-          "mode" : "fixed",
-          "identifier" : this.uuid(),
-          "metadata" : {
-            "guiType" : e.data,
-            "name": "Name",
-            "description": "Add your description here..."
+          mode: 'fixed',
+          identifier: this.uuid(),
+          metadata: {
+            guiType: e.data,
+            name: 'Name',
+            description: 'Add your description here...',
           },
-          "options" : [
+          options: [
             {
-              "value": "value",
-              "text": "label",
-              "selected": false,
-              "disabled": false
-            }
+              value: 'value',
+              text: 'label',
+              selected: false,
+              disabled: false,
+            },
           ],
-          "validation" : "anyof",
+          validation: 'anyof',
         };
-      } else if (e.data === "radio") {
+      } else if (e.data === 'radio') {
         parameter = {
-          "mode" : "fixed",
-          "identifier" : this.uuid(),
-          "metadata" : {
-            "guiType" : e.data,
-            "name": "Name",
-            "description": "Add your description here..."
+          mode: 'fixed',
+          identifier: this.uuid(),
+          metadata: {
+            guiType: e.data,
+            name: 'Name',
+            description: 'Add your description here...',
           },
-          "options" : [
+          options: [
             {
-              "value": "value",
-              "text": "label",
-              "selected": false,
-              "disabled": false
-            }
+              value: 'value',
+              text: 'label',
+              selected: false,
+              disabled: false,
+            },
           ],
-          "validation" : "oneof",
+          validation: 'oneof',
         };
-      } else if (e.data === "dropdown") {
+      } else if (e.data === 'dropdown') {
         parameter = {
-          "mode" : "fixed",
-          "identifier" : this.uuid(),
-          "metadata" : {
-            "guiType" : e.data,
-            "name": "Name",
-            "description": "Add your description here..."
+          mode: 'fixed',
+          identifier: this.uuid(),
+          metadata: {
+            guiType: e.data,
+            name: 'Name',
+            description: 'Add your description here...',
           },
-          "options" : [
+          options: [
             {
-              "value": "value",
-              "text": "label",
-              "selected": false,
-              "disabled": false
-            }
+              value: 'value',
+              text: 'label',
+              selected: false,
+              disabled: false,
+            },
           ],
-          "validation" : "oneof",
+          validation: 'oneof',
         };
-      } else if (e.data === "toggle") {
+      } else if (e.data === 'toggle') {
         parameter = {
-          "mode" : "fixed",
-          "identifier" : this.uuid(),
-          "metadata" : {
-            "guiType" : e.data,
-            "name": "Name",
-            "description": "Add your description here..."
+          mode: 'fixed',
+          identifier: this.uuid(),
+          metadata: {
+            guiType: e.data,
+            name: 'Name',
+            description: 'Add your description here...',
           },
-          "options" : [
+          options: [
             {
-              "value": "value",
-              "text": "label",
-              "selected": false,
-              "disabled": false
-            }
+              value: 'value',
+              text: 'label',
+              selected: false,
+              disabled: false,
+            },
           ],
-          "validation" : "anyof",
+          validation: 'anyof',
         };
       } else {
         parameter = {
-          "identifier" : this.uuid(),
-          "metadata" : { "guiType" : e.data}}
+          identifier: this.uuid(),
+          metadata: { guiType: e.data },
+        };
       }
       // if part in set, add parameter to part, else add it to commanline parameters
       if (part !== null) {
@@ -1873,10 +1869,10 @@ export default {
       this.$forceUpdate();
     },
     remove(n) {
-      let index = this.numbers.indexOf(n);
+      const index = this.numbers.indexOf(n);
       this.numbers.splice(index, 1);
     },
-    openWindow: function(event, type, content) {
+    openWindow(event, type, content) {
       event.stopPropagation();
       this.closePreferences();
       this.preferences = true;
@@ -1892,13 +1888,13 @@ export default {
       } else if (type === 'commands') {
         this.showCommands = true;
       } else {
-        if (this.computationTemplate.identifier == "") {
+        if (this.computationTemplate.identifier == '') {
           this.computationTemplate.identifier = this.uuid();
         }
         this.showTemplate = true;
       }
     },
-    closePreferences: function() {
+    closePreferences() {
       this.preferences = false;
       this.selectedParameter = {};
       this.selectedPart = {};
@@ -1910,45 +1906,45 @@ export default {
       this.showCommands = false;
     },
     /** create uuid for the parameters */
-    uuid: function () {
+    uuid() {
       function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
           .toString(16)
           .substring(1);
       }
       return (
-        s4() +
-        s4() +
-        "-" +
-        s4() +
-        "-" +
-        s4() +
-        "-" +
-        s4() +
-        "-" +
-        s4() +
-        s4() +
-        s4()
+        `${s4()
+        + s4()
+        }-${
+          s4()
+        }-${
+          s4()
+        }-${
+          s4()
+        }-${
+          s4()
+        }${s4()
+        }${s4()}`
       );
     },
-    addOrRemoveParameters: function(selectedPart) {
-      if (selectedPart.access === "template" && (typeof selectedPart.parameters === "undefined")) {
-        this.$set(selectedPart, "parameters", []);
-      } else if (selectedPart.access !== "template") {
+    addOrRemoveParameters(selectedPart) {
+      if (selectedPart.access === 'template' && (typeof selectedPart.parameters === 'undefined')) {
+        this.$set(selectedPart, 'parameters', []);
+      } else if (selectedPart.access !== 'template') {
         delete selectedPart.parameters;
       }
     },
     /**
      * Delete Parameter from part or command line arguments and rerender
      */
-    removeParameter: function(event, item, isInPart = true) {
+    removeParameter(event, item, isInPart = true) {
       event.stopPropagation();
       if (isInPart) {
-        for (var file in this.computationTemplate.files) {
-          for (var part in this.computationTemplate.files[file].parts) {
-            var currentPart = this.computationTemplate.files[file].parts[part];
-            for (var parameter in currentPart.parameters) {
-              let currentParameter = currentPart.parameters[parameter];
+        for (const file in this.computationTemplate.files) {
+          for (const part in this.computationTemplate.files[file].parts) {
+            const currentPart = this.computationTemplate.files[file].parts[part];
+            for (const parameter in currentPart.parameters) {
+              const currentParameter = currentPart.parameters[parameter];
               if (currentParameter.identifier === item.identifier) {
                 delete this.computationTemplate.files[file].parts[part].parameters.splice(parameter, 1);
                 this.closePreferences();
@@ -1959,8 +1955,8 @@ export default {
           }
         }
       } else {
-        for (let argument in this.computationTemplate.parameters) {
-          let currentParameter = this.computationTemplate.parameters[argument];
+        for (const argument in this.computationTemplate.parameters) {
+          const currentParameter = this.computationTemplate.parameters[argument];
           if (currentParameter.identifier === item.identifier) {
             delete this.computationTemplate.parameters.splice(argument, 1);
             this.closePreferences();
@@ -1974,9 +1970,9 @@ export default {
     /**
      * Delete file from json and rerender
      */
-    removeFile: function(event, item) {
+    removeFile(event, item) {
       event.stopPropagation();
-      for (let fileIndex in this.computationTemplate.files) {
+      for (const fileIndex in this.computationTemplate.files) {
         if (this.computationTemplate.files[fileIndex].identifier == item.identifier) {
           delete this.computationTemplate.files.splice(fileIndex, 1);
         }
@@ -1987,7 +1983,7 @@ export default {
 
       // if there are no files, remove ability to add parts
       if (this.computationTemplate.files.length == 0) {
-        this.componentsCommand = ["checkbox", "radio", "dropdown", "toggle"]
+        this.componentsCommand = ['checkbox', 'radio', 'dropdown', 'toggle'];
       }
 
       this.$forceUpdate();
@@ -1995,10 +1991,10 @@ export default {
     /**
      * Delete part from json and rerender
      */
-    removePart: function(event, item) {
+    removePart(event, item) {
       event.stopPropagation();
-      for (let fileIndex in this.computationTemplate.files) {
-        for (let partIndex in this.computationTemplate.files[fileIndex].parts) {
+      for (const fileIndex in this.computationTemplate.files) {
+        for (const partIndex in this.computationTemplate.files[fileIndex].parts) {
           if (this.computationTemplate.files[fileIndex].parts[partIndex].identifier == item.identifier) {
             delete this.computationTemplate.files[fileIndex].parts.splice(partIndex, 1);
           }
@@ -2012,16 +2008,16 @@ export default {
     /**
      * Delete commandline args from json and rerender
      */
-    removeCommandlineArgs: function(event) {
+    removeCommandlineArgs(event) {
       event.stopPropagation();
       delete this.computationTemplate.parameters;
-      this.componentsFiles.push("commandline arguments")
+      this.componentsFiles.push('commandline arguments');
       this.closePreferences();
       this.preferences = true;
       this.showTemplate = true;
       this.$forceUpdate();
     },
-    removeConfig: function(event, isCsv, config) {
+    removeConfig(event, isCsv, config) {
       event.stopPropagation();
       let configObject;
       if (isCsv) {
@@ -2029,16 +2025,16 @@ export default {
       } else {
         configObject = this.computationTemplate.metadata.output.vtk;
       }
-      for (let configItem in configObject) {
+      for (const configItem in configObject) {
         if (configObject[configItem].basename == config.basename) {
-          this.$delete(configObject, configItem)
+          this.$delete(configObject, configItem);
 
           // if csv-object is empty, delete it
           if (configObject.length === 0) {
             if (isCsv) {
-              this.$delete(this.computationTemplate.metadata.output, "csv")
+              this.$delete(this.computationTemplate.metadata.output, 'csv');
             } else {
-              this.$delete(this.computationTemplate.metadata.output, "vtk")
+              this.$delete(this.computationTemplate.metadata.output, 'vtk');
             }
           }
 
@@ -2047,20 +2043,20 @@ export default {
       }
 
       // delete metadata.output if empty
-      if (typeof this.computationTemplate.metadata.output.viewer == "undefined" && typeof this.computationTemplate.metadata.output.csv == "undefined" && typeof this.computationTemplate.metadata.output.vtk == "undefined") {
-        this.$delete(this.computationTemplate.metadata, "output")
+      if (typeof this.computationTemplate.metadata.output.viewer === 'undefined' && typeof this.computationTemplate.metadata.output.csv === 'undefined' && typeof this.computationTemplate.metadata.output.vtk === 'undefined') {
+        this.$delete(this.computationTemplate.metadata, 'output');
       }
 
       this.$forceUpdate();
     },
-    removePlot: function(event, csv, plotConf) {
+    removePlot(event, csv, plotConf) {
       event.stopPropagation();
-      let configObject = this.computationTemplate.metadata.output.csv;
-      for (let configItem in configObject) {
+      const configObject = this.computationTemplate.metadata.output.csv;
+      for (const configItem in configObject) {
         if (configObject[configItem].basename == csv.basename) {
-          for (let plot in configObject[configItem].plots) {
+          for (const plot in configObject[configItem].plots) {
             if (configObject[configItem].plots[plot].key == plotConf.key) {
-              this.$delete(configObject[configItem].plots, plot)
+              this.$delete(configObject[configItem].plots, plot);
             }
           }
         }
@@ -2071,35 +2067,35 @@ export default {
      * input_field
      * adjust parts of input-field json, depending on type
      */
-    adjustInputType: function(item) {
-      let type = item.metadata.type;
-      if (type == "text") {
-        this.$delete(item, "min");
-        this.$delete(item, "max");
-        this.$delete(item, "step");
-      } else if (type == "number") {
-        this.$delete(item, "maxlength");
+    adjustInputType(item) {
+      const { type } = item.metadata;
+      if (type == 'text') {
+        this.$delete(item, 'min');
+        this.$delete(item, 'max');
+        this.$delete(item, 'step');
+      } else if (type == 'number') {
+        this.$delete(item, 'maxlength');
       }
-      this.$set(item.default, 0, "");
+      this.$set(item.default, 0, '');
     },
     /**
      * validation - type: pattern
      * adjust whether pattern-object exists in json
      */
-    adjustPatternExistence: function(item) {
-      let validation = item.validation;
-      if (validation != "pattern") {
-        delete item["pattern"];
+    adjustPatternExistence(item) {
+      const { validation } = item;
+      if (validation != 'pattern') {
+        delete item.pattern;
       }
       this.$forceUpdate();
     },
-    addConfig: function() {
-      let env = this.computationTemplate.environment;
-      if (typeof this.computationTemplate.configuration == "undefined") {
-        this.$set(this.computationTemplate, "configuration", {});
+    addConfig() {
+      const env = this.computationTemplate.environment;
+      if (typeof this.computationTemplate.configuration === 'undefined') {
+        this.$set(this.computationTemplate, 'configuration', {});
       }
-      if (typeof this.computationTemplate.configuration["running.timelimitInSeconds"] == "undefined") {
-        this.$set(this.computationTemplate.configuration, "running.timelimitInSeconds", 0);
+      if (typeof this.computationTemplate.configuration['running.timelimitInSeconds'] === 'undefined') {
+        this.$set(this.computationTemplate.configuration, 'running.timelimitInSeconds', 0);
       }
       // TODO: Add environments as they are supported by the backend
       switch (env) {
@@ -2139,30 +2135,30 @@ export default {
         //   this.$set(this.computationTemplate.configuration, "checking.allowedCalls", "");
         //   this.$set(this.computationTemplate.configuration, "running.stdinFilename", "");
         //   break;
-        case "Container":
-          if (typeof this.computationTemplate.configuration["running.commandLineArguments"] == "undefined") {
-            this.$set(this.computationTemplate.configuration, "running.commandLineArguments", "");
+        case 'Container':
+          if (typeof this.computationTemplate.configuration['running.commandLineArguments'] === 'undefined') {
+            this.$set(this.computationTemplate.configuration, 'running.commandLineArguments', '');
           }
-          if (typeof this.computationTemplate.configuration["running.entrypoint"] == "undefined") {
-            this.$set(this.computationTemplate.configuration, "running.entrypoint", "");
+          if (typeof this.computationTemplate.configuration['running.entrypoint'] === 'undefined') {
+            this.$set(this.computationTemplate.configuration, 'running.entrypoint', '');
           }
-          if (typeof this.computationTemplate.configuration["running.intermediateFilesPattern"] == "undefined") {
-            this.$set(this.computationTemplate.configuration, "running.intermediateFilesPattern", [ "" ]);
+          if (typeof this.computationTemplate.configuration['running.intermediateFilesPattern'] === 'undefined') {
+            this.$set(this.computationTemplate.configuration, 'running.intermediateFilesPattern', ['']);
           }
-          if (typeof this.computationTemplate.configuration["running.userId"] == "undefined") {
-            this.$set(this.computationTemplate.configuration, "running.userId", 0);
+          if (typeof this.computationTemplate.configuration['running.userId'] === 'undefined') {
+            this.$set(this.computationTemplate.configuration, 'running.userId', 0);
           }
-          if (typeof this.computationTemplate.configuration["resources.image"] == "undefined") {
-            this.$set(this.computationTemplate.configuration, "resources.image", "");
+          if (typeof this.computationTemplate.configuration['resources.image'] === 'undefined') {
+            this.$set(this.computationTemplate.configuration, 'resources.image', '');
           }
-          if (typeof this.computationTemplate.configuration["resources.volume"] == "undefined") {
-            this.$set(this.computationTemplate.configuration, "resources.volume", "");
+          if (typeof this.computationTemplate.configuration['resources.volume'] === 'undefined') {
+            this.$set(this.computationTemplate.configuration, 'resources.volume', '');
           }
-          if (typeof this.computationTemplate.configuration["resources.memory"] == "undefined") {
-            this.$set(this.computationTemplate.configuration, "resources.memory", "");
+          if (typeof this.computationTemplate.configuration['resources.memory'] === 'undefined') {
+            this.$set(this.computationTemplate.configuration, 'resources.memory', '');
           }
-          if (typeof this.computationTemplate.configuration["resources.numCPUs"] == "undefined") {
-            this.$set(this.computationTemplate.configuration, "resources.numCPUs", 1);
+          if (typeof this.computationTemplate.configuration['resources.numCPUs'] === 'undefined') {
+            this.$set(this.computationTemplate.configuration, 'resources.numCPUs', 1);
           }
           break;
         // case "DuMuX":
@@ -2173,80 +2169,79 @@ export default {
     },
     /** Check if property exists in current config, or if it is undefined */
     ifConfigPropertyExists(property) {
-      let config = this.computationTemplate.configuration;
-      if (typeof config[property] !== "undefined") {
+      const config = this.computationTemplate.configuration;
+      if (typeof config[property] !== 'undefined') {
         return true;
       }
       return false;
     },
-    addCsvConfig: function () {
-      let outputConfig = {
-        "basename": "csv-basename",
-        "xlabel" : {
-          "key" : "x-key",
-          "label" : "x-label"
+    addCsvConfig() {
+      const outputConfig = {
+        basename: 'csv-basename',
+        xlabel: {
+          key: 'x-key',
+          label: 'x-label',
         },
-        "plots": [
+        plots: [
           {
-            "key" : "y-key",
-            "label" : "y-label"
-          }
-        ]
+            key: 'y-key',
+            label: 'y-label',
+          },
+        ],
       };
-      if (typeof this.computationTemplate.metadata == "undefined") {
-        this.$set(this.computationTemplate, "metadata", { });
+      if (typeof this.computationTemplate.metadata === 'undefined') {
+        this.$set(this.computationTemplate, 'metadata', { });
       }
-      if (typeof this.computationTemplate.metadata.output == "undefined") {
-        this.$set(this.computationTemplate.metadata, "output", { });
+      if (typeof this.computationTemplate.metadata.output === 'undefined') {
+        this.$set(this.computationTemplate.metadata, 'output', { });
       }
-      if (typeof this.computationTemplate.metadata.output.csv == "undefined") {
-        this.$set(this.computationTemplate.metadata.output, "csv", []);
+      if (typeof this.computationTemplate.metadata.output.csv === 'undefined') {
+        this.$set(this.computationTemplate.metadata.output, 'csv', []);
       }
       this.computationTemplate.metadata.output.csv.push(outputConfig);
     },
-    addCsvPlot: function (csvConfigIndex) {
-      let plotConfig = {
-        "key" : "y-key",
-        "label" : "y-label"
+    addCsvPlot(csvConfigIndex) {
+      const plotConfig = {
+        key: 'y-key',
+        label: 'y-label',
       };
-      if (typeof this.computationTemplate.metadata.output.csv[csvConfigIndex].plots == "undefined") {
-        this.$set(this.computationTemplate.metadata.output.csv[csvConfigIndex], "plots", []);
+      if (typeof this.computationTemplate.metadata.output.csv[csvConfigIndex].plots === 'undefined') {
+        this.$set(this.computationTemplate.metadata.output.csv[csvConfigIndex], 'plots', []);
       }
       this.computationTemplate.metadata.output.csv[csvConfigIndex].plots.push(plotConfig);
     },
-    addVtkConfig: function () {
-      let outputConfig = {
-        "basename": "vtk-basename"
+    addVtkConfig() {
+      const outputConfig = {
+        basename: 'vtk-basename',
       };
-      if (typeof this.computationTemplate.metadata == "undefined") {
-        this.$set(this.computationTemplate, "metadata", { });
+      if (typeof this.computationTemplate.metadata === 'undefined') {
+        this.$set(this.computationTemplate, 'metadata', { });
       }
-      if (typeof this.computationTemplate.metadata.output == "undefined") {
-        this.$set(this.computationTemplate.metadata, "output", { });
+      if (typeof this.computationTemplate.metadata.output === 'undefined') {
+        this.$set(this.computationTemplate.metadata, 'output', { });
       }
-      if (typeof this.computationTemplate.metadata.output.vtk == "undefined") {
-        this.$set(this.computationTemplate.metadata.output, "vtk", []);
+      if (typeof this.computationTemplate.metadata.output.vtk === 'undefined') {
+        this.$set(this.computationTemplate.metadata.output, 'vtk', []);
       }
       this.computationTemplate.metadata.output.vtk.push(outputConfig);
     },
-    updateContent: function (item, event) {
-      //this.computationTemplate.files[fileIndex].parts[partIndex].content = event
+    updateContent(item, event) {
+      // this.computationTemplate.files[fileIndex].parts[partIndex].content = event
       item.content = event;
     },
-    setEditorValue: function (event) {
+    setEditorValue(event) {
       this.$set(this.selectedParameter.default, 0, event);
       this.$forceUpdate();
     },
-    getNumberofFields: function (paramId) {
+    getNumberofFields(paramId) {
       if (this.valueNumbers.get(paramId) == undefined) {
         this.valueNumbers.set(paramId, 1);
         return 1;
-      } else {
-        return this.valueNumbers.get(paramId);
       }
+      return this.valueNumbers.get(paramId);
     },
-    setNumberOfFields: function (paramId, newValue) {
-      if (this.selectedParameter.metadata.guiType == "checkbox") {
+    setNumberOfFields(paramId, newValue) {
+      if (this.selectedParameter.metadata.guiType == 'checkbox') {
         if (newValue < this.getNumberofFields(paramId)) {
           this.selectedParameter.options.pop();
           this.$forceUpdate();
@@ -2255,14 +2250,13 @@ export default {
       this.valueNumbers.set(paramId, newValue);
       this.$forceUpdate();
     },
-    getNumberofConfigFields: function (configName) {
+    getNumberofConfigFields(configName) {
       if (this.computationTemplate.configuration[configName] == undefined) {
         return 0;
-      } else {
-        return this.computationTemplate.configuration[configName].length;
       }
+      return this.computationTemplate.configuration[configName].length;
     },
-    setNumberOfConfigFields: function (configName, newValue) {
+    setNumberOfConfigFields(configName, newValue) {
       if (newValue < this.getNumberofConfigFields(configName)) {
         this.computationTemplate.configuration[configName].pop();
         if (newValue == 0) {
@@ -2271,31 +2265,29 @@ export default {
         this.$forceUpdate();
       } else if (newValue != 0) {
         if (this.getNumberofConfigFields(configName) == 0) {
-          this.computationTemplate.configuration[configName] = [ "" ];
+          this.computationTemplate.configuration[configName] = [''];
         } else {
-          this.computationTemplate.configuration[configName].push("");
+          this.computationTemplate.configuration[configName].push('');
         }
       }
       this.$forceUpdate();
     },
-    getConfigvModel: function (configName, index = 0) {
+    getConfigvModel(configName, index = 0) {
       if (index != null) {
-        if (typeof this.computationTemplate.configuration[configName] != "undefined") {
+        if (typeof this.computationTemplate.configuration[configName] !== 'undefined') {
           if (this.computationTemplate.configuration[configName].length > 0) {
             return this.computationTemplate.configuration[configName][index];
           }
         }
-      } else {
-        if (typeof this.computationTemplate.configuration[configName] != "undefined") {
-            return this.computationTemplate.configuration[configName];
-        }
+      } else if (typeof this.computationTemplate.configuration[configName] !== 'undefined') {
+        return this.computationTemplate.configuration[configName];
       }
-      return "";
+      return '';
     },
-    setConfigvModel: function (configName, val, index = 0, isNumericalValue = false) {
+    setConfigvModel(configName, val, index = 0, isNumericalValue = false) {
       // if config element is an array
       if (index != null) {
-        if (typeof this.computationTemplate.configuration[configName] != "undefined") {
+        if (typeof this.computationTemplate.configuration[configName] !== 'undefined') {
           this.$set(this.computationTemplate.configuration[configName], index, val.target.value);
         } else {
           this.computationTemplate.configuration[configName] = [val.target.value];
@@ -2308,14 +2300,14 @@ export default {
         // if the value has to be a number, check it
         if (isNumericalValue) {
           newValue = parseFloat(val.target.value);
-          if(isNaN(newValue)) {
+          if (isNaN(newValue)) {
             // set to old value, if input was not null
-            console.log(val.target.value)
-            if (typeof this.computationTemplate.configuration[configName] !== "undefined" && val.target.value !== "") {
+            console.log(val.target.value);
+            if (typeof this.computationTemplate.configuration[configName] !== 'undefined' && val.target.value !== '') {
               newValue = this.computationTemplate.configuration[configName];
             // set to old value if new char was string not number
-            } else if (typeof this.computationTemplate.configuration[configName] !== "undefined" && val.target.value === "") {
-              newValue = null//this.computationTemplate.configuration[configName];
+            } else if (typeof this.computationTemplate.configuration[configName] !== 'undefined' && val.target.value === '') {
+              newValue = null;// this.computationTemplate.configuration[configName];
             // else set value to null
             } else {
               newValue = null;
@@ -2325,36 +2317,36 @@ export default {
           newValue = val.target.value;
         }
 
-        console.log(newValue)
+        console.log(newValue);
 
         // set existing value or create config-element and set it
-        if (typeof this.computationTemplate.configuration[configName] != "undefined") {
+        if (typeof this.computationTemplate.configuration[configName] !== 'undefined') {
           this.$set(this.computationTemplate.configuration, configName, newValue);
         } else {
           this.computationTemplate.configuration[configName] = newValue;
         }
 
         // delete config element if set to null or empty string
-        if (newValue === null || newValue === "") {
+        if (newValue === null || newValue === '') {
           this.$set(this.computationTemplate.configuration, configName, newValue);
           this.$delete(this.computationTemplate.configuration, configName);
         }
       }
       this.$forceUpdate();
     },
-    getSlidervModel: function (index) {
+    getSlidervModel(index) {
       if (this.selectedParameter.default.length > 0) {
         return this.selectedParameter.default[index];
       }
       return NaN;
     },
-    setSlidervModel: function (val, index) {
-      if (typeof this.selectedParameter !== "undefined") {
-        if (val.target.value === "") {
-          this.$set(this.selectedParameter.default, index, "");
+    setSlidervModel(val, index) {
+      if (typeof this.selectedParameter !== 'undefined') {
+        if (val.target.value === '') {
+          this.$set(this.selectedParameter.default, index, '');
         } else {
-          console.log(val.target.value)
-          if (val.target.value === "0.0") {
+          console.log(val.target.value);
+          if (val.target.value === '0.0') {
             this.$set(this.selectedParameter.default, index, val.target.value);
           } else {
             this.$set(this.selectedParameter.default, index, parseFloat(val.target.value));
@@ -2363,115 +2355,111 @@ export default {
       }
       this.$forceUpdate();
     },
-    getFixedParamvModel: function (index, whatToGet = "value") {
+    getFixedParamvModel(index, whatToGet = 'value') {
       if (this.selectedParameter.options.length > 0) {
-        if (typeof this.selectedParameter.options[index] == "undefined") {
-          let option = {
-              "value" : "",
-              "text" : "",
-              "selected" : false,
-              "disabled" : false
-            };
+        if (typeof this.selectedParameter.options[index] === 'undefined') {
+          const option = {
+            value: '',
+            text: '',
+            selected: false,
+            disabled: false,
+          };
           this.selectedParameter.options.push(option);
         }
         return this.selectedParameter.options[index][whatToGet];
       }
-      return "";
+      return '';
     },
     /**
      * Sets value, selected or disabled in options-object
      * whatToSet: "value" || "selected" || "disabled"
      */
-    setFixedParamvModel: function (val, index, whatToSet) {
-      if (typeof this.selectedParameter !== "undefined") {
-        if (typeof this.selectedParameter.options[index] == "undefined") {
-          let option = {
-              "value" : "",
-              "selected" : false,
-              "disabled" : false
-            };
+    setFixedParamvModel(val, index, whatToSet) {
+      if (typeof this.selectedParameter !== 'undefined') {
+        if (typeof this.selectedParameter.options[index] === 'undefined') {
+          const option = {
+            value: '',
+            selected: false,
+            disabled: false,
+          };
           this.selectedParameter.options.push(option);
         }
         // if selected or disabled, set value as boolean - not as string
-        if (whatToSet == "selected" || whatToSet == "disabled") {
-          let isSetTrue = (val.target.value === 'true');
-          this.$set(this.selectedParameter.options[index] , whatToSet, isSetTrue);
-          if (this.selectedParameter.metadata.guiType === "radio" && isSetTrue) {
-            let radioOptions = this.selectedParameter.options;
-            for (let radioOption in radioOptions) {
+        if (whatToSet == 'selected' || whatToSet == 'disabled') {
+          const isSetTrue = (val.target.value === 'true');
+          this.$set(this.selectedParameter.options[index], whatToSet, isSetTrue);
+          if (this.selectedParameter.metadata.guiType === 'radio' && isSetTrue) {
+            const radioOptions = this.selectedParameter.options;
+            for (const radioOption in radioOptions) {
               if (radioOption != index) {
                 this.$set(radioOptions[radioOption], whatToSet, false);
               }
             }
           }
+        } else if (val.target.value === '' && whatToSet === 'text') {
+          this.$delete(this.selectedParameter.options[index], 'text');
         } else {
-          if (val.target.value === "" && whatToSet === "text") {
-            this.$delete(this.selectedParameter.options[index], "text");
-          } else {
-            this.$set(this.selectedParameter.options[index] , whatToSet, val.target.value);
-          }
+          this.$set(this.selectedParameter.options[index], whatToSet, val.target.value);
         }
         // if dropdown and multiple fields are selected
-        if (this.selectedParameter.metadata.guiType === "dropdown") {
-          let selected = [];
-          for (let opt in this.selectedParameter.options) {
-            let keys = Object.keys(this.selectedParameter.options[opt])
-            if (keys.includes("selected")) {
+        if (this.selectedParameter.metadata.guiType === 'dropdown') {
+          const selected = [];
+          for (const opt in this.selectedParameter.options) {
+            const keys = Object.keys(this.selectedParameter.options[opt]);
+            if (keys.includes('selected')) {
               if (this.selectedParameter.options[opt].selected) {
                 selected.push(opt);
               }
             }
           }
           if (selected.length > 1) {
-            this.$set(this.selectedParameter, "multiple", true);
+            this.$set(this.selectedParameter, 'multiple', true);
           } else {
-            this.$set(this.selectedParameter, "multiple", false);
+            this.$set(this.selectedParameter, 'multiple', false);
           }
         }
         this.$forceUpdate();
         return this.slidervModel;
       }
     },
-    getRadioSelected: function(index) {
-      if (typeof this.selectedParameter.options[index] != "undefined") {
+    getRadioSelected(index) {
+      if (typeof this.selectedParameter.options[index] !== 'undefined') {
         return this.selectedParameter.options[index].selected;
       }
       return false;
     },
-    getvModelTemplateMetadata: function (propertyName) {
-        if (typeof this.computationTemplate.metadata == "undefined") {
-          this.$set(this.computationTemplate, "metadata", { });
-        }
-        if (typeof this.computationTemplate.metadata[propertyName] != "undefined") {
-          return this.computationTemplate.metadata[propertyName];
-        }
-        return "";
-      },
-    setvModelTemplateMetadata: function (propertyName, val) {
-      if (val.target.value != "") {
-        if (typeof this.computationTemplate.metadata[propertyName] !== "undefined") {
+    getvModelTemplateMetadata(propertyName) {
+      if (typeof this.computationTemplate.metadata === 'undefined') {
+        this.$set(this.computationTemplate, 'metadata', { });
+      }
+      if (typeof this.computationTemplate.metadata[propertyName] !== 'undefined') {
+        return this.computationTemplate.metadata[propertyName];
+      }
+      return '';
+    },
+    setvModelTemplateMetadata(propertyName, val) {
+      if (val.target.value != '') {
+        if (typeof this.computationTemplate.metadata[propertyName] !== 'undefined') {
           this.$set(this.computationTemplate.metadata, propertyName, val.target.value);
           this.$forceUpdate();
-        } else if (typeof this.computationTemplate.metadata == "undefined") {
-          this.$set(this.computationTemplate, "metadata", { });
+        } else if (typeof this.computationTemplate.metadata === 'undefined') {
+          this.$set(this.computationTemplate, 'metadata', { });
           this.$set(this.computationTemplate.metadata, propertyName, val.target.value);
         } else {
           this.$set(this.computationTemplate.metadata, propertyName, val.target.value);
         }
         return this.computationTemplate.metadata[propertyName];
-      } else {
-        // if val is empty delete displayName-element
-        if (typeof this.computationTemplate.metadata[propertyName] !== "undefined") {
-          this.$delete(this.computationTemplate.metadata, propertyName);
-          this.$forceUpdate();
-        }
+      }
+      // if val is empty delete displayName-element
+      if (typeof this.computationTemplate.metadata[propertyName] !== 'undefined') {
+        this.$delete(this.computationTemplate.metadata, propertyName);
+        this.$forceUpdate();
       }
     },
     /**
      * validate computation template and return whether button should be enabled
      */
-    validateJson: function (event, uploaded = false) {
-
+    validateJson(event, uploaded = false) {
       if (!uploaded) {
         this.validationRunning = true;
       }
@@ -2483,71 +2471,69 @@ export default {
 
       // ct validation
       // TODO if environment can be more than "Container" validate depending on that
-      const ajv = new Ajv()
-      const validate = ajv.compile(this.schema)
-      validate(this.computationTemplate)
-      this.validationResult = validate.errors
+      const ajv = new Ajv();
+      const validate = ajv.compile(this.schema);
+      validate(this.computationTemplate);
+      this.validationResult = validate.errors;
 
       // parameter validation
-      let files = this.computationTemplate.files;
-      const paramValidate = ajv.compile(this.paramSchema)
-      for (let file in files) {
-        let parts = files[file].parts;
-        for (let part in parts) {
-          if (typeof parts[part].parameters !== "undefined") {
-            paramValidate(parts[part].parameters)
+      const { files } = this.computationTemplate;
+      const paramValidate = ajv.compile(this.paramSchema);
+      for (const file in files) {
+        const { parts } = files[file];
+        for (const part in parts) {
+          if (typeof parts[part].parameters !== 'undefined') {
+            paramValidate(parts[part].parameters);
             this.validationPartParameterResult = paramValidate.errors;
           }
         }
       }
 
       // commandline arguments validation
-      const commandlineValidate = ajv.compile(this.commandlineArgsSchema)
-      if (typeof this.computationTemplate.parameters !== "undefined" && this.computationTemplate.parameters !== []) {
-        commandlineValidate(this.computationTemplate.parameters)
-        this.validationArgsResult = commandlineValidate.errors
+      const commandlineValidate = ajv.compile(this.commandlineArgsSchema);
+      if (typeof this.computationTemplate.parameters !== 'undefined' && this.computationTemplate.parameters !== []) {
+        commandlineValidate(this.computationTemplate.parameters);
+        this.validationArgsResult = commandlineValidate.errors;
       }
 
       if (!uploaded) {
         // if everything is valid, set validationResult to "Template is Valid!"
         if (this.validationResult == null && this.validationPartParameterResult == null && this.validationArgsResult == null) {
-          this.validationResult = "Template is Valid!";
+          this.validationResult = 'Template is Valid!';
           setTimeout(() => this.validationRunning = false, 2000);
-          this.classValidity = "valid-true";
+          this.classValidity = 'valid-true';
           return true;
         }
 
         setTimeout(() => this.validationRunning = false, 2000);
-        this.classValidity = "valid-false"
-      } else {
-        if (this.validationResult == null && this.validationPartParameterResult == null && this.validationArgsResult == null) {
-          return true;
-        }
+        this.classValidity = 'valid-false';
+      } else if (this.validationResult == null && this.validationPartParameterResult == null && this.validationArgsResult == null) {
+        return true;
       }
       return false;
     },
     /** Check if teacher-frontend was opened by a user that is signed in */
-    isLoggedIn: function() {
-      let appDiv = document.body;
-      let dataMode = appDiv.getAttribute("data-mode");
+    isLoggedIn() {
+      const appDiv = document.body;
+      const dataMode = appDiv.getAttribute('data-mode');
       // if data-mode is set to "create-and-execute", user is logged in (if it is set to "created", the user is not logged in)
-      let loggedIn = ( (dataMode == "create-and-execute")? true : false );
+      const loggedIn = ((dataMode == 'create-and-execute'));
       return loggedIn;
     },
-    startGuide: function() {
-      this.$tours['myTour'].start()
+    startGuide() {
+      this.$tours.myTour.start();
     },
-    /*upload existing Computation Template JSON */
-    uploadCT: function (event) {
-      let iFrameDiv = document.getElementById("iframe-div")
-      iFrameDiv.innerHTML = ""
-      var reader = new FileReader();
+    /* upload existing Computation Template JSON */
+    uploadCT(event) {
+      const iFrameDiv = document.getElementById('iframe-div');
+      iFrameDiv.innerHTML = '';
+      const reader = new FileReader();
       reader.onload = this.onReaderLoad;
       reader.readAsText(event.target.files[0]);
     },
-    /*get json from uploaded file und update DOM */
-    onReaderLoad: function (event) {
-      let obj = JSON.parse(event.target.result);
+    /* get json from uploaded file und update DOM */
+    onReaderLoad(event) {
+      const obj = JSON.parse(event.target.result);
 
       // close preferences of previous template and show cofig of new ct in preferences-window
       this.closePreferences();
@@ -2555,81 +2541,80 @@ export default {
       this.showTemplate = true;
 
       //  add required elements that might be missing
-      if (typeof obj.files !== "undefined") {
-        for (let file in obj.files) {
+      if (typeof obj.files !== 'undefined') {
+        for (const file in obj.files) {
           // add file-identifiers if missing
-          if (typeof obj.files[file].identifier == "undefined") {
-            this.$set(obj.files[file], "identifier", this.uuid())
+          if (typeof obj.files[file].identifier === 'undefined') {
+            this.$set(obj.files[file], 'identifier', this.uuid());
           }
           // add "parts"-elements
-          if (typeof obj.files[file].parts == "undefined") {
-            this.$set(obj.files[file], "parts", []);
+          if (typeof obj.files[file].parts === 'undefined') {
+            this.$set(obj.files[file], 'parts', []);
           }
           // add required elements in parts
-          for (let part in obj.files[file].parts) {
+          for (const part in obj.files[file].parts) {
             // add identifiers if missing
-            if (typeof obj.files[file].parts[part].identifier == "undefined") {
-              this.$set(obj.files[file].parts[part], "identifier", this.uuid())
+            if (typeof obj.files[file].parts[part].identifier === 'undefined') {
+              this.$set(obj.files[file].parts[part], 'identifier', this.uuid());
             }
             // add content if missing
-            if (typeof obj.files[file].parts[part].content == "undefined") {
-              this.$set(obj.files[file].parts[part], "content", "")
+            if (typeof obj.files[file].parts[part].content === 'undefined') {
+              this.$set(obj.files[file].parts[part], 'content', '');
             }
             // if access is already set to template
-            if (typeof obj.files[file].parts[part].access !== "undefined") {
-              if (obj.files[file].parts[part].access === "template") {
+            if (typeof obj.files[file].parts[part].access !== 'undefined') {
+              if (obj.files[file].parts[part].access === 'template') {
                 // add parameters
-                if (typeof obj.files[file].parts[part].parameters == "undefined") {
-                  this.$set(obj.files[file].parts[part], "parameters", [])
+                if (typeof obj.files[file].parts[part].parameters === 'undefined') {
+                  this.$set(obj.files[file].parts[part], 'parameters', []);
                 }
               }
             }
-
           }
         }
       } else {
-        this.$set(obj, "files", []);
+        this.$set(obj, 'files', []);
       }
 
       // add template identifier
-      if (typeof obj.identifier == "undefined") {
-        this.$set(obj, "identifier", this.uuid())
+      if (typeof obj.identifier === 'undefined') {
+        this.$set(obj, 'identifier', this.uuid());
       }
 
       // TODO: Container needs configuration, but other environments might not need it (take that into account as backend supports more)
       // add configutation
-      if (typeof obj.configuration == "undefined") {
-        this.$set(obj, "configuration", {})
+      if (typeof obj.configuration === 'undefined') {
+        this.$set(obj, 'configuration', {});
       }
 
       // TODO: Should also function without metadata as it is not required
       // add metadata if missing
 
       // save current template, as it will be overwritten to perform validation
-      let tmp = this.computationTemplate;
+      const tmp = this.computationTemplate;
       // set generatedTemplate/computationTemplate so validation can be performed
-      this.$store.commit("updateGeneratedComputationTemplate", obj)
-      let isValid = this.validateJson(true)
+      this.$store.commit('updateGeneratedComputationTemplate', obj);
+      const isValid = this.validateJson(true);
       if (!isValid) {
-        this.$alert("Your template is not valid. Thus, it can not be imported!", "Import Error", "error");
-        this.$store.commit("updateGeneratedComputationTemplate", tmp)
+        this.$alert('Your template is not valid. Thus, it can not be imported!', 'Import Error', 'error');
+        this.$store.commit('updateGeneratedComputationTemplate', tmp);
       } else {
-        this.$store.commit("updateGeneratedComputationTemplate", obj)
-        this.signifyChange = !this.signifyChange
+        this.$store.commit('updateGeneratedComputationTemplate', obj);
+        this.signifyChange = !this.signifyChange;
         // set number of options for configuring parameters and commandline arguments
         this.setNumbersOfOptions();
       }
 
       this.$forceUpdate();
     },
-    setNumbersOfOptions: function() {
+    setNumbersOfOptions() {
       // set numbers of parameter-values
-      for (let file in this.computationTemplate.files) {
-        for (let part in this.computationTemplate.files[file].parts) {
-          if (this.computationTemplate.files[file].parts[part].access == "template") {
-            for (let parameter in this.computationTemplate.files[file].parts[part].parameters) {
-              let currentParam = this.computationTemplate.files[file].parts[part].parameters[parameter];
-              if (currentParam.mode == "fixed") {
+      for (const file in this.computationTemplate.files) {
+        for (const part in this.computationTemplate.files[file].parts) {
+          if (this.computationTemplate.files[file].parts[part].access == 'template') {
+            for (const parameter in this.computationTemplate.files[file].parts[part].parameters) {
+              const currentParam = this.computationTemplate.files[file].parts[part].parameters[parameter];
+              if (currentParam.mode == 'fixed') {
                 this.valueNumbers.set(currentParam.identifier, currentParam.options.length);
               }
             }
@@ -2637,82 +2622,81 @@ export default {
         }
       }
       // set number of commandline argument-values
-      if (typeof this.computationTemplate.parameters !== "undefined") {
-        for (let arg in this.computationTemplate.parameters) {
-          if (this.computationTemplate.parameters[arg].mode == "fixed") {
+      if (typeof this.computationTemplate.parameters !== 'undefined') {
+        for (const arg in this.computationTemplate.parameters) {
+          if (this.computationTemplate.parameters[arg].mode == 'fixed') {
             this.valueNumbers.set(this.computationTemplate.parameters[arg].identifier, this.computationTemplate.parameters[arg].options.length);
           }
         }
       }
     },
     /** Run created template in another tab */
-    runTemplate: function() {
+    runTemplate() {
       if (this.validateJson()) {
-        let url = window.location
-        let baseUrl = url.protocol + "//" + url.host + "/"
+        const url = window.location;
+        const baseUrl = `${url.protocol}//${url.host}/`;
 
         // calculate data-template for frontend-preview
-        let file = JSON.stringify(this.computationTemplate);
-        let dataBase64url = base64url(Buffer.from(file).toString());
+        const file = JSON.stringify(this.computationTemplate);
+        const dataBase64url = base64url(Buffer.from(file).toString());
 
-        //baseUrl = "http://localhost:3000/";
-        fetch(baseUrl + "sign", {
+        // baseUrl = "http://localhost:3000/";
+        fetch(`${baseUrl}sign`, {
           method: 'POST',
-          body: dataBase64url
-        }).then(response => {
-          if(response.ok){
+          body: dataBase64url,
+        }).then((response) => {
+          if (response.ok) {
             return response.json();
           }
-            throw new Error('Request failed!');
-        }, networkError => {
+          throw new Error('Request failed!');
+        }, (networkError) => {
           console.log(networkError.message);
-        }).then(jsonResponse => {
+        }).then((jsonResponse) => {
           // get token from sign-endpoint
-          let token = jsonResponse.token;
+          const { token } = jsonResponse;
 
           // set all values in Vuex store
-          this.$store.commit("updateModifiedByTeacher", true);
-          this.$store.commit("updateJsonTemplate", this.computationTemplate)
-          this.$store.commit("updateToken", token);
-          this.$store.commit("updateDataTemplate", dataBase64url);
+          this.$store.commit('updateModifiedByTeacher', true);
+          this.$store.commit('updateJsonTemplate', this.computationTemplate);
+          this.$store.commit('updateToken', token);
+          this.$store.commit('updateDataTemplate', dataBase64url);
 
           // authenticate with new token
-          /*this.ws = new WebSocket(this.$config.WEBSOCKET_API);
+          /* this.ws = new WebSocket(this.$config.WEBSOCKET_API);
           let message = JSON.stringify({ type: "authenticate", content: { jwt: token } });
-          this.sendWaiting(message)*/
+          this.sendWaiting(message) */
 
           // preview ct in iFrame
-          let iFrameDiv = document.getElementById("iframe-div")
-          iFrameDiv.innerHTML = ""
-          let iFrame = document.createElement("iframe");
-          iFrameDiv.appendChild(iFrame)
-          iFrame.setAttribute("src", url.href.replace("#/teacher", ""))
-          iFrame.setAttribute("width", "100%")
-          iFrame.setAttribute("height", "315")
-        })
+          const iFrameDiv = document.getElementById('iframe-div');
+          iFrameDiv.innerHTML = '';
+          const iFrame = document.createElement('iframe');
+          iFrameDiv.appendChild(iFrame);
+          iFrame.setAttribute('src', url.href.replace('#/teacher', ''));
+          iFrame.setAttribute('width', '100%');
+          iFrame.setAttribute('height', '315');
+        });
       } else {
-        this.$alert("Your template is not valid. Thus, it can not be executed!", "Execution Error", "error");
+        this.$alert('Your template is not valid. Thus, it can not be executed!', 'Execution Error', 'error');
       }
     },
-    downloadCT: function() {
-      console.log("clicked")
-      let isValid = this.validateJson();
+    downloadCT() {
+      console.log('clicked');
+      const isValid = this.validateJson();
 
       if (isValid) {
-        var dataStr =
-          "data:text/json;charset=utf-8," +
-          encodeURIComponent(JSON.stringify(this.computationTemplate));
-        let exportName = this.computationTemplate.identifier;
-        var downloadAnchorNode = document.createElement("a");
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", exportName + ".json");
+        const dataStr = `data:text/json;charset=utf-8,${
+          encodeURIComponent(JSON.stringify(this.computationTemplate))}`;
+        const exportName = this.computationTemplate.identifier;
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute('href', dataStr);
+        downloadAnchorNode.setAttribute('download', `${exportName}.json`);
         document.body.appendChild(downloadAnchorNode); // required for firefox
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
       } else {
-        this.$alert("Your template is not valid. Thus, it can not be saved!", "Download Error", "error");
+        this.$alert('Your template is not valid. Thus, it can not be saved!', 'Download Error', 'error');
       }
-    }
+    },
   },
   created() {
 

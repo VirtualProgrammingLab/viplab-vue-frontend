@@ -37,13 +37,13 @@
 
 <script>
 
-import { Plotly } from '@rleys/vue-plotly-basic'
-import plotlyjs from "plotly.js"
+import { Plotly } from '@rleys/vue-plotly-basic';
+import plotlyjs from 'plotly.js';
 
-import base64url from "base64url";
+import base64url from 'base64url';
 
 export default {
-  name: "CsvPlot",
+  name: 'CsvPlot',
   components: {
     Plotly,
   },
@@ -51,7 +51,7 @@ export default {
     areUrlsProp: Boolean,
     csvsProp: Array,
     datasetProp: Object,
-    labelProp: Object
+    labelProp: Object,
   },
   data() {
     return {
@@ -59,12 +59,12 @@ export default {
       fileIndex: 0,
       data: [],
       layout: {
-        title: "",
+        title: '',
       },
       datasetList: [],
       imageConfig: {
-        format: "svg",
-        filename: "graph",
+        format: 'svg',
+        filename: 'graph',
       },
       enableAutoPlay: false,
       interval: undefined,
@@ -88,29 +88,28 @@ export default {
     } else {
       this.loadBase64Data(this.csvs[this.fileIndex]);
     }
-
   },
   methods: {
-    //"http://localhost:8080/" + inputFile
-    loadData: function(context) {
-        //plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){
-        //plotlyjs.d3.csv("http://localhost:8080/plotly-test.csv", function(data){
-        plotlyjs.d3.csv(context.csvs[context.fileIndex], function(data){
-          context.processData(data);
-        });
+    // "http://localhost:8080/" + inputFile
+    loadData(context) {
+      // plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){
+      // plotlyjs.d3.csv("http://localhost:8080/plotly-test.csv", function(data){
+      plotlyjs.d3.csv(context.csvs[context.fileIndex], (data) => {
+        context.processData(data);
+      });
     },
-    loadBase64Data: function(base64Data, delimiter = ",") {
-      let decodedData = base64url.decode(base64Data);
+    loadBase64Data(base64Data, delimiter = ',') {
+      const decodedData = base64url.decode(base64Data);
       // get header: slice first line of first string and split by delimiter
-      const headers = decodedData.slice(0, decodedData.indexOf("\n")).split(delimiter);
+      const headers = decodedData.slice(0, decodedData.indexOf('\n')).split(delimiter);
       // slice the rest of the string at line endings (\n)
-      const splitrows = decodedData.slice(decodedData.indexOf("\n") + 1).split("\n");
+      const splitrows = decodedData.slice(decodedData.indexOf('\n') + 1).split('\n');
       // filter empty rows
-      let rows = splitrows.filter(n => n);
+      const rows = splitrows.filter((n) => n);
       // map the row-values to the header to create header:value type entries
-      const data = rows.map(function (row) {
+      const data = rows.map((row) => {
         const values = row.split(delimiter);
-        const element = headers.reduce(function (object, header, index) {
+        const element = headers.reduce((object, header, index) => {
           object[header] = values[index];
           return object;
         }, {});
@@ -118,122 +117,122 @@ export default {
       });
       this.processData(data);
     },
-    processData: function(data) {
-        var traces = [];
+    processData(data) {
+      const traces = [];
 
-        // create an object, where there is an array for each column name
-        var obj = []
-        var keys = Object.keys(data[0]);
-        keys.forEach(element => obj[element] = []);
-        // fill the object with the data depending on the keys (column names)
-        for (var i=0; i<data.length; i++) {
-          let row = data[i];
-          keys.forEach(element => obj[element].push(row[element]));
-        }
+      // create an object, where there is an array for each column name
+      const obj = [];
+      const keys = Object.keys(data[0]);
+      keys.forEach((element) => obj[element] = []);
+      // fill the object with the data depending on the keys (column names)
+      for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        keys.forEach((element) => obj[element].push(row[element]));
+      }
 
-        let xkey = keys[0];
-        if (this.labelProp.key !== undefined) {
-          if (keys[0] !== this.labelProp.key) {
-            xkey = this.labelProp.key
-          }
+      let xkey = keys[0];
+      if (this.labelProp.key !== undefined) {
+        if (keys[0] !== this.labelProp.key) {
+          xkey = this.labelProp.key;
         }
+      }
 
-        // multiply x-axis by factor if given
-        if (this.labelProp.factor !== undefined) {
-          for (let j = 0; j < obj[(xkey)].length; j++) {
-              obj[(xkey)][j] = obj[(xkey)][j] * this.labelProp.factor
-          }
+      // multiply x-axis by factor if given
+      if (this.labelProp.factor !== undefined) {
+        for (let j = 0; j < obj[(xkey)].length; j++) {
+          obj[(xkey)][j] = obj[(xkey)][j] * this.labelProp.factor;
         }
-        let xkey_ind = keys.indexOf(xkey)
-        if (xkey_ind > -1) {
-          keys.splice(xkey_ind, 1);
-        }
-        // create traces to be rendered later; the first column is always x; the others are ys
-        for (var k = 0; k < keys.length; k++) {
-          if (this.datasetProp.key) {
-            // multiply y-axis by factor if given
-            if(keys[k] === this.datasetProp.key) {
-              if (this.datasetProp.factor !== undefined) {
-                for (let j = 0; j < obj[(xkey)].length; j++) {
-                  obj[(keys[k])][j] = obj[(keys[k])][j] * this.datasetProp.factor
-                }
+      }
+      const xkey_ind = keys.indexOf(xkey);
+      if (xkey_ind > -1) {
+        keys.splice(xkey_ind, 1);
+      }
+      // create traces to be rendered later; the first column is always x; the others are ys
+      for (let k = 0; k < keys.length; k++) {
+        if (this.datasetProp.key) {
+          // multiply y-axis by factor if given
+          if (keys[k] === this.datasetProp.key) {
+            if (this.datasetProp.factor !== undefined) {
+              for (let j = 0; j < obj[(xkey)].length; j++) {
+                obj[(keys[k])][j] = obj[(keys[k])][j] * this.datasetProp.factor;
               }
-              let trace = {
-                x: obj[(xkey)],
-                y: obj[(keys[k])],
-                name: this.datasetProp.label
-              }
-              traces.push(trace);
             }
-          } else {
-            let trace = {
+            const trace = {
               x: obj[(xkey)],
               y: obj[(keys[k])],
-              name:  keys[k]
-            }
+              name: this.datasetProp.label,
+            };
             traces.push(trace);
           }
+        } else {
+          const trace = {
+            x: obj[(xkey)],
+            y: obj[(keys[k])],
+            name: keys[k],
+          };
+          traces.push(trace);
         }
+      }
 
-        // set x-Axis label and title
-        // TODO: allow title in metadata? (id in dumux web-app)
-        let lastIndex = this.csvs[this.fileIndex].lastIndexOf('/');
-        let title = ((this.areUrlsProp) ? this.csvs[this.fileIndex].substr(lastIndex + 1, this.csvs[this.fileIndex].length) : "Graph");
-        let xformat = (this.labelProp.format) ? this.labelProp.format : ".1f"
-        let yformat = (this.datasetProp.format) ? this.datasetProp.format : ".1f"
-        let ytext = this.datasetProp.label || ((keys.length <= 2) ? keys[1] : '')
+      // set x-Axis label and title
+      // TODO: allow title in metadata? (id in dumux web-app)
+      const lastIndex = this.csvs[this.fileIndex].lastIndexOf('/');
+      const title = ((this.areUrlsProp) ? this.csvs[this.fileIndex].substr(lastIndex + 1, this.csvs[this.fileIndex].length) : 'Graph');
+      const xformat = (this.labelProp.format) ? this.labelProp.format : '.1f';
+      const yformat = (this.datasetProp.format) ? this.datasetProp.format : '.1f';
+      const ytext = this.datasetProp.label || ((keys.length <= 2) ? keys[1] : '');
 
-        this.layout = {
-          title: title,
-          xaxis: {
-            title: {
-              text: this.labelProp.label || xkey
-            },
-            tickformat: xformat
+      this.layout = {
+        title,
+        xaxis: {
+          title: {
+            text: this.labelProp.label || xkey,
           },
-          yaxis: {
-            title: {
-              text: ytext
-            },
-            tickformat: yformat
-          }
-        }
+          tickformat: xformat,
+        },
+        yaxis: {
+          title: {
+            text: ytext,
+          },
+          tickformat: yformat,
+        },
+      };
 
-        this.fillPlotWithData(traces);
+      this.fillPlotWithData(traces);
     },
-    fillPlotWithData: function(traces) {
-        this.data = traces;
+    fillPlotWithData(traces) {
+      this.data = traces;
     },
-    watchAutoPlayOrPause: function () {
+    watchAutoPlayOrPause() {
       if (this.enableAutoPlay) {
-        this.interval = setInterval(function() {
+        this.interval = setInterval(() => {
           this.increaseFileIndex();
-        }.bind(this), 1000);
+        }, 1000);
       } else {
         clearInterval(this.interval);
       }
     },
-    decreaseFileIndex: function () {
+    decreaseFileIndex() {
       this.fileIndex = Math.max(this.fileIndex - 1, 0);
       return this.fileIndex;
     },
-    increaseFileIndex: function () {
+    increaseFileIndex() {
       this.fileIndex = Math.min(this.fileIndex + 1, this.csvs.length - 1);
       return this.fileIndex;
     },
-    resetFileIndex: function () {
+    resetFileIndex() {
       this.fileIndex = 0;
       return this.fileIndex;
     },
-    setMaxFileIndex: function () {
+    setMaxFileIndex() {
       this.fileIndex = this.csvs.length - 1;
       return this.fileIndex;
     },
-    setEnableAutoPlay: function () {
+    setEnableAutoPlay() {
       this.enableAutoPlay = !this.enableAutoPlay;
       return this.enableAutoPlay;
-    }
-  }
+    },
+  },
 };
 </script>
 

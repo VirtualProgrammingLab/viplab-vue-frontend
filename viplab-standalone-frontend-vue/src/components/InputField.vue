@@ -42,79 +42,76 @@
 import { ValidationProvider, extend } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules';
 
-import base64url from "base64url";
+import base64url from 'base64url';
 
 extend('required', {
   ...required,
-  message: 'This field is required'
+  message: 'This field is required',
 });
 
 extend('inputFieldRegex', (value, arg) => {
-  //console.log("inputfield oneof " + value + " arg: " + arg);
+  // console.log("inputfield oneof " + value + " arg: " + arg);
   const regex = new RegExp(arg);
   if (regex.test(value)) {
     return true;
   }
-  return 'Field format invalid! Has to be: ' + arg;
+  return `Field format invalid! Has to be: ${arg}`;
 });
 
 extend('inputFieldRange', (value, [min, max]) => {
-  //console.log("inputfield oneof " + value + " min: " + min + " max: " + max);
+  // console.log("inputfield oneof " + value + " min: " + min + " max: " + max);
   if (value >= min && value <= max) {
     return true;
   }
-  return 'Value has to be between ' + min + ' and ' + max + '!'
+  return `Value has to be between ${min} and ${max}!`;
 });
 
 export default {
   name: 'InputField',
   components: {
-    ValidationProvider
+    ValidationProvider,
   },
   props: {
     item: Object,
-    parent_index: Number
-  }, 
+    parent_index: Number,
+  },
   computed: {
     vModel: {
-      get: function () {
-        if (this.item.metadata.type === "number") {
+      get() {
+        if (this.item.metadata.type === 'number') {
           return this.item.value;
-        } else {
-          return base64url.decode(this.item.value);
         }
+        return base64url.decode(this.item.value);
       },
-      set: function (val) {
-        if (this.item.metadata.type === "number") {
-          this.$set(this.item , "value", val);
+      set(val) {
+        if (this.item.metadata.type === 'number') {
+          this.$set(this.item, 'value', val);
         } else {
-          this.$set(this.item , "value", base64url(val));
+          this.$set(this.item, 'value', base64url(val));
         }
         this.$forceUpdate();
         return this.vModel;
-      }
+      },
     },
-    range: function() {
-      if(this.input.validation === "range") {
+    range() {
+      if (this.input.validation === 'range') {
         return true;
-      } else {
-        return false;
       }
-    }, 
-    pattern: function() {
-      if(this.input.validation === "pattern") {
+      return false;
+    },
+    pattern() {
+      if (this.input.validation === 'pattern') {
         return true;
-      } else {
-        return false;
       }
+      return false;
     },
   },
   data() {
     return {
-      input: this.item
-    }
+      input: this.item,
+    };
   },
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

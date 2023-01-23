@@ -29,28 +29,28 @@ import { required } from 'vee-validate/dist/rules';
 
 extend('required', {
   ...required,
-  message: 'This field is required'
+  message: 'This field is required',
 });
 
-extend('checkboxOneOf', value => {
-  //console.log("checkbox oneof " + value);
+extend('checkboxOneOf', (value) => {
+  // console.log("checkbox oneof " + value);
   if (value.length > 0 && value.length == 1) {
     return true;
   }
-  return 'Only choose one!'
+  return 'Only choose one!';
 });
 
-extend('checkboxMinOne', value => {
+extend('checkboxMinOne', (value) => {
   if (value.length >= 1) {
     return true;
   }
-  return 'Choose one or more!'
+  return 'Choose one or more!';
 });
 
 export default {
-  name: "CheckBox",
+  name: 'CheckBox',
   components: {
-    ValidationProvider
+    ValidationProvider,
   },
   props: {
     item: Object,
@@ -58,35 +58,33 @@ export default {
   },
   computed: {
     vModel: {
-      get: function () {
+      get() {
         return this.item.selected;
       },
-      set: function (val) {
-        this.$set(this.item , "selected", val);
+      set(val) {
+        this.$set(this.item, 'selected', val);
         this.$forceUpdate();
         return this.vModel;
-      }
+      },
     },
-    onlyone: function() {
-      if(this.checkbox.validation === "onlyone") {
+    onlyone() {
+      if (this.checkbox.validation === 'onlyone') {
         return true;
-      } else {
-        return false;
       }
-    }, 
-    minone: function() {
-      if(this.checkbox.validation === "minone") {
+      return false;
+    },
+    minone() {
+      if (this.checkbox.validation === 'minone') {
         return true;
-      } else {
-        return false;
       }
+      return false;
     },
   },
   data() {
     return {
-      checkbox: this.item
-    }
-  }
+      checkbox: this.item,
+    };
+  },
 };
 </script>
 

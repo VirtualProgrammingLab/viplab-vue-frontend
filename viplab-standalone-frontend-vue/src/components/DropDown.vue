@@ -54,87 +54,85 @@ import { required } from 'vee-validate/dist/rules';
 
 extend('required', {
   ...required,
-  message: 'This field is required'
+  message: 'This field is required',
 });
 
-extend('dropdownOneOf', value => {
-  //console.log("dropdown oneof " + value);
+extend('dropdownOneOf', (value) => {
+  // console.log("dropdown oneof " + value);
   if (!Array.isArray(value)) {
     return true;
   }
-  return 'Only choose one!'
+  return 'Only choose one!';
 });
 
-extend('dropdownMinOne', value => {
-  //console.log("dropdown minone  " + value);
+extend('dropdownMinOne', (value) => {
+  // console.log("dropdown minone  " + value);
   if (value.length >= 1) {
     return true;
   }
-  return 'Choose one or more!'
+  return 'Choose one or more!';
 });
 
 export default {
   name: 'DropDown',
   components: {
-    ValidationProvider
+    ValidationProvider,
   },
   props: {
     item: Object,
-    parent_index: Number, 
+    parent_index: Number,
   },
   computed: {
     vModel: {
-      get: function () {
+      get() {
         return this.item.selected;
       },
-      set: function (val) {
-        this.$set(this.item , "selected", val);
+      set(val) {
+        this.$set(this.item, 'selected', val);
         this.$forceUpdate();
         return this.vModel;
-      }
+      },
     },
-    onlyone: function() {
-      if(this.dropitem.validation === "onlyone") {
+    onlyone() {
+      if (this.dropitem.validation === 'onlyone') {
         return true;
-      } else {
-        return false;
       }
-    }, 
-    minone: function() {
-      if(this.dropitem.validation === "minone") {
+      return false;
+    },
+    minone() {
+      if (this.dropitem.validation === 'minone') {
         return true;
-      } else {
-        return false;
       }
+      return false;
     },
   },
   data() {
     return {
-      dropitem: this.item
-    }
+      dropitem: this.item,
+    };
   },
   methods: {
     /** get all values of an item that are not disabled */
-    itemWithoutDisabled: function(item){
-      var array = [];
-      for(var i = 0; i < item.options.length; i++){
-        if(!item.options[i].disabled){
+    itemWithoutDisabled(item) {
+      const array = [];
+      for (let i = 0; i < item.options.length; i++) {
+        if (!item.options[i].disabled) {
           array.push(item.options[i]);
         }
       }
       return array;
     },
-    itemsDisabled: function(item){
-      var array = [];
-      for(var i = 0; i < item.options.length; i++){
-        if(item.options[i].disabled){
+    itemsDisabled(item) {
+      const array = [];
+      for (let i = 0; i < item.options.length; i++) {
+        if (item.options[i].disabled) {
           array.push(item.options[i]);
         }
       }
       return array;
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
