@@ -41,7 +41,7 @@
     "vtk.js": "^26.0.0",
     "vue": "~2.6.0",
     "vue-blockui": "^1.1.7",
-    "vue-easy-dnd": "^1.19.0",
+    "vue-easy-dnd": "^2.0.0",
     "vue-prism-editor": "^1.2.2",
     "vue-router": "^3.5.2",
     "vue-simple-alert": "^1.1.1",
