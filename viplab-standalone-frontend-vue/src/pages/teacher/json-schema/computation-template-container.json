@@ -36,6 +36,13 @@
                             },
                             "additionalItems": false
                         },
+                        "ignore": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Filenames that should not get plotted."
+                        },
                         "csv": {
                             "type": "array",
                             "items": {
