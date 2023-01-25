@@ -176,8 +176,15 @@ export default {
 
       // set x-Axis label and title
       // TODO: allow title in metadata? (id in dumux web-app)
-      const lastIndex = this.csvs[this.fileIndex].lastIndexOf('/');
-      const title = ((this.areUrlsProp) ? this.csvs[this.fileIndex].substr(lastIndex + 1, this.csvs[this.fileIndex].length) : 'Graph');
+      let title = 'Graph';
+      if (this.areUrlsProp) {
+        let startIndex = this.csvs[this.fileIndex].lastIndexOf('/');
+        startIndex = (startIndex != -1) ? startIndex : 0;
+        let endIndex = this.csvs[this.fileIndex].lastIndexOf('?');
+        endIndex = (endIndex != -1) ? endIndex : this.csvs[this.fileIndex].length;
+        title = this.csvs[this.fileIndex].substring(startIndex + 1, endIndex);
+      }
+
       const xformat = (this.labelProp.format) ? this.labelProp.format : '.1f';
       const yformat = (this.datasetProp.format) ? this.datasetProp.format : '.1f';
       const ytext = this.datasetProp.label || ((keys.length <= 2) ? keys[1] : '');
