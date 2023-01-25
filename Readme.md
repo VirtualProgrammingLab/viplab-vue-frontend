@@ -60,7 +60,7 @@ Ensure a clean project directory (without node_modules or dist folder) to be in 
 ```
 docker run --rm -v <path-to-viplab-standalone-frontend-dir>:/app viplab/npm install
 ```
-Then you can start the container with hot reloading or, use the viplab-docker-dev-env compose-file with profile "vue-mount".
+Then you can start the container with hot reloading or, use the viplab-docker-dev-env compose-file with profile "vue-mount". To see the frontend go to http://localhost:8081 in the first case, and http://localhost otherwise.
 ```
 docker run -it -p 8081:8081 --rm -v <path-to-viplab-standalone-frontend-dir>:/app --name viplab-vue-frontend-dev viplab/npm run serve -- --host 0.0.0.0
 ```
@@ -71,6 +71,10 @@ docker exec viplab-vue-frontend-dev npm install XXX
 or
 ```
 docker-compose exec vue-frontend-dev npm install XXX
+```
+To see the linter output you can run ```npm run lint```, or if you use the docker setup:
+```
+docker run -it --rm -v <path-to-viplab-standalone-frontend-dir>:/app viplab/npm run lint
 ```
 
 ### 2. Build the Application to use it for production
