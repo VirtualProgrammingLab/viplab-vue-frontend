@@ -1476,11 +1476,7 @@ body {
 
   .header-content {
     text-align: center;
-    width: 50%;
-  }
-
-  .header-content h4 {
-    width: 100%
+    width: 75%;
   }
 
   .sticky-button {
