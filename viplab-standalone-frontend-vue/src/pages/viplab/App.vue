@@ -111,7 +111,7 @@
 
                       </div>
                     </div>
-                    <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right" @click="switchParameterView()" v-tooltip.top-center="asForm? 'View File' : 'Modify Parameters'">
+                    <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right" @click="switchParameterView()" v-tooltip.top-center="asForm? 'View File' : 'Hide File'">
                       <b-icon v-if="asForm" icon="file-earmark-code" aria-hidden="true"></b-icon>
                       <b-icon v-else icon="file-earmark-diff" aria-hidden="true"></b-icon>
                     </b-button>
