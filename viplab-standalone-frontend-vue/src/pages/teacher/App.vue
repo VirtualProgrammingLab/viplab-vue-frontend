@@ -668,7 +668,7 @@
                                       </div>
                                     </div>
                                     <!-- plots -->
-                                    <label class="mr-2" for="csvConfig.plots">Information about the Y-Axes: </label>
+                                    <label class="mr-2" for="csvConfig.plots">Information about the Y-Axis: </label>
                                     <div class="d-flex ml-4 mr-4">
                                       <div class="flex-grow-1">
                                         <label class="mr-2" for="csvConfig.plots">Define multiple Plots generated from one CSV: </label>
@@ -687,7 +687,7 @@
                                         <!-- key -->
                                         <div class="d-flex form-group">
                                           <div class="flex-grow-1">
-                                            <label class="mr-2" for="csvPlot.key">Key of Y-Axes in CSV: </label>
+                                            <label class="mr-2" for="csvPlot.key">Key(s) of Y-Axis in CSV: </label>
                                           </div>
                                           <!-- Delete CSV-Config -->
                                           <div class="tooltip-icon pl-2" @click="removePlot($event, csvConfig, csvPlot)">
@@ -700,7 +700,7 @@
                                           </div>
                                           <!-- tooltip -->
                                           <div class="tooltip-icon pl-2">
-                                              <b-icon-info-circle v-tooltip.top-center="'Key for y-axis given in csv header.'"></b-icon-info-circle>
+                                              <b-icon-info-circle v-tooltip.top-center="'Key(s) for y-axis given in csv header.'"></b-icon-info-circle>
                                           </div>
                                         </div>
                                         <!-- label -->

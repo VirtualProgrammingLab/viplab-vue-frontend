@@ -341,7 +341,7 @@
                                   class="outPartcontent"
                                 >
                                   <div v-if="artifact.plots">
-                                    <div v-for="plot in artifact.plots" :key="plot.key">
+                                    <div v-for="plot in artifact.plots" :key="(typeof plot.key == 'string') ? plot.key : plot.key[0]">
                                       <csv-plot
                                         :csvsProp=artifact.urlsOrContents
                                         :areUrlsProp="false"
@@ -420,7 +420,7 @@
                                 </div>
                                 <div v-else-if="artifact.MIMEtype == 'text/csv'">
                                   <div v-if="artifact.plots">
-                                    <div v-for="plot in artifact.plots" :key="plot.key">
+                                    <div v-for="plot in artifact.plots" :key="(typeof plot.key == 'string') ? plot.key : plot.key[0]">
                                       <csv-plot
                                         :csvsProp=artifact.urlsOrContents
                                         :areUrlsProp="true"

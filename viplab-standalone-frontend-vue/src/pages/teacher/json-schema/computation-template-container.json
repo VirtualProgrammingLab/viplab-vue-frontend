@@ -82,9 +82,9 @@
                                             "type": "object",
                                             "properties": {
                                                 "key" : {
-                                                    "type" : "string",
+                                                    "type" : ["string", "array"],
                                                     "minLength": 1,
-                                                    "description": "key for y-axis given in csv header"
+                                                    "description": "key(s) for y-axis given in csv header"
                                                 },
                                                 "label" : {
                                                     "type" : "string",

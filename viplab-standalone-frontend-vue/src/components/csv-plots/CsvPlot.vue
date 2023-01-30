@@ -151,7 +151,7 @@ export default {
       for (let k = 0; k < keys.length; k++) {
         if (this.datasetProp.key) {
           // multiply y-axis by factor if given
-          if (keys[k] === this.datasetProp.key) {
+          if (keys[k] === this.datasetProp.key || this.datasetProp.key.includes(keys[k])) {
             if (this.datasetProp.factor !== undefined) {
               for (let j = 0; j < obj[(xkey)].length; j++) {
                 obj[(keys[k])][j] = obj[(keys[k])][j] * this.datasetProp.factor;
@@ -160,7 +160,7 @@ export default {
             const trace = {
               x: obj[(xkey)],
               y: obj[(keys[k])],
-              name: this.datasetProp.label,
+              name: (typeof this.datasetProp.key == 'string') ? this.datasetProp.label : keys[k],
             };
             traces.push(trace);
           }
