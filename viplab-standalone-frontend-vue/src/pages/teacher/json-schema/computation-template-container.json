@@ -37,11 +37,24 @@
                             "additionalItems": false
                         },
                         "ignore": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            },
-                            "description": "Filenames that should not get plotted."
+                            "type": "object",
+                            "description": "Specific files that should not get plotted or downloaded.",
+                            "properties": {
+                                "visualization": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "Filenames that should not get plotted. Can include wildcard *"
+                                },
+                                "download": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "Filenames that can be ignored for the final download. Can include wildcard *"
+                                }
+                            }
                         },
                         "csv": {
                             "type": "array",
