@@ -201,6 +201,7 @@ export default {
       const mapperConfig = this.getMapperConfig(color);
       // console.log(mapperConfig);
       this.mapper.set(mapperConfig);
+      this.mapper.setLookupTable(this.lookupTable);
       this.applyPreset();
 
       this.renderWindow.render();
