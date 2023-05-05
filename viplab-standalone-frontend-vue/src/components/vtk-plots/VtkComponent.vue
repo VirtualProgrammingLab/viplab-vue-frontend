@@ -89,6 +89,7 @@ import 'vtk.js/Sources/Rendering/Profiles/Geometry';
 
 import vtkFullScreenRenderWindow from 'vtk.js/Sources/Rendering/Misc/FullScreenRenderWindow';
 import vtkActor from 'vtk.js/Sources/Rendering/Core/Actor';
+import vtkScalarBarActor from 'vtk.js/Sources/Rendering/Core/ScalarBarActor';
 import vtkMapper from 'vtk.js/Sources/Rendering/Core/Mapper';
 import vtkColorTransferFunction from 'vtk.js/Sources/Rendering/Core/ColorTransferFunction';
 
@@ -123,6 +124,7 @@ export default {
       renderer: Object,
       renderWindow: Object,
       actor: Object,
+      barActor: null,
       representation: '1:2:0',
       representationOptions: [
         {
@@ -204,6 +206,11 @@ export default {
       this.mapper.setLookupTable(this.lookupTable);
       this.applyPreset();
 
+      const [location, name] = color.split(':');
+      if (location == "SolidColor")
+          this.removeBarActor()
+      else
+          this.makeBarActor(name)
       this.renderWindow.render();
     },
     getMapperConfig(value) {
@@ -240,6 +247,32 @@ export default {
       this.lookupTable.setMappingRange(this.dataRange[0], this.dataRange[1]);
       this.lookupTable.updateRange();
       // console.log(this.lookupTable);
+    },
+    removeBarActor() {
+      if (this.barActor != null) {
+        this.renderer.removeActor(this.barActor);
+        this.barActor.delete();
+      }
+    },
+    makeBarActor(fieldName) {
+      this.removeBarActor();
+      this.barActor = vtkScalarBarActor.newInstance();
+      this.barActor.setMapper(this.mapper);
+      this.barActor.setAxisLabel(fieldName);
+      this.barActor.setScalarsToColors(this.lookupTable);
+      this.barActor.setVisibility(true);
+
+      this.barActor.setAutomated(false);
+      this.barActor.setBoxPosition([0.66, -0.5]);
+
+      let boxSize = this.barActor.getBoxSize();
+      let tickStyle = this.barActor.getAxisTextStyle();
+      boxSize[0] *= 3.0;
+      tickStyle.fontSize = 35;
+      this.barActor.setBoxSize(boxSize);
+      this.barActor.setTickTextStyle(tickStyle);
+
+      this.renderer.addActor(this.barActor);
     },
     decreaseFileIndex() {
       this.fileIndex = Math.max(this.fileIndex - 1, 0);
