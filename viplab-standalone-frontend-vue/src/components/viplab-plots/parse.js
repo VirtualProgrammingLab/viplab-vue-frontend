@@ -1,12 +1,11 @@
-// import * as IOException from "./io/IOException.js"
-import * as DataSet from './gridplot/DataSet.js';
+import DataSet from './gridplot/DataSet';
 
-export function Parse(viplabFile) {
+export default function Parse(viplabFile) {
   this.file = viplabFile;
 
   // set min and max as Arrays: Will be Arrays of Strings representing rgb-values
-  this.min = new Array();
-  this.max = new Array();
+  this.min = [];
+  this.max = [];
 
   this.outputFile = function () {
     console.log(this.file);
@@ -27,7 +26,7 @@ export function Parse(viplabFile) {
     let xscale = 1.0; let yscale = 1.0; let
       zscale = 1.0; // scaling factors
 
-    const datasetList = new Array();
+    const datasetList = [];
     let dataset = null;
 
     let label = null;
@@ -42,7 +41,7 @@ export function Parse(viplabFile) {
     const valueArray = [];
 
     // get all values (starting at i = 1, such that the Plot-type isn't included) and convert them to array of array
-    for (let i = 1; i < value.length; i++) {
+    for (let i = 1; i < value.length; i += 1) {
       if (value[i] != null && (!(value[i] === '\n')) && (!(value[i].startsWith('##')))) {
         if (value[i].startsWith('#')) {
           const splitLine = value[i].split(' ');
@@ -52,38 +51,40 @@ export function Parse(viplabFile) {
 
           switch (splitLine[1].toLowerCase()) {
             case 'x-range':
-              xmin = splitLine[2];
-              xmax = splitLine[3];
+              [, , xmin, xmax] = splitLine;
               break;
             case 'y-range':
-              ymin = splitLine[2];
-              ymax = splitLine[3];
+              [, , ymin, ymax] = splitLine;
               break;
             case 'x-count':
-              width = splitLine[2];
+              [, , width] = splitLine;
               break;
             case 'y-count':
-              height = splitLine[2];
+              [, , height] = splitLine;
               break;
-            case 'min-color':
-              var r1 = splitLine[2];
-              var g1 = splitLine[3];
-              var b1 = splitLine[4];
+            case 'min-color': {
+              let r1;
+              let g1;
+              let b1;
+              // eslint-disable-next-line prefer-const
+              [, , r1, g1, b1] = splitLine;
               cmin = `rgb(${r1}, ${g1}, ${b1})`;
               break;
-            case 'max-color':
-              var r2 = splitLine[2];
-              var g2 = splitLine[3];
-              var b2 = splitLine[4];
+            }
+            case 'max-color': {
+              let r2;
+              let g2;
+              let b2;
+              // eslint-disable-next-line prefer-const
+              [, , r2, g2, b2] = splitLine;
               cmax = `rgb(${r2}, ${g2}, ${b2})`;
               break;
+            }
             case 'scale':
-              xscale = splitLine[2];
-              yscale = splitLine[3];
-              zscale = splitLine[4];
+              [, , xscale, yscale, zscale] = splitLine;
               break;
             case 'time':
-              time = splitLine[2];
+              [, , time] = splitLine;
               break;
             case 'label':
               label = splitLine.splice(2, splitLine.length).join(' ');
@@ -112,7 +113,7 @@ export function Parse(viplabFile) {
             cmax = null;
           }
           valueArray.push(JSON.parse(`[${value[i].trim().replace(/ /g, ', ')}]`));
-          for (let idx = 0; idx < valueArray[valueArray.length - 1].length; idx++) {
+          for (let idx = 0; idx < valueArray[valueArray.length - 1].length; idx += 1) {
             const z = valueArray[valueArray.length - 1][idx];
             valueArray[valueArray.length - 1][idx] = z * zscale;
           }

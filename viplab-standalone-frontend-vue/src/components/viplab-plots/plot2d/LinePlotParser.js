@@ -1,10 +1,10 @@
 // import * as IOException from "./io/IOException.js"
 // import * as DataSet from "./gridplot/DataSet.js"
 
-import { LinePlotFrame } from './LinePlotFrame';
-import { LinePlotGraph } from './LinePlotGraph';
+import LinePlotFrame from './LinePlotFrame';
+import LinePlotGraph from './LinePlotGraph';
 
-export function LineParser(viplabFile) {
+export default function LineParser(viplabFile) {
   this.file = viplabFile;
 
   this.outputFile = function () {
@@ -23,17 +23,17 @@ export function LineParser(viplabFile) {
     let currentFrame = new LinePlotFrame();
     let currentGraph = new LinePlotGraph();
 
-    for (let i = 0; i < value.length; i++) {
+    for (let i = 0; i < value.length; i += 1) {
       if (value[i] != null && (!(value[i] === '\n')) && (!(value[i].startsWith('##')))) {
         // if (value[i].startsWith("#")) {
 
         const splitLine = value[i].split(' ');
-        if (splitLine[0] == '') {
+        if (splitLine[0] === '') {
           splitLine.splice(0, 1);
         }
         // console.log("line length " + splitLine.length + " - " + splitLine);
 
-        if ((splitLine.length == 1) || (splitLine[0] === '##')) {
+        if ((splitLine.length === 1) || (splitLine[0] === '##')) {
           // do nothing
         }
 
@@ -56,8 +56,8 @@ export function LineParser(viplabFile) {
               currentFrame = new LinePlotFrame();
 
               // optional frame duration argument
-              if (splitLine.length == 3) {
-                currentFrame.setDuration(parseInt(splitLine[2]));
+              if (splitLine.length === 3) {
+                currentFrame.setDuration(parseInt(splitLine[2], 10));
               }
               break;
             case 'linestyle':
@@ -75,12 +75,12 @@ export function LineParser(viplabFile) {
                 console.log(`Invalid plot syntax - line plot style invalid - in line ${value[i]}`);
               }
               break;
-            case 'color':
-              newColor = 'rgb(0,0,0)'; // This is the default color
-              if (splitLine.length == 5) {
-                const r = parseInt(splitLine[2]);
-                const g = parseInt(splitLine[3]);
-                const b = parseInt(splitLine[4]);
+            case 'color': {
+              let newColor = 'rgb(0,0,0)'; // This is the default color
+              if (splitLine.length === 5) {
+                const r = parseInt(splitLine[2], 10);
+                const g = parseInt(splitLine[3], 10);
+                const b = parseInt(splitLine[4], 10);
                 newColor = `rgb(${r},${g},${b})`;
               }
               // if graph is not empty, store it and create new one
@@ -90,16 +90,17 @@ export function LineParser(viplabFile) {
               }
               currentGraph.setColor(newColor);
               break;
-            case 'legend':
-              var choppedLegends = value[i].substring('# legend '.length).split(',');
+            }
+            case 'legend': {
+              const choppedLegends = value[i].substring('# legend '.length).split(',');
 
-              var graphIndex;
+              let graphIndex;
               // add legend to every graph in this frame that still has no legend
-              var numberOfAddedLegends = 0;
-              for (graphIndex = 0; graphIndex < currentFrame.getGraphsCount() && numberOfAddedLegends < choppedLegends.length; graphIndex++) {
+              let numberOfAddedLegends = 0;
+              for (graphIndex = 0; graphIndex < currentFrame.getGraphsCount() && numberOfAddedLegends < choppedLegends.length; graphIndex += 1) {
                 if (currentFrame.getGraph(graphIndex).getLegend() === ('')) {
                   currentFrame.getGraph(graphIndex).setLegend(choppedLegends[numberOfAddedLegends]);
-                  numberOfAddedLegends++;
+                  numberOfAddedLegends += 1;
                 }
               }
               // add legend to current graph if necessary
@@ -107,6 +108,7 @@ export function LineParser(viplabFile) {
                 currentGraph.setLegend(choppedLegends[numberOfAddedLegends]);
               }
               break;
+            }
             case 'symbol':
               if (splitLine[1] === 'none') {
                 currentGraph.setSymbol('\0');
@@ -115,15 +117,8 @@ export function LineParser(viplabFile) {
               }
               break;
             case 'text':
-              var newColor = 'rgb(0,0,0)';
               if (splitLine.length >= 5) {
-                let textContent;
-                // let x,y;
-
-                // x = parseFloat(splitLine[2]);
-                // y = parseFloat(splitLine[3]);
-
-                textContent = value[i].substring('# text '.length + splitLine[2].length + splitLine[3].length + 2);
+                const textContent = value[i].substring('# text '.length + splitLine[2].length + splitLine[3].length + 2);
                 currentFrame.addText(textContent);
               }
               // if graph is not empty, store it and create new one
@@ -131,7 +126,7 @@ export function LineParser(viplabFile) {
                 currentFrame.addGraph(currentGraph);
                 currentGraph = new LinePlotGraph();
               }
-              currentGraph.setColor(newColor);
+              currentGraph.setColor('rgb(0,0,0)');
               break;
             case 'title':
               currentFrame.setTitle(value[i].substring('# title '.length));
@@ -162,7 +157,7 @@ export function LineParser(viplabFile) {
             default:
               console.log('default case');
           }
-        } else if (splitLine.length == 4) {
+        } else if (splitLine.length === 4) {
           // console.log("splitLine length 4");
           // coordinates for the graph
           const x1 = parseFloat(splitLine[0]);

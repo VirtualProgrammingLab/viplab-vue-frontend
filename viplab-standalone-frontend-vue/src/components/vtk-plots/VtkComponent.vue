@@ -72,9 +72,11 @@
           </b-button>
         </b-button-group>
         <div class="fixed-row-70 display-flex-center">
-          <b-button btn-variant="white" @click="download($event)">
-            <font-awesome-icon icon="download" />
-          </b-button>
+          <a :href="downloadURL" download>
+            <b-button btn-variant="white">
+              <font-awesome-icon icon="download" />
+            </b-button>
+          </a>
         </div>
       </div>
     </div>
@@ -155,6 +157,7 @@ export default {
       latestRepresentationEvent: null,
       latestOpacityEvent: null,
       latestColorEvent: null,
+      downloadURL: null,
     };
   },
   watch: {
@@ -217,8 +220,8 @@ export default {
         const dataArray = this.source[`get${location}`]().getArrayByName(colorByArrayName);
         const newDataRange = dataArray.getRange();
         // console.log(newDataRange);
-        this.dataRange[0] = newDataRange[0];
-        this.dataRange[1] = newDataRange[1];
+        this.dataRange[0] = newDataRange.getRangeAt(0);
+        this.dataRange[1] = newDataRange.getRangeAt(1);
         colorMode = ColorMode.MAP_SCALARS;
         scalarMode = location === 'PointData'
           ? ScalarMode.USE_POINT_FIELD_DATA
@@ -298,20 +301,18 @@ export default {
           return response.blob();
         })
         .then((response) => {
-          const readRawData = ({ fileName, data }) => new Promise((resolve, reject) => {
+          const readRawData = ({ fileName: rawFileName, data }) => new Promise((resolve, reject) => {
             const sourceType = null;
-            const reader = vtkITKPolyDataReader.newInstance();
+            const vtkReader = vtkITKPolyDataReader.newInstance();
 
             // if file was fetched from a blob-url (created from base64-content, in App.vue), get filename from File-response-object
-            if (!fileName.endsWith('.vtu') && !fileName.endsWith('.vtp')) {
-              fileName = response.name;
-            }
-            reader.setFileName(fileName);
+            const fileName = (!rawFileName.endsWith('.vtu') && !rawFileName.endsWith('.vtp')) ? response.name : rawFileName;
+            vtkReader.setFileName(fileName);
             try {
-              const ds = reader.parseAsArrayBuffer(data);
+              const ds = vtkReader.parseAsArrayBuffer(data);
               Promise.resolve(ds)
                 .then((dataset) => resolve({
-                  dataset, reader, sourceType, name: fileName,
+                  dataset, reader: vtkReader, sourceType, name: fileName,
                 }))
                 .catch(reject);
             } catch (e) {
@@ -341,6 +342,7 @@ export default {
       const scalars = this.source.getPointData().getScalars();
       this.dataRange = [].concat(scalars ? scalars.getRange() : [0, 1]);
 
+      this.downloadURL = inputFileUrl;
       this.applyPreset();
 
       this.colorByOptions = [{ value: ':', label: 'Solid color' }].concat(
@@ -397,31 +399,6 @@ export default {
       } else {
         clearInterval(this.interval);
       }
-    },
-    async download(event) {
-      // console.log(event);
-      event.preventDefault();
-
-      // TODO: Unterscheidung: files in content als Base64 => so wie hier
-      //    über S3 einfach diese URL zurück geben
-      // generate objectUrl of blob of the currently displayed file
-      const inputFile = this.files[this.fileIndex];
-      const myRequest = new Request(inputFile);
-      const blob = await fetch(myRequest)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.blob();
-        })
-        .then((myBlob) => {
-          const objectURL = URL.createObjectURL(myBlob);
-          return objectURL.toString();
-        });
-
-      // set target url of button and redirect to url for download
-      event.target.href = blob;
-      location.href = event.target.href;
     },
   },
   async mounted() {

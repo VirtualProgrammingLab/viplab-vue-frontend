@@ -34,7 +34,7 @@ extend('required', {
 
 extend('checkboxOneOf', (value) => {
   // console.log("checkbox oneof " + value);
-  if (value.length > 0 && value.length == 1) {
+  if (value.length > 0 && value.length === 1) {
     return true;
   }
   return 'Only choose one!';
@@ -68,16 +68,10 @@ export default {
       },
     },
     onlyone() {
-      if (this.checkbox.validation === 'onlyone') {
-        return true;
-      }
-      return false;
+      return this.checkbox.validation === 'onlyone';
     },
     minone() {
-      if (this.checkbox.validation === 'minone') {
-        return true;
-      }
-      return false;
+      return this.checkbox.validation === 'minone';
     },
   },
   data() {

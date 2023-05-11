@@ -36,6 +36,7 @@
 <script>
 import base64url from 'base64url';
 
+// eslint-disable-next-line global-require
 global.Buffer = global.Buffer || require('buffer').Buffer;
 // const Base64 = require('js-base64');
 
@@ -109,15 +110,11 @@ export default {
       // this.token = appDiv.getAttribute("data-token");
 
       // if there are parameters in parts, set var accordingly for rendering of button
-      for (const file in this.json.files) {
-        for (const part in this.json.files[file].parts) {
-          const parti = this.json.files[file].parts[part];
-          if (parti.access == 'template' && parti.parameters) {
-            this.isPartParameters++;
-            break;
-          }
+      Object.values(this.json.files).forEach((file) => {
+        if (Object.values(file.parts).find((part) => part.access === 'template' && part.parameters)) {
+          this.isPartParameters += 1;
         }
-      }
+      });
     },
   },
   created() {

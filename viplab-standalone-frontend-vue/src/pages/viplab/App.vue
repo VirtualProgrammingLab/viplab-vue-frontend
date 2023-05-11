@@ -60,7 +60,10 @@
                   >
                   <template slot='title'>
                    {{ getFilename(file.path) }}
-                      <b-icon-info-circle class="pl-1" v-tooltip.top-center="file.metadata.description" v-if="file.metadata && file.metadata.description"></b-icon-info-circle>
+                      <b-icon-info-circle class="pl-1"
+                                          v-tooltip.top-center="file.metadata.description"
+                                          v-if="file.metadata && file.metadata.description">
+                      </b-icon-info-circle>
                   </template>
                     <div
                       class="part"
@@ -75,7 +78,13 @@
                           part.access !== 'template' && numberOfInputFiles > 0
                         "
                       >
-                        <div class="desc-file-part" v-if="(part.access != 'invisible') && part.metadata && part.metadata.description">{{part.metadata.description}}</div>
+                        <div class="desc-file-part"
+                             v-if="
+                             (part.access != 'invisible') &&
+                             part.metadata &&
+                             part.metadata.description">
+                          {{part.metadata.description}}
+                        </div>
                         <div v-if="part.access == 'visible'">
                           <ace-editor-component
                             :isParameter="false"
@@ -104,14 +113,19 @@
                         class="part-parameters"
                         v-if="part.parameters && part.access == 'template'"
                       >
-                      <div class="desc-file-part mb-2" v-if="part.metadata && part.metadata.description">{{part.metadata.description}}</div>
+                      <div class="desc-file-part mb-2"
+                           v-if="part.metadata && part.metadata.description">
+                        {{part.metadata.description}}
+                      </div>
                         <parameters
                           :parameters="part.parameters">
                         </parameters>
 
                       </div>
                     </div>
-                    <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right" @click="switchParameterView()" v-tooltip.top-center="asForm? 'View File' : 'Hide File'">
+                    <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right"
+                              @click="switchParameterView()"
+                              v-tooltip.top-center="asForm? 'View File' : 'Hide File'">
                       <b-icon v-if="asForm" icon="file-earmark-code" aria-hidden="true"></b-icon>
                       <b-icon v-else icon="file-earmark-diff" aria-hidden="true"></b-icon>
                     </b-button>
@@ -133,7 +147,8 @@
         <!-- sticky buttons -->
               <div class="sticky-button d-flex flex-row pl-5 pr-5">
                 <div class="mr-auto">
-                  <b-button class="btn mr-2 btn-row" v-tooltip.top-center="'Download backup of changes'">
+                  <b-button class="btn mr-2 btn-row"
+                            v-tooltip.top-center="'Download backup of changes'">
                     <b-icon
                       icon="download"
                       aria-hidden="true"
@@ -156,14 +171,26 @@
                   </b-button>
                 </div>
                 <div class="buttons">
-                  <b-button class="btn mr-2 btn-row" id="maximize-button" @click="maximize" v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'" v-if="!asForm || outputFiles !== ''">
+                  <b-button class="btn mr-2 btn-row"
+                            id="maximize-button"
+                            @click="maximize"
+                            v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'"
+                            v-if="!asForm || outputFiles !== ''">
                     <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
                     <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
                   </b-button>
-                  <b-button v-if="$config.IS_STUDENT" class="btn mr-2 btn-row" style="width:62.5px" variant="success" btn-variant="white" v-tooltip.top-center="'Save'">
+                  <b-button v-if="$config.IS_STUDENT" class="btn mr-2 btn-row"
+                            style="width:62.5px"
+                            variant="success"
+                            btn-variant="white" v-tooltip.top-center="'Save'">
                     <font-awesome-icon icon="save" />
                   </b-button>
-                  <b-button class="btn btn-row" id="submit" variant="primary" :disabled="invalid" v-tooltip.top-center="'Run'" @click="sendData">
+                  <b-button class="btn btn-row"
+                            id="submit"
+                            variant="primary"
+                            :disabled="invalid"
+                            v-tooltip.top-center="'Run'"
+                            @click="sendData">
                     <b-icon v-if="!waitingResponse" icon="play" aria-hidden="true"></b-icon>
                     <v-wait for="wait for ws response">
                       <spring-spinner
@@ -182,7 +209,11 @@
 
       <div
         class="side-to-side-div flex-right m-2 pt-5 pb-5"
-        v-if="!asForm || (outputFiles !== '' || errorFiles !== '' || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0))"
+        v-if="
+          !asForm ||
+          (outputFiles !== '' || errorFiles !== ''
+            || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0)
+          )"
         >
         <div class="sticky-div form-group mb-5 ml-5 mr-5">
           <h2>Output Files</h2>
@@ -231,7 +262,10 @@
 
               <b-card
                 no-body
-                v-if="outputFiles !== '' || errorFiles !== '' || (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0)"
+                v-if="
+                outputFiles !== '' ||
+                errorFiles !== '' ||
+                (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0)"
                 fill
               >
                 <b-tabs card class="files" content-class="m-2">
@@ -283,7 +317,9 @@
                             >
                               <div v-if="artifact.type !== 's3file'">
                                 <div
-                                  v-if="artifact.MIMEtype == 'text/plain' || artifact.MIMEtype == 'application/json'"
+                                  v-if="
+                                    artifact.MIMEtype == 'text/plain' ||
+                                    artifact.MIMEtype == 'application/json'"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
@@ -291,7 +327,8 @@
                                     :isParameter="false"
                                     :isHandlebar="false"
                                     :readonly="true"
-                                    :lang="(artifact.MIMEtype == 'application/json') ? 'json' : 'text'"
+                                    :lang="(artifact.MIMEtype == 'application/json') ?
+                                      'json' : 'text'"
                                     :item='{
                                       "identifier" : "Editor" + artifact.identifier,
                                       "content" : artifact.content,
@@ -306,14 +343,20 @@
                                 >
                                   Links:
                                   <ul>
-                                      <li v-for="(link, link_index) in getLinks(artifact.content)" :key="'uri' + artifact.identifier + link_index">
-                                        <div class="d-flex justify-content-between">
-                                          <a target="_blank" rel="noopener noreferrer" :href="link">{{ link }}</a>
-                                          <b-button class="float-right" variant="outline-primary" @click="downloadFromLink(link)">
-                                            <b-icon icon="download" aria-hidden="true"></b-icon>
-                                          </b-button>
-                                        </div>
-                                      </li>
+                                    <li v-for="(link, link_index) in getLinks(artifact.content)"
+                                        :key="'uri' + artifact.identifier + link_index">
+                                      <div class="d-flex justify-content-between">
+                                        <a target="_blank" rel="noopener noreferrer"
+                                           :href="link">
+                                          {{ link }}
+                                        </a>
+                                        <b-button class="float-right"
+                                                  variant="outline-primary"
+                                                  @click="downloadFromLink(link)">
+                                          <b-icon icon="download" aria-hidden="true"></b-icon>
+                                        </b-button>
+                                      </div>
+                                    </li>
                                   </ul>
                                 </div>
 
@@ -329,7 +372,9 @@
                                 </div>
 
                                 <div
-                                  v-if="artifact.MIMEtype === 'image/png' || artifact.MIMEtype === 'image/jpeg'"
+                                  v-if="
+                                    artifact.MIMEtype === 'image/png' ||
+                                    artifact.MIMEtype === 'image/jpeg'"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
@@ -341,7 +386,10 @@
                                   class="outPartcontent"
                                 >
                                   <div v-if="artifact.plots">
-                                    <div v-for="plot in artifact.plots" :key="(typeof plot.key == 'string') ? plot.key : plot.key[0]">
+                                    <div v-for="plot in artifact.plots"
+                                         :key="(typeof plot.key == 'string') ?
+                                         plot.key : plot.key[0]"
+                                    >
                                       <csv-plot
                                         :csvsProp=artifact.urlsOrContents
                                         :areUrlsProp="false"
@@ -367,7 +415,9 @@
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
-                                  <grid-plot :plotData="base64url.decode(artifact.content)"></grid-plot>
+                                  <grid-plot
+                                    :plotData="base64url.decode(artifact.content)">
+                                  </grid-plot>
                                 </div>
                                 <!-- show viplab 2d plot -->
                                 <div
@@ -392,7 +442,11 @@
                                     ></vtk-component>
                                 </div>
                                 <div
-                                  v-else-if="artifact.MIMEtype !== 'image/png' && artifact.MIMEtype !== 'image/jpeg' && ( artifact.MIMEtype == 'text/plain' || artifact.MIMEtype == 'application/json')"
+                                  v-else-if="
+                                    artifact.MIMEtype !== 'image/png' &&
+                                    artifact.MIMEtype !== 'image/jpeg' &&
+                                    ( artifact.MIMEtype == 'text/plain' ||
+                                      artifact.MIMEtype == 'application/json')"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
@@ -407,7 +461,8 @@
                                         :isParameter="false"
                                         :isHandlebar="false"
                                         :readonly="true"
-                                        :lang="(artifact.MIMEtype == 'application/json') ? 'json' : 'text'"
+                                        :lang="(artifact.MIMEtype == 'application/json') ?
+                                          'json' : 'text'"
                                         :item='{
                                           "identifier" : "Editor" + artifact.identifier,
                                           "content" : s3Contents.get(artifact.url),
@@ -420,7 +475,9 @@
                                 </div>
                                 <div v-else-if="artifact.MIMEtype == 'text/csv'">
                                   <div v-if="artifact.plots">
-                                    <div v-for="plot in artifact.plots" :key="(typeof plot.key == 'string') ? plot.key : plot.key[0]">
+                                    <div v-for="plot in artifact.plots"
+                                         :key="(typeof plot.key == 'string') ?
+                                           plot.key : plot.key[0]">
                                       <csv-plot
                                         :csvsProp=artifact.urlsOrContents
                                         :areUrlsProp="true"
@@ -438,7 +495,9 @@
                                     </csv-plot>
                                   </div>
                                 </div>
-                                <div v-else-if="artifact.MIMEtype == 'image/png' || artifact.MIMEtype == 'image/jpeg'">
+                                <div v-else-if="
+                                  artifact.MIMEtype == 'image/png' ||
+                                  artifact.MIMEtype == 'image/jpeg'">
                                   <img
                                     :src="artifact.url"
                                     :ref="artifact.path"/>
@@ -458,7 +517,8 @@
                                           ref="outPartcontent"
                                           class="outPartcontent"
                                         >
-                                          <grid-plot :plotData="s3Contents.get(artifact.url)"></grid-plot>
+                                          <grid-plot :plotData="s3Contents.get(artifact.url)"
+                                          ></grid-plot>
                                         </div>
                                         <!-- show viplab 2d plot -->
                                         <div
@@ -466,7 +526,8 @@
                                           ref="outPartcontent"
                                           class="outPartcontent"
                                         >
-                                          <plot-2d :plotData="s3Contents.get(artifact.url)"></plot-2d>
+                                          <plot-2d :plotData="s3Contents.get(artifact.url)">
+                                          </plot-2d>
                                         </div>
                                       </div>
                                   </div>
@@ -489,7 +550,8 @@
                       <h3>Files to Download</h3>
                       <ul>
                         <li
-                          v-for="(artifact) in filteredDownloadArtifacts(returnedUnmodifiedArtifacts.artifacts)"
+                          v-for="(artifact) in
+                            filteredDownloadArtifacts(returnedUnmodifiedArtifacts.artifacts)"
                           :key="artifact.identifier+'Download'"
                         >
                           <a
@@ -670,11 +732,9 @@ export default {
     },
     /* set the number of input files */
     setNumberOfInputFiles() {
-      const { files } = this.json;
-      for (const file in files) {
-        const { parts } = files[file];
-        this.numberOfInputFiles = parts.length;
-      }
+      Object.values(this.json.files).forEach((file) => {
+        this.numberOfInputFiles = file.parts.length;
+      });
     },
     /** load json from file with temp being the file name, set this.json to the content of the file and fill form_v_model */
     loadJsonFromFile() {
@@ -686,7 +746,7 @@ export default {
         this.json = JSON.parse(base64url.decode(data));
         this.$store.commit('updateDataTemplate', data);
       } else if (Object.keys(this.$store.state.jsonTemplate).length > 0) {
-        if (data && (data === '{{ data }}' || data === '') || this.modifiedByTeacher) {
+        if ((data && (data === '{{ data }}' || data === '')) || this.modifiedByTeacher) {
           this.json = this.$store.state.jsonTemplate;
           this.dataTemplate = this.$store.state.dataTemplate;
         } else {
@@ -701,7 +761,7 @@ export default {
       if (token && token !== '{{ token }}' && token !== '' && this.$store.state.token.length === 0) {
         this.$store.commit('updateToken', appDiv.getAttribute('data-token'));
       } else if (this.$store.state.token.length > 0) {
-        if (token && (token === '{{ token }}' || token === '') || this.modifiedByTeacher) {
+        if ((token && (token === '{{ token }}' || token === '')) || this.modifiedByTeacher) {
           this.token = this.$store.state.token;
         } else {
           this.$store.commit('updateToken', appDiv.getAttribute('data-token'));
@@ -719,15 +779,11 @@ export default {
       }
 
       // if there are parameters in parts, set var accordingly for rendering of button
-      for (const file in this.json.files) {
-        for (const part in this.json.files[file].parts) {
-          const parti = this.json.files[file].parts[part];
-          if (parti.access == 'template' && parti.parameters) {
-            this.isPartParameters++;
-            break;
-          }
+      Object.values(this.json.files).forEach((file) => Object.values(file.parts).forEach((part) => {
+        if (part.access === 'template' && part.parameters) {
+          this.isPartParameters += 1;
         }
-      }
+      }));
 
       this.setNumberOfInputFiles();
     },
@@ -773,7 +829,7 @@ export default {
             console.error(data);
         }
 
-        if (this.outputFiles !== '' || this.errorFiles !== '' || this.returnedOutputJson != '') {
+        if (this.outputFiles !== '' || this.errorFiles !== '' || this.returnedOutputJson !== '') {
           // stop waiting
           this.$wait.end('wait for ws response');
           this.waitingResponse = false;
@@ -851,9 +907,9 @@ export default {
       };
 
       if (this.$refs.file != null) {
-        for (const fileIndex in this.json.files) {
+        Object.keys(this.json.files).forEach((fileIndex) => {
           const file = { identifier: this.json.files[fileIndex].identifier, parts: [] };
-          for (const part in this.json.files[fileIndex].parts) {
+          Object.keys(this.json.files[fileIndex].parts).forEach((part) => {
             // for access modifiable or access template, where the content is available
             if (this.json.files[fileIndex].parts[part].access === 'modifiable') {
               file.parts.push({
@@ -863,7 +919,7 @@ export default {
             // Generate json for access template parameters, if there is no content given
             } else if (this.json.files[fileIndex].parts[part].access === 'template') {
               const generatedContent = JSON.parse('{}');
-              for (const paramIndex in this.json.files[fileIndex].parts[part].parameters) {
+              Object.keys(this.json.files[fileIndex].parts[part].parameters).forEach((paramIndex) => {
                 const currentParam = this.json.files[fileIndex].parts[part].parameters[paramIndex];
                 let value = currentParam.value || currentParam.selected;
 
@@ -872,12 +928,12 @@ export default {
                   value = `base64:${value}`;
                 }
                 /* If Parameter is single-value slider or input_field of type number, use string/number as result, instead of array */
-                if ((currentParam.metadata.guiType === 'slider' && value.length == 1) || (currentParam.metadata.guiType === 'input_field' && currentParam.metadata.type === 'number' && Array.isArray(value))) {
-                  value = value[0];
+                if ((currentParam.metadata.guiType === 'slider' && value.length === 1) || (currentParam.metadata.guiType === 'input_field' && currentParam.metadata.type === 'number' && Array.isArray(value))) {
+                  [value] = value;
                 }
 
                 generatedContent[currentParam.identifier] = value;
-              }
+              });
               const contentBase64 = base64url(JSON.stringify(generatedContent));
 
               file.parts.push({
@@ -885,20 +941,16 @@ export default {
                 content: contentBase64,
               });
             }
-          }
+          });
           task.files.push(file);
-        }
+        });
 
         // Add arguments to task - only fixed-value parameters!
         if (Object.prototype.hasOwnProperty.call(this.json, 'parameters')) {
-          const args = JSON.parse('{}');
-          const parametersJson = this.json.parameters;
-          for (const paramIndex in parametersJson) {
-            const currentParam = parametersJson[paramIndex];
-            const value = currentParam.value || currentParam.selected;
-
-            args[currentParam.identifier] = value;
-          }
+          const args = {};
+          Object.values(this.json.parameters).forEach((parameter) => {
+            args[parameter.identifier] = parameter.value || parameter.selected;
+          });
           task.arguments = args;
         }
       }
@@ -915,7 +967,7 @@ export default {
     },
     /** process the result before displaying it in the DOM */
     displayResult(result) {
-      if (result.result.status == 'final') {
+      if (result.result.status === 'final') {
         document.getElementById('submit').disabled = false;
       }
 
@@ -930,7 +982,7 @@ export default {
         this.returnedUnmodifiedArtifacts.artifacts = this.returnedUnmodifiedArtifacts.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)));
       }
 
-      this.returnedUnmodifiedArtifacts.artifacts.sort((a, b) => ((a.path > b.path) ? 1 : ((b.path > a.path) ? -1 : 0)));
+      this.returnedUnmodifiedArtifacts.artifacts.sort((a, b) => a.path.localeCompare(b.path));
 
       // filter result such that only specified results are displayed
       let viewer = [];
@@ -942,37 +994,32 @@ export default {
         }
       }
       if (!viewer.includes('Image')) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
-          if (value.MIMEtype !== 'image/png' || value.MIMEtype !== 'image/jpeg') {
-            return value;
-          }
-        });
+        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+          (value) => value.MIMEtype !== 'image/png' || value.MIMEtype !== 'image/jpeg',
+        );
       }
       if (!viewer.includes('ParaView')) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
-          if (value.MIMEtype !== 'application/vnd.kitware') {
-            return value;
-          }
-        });
+        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+          (value) => value.MIMEtype !== 'application/vnd.kitware',
+        );
       }
       if (!viewer.includes('ViPLabGraphics')) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
-          if ((value.MIMEtype !== 'application/x-vgf') && (value.MIMEtype !== 'application/x-vgf3') && (value.MIMEtype !== 'application/x-vgfc')) {
-            return value;
-          }
-        });
+        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+          (value) => (value.MIMEtype !== 'application/x-vgf')
+            && (value.MIMEtype !== 'application/x-vgf3')
+            && (value.MIMEtype !== 'application/x-vgfc'),
+        );
       }
       if (!viewer.includes('CSV')) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
-          if (value.MIMEtype !== 'text/csv') {
-            return value;
-          }
-        });
+        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+          (value) => value.MIMEtype !== 'text/csv',
+        );
       }
 
+      /* eslint no-param-reassign: ["error", { "props": false }] */
       // process vtk-files with base64-content
       this.returnedOutputJson.artifacts.forEach((item) => {
-        if (item.MIMEtype == 'application/vnd.kitware') {
+        if (item.MIMEtype === 'application/vnd.kitware') {
           if (item.content) {
             // generate Object-URLs of the base64url encoded content
             const byteCharacters = base64url.decode(item.content);
@@ -983,7 +1030,7 @@ export default {
               const slice = byteCharacters.slice(offset, offset + sliceSize);
 
               const byteNumbers = new Array(slice.length);
-              for (let i = 0; i < slice.length; i++) {
+              for (let i = 0; i < slice.length; i += 1) {
                 byteNumbers[i] = slice.charCodeAt(i);
               }
 
@@ -1006,7 +1053,7 @@ export default {
       // let created = false;
 
       // sort result artifacts alphabetically to make sure that connected files are in correct order
-      artifacts.sort((a, b) => ((a.path > b.path) ? 1 : ((b.path > a.path) ? -1 : 0)));
+      artifacts.sort((a, b) => a.path.localeCompare(b.path));
 
       // get basenames for collections of files
       let outputConfig = [];
@@ -1023,7 +1070,7 @@ export default {
 
       if (outputConfig.length > 0) {
         const basenames = [];
-        for (let out = 0; out < outputConfig.length; out++) {
+        for (let out = 0; out < outputConfig.length; out += 1) {
           const currentConfig = outputConfig[out];
           const currentBasename = currentConfig.basename;
           if (!basenames.includes(currentBasename)) {
@@ -1041,13 +1088,13 @@ export default {
         }
 
         // group results according to the available basenames
-        for (let a = 0; a < artifacts.length; a++) {
-          if ((artifacts[a].MIMEtype == 'application/vnd.kitware' || artifacts[a].MIMEtype == 'text/csv') && !artifacts[a].artifacts) {
+        for (let a = 0; a < artifacts.length; a += 1) {
+          if ((artifacts[a].MIMEtype === 'application/vnd.kitware' || artifacts[a].MIMEtype === 'text/csv') && !artifacts[a].artifacts) {
             const { path } = artifacts[a];
             const lastIndex = path.lastIndexOf('/');
             const filenamePart = path.substr(lastIndex + 1, path.length);
 
-            for (let base = 0; base < basenames.length; base++) {
+            for (let base = 0; base < basenames.length; base += 1) {
               const currentBasename = basenames[base];
               // filename has to start with basename
               if (filenamePart.startsWith(currentBasename)) {
@@ -1068,40 +1115,38 @@ export default {
 
         // If config contains output, that wasn't sent: remove from connectedVtks so ot isn't shown in gui
         const tmpConnectedFiles = {};
-        for (const fileGroupKey in connectedVtks) {
+        Object.keys(connectedVtks).forEach((fileGroupKey) => {
           const value = connectedVtks[fileGroupKey];
           if (value.urlsOrContents.length > 0) {
             tmpConnectedFiles[fileGroupKey] = connectedVtks[fileGroupKey];
           }
-        }
+        });
         connectedVtks = tmpConnectedFiles;
 
         // delete all vtk and csv artifacts that are part of a collection
         artifacts = this.returnedOutputJson.artifacts;
-        let b = artifacts.length;
-        while (b--) {
+        let b = artifacts.length - 1;
+        while (b > 0) {
           if (artifacts[b].inCollection) {
             artifacts.splice(b, 1);
           }
+          b -= 1;
         }
 
         // add vtk/csv collections
         const connectedFilesKeys = Object.keys(connectedVtks);
-        for (let c = 0; c < connectedFilesKeys.length; c++) {
+        for (let c = 0; c < connectedFilesKeys.length; c += 1) {
           this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
         }
       }
 
       // filter returnedOutputJson to only include displayable results
-      this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter((value) => {
-        const displayableMIMEtypes = ['text/plain', 'text/csv', 'text/uri-list', 'image/png', 'image/jpeg', 'application/x-vgf', 'application/x-vgf3', 'application/x-vgfc', 'application/vnd.kitware', 'application/json'];
-        if (displayableMIMEtypes.includes(value.MIMEtype)) {
-          return value;
-        }
-      });
+      const displayableMIMEtypes = ['text/plain', 'text/csv', 'text/uri-list', 'image/png', 'image/jpeg', 'application/x-vgf', 'application/x-vgf3', 'application/x-vgfc', 'application/vnd.kitware', 'application/json'];
+      this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+        (value) => displayableMIMEtypes.includes(value.MIMEtype),
+      );
 
-      for (const a in this.returnedOutputJson.artifacts) {
-        const currentArtifact = this.returnedOutputJson.artifacts[a];
+      Object.values(this.returnedOutputJson.artifacts).forEach((currentArtifact) => {
         if (currentArtifact.type === 's3file') {
           if (currentArtifact.MIMEtype === 'text/plain' || currentArtifact.MIMEtype === 'application/json') {
             this.getContentFromS3(currentArtifact.url);
@@ -1109,7 +1154,7 @@ export default {
             this.getContentFromS3(currentArtifact.url, true);
           }
         }
-      }
+      });
 
       // TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.outputFiles.concat(base64url.decode(result.result.output.stdout));
@@ -1145,7 +1190,7 @@ export default {
     /**  return base64 image src for img-tag */
     imagesrc(base64Image, mimetype) {
       const base64 = base64Image.replaceAll('-', '+').replaceAll('_', '/');
-      if (base64.length % 4 != 0) {
+      if (base64.length % 4 !== 0) {
         base64.concat('='.repeat(4 - (base64.length % 4)));
       }
       if (mimetype === 'image/jpeg') {
@@ -1157,18 +1202,16 @@ export default {
     async save(filename, identifier, mimetype) {
       let content = '';
       this.returnedUnmodifiedArtifacts.artifacts.forEach((item) => {
-        if (item.identifier == identifier && item.content) {
+        if (item.identifier === identifier && item.content) {
           if (item.MIMEtype !== 'image/png' && item.MIMEtype !== 'image/jpeg') {
             content = base64url.decode(item.content);
           } else {
             content = item.content;
           }
-        } else if (item.identifier == identifier) {
+        } else if (item.identifier === identifier) {
           // handle files that were downloaded from s3
           let itemContent = '';
-          // if (item.MIMEtype === "text/plain" || item.MIMEtype === "image/png"  || item.MIMEtype === "image/jpeg" || item.MIMEtype === "text/csv" || item.MIMEtype === "application/vnd.kitware") {
           itemContent = item.url;
-          // }
           content = itemContent;
         }
       });
@@ -1180,9 +1223,9 @@ export default {
         const base64 = this.imagesrc(content, mimetype);
         fetch(base64)
           .then((res) => res.blob())
-          .then((blob) => {
+          .then((contentBlob) => {
             const elem = window.document.createElement('a');
-            elem.href = window.URL.createObjectURL(blob);
+            elem.href = window.URL.createObjectURL(contentBlob);
             elem.download = filename;
             document.body.appendChild(elem);
             elem.click();
@@ -1216,12 +1259,11 @@ export default {
     /* download Computation Task JSON Message */
     download() {
       // first, generate the computation task json message
-      const taskJson = new Object();
+      const taskJson = {};
       taskJson.template = this.json.identifier;
       const args = [];
-      for (const i in this.json.parameters) {
-        const param = this.json.parameters[i];
-        const arg = new Object();
+      Object.values(this.json.parameters).forEach((param) => {
+        const arg = {};
         if (param.selected) {
           arg.identifier = param.identifier;
           arg.value = param.selected;
@@ -1233,17 +1275,16 @@ export default {
           arg.value = '';
         }
         args.push(arg);
-      }
+      });
       taskJson.arguments = args;
       const parts = [];
-      for (const j in this.json.files) {
-        for (const k in this.json.files[j].parts) {
-          const currentPart = this.json.files[j].parts[k];
-          if (currentPart.access != 'visible') {
-            parts.push(currentPart);
+      Object.values(this.json.files).forEach((file) => {
+        Object.values(file.parts).forEach((part) => {
+          if (part.access !== 'visible') {
+            parts.push(part);
           }
-        }
-      }
+        });
+      });
       taskJson.parts = parts;
 
       // now download json
@@ -1268,51 +1309,48 @@ export default {
       const obj = JSON.parse(event.target.result);
       // apply changes to current json
       const templateId = obj.template;
-      if (templateId == this.json.identifier) {
+      if (templateId === this.json.identifier) {
         // parse parameters/arguments
-        for (const a in obj.arguments) {
+        Object.keys(obj.arguments).forEach((a) => {
           const currentArg = obj.arguments[a];
           const argId = currentArg.identifier;
           const argValue = currentArg.value;
           const currentParam = this.json.parameters[a];
-          if (argId == currentParam.identifier) {
+          if (argId === currentParam.identifier) {
             if (currentParam.selected) {
               currentParam.selected = argValue;
             } else {
               currentParam.value = argValue;
             }
           }
-        }
+        });
 
         // parse parts
-        for (const p in obj.parts) {
-          const currentPart = obj.parts[p];
+        Object.values(obj.parts).forEach((currentPart) => {
           const partId = currentPart.identifier;
-          for (const f in this.json.files) {
-            for (const oldp in this.json.files[f].parts) {
-              if (this.json.files[f].parts[oldp].identifier == partId) {
+          Object.values(this.json.files).forEach((file) => {
+            Object.values(file.parts).forEach((part) => {
+              if (part.identifier === partId) {
                 // set content of parts
                 // this.json.files[f].parts[oldp].content = obj.parts[p].content;
-                this.$set(this.json.files[f].parts[oldp], 'content', obj.parts[p].content);
+                this.$set(part, 'content', currentPart.content);
                 this.$forceUpdate();
                 // set parameters of parts
-                for (const oldPara in this.json.files[f].parts[oldp].parameters) {
-                  const currentParamJson = this.json.files[f].parts[oldp].parameters[oldPara];
-                  for (const newPara in obj.parts[p].parameters) {
-                    const currentParamObj = obj.parts[p].parameters[newPara];
-                    if (currentParamObj.identifier == currentParamJson.identifier) {
-                      if (currentParamJson.selected) {
-                        this.$set(currentParamJson, 'selected', currentParamObj.selected);
+                Object.values(part.parameters).forEach((parameterFromJson) => {
+                  Object.values(currentPart.parameters).forEach((parameterFromObj) => {
+                    if (parameterFromObj.identifier === parameterFromJson.identifier) {
+                      if (parameterFromJson.selected) {
+                        this.$set(parameterFromJson, 'selected', parameterFromObj.selected);
                       } else {
-                        this.$set(currentParamJson, 'value', currentParamObj.value);
+                        this.$set(parameterFromJson, 'value', parameterFromObj.value);
                       }
                     }
-                  }
-                }
+                  });
+                });
               }
-            }
-          }
-        }
+            });
+          });
+        });
       }
     },
     /** For the sticky play button: emit a scroll event when files tab is changed, so that the sticky-button is reloaded in the right place */
@@ -1334,11 +1372,11 @@ export default {
         // add selected-item to parameters with mode == fixed
         const arr = [];
         const { options } = currentParameter;
-        for (const i in options) {
-          if (options[i].selected) {
-            arr.push(options[i].value);
+        Object.values(options).forEach((option) => {
+          if (option.selected) {
+            arr.push(option.value);
           }
-        }
+        });
         if (currentParameter.metadata.guiType === 'radio' || (currentParameter.metadata.guiType === 'dropdown' && !currentParameter.multiple) || (currentParameter.metadata.guiType === 'input_field')) {
           this.$set(currentParameter, 'selected', arr[0]);
         } else {
@@ -1360,19 +1398,18 @@ export default {
           const handlebarsTemplate = base64url.decode(part.content);
           const view = {};
           // Get values that will be substituted into the template
-          for (const p in part.parameters) {
-            const currentParam = part.parameters[p];
+          Object.values(part.parameters).forEach((currentParam) => {
             const currentValue = currentParam.value || currentParam.selected;
             view[currentParam.identifier] = currentValue;
-          }
+          });
           // Substitute values in handlebars template
           const template = Handlebars.compile(handlebarsTemplate);
           const output = template(view);
           return output;
         }
-        /** Get Content from separate file */
-        return '';
       }
+      /** Get Content from separate file */
+      return '';
     },
     generateHandlebarsDivId(partId) {
       return `handlebars${partId}`;
@@ -1391,7 +1428,7 @@ export default {
     calculateFirstLineNumber(allParts, partIndex) {
       let firstLine = 1;
       if (partIndex > 0) {
-        for (let previousPartIndex = 0; previousPartIndex < partIndex; previousPartIndex++) {
+        for (let previousPartIndex = 0; previousPartIndex < partIndex; previousPartIndex += 1) {
           const previousPart = allParts[previousPartIndex];
           const decodedPreviousContent = base64url.decode(previousPart.content);
           const lines = decodedPreviousContent.split(/\r\n|\r|\n/).length;
@@ -1432,20 +1469,17 @@ export default {
         if (typeof this.json.metadata.output !== 'undefined') {
           if (typeof this.json.metadata.output.ignore !== 'undefined') {
             if (typeof this.json.metadata.output.ignore.visualization !== 'undefined') {
-              filenamefilter = this.json.metadata.output.ignore.visualization.map(filename => {
-                let w = filename.replace(/[.+^${}()|[\]\\]/g, '\\$&'); // regexp escape
-                return new RegExp(`^${w.replace(/\*/g,'.*').replace(/\?/g,'.')}$`);
-                }
-              );
+              filenamefilter = this.json.metadata.output.ignore.visualization.map((filename) => {
+                const w = filename.replace(/[.+^${}()|[\]\\]/g, '\\$&'); // regexp escape
+                return new RegExp(`^${w.replace(/\*/g, '.*').replace(/\?/g, '.')}$`);
+              });
             }
           }
         }
       }
-      const filtered = artifactsArray.filter((artifact) => (availableMIMEtypes.indexOf(artifact.MIMEtype) > -1)).filter(artifact => {
-        let valid = true;
-        filenamefilter.forEach(filterregex => (valid = valid && !filterregex.test(artifact.path)));
-        return valid;
-      });
+      const filtered = artifactsArray
+        .filter((artifact) => (availableMIMEtypes.indexOf(artifact.MIMEtype) > -1))
+        .filter((artifact) => filenamefilter.every((filterregex) => !filterregex.test(artifact.path)));
       return filtered;
     },
 
@@ -1456,40 +1490,38 @@ export default {
         if (typeof this.json.metadata.output !== 'undefined') {
           if (typeof this.json.metadata.output.ignore !== 'undefined') {
             if (typeof this.json.metadata.output.ignore.download !== 'undefined') {
-              filenamefilter = this.json.metadata.output.ignore.download.map(filename => {
-                  let w = filename.replace(/[.+^${}()|[\]\\]/g, '\\$&'); // regexp escape
-                  return new RegExp(`^${w.replace(/\*/g,'.*').replace(/\?/g,'.')}$`);
-                }
-              );
+              filenamefilter = this.json.metadata.output.ignore.download.map((filename) => {
+                const w = filename.replace(/[.+^${}()|[\]\\]/g, '\\$&'); // regexp escape
+                return new RegExp(`^${w.replace(/\*/g, '.*').replace(/\?/g, '.')}$`);
+              });
             }
           }
         }
       }
-      const filtered = artifactsArray.filter(artifact => {
-        let valid = true;
-        filenamefilter.forEach(filterregex => (valid = valid && !filterregex.test(artifact.path)));
-        return valid;
-      });
+      const filtered = artifactsArray
+        .filter((artifact) => filenamefilter.every((filterregex) => !filterregex.test(artifact.path)));
       return filtered;
     },
   },
   created() {
     this.loadJsonFromFile();
-
     // parse the parameters and add items for generating the gui and modifing the content
     // first: modify parameters section
-    for (const parameter in this.json.parameters) {
-      var curr = this.json.parameters[parameter];
-      this.parseParametersForGuiGeneration(curr);
+    const keys = Object.keys(this.json);
+    if (keys.find((key) => key === 'parameter')) {
+      this.json.parameters.forEach(
+        (curr) => this.parseParametersForGuiGeneration(curr),
+      );
     }
     // then: modify the parameters inside the parts
-    for (const fileInd in this.json.files) {
-      for (const partInd in this.json.files[fileInd].parts) {
-        for (const paramInd in this.json.files[fileInd].parts[partInd].parameters) {
-          curr = this.json.files[fileInd].parts[partInd].parameters[paramInd];
-          this.parseParametersForGuiGeneration(curr);
-        }
-      }
+    if (keys.find((key) => key === 'files')) {
+      Object.values(this.json.files).forEach((file) => {
+        Object.values(file.parts).forEach((part) => {
+          Object.values(part.parameters).forEach((parameter) => {
+            this.parseParametersForGuiGeneration(parameter);
+          });
+        });
+      });
     }
   },
   mounted() {

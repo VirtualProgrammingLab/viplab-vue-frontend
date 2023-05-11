@@ -64,6 +64,7 @@ export default {
     InputField,
     AceEditorComponent,
   },
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Parameters',
   props: {
     parameters: Array,

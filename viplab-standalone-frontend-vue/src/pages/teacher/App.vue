@@ -1361,15 +1361,9 @@ export default {
       },
     },
     thereIsTemplate() {
-      for (const file in this.computationTemplate.files) {
-        for (const part in this.computationTemplate.files[file].parts) {
-          const currentPart = this.computationTemplate.files[file].parts[part];
-          if (currentPart.access === 'template') {
-            return true;
-          }
-        }
-      }
-      return false;
+      return Object.values(this.computationTemplate.files).find(
+        (file) => Object.values(file.parts).find((part) => part.access === 'template'),
+      );
     },
     vModelInputFieldText: {
       get() {
@@ -1395,13 +1389,13 @@ export default {
       set(val) {
         let newValue = parseFloat(val);
 
-        if (isNaN(newValue)) {
+        if (Number.isNaN(newValue)) {
           // set to old value, if input was not null
           if (typeof this.selectedParameter !== 'undefined' && val !== '') {
-            newValue = this.selectedParameter.default[0];
+            [newValue] = this.selectedParameter.default;
           // set to old value if new char was string not number
           } else if (typeof this.selectedParameter !== 'undefined' && val.length > 0) {
-            newValue = this.selectedParameter.default[0];
+            [newValue] = this.selectedParameter.default;
           // else set value to null
           } else {
             newValue = null;
@@ -1468,7 +1462,7 @@ export default {
       },
       set(val) {
         this.$set(this.selectedFile, 'path', val);
-        if (val == '') {
+        if (val === '') {
           this.$delete(this.selectedFile, 'path');
         }
         this.$forceUpdate();
@@ -1491,9 +1485,9 @@ export default {
         this.$set(this.selectedFile.metadata, 'syntaxHighlighting', val);
 
         // if val is empty, remove object from ct
-        if (val == '') {
+        if (val === '') {
           this.$delete(this.selectedFile.metadata, 'syntaxHighlighting');
-          if (Object.keys(this.selectedFile.metadata).length == 0) {
+          if (Object.keys(this.selectedFile.metadata).length === 0) {
             this.$delete(this.selectedFile, 'metadata');
           }
         }
@@ -1518,9 +1512,9 @@ export default {
         this.$set(this.selectedFile.metadata, 'description', val);
 
         // if val is empty, remove object from ct
-        if (val == '') {
+        if (val === '') {
           this.$delete(this.selectedFile.metadata, 'description');
-          if (Object.keys(this.selectedFile.metadata).length == 0) {
+          if (Object.keys(this.selectedFile.metadata).length === 0) {
             this.$delete(this.selectedFile, 'metadata');
           }
         }
@@ -1533,7 +1527,7 @@ export default {
         if (typeof this.selectedPart.access !== 'undefined') {
           return this.selectedPart.access;
         }
-        this.$set(this.selectedPart, 'access', '');
+        // this.$set(this.selectedPart, 'access', '');
 
         return '';
       },
@@ -1567,9 +1561,9 @@ export default {
         }
 
         // if val is empty, remove object from ct
-        if (val == '') {
+        if (val === '') {
           this.$delete(this.selectedPart.metadata, 'description');
-          if (Object.keys(this.selectedPart.metadata).length == 0) {
+          if (Object.keys(this.selectedPart.metadata).length === 0) {
             this.$delete(this.selectedPart, 'metadata');
           }
         }
@@ -1587,7 +1581,7 @@ export default {
       set(val) {
         this.$set(this.selectedParameter, 'identifier', val);
         // if val is empty, remove object from ct
-        if (val == '') {
+        if (val === '') {
           this.$delete(this.selectedParameter, 'identifier');
         }
 
@@ -1611,7 +1605,7 @@ export default {
         }
 
         // if val is empty, remove object from ct
-        if (val == '') {
+        if (val === '') {
           this.$delete(this.selectedParameter.metadata, 'name');
         }
 
@@ -1635,7 +1629,7 @@ export default {
         }
 
         // if val is empty, remove object from ct
-        if (val == '') {
+        if (val === '') {
           this.$delete(this.selectedParameter.metadata, 'description');
         }
 
@@ -1652,7 +1646,7 @@ export default {
       set(val) {
         let newValue = parseFloat(val);
 
-        if (isNaN(newValue)) {
+        if (Number.isNaN(newValue)) {
           // set to old value, if input was not null
           if (typeof this.selectedParameter !== 'undefined' && val !== '') {
             newValue = this.selectedParameter.maxlength;
@@ -1668,7 +1662,7 @@ export default {
         this.$set(this.selectedParameter, 'maxlength', newValue);
 
         // if val is empty, remove object from ct
-        if (val == '') {
+        if (val === '') {
           this.$delete(this.selectedParameter, 'maxlength');
         }
 
@@ -1677,18 +1671,18 @@ export default {
     },
     ignoreVisualizationDefined: {
       get() {
-        return (typeof this.computationTemplate.metadata !== 'undefined') &&
-          (typeof this.computationTemplate.metadata.output !== 'undefined') &&
-          (typeof this.computationTemplate.metadata.output.ignore != 'undefined') &&
-          (typeof this.computationTemplate.metadata.output.ignore.visualization != 'undefined')
+        return (typeof this.computationTemplate.metadata !== 'undefined')
+          && (typeof this.computationTemplate.metadata.output !== 'undefined')
+          && (typeof this.computationTemplate.metadata.output.ignore !== 'undefined')
+          && (typeof this.computationTemplate.metadata.output.ignore.visualization !== 'undefined');
       },
     },
     ignoreDownloadDefined: {
       get() {
-        return (typeof this.computationTemplate.metadata !== 'undefined') &&
-          (typeof this.computationTemplate.metadata.output !== 'undefined') &&
-          (typeof this.computationTemplate.metadata.output.ignore != 'undefined') &&
-          (typeof this.computationTemplate.metadata.output.ignore.download != 'undefined')
+        return (typeof this.computationTemplate.metadata !== 'undefined')
+          && (typeof this.computationTemplate.metadata.output !== 'undefined')
+          && (typeof this.computationTemplate.metadata.output.ignore !== 'undefined')
+          && (typeof this.computationTemplate.metadata.output.ignore.download !== 'undefined');
       },
     },
   },
@@ -1700,11 +1694,13 @@ export default {
         iFrameDiv.innerHTML = '';
 
         // check if properties are empty and delete
-        for (const [key, value] of Object.entries(this.computationTemplate.configuration)) {
-          if (value == '') {
-            this.$delete(this.computationTemplate.configuration, key);
+        const emptyProperties = [];
+        Object.entries(this.computationTemplate.configuration).forEach(([key, value]) => {
+          if (value === '') {
+            emptyProperties.push(key);
           }
-        }
+        });
+        emptyProperties.forEach((key) => this.$delete(this.computationTemplate.configuration, key));
 
         // TODO: check if metadata.output is empty and delete
 
@@ -1766,14 +1762,12 @@ export default {
         this.computationTemplate.files.push(file);
         // add possibility to add "parts"
         this.componentsCommand = this.componentsPart.concat(this.componentsCommand);
-      } else {
-        // add commandline parameters
-        if (typeof this.computationTemplate.parameters === 'undefined') {
-          this.computationTemplate.parameters = [];
-          // remove possibility to add commandline params
-          this.componentsFiles = ['file'];
-          this.$forceUpdate();
-        }
+      // add commandline parameters
+      } else if (typeof this.computationTemplate.parameters === 'undefined') {
+        this.computationTemplate.parameters = [];
+        // remove possibility to add commandline params
+        this.componentsFiles = ['file'];
+        this.$forceUpdate();
       }
     },
     onPartDrop(e, file) {
@@ -1937,7 +1931,7 @@ export default {
       } else if (type === 'commands') {
         this.showCommands = true;
       } else {
-        if (this.computationTemplate.identifier == '') {
+        if (this.computationTemplate.identifier === '') {
           this.computationTemplate.identifier = this.uuid();
         }
         this.showTemplate = true;
@@ -1976,6 +1970,7 @@ export default {
         }${s4()}`
       );
     },
+    /* eslint no-param-reassign: ["error", { "props": false }] */
     addOrRemoveParameters(selectedPart) {
       if (selectedPart.access === 'template' && (typeof selectedPart.parameters === 'undefined')) {
         this.$set(selectedPart, 'parameters', []);
@@ -1989,22 +1984,21 @@ export default {
     removeParameter(event, item, isInPart = true) {
       event.stopPropagation();
       if (isInPart) {
-        for (const file in this.computationTemplate.files) {
-          for (const part in this.computationTemplate.files[file].parts) {
-            const currentPart = this.computationTemplate.files[file].parts[part];
-            for (const parameter in currentPart.parameters) {
-              const currentParameter = currentPart.parameters[parameter];
+        Object.values(this.computationTemplate.files).forEach((file) => {
+          Object.values(file.parts).forEach((part) => {
+            Object.keys(part.parameters).forEach((parameter) => {
+              const currentParameter = part.parameters[parameter];
               if (currentParameter.identifier === item.identifier) {
-                delete this.computationTemplate.files[file].parts[part].parameters.splice(parameter, 1);
+                delete part.parameters.splice(parameter, 1);
                 this.closePreferences();
                 this.showTemplate = true;
                 this.preferences = true;
               }
-            }
-          }
-        }
+            });
+          });
+        });
       } else {
-        for (const argument in this.computationTemplate.parameters) {
+        Object.keys(this.computationTemplate.parameters).forEach((argument) => {
           const currentParameter = this.computationTemplate.parameters[argument];
           if (currentParameter.identifier === item.identifier) {
             delete this.computationTemplate.parameters.splice(argument, 1);
@@ -2012,7 +2006,7 @@ export default {
             this.showCommands = true;
             this.preferences = true;
           }
-        }
+        });
       }
       this.$forceUpdate();
     },
@@ -2021,17 +2015,17 @@ export default {
      */
     removeFile(event, item) {
       event.stopPropagation();
-      for (const fileIndex in this.computationTemplate.files) {
-        if (this.computationTemplate.files[fileIndex].identifier == item.identifier) {
+      Object.keys(this.computationTemplate.files).forEach((fileIndex) => {
+        if (this.computationTemplate.files[fileIndex].identifier === item.identifier) {
           delete this.computationTemplate.files.splice(fileIndex, 1);
         }
-      }
+      });
       this.closePreferences();
       this.preferences = true;
       this.showTemplate = true;
 
       // if there are no files, remove ability to add parts
-      if (this.computationTemplate.files.length == 0) {
+      if (this.computationTemplate.files.length === 0) {
         this.componentsCommand = ['checkbox', 'radio', 'dropdown', 'toggle'];
       }
 
@@ -2042,13 +2036,13 @@ export default {
      */
     removePart(event, item) {
       event.stopPropagation();
-      for (const fileIndex in this.computationTemplate.files) {
-        for (const partIndex in this.computationTemplate.files[fileIndex].parts) {
-          if (this.computationTemplate.files[fileIndex].parts[partIndex].identifier == item.identifier) {
-            delete this.computationTemplate.files[fileIndex].parts.splice(partIndex, 1);
+      Object.values(this.computationTemplate.files).forEach((file) => {
+        Object.keys(file.parts).forEach((partIndex) => {
+          if (file.parts[partIndex].identifier === item.identifier) {
+            delete file.parts.splice(partIndex, 1);
           }
-        }
-      }
+        });
+      });
       this.closePreferences();
       this.preferences = true;
       this.showTemplate = true;
@@ -2074,8 +2068,8 @@ export default {
       } else {
         configObject = this.computationTemplate.metadata.output.vtk;
       }
-      for (const configItem in configObject) {
-        if (configObject[configItem].basename == config.basename) {
+      Object.values(configObject).forEach((configItem) => {
+        if (configItem.basename === config.basename) {
           this.$delete(configObject, configItem);
 
           // if csv-object is empty, delete it
@@ -2089,7 +2083,7 @@ export default {
 
           this.$forceUpdate();
         }
-      }
+      });
 
       // delete metadata.output if empty
       if (typeof this.computationTemplate.metadata.output.viewer === 'undefined' && typeof this.computationTemplate.metadata.output.csv === 'undefined' && typeof this.computationTemplate.metadata.output.vtk === 'undefined') {
@@ -2101,15 +2095,15 @@ export default {
     removePlot(event, csv, plotConf) {
       event.stopPropagation();
       const configObject = this.computationTemplate.metadata.output.csv;
-      for (const configItem in configObject) {
-        if (configObject[configItem].basename == csv.basename) {
-          for (const plot in configObject[configItem].plots) {
-            if (configObject[configItem].plots[plot].key == plotConf.key) {
-              this.$delete(configObject[configItem].plots, plot);
+      Object.values(configObject).forEach((configItem) => {
+        if (configItem.basename === csv.basename) {
+          Object.keys(configItem.plots).forEach((plot) => {
+            if (configItem.plots[plot].key === plotConf.key) {
+              this.$delete(configItem.plots, plot);
             }
-          }
+          });
         }
-      }
+      });
       this.$forceUpdate();
     },
     /**
@@ -2118,11 +2112,11 @@ export default {
      */
     adjustInputType(item) {
       const { type } = item.metadata;
-      if (type == 'text') {
+      if (type === 'text') {
         this.$delete(item, 'min');
         this.$delete(item, 'max');
         this.$delete(item, 'step');
-      } else if (type == 'number') {
+      } else if (type === 'number') {
         this.$delete(item, 'maxlength');
       }
       this.$set(item.default, 0, '');
@@ -2133,7 +2127,7 @@ export default {
      */
     adjustPatternExistence(item) {
       const { validation } = item;
-      if (validation != 'pattern') {
+      if (validation !== 'pattern') {
         delete item.pattern;
       }
       this.$forceUpdate();
@@ -2147,6 +2141,7 @@ export default {
         this.$set(this.computationTemplate.configuration, 'running.timelimitInSeconds', 0);
       }
       // TODO: Add environments as they are supported by the backend
+      // eslint-disable-next-line default-case
       switch (env) {
         // case "C":
         //   this.$set(this.computationTemplate.configuration, "compiling.sources", [ "" ]);
@@ -2249,9 +2244,9 @@ export default {
       }
       this.computationTemplate.metadata.output.csv.push(outputConfig);
     },
-    //TODO merge visualization and download
+    // TODO merge visualization and download
     addIgnoreVisualization() {
-      //output-ignore-visualization-input
+      // output-ignore-visualization-input
       if (typeof this.computationTemplate.metadata === 'undefined') {
         this.$set(this.computationTemplate, 'metadata', { });
       }
@@ -2272,7 +2267,7 @@ export default {
       this.computationTemplate.metadata.output.ignore.visualization.splice(itemIndex, 1);
     },
     addIgnoreDownload() {
-      //output-ignore-visualization-input
+      // output-ignore-visualization-input
       if (typeof this.computationTemplate.metadata === 'undefined') {
         this.$set(this.computationTemplate, 'metadata', { });
       }
@@ -2326,14 +2321,14 @@ export default {
       this.$forceUpdate();
     },
     getNumberOfFields(paramId) {
-      if (this.valueNumbers.get(paramId) == undefined) {
+      if (this.valueNumbers.get(paramId) === undefined) {
         this.valueNumbers.set(paramId, 1);
         return 1;
       }
       return this.valueNumbers.get(paramId);
     },
     setNumberOfFields(paramId, newValue) {
-      if (this.selectedParameter.metadata.guiType == 'checkbox') {
+      if (this.selectedParameter.metadata.guiType === 'checkbox') {
         if (newValue < this.getNumberOfFields(paramId)) {
           this.selectedParameter.options.pop();
           this.$forceUpdate();
@@ -2343,7 +2338,7 @@ export default {
       this.$forceUpdate();
     },
     getNumberofConfigFields(configName) {
-      if (this.computationTemplate.configuration[configName] == undefined) {
+      if (this.computationTemplate.configuration[configName] === undefined) {
         return 0;
       }
       return this.computationTemplate.configuration[configName].length;
@@ -2351,12 +2346,12 @@ export default {
     setNumberOfConfigFields(configName, newValue) {
       if (newValue < this.getNumberofConfigFields(configName)) {
         this.computationTemplate.configuration[configName].pop();
-        if (newValue == 0) {
+        if (newValue === 0) {
           this.$delete(this.computationTemplate.configuration, configName);
         }
         this.$forceUpdate();
-      } else if (newValue != 0) {
-        if (this.getNumberofConfigFields(configName) == 0) {
+      } else if (newValue !== 0) {
+        if (this.getNumberofConfigFields(configName) === 0) {
           this.computationTemplate.configuration[configName] = [''];
         } else {
           this.computationTemplate.configuration[configName].push('');
@@ -2392,7 +2387,7 @@ export default {
         // if the value has to be a number, check it
         if (isNumericalValue) {
           newValue = parseFloat(val.target.value);
-          if (isNaN(newValue)) {
+          if (Number.isNaN(newValue)) {
             // set to old value, if input was not null
             console.log(val.target.value);
             if (typeof this.computationTemplate.configuration[configName] !== 'undefined' && val.target.value !== '') {
@@ -2477,16 +2472,16 @@ export default {
           this.selectedParameter.options.push(option);
         }
         // if selected or disabled, set value as boolean - not as string
-        if (whatToSet == 'selected' || whatToSet == 'disabled') {
+        if (whatToSet === 'selected' || whatToSet === 'disabled') {
           const isSetTrue = (val.target.value === 'true');
           this.$set(this.selectedParameter.options[index], whatToSet, isSetTrue);
           if (this.selectedParameter.metadata.guiType === 'radio' && isSetTrue) {
             const radioOptions = this.selectedParameter.options;
-            for (const radioOption in radioOptions) {
-              if (radioOption != index) {
+            Object.keys(radioOptions).forEach((radioOption) => {
+              if (radioOption !== index) {
                 this.$set(radioOptions[radioOption], whatToSet, false);
               }
-            }
+            });
           }
         } else if (val.target.value === '' && whatToSet === 'text') {
           this.$delete(this.selectedParameter.options[index], 'text');
@@ -2496,14 +2491,14 @@ export default {
         // if dropdown and multiple fields are selected
         if (this.selectedParameter.metadata.guiType === 'dropdown') {
           const selected = [];
-          for (const opt in this.selectedParameter.options) {
+          Object.keys(this.selectedParameter.options).forEach((opt) => {
             const keys = Object.keys(this.selectedParameter.options[opt]);
             if (keys.includes('selected')) {
               if (this.selectedParameter.options[opt].selected) {
                 selected.push(opt);
               }
             }
-          }
+          });
           if (selected.length > 1) {
             this.$set(this.selectedParameter, 'multiple', true);
           } else {
@@ -2511,7 +2506,7 @@ export default {
           }
         }
         this.$forceUpdate();
-        return this.slidervModel;
+        // return this.slidervModel;
       }
     },
     getRadioSelected(index) {
@@ -2530,7 +2525,7 @@ export default {
       return '';
     },
     setvModelTemplateMetadata(propertyName, val) {
-      if (val.target.value != '') {
+      if (val.target.value !== '') {
         if (typeof this.computationTemplate.metadata[propertyName] !== 'undefined') {
           this.$set(this.computationTemplate.metadata, propertyName, val.target.value);
           this.$forceUpdate();
@@ -2540,13 +2535,13 @@ export default {
         } else {
           this.$set(this.computationTemplate.metadata, propertyName, val.target.value);
         }
-        return this.computationTemplate.metadata[propertyName];
-      }
+        // return this.computationTemplate.metadata[propertyName];
       // if val is empty delete displayName-element
-      if (typeof this.computationTemplate.metadata[propertyName] !== 'undefined') {
+      } else if (typeof this.computationTemplate.metadata[propertyName] !== 'undefined') {
         this.$delete(this.computationTemplate.metadata, propertyName);
-        this.$forceUpdate();
+        // this.$forceUpdate();
       }
+      this.$forceUpdate();
     },
     /**
      * validate computation template and return whether button should be enabled
@@ -2571,15 +2566,14 @@ export default {
       // parameter validation
       const { files } = this.computationTemplate;
       const paramValidate = ajv.compile(this.paramSchema);
-      for (const file in files) {
-        const { parts } = files[file];
-        for (const part in parts) {
-          if (typeof parts[part].parameters !== 'undefined') {
-            paramValidate(parts[part].parameters);
+      Object.values(files).forEach((file) => {
+        Object.values(file.parts).forEach((part) => {
+          if (typeof part.parameters !== 'undefined') {
+            paramValidate(part.parameters);
             this.validationPartParameterResult = paramValidate.errors;
           }
-        }
-      }
+        });
+      });
 
       // commandline arguments validation
       const commandlineValidate = ajv.compile(this.commandlineArgsSchema);
@@ -2592,12 +2586,12 @@ export default {
         // if everything is valid, set validationResult to "Template is Valid!"
         if (this.validationResult == null && this.validationPartParameterResult == null && this.validationArgsResult == null) {
           this.validationResult = 'Template is Valid!';
-          setTimeout(() => this.validationRunning = false, 2000);
+          setTimeout(() => { this.validationRunning = false; }, 2000);
           this.classValidity = 'valid-true';
           return true;
         }
 
-        setTimeout(() => this.validationRunning = false, 2000);
+        setTimeout(() => { this.validationRunning = false; }, 2000);
         this.classValidity = 'valid-false';
       } else if (this.validationResult == null && this.validationPartParameterResult == null && this.validationArgsResult == null) {
         return true;
@@ -2609,7 +2603,7 @@ export default {
       const appDiv = document.body;
       const dataMode = appDiv.getAttribute('data-mode');
       // if data-mode is set to "create-and-execute", user is logged in (if it is set to "created", the user is not logged in)
-      const loggedIn = ((dataMode == 'create-and-execute'));
+      const loggedIn = ((dataMode === 'create-and-execute'));
       return loggedIn;
     },
     startGuide() {
@@ -2634,36 +2628,36 @@ export default {
 
       //  add required elements that might be missing
       if (typeof obj.files !== 'undefined') {
-        for (const file in obj.files) {
+        Object.values(obj.files).forEach((file) => {
           // add file-identifiers if missing
-          if (typeof obj.files[file].identifier === 'undefined') {
-            this.$set(obj.files[file], 'identifier', this.uuid());
+          if (typeof file.identifier === 'undefined') {
+            this.$set(file, 'identifier', this.uuid());
           }
           // add "parts"-elements
-          if (typeof obj.files[file].parts === 'undefined') {
-            this.$set(obj.files[file], 'parts', []);
+          if (typeof file.parts === 'undefined') {
+            this.$set(file, 'parts', []);
           }
           // add required elements in parts
-          for (const part in obj.files[file].parts) {
+          Object.values(file.parts).forEach((part) => {
             // add identifiers if missing
-            if (typeof obj.files[file].parts[part].identifier === 'undefined') {
-              this.$set(obj.files[file].parts[part], 'identifier', this.uuid());
+            if (typeof part.identifier === 'undefined') {
+              this.$set(part, 'identifier', this.uuid());
             }
             // add content if missing
-            if (typeof obj.files[file].parts[part].content === 'undefined') {
-              this.$set(obj.files[file].parts[part], 'content', '');
+            if (typeof part.content === 'undefined') {
+              this.$set(part, 'content', '');
             }
             // if access is already set to template
-            if (typeof obj.files[file].parts[part].access !== 'undefined') {
-              if (obj.files[file].parts[part].access === 'template') {
+            if (typeof part.access !== 'undefined') {
+              if (part.access === 'template') {
                 // add parameters
-                if (typeof obj.files[file].parts[part].parameters === 'undefined') {
-                  this.$set(obj.files[file].parts[part], 'parameters', []);
+                if (typeof part.parameters === 'undefined') {
+                  this.$set(part, 'parameters', []);
                 }
               }
             }
-          }
-        }
+          });
+        });
       } else {
         this.$set(obj, 'files', []);
       }
@@ -2701,25 +2695,22 @@ export default {
     },
     setNumbersOfOptions() {
       // set numbers of parameter-values
-      for (const file in this.computationTemplate.files) {
-        for (const part in this.computationTemplate.files[file].parts) {
-          if (this.computationTemplate.files[file].parts[part].access == 'template') {
-            for (const parameter in this.computationTemplate.files[file].parts[part].parameters) {
-              const currentParam = this.computationTemplate.files[file].parts[part].parameters[parameter];
-              if (currentParam.mode == 'fixed') {
-                this.valueNumbers.set(currentParam.identifier, currentParam.options.length);
-              }
-            }
-          }
-        }
-      }
+      Object.values(this.computationTemplate.files).forEach((file) => {
+        Object.values(file.parts)
+          .filter((part) => part.access === 'template')
+          .forEach((part) => {
+            Object.values(part.parameters)
+              .filter((currentParam) => currentParam.mode === 'fixed')
+              .forEach((currentParam) => { this.valueNumbers.set(currentParam.identifier, currentParam.options.length); });
+          });
+      });
       // set number of commandline argument-values
       if (typeof this.computationTemplate.parameters !== 'undefined') {
-        for (const arg in this.computationTemplate.parameters) {
-          if (this.computationTemplate.parameters[arg].mode == 'fixed') {
-            this.valueNumbers.set(this.computationTemplate.parameters[arg].identifier, this.computationTemplate.parameters[arg].options.length);
-          }
-        }
+        Object.values(this.computationTemplate.parameters)
+          .filter((parmeter) => parmeter.mode === 'fixed')
+          .forEach((parameter) => {
+            this.valueNumbers.set(parameter.identifier, parameter.options.length);
+          });
       }
     },
     /** Run created template in another tab */

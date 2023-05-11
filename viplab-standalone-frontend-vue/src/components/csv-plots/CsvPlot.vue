@@ -109,11 +109,11 @@ export default {
       // map the row-values to the header to create header:value type entries
       const data = rows.map((row) => {
         const values = row.split(delimiter);
-        const element = headers.reduce((object, header, index) => {
-          object[header] = values[index];
-          return object;
+        return headers.reduce((object, header, index) => {
+          const newObject = object;
+          newObject[header] = values[index];
+          return newObject;
         }, {});
-        return element;
       });
       this.processData(data);
     },
@@ -123,9 +123,9 @@ export default {
       // create an object, where there is an array for each column name
       const obj = [];
       const keys = Object.keys(data[0]);
-      keys.forEach((element) => obj[element] = []);
+      keys.forEach((element) => { obj[element] = []; });
       // fill the object with the data depending on the keys (column names)
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 0; i < data.length; i *= 1) {
         const row = data[i];
         keys.forEach((element) => obj[element].push(row[element]));
       }
@@ -139,28 +139,28 @@ export default {
 
       // multiply x-axis by factor if given
       if (this.labelProp.factor !== undefined) {
-        for (let j = 0; j < obj[(xkey)].length; j++) {
-          obj[(xkey)][j] = obj[(xkey)][j] * this.labelProp.factor;
+        for (let j = 0; j < obj[(xkey)].length; j += 1) {
+          obj[(xkey)][j] *= this.labelProp.factor;
         }
       }
-      const xkey_ind = keys.indexOf(xkey);
-      if (xkey_ind > -1) {
-        keys.splice(xkey_ind, 1);
+      const xKeyIndex = keys.indexOf(xkey);
+      if (xKeyIndex > -1) {
+        keys.splice(xKeyIndex, 1);
       }
       // create traces to be rendered later; the first column is always x; the others are ys
-      for (let k = 0; k < keys.length; k++) {
+      for (let k = 0; k < keys.length; k += 1) {
         if (this.datasetProp.key) {
           // multiply y-axis by factor if given
           if (keys[k] === this.datasetProp.key || this.datasetProp.key.includes(keys[k])) {
             if (this.datasetProp.factor !== undefined) {
-              for (let j = 0; j < obj[(xkey)].length; j++) {
-                obj[(keys[k])][j] = obj[(keys[k])][j] * this.datasetProp.factor;
+              for (let j = 0; j < obj[(xkey)].length; j += 1) {
+                obj[(keys[k])][j] *= this.datasetProp.factor;
               }
             }
             const trace = {
               x: obj[(xkey)],
               y: obj[(keys[k])],
-              name: (typeof this.datasetProp.key == 'string') ? this.datasetProp.label : keys[k],
+              name: (typeof this.datasetProp.key === 'string') ? this.datasetProp.label : keys[k],
             };
             traces.push(trace);
           }
@@ -179,9 +179,9 @@ export default {
       let title = 'Graph';
       if (this.areUrlsProp) {
         let startIndex = this.csvs[this.fileIndex].lastIndexOf('/');
-        startIndex = (startIndex != -1) ? startIndex : 0;
+        startIndex = (startIndex !== -1) ? startIndex : 0;
         let endIndex = this.csvs[this.fileIndex].lastIndexOf('?');
-        endIndex = (endIndex != -1) ? endIndex : this.csvs[this.fileIndex].length;
+        endIndex = (endIndex !== -1) ? endIndex : this.csvs[this.fileIndex].length;
         title = this.csvs[this.fileIndex].substring(startIndex + 1, endIndex);
       }
 

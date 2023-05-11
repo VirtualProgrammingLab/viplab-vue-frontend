@@ -1,7 +1,5 @@
 import Vue from 'vue';
-import App from './App.vue';
 import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.css';
 import VueWait from 'vue-wait';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 
@@ -29,6 +27,7 @@ import VueTour from 'vue-tour';
 
 import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
+import App from './App.vue';
 import ViPLab from './pages/viplab/App.vue';
 import Teacher from './pages/teacher/App.vue';
 
@@ -92,6 +91,7 @@ const store = new Vuex.Store({
     modifiedByTeacher: false,
   },
   mutations: {
+    /* eslint no-param-reassign: ["error", { "props": false }] */
     updateJsonTemplate(state, newValue) {
       state.jsonTemplate = newValue;
     },

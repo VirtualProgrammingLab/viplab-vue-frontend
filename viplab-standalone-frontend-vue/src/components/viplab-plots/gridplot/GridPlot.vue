@@ -13,7 +13,7 @@
 
 <script>
 import { Plotly } from '@rleys/vue-plotly-basic';
-import * as Parser from '../parse.js';
+import Parse from '../parse';
 
 export default {
   name: 'GridPlot',
@@ -47,17 +47,17 @@ export default {
     };
   },
   mounted() {
-    const parseTest = new Parser.Parse(this.plotData);
+    const parseTest = new Parse(this.plotData);
     const testJson = parseTest.parseFileToJson();
     this.datasetList = parseTest.parseValues(testJson);
     this.minColor = parseTest.getMinColor();
     this.maxColor = parseTest.getMaxColor();
 
-    for (var i = 0; i < this.datasetList[0].getWidth(); i++) {
+    for (let i = 0; i < this.datasetList[0].getWidth(); i += 1) {
       this.xArray.push(this.datasetList[0].getXMin() * 1 + (i * ((this.datasetList[0].getXMax() - this.datasetList[0].getXMin()) / this.datasetList[0].getWidth())));
     }
 
-    for (i = 0; i < this.datasetList[0].getHeight(); i++) {
+    for (let i = 0; i < this.datasetList[0].getHeight(); i += 1) {
       this.yArray.push(this.datasetList[0].getYMin() * 1 + (i * ((this.datasetList[0].getYMax() - this.datasetList[0].getYMin()) / this.datasetList[0].getHeight())));
     }
 
@@ -102,26 +102,26 @@ export default {
           y: this.yArray,
           type: 'heatmap',
           hoverongaps: false,
-          xgap:	0.5,
-          ygap:	0.5,
+          xgap: 0.5,
+          ygap: 0.5,
           colorscale: [[0, this.minColor[0]], [1, this.maxColor[0]]],
         },
       ];
     },
     create3dKaestchen() {
-      const xScatterArray = new Array();
-      const yScatterArray = new Array();
+      const xScatterArray = [];
+      const yScatterArray = [];
 
-      for (var j = 0; j < this.datasetList[0].getData()[0].length; j++) {
+      for (let j = 0; j < this.datasetList[0].getData()[0].length; j += 1) {
         Array.prototype.push.apply(xScatterArray, this.xArray);
       }
 
-      for (j = 0; j < this.datasetList[0].getData().length; j++) {
+      for (let j = 0; j < this.datasetList[0].getData().length; j += 1) {
         Array.prototype.push.apply(yScatterArray, this.yArray);
       }
 
-      let zScatterArray = new Array();
-      for (let i = 0; i < this.datasetList[0].getData().length; i++) {
+      let zScatterArray = [];
+      for (let i = 0; i < this.datasetList[0].getData().length; i += 1) {
         zScatterArray = zScatterArray.concat(this.datasetList[0].getData()[i]);
       }
       yScatterArray.sort((a, b) => a - b);

@@ -1,4 +1,4 @@
-export function LinePlotFrame() {
+export default function LinePlotFrame() {
   this.graphs = []; // LinePlotGraphs
   this.texts = []; // LinePlotTexts
 
@@ -202,11 +202,11 @@ export function LinePlotFrame() {
 
   // Check wehter the scaling in X direction is logarithmic.
   this.isXScaleLogarithmic = function () {
-    return (this.scale == SCALE_LOG_LIN) || (this.scale == SCALE_LOG_LOG);
+    return (this.scale === SCALE_LOG_LIN) || (this.scale === SCALE_LOG_LOG);
   };
 
   // Check whether the scaling in Y direction is logarithmic.
   this.isYScaleLogarithmic = function () {
-    return (this.scale == SCALE_LIN_LOG) || (this.scale == SCALE_LOG_LOG);
+    return (this.scale === SCALE_LIN_LOG) || (this.scale === SCALE_LOG_LOG);
   };
 }

@@ -25,7 +25,7 @@ extend('required', {
 
 extend('toggleOneOf', (value) => {
   // console.log("toggle oneof " + value);
-  if (value.length > 0 && value.length == 1) {
+  if (value.length > 0 && value.length === 1) {
     return true;
   }
   return 'Only choose one!';

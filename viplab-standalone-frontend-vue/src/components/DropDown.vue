@@ -94,16 +94,10 @@ export default {
       },
     },
     onlyone() {
-      if (this.dropitem.validation === 'onlyone') {
-        return true;
-      }
-      return false;
+      return this.dropitem.validation === 'onlyone';
     },
     minone() {
-      if (this.dropitem.validation === 'minone') {
-        return true;
-      }
-      return false;
+      return this.dropitem.validation === 'minone';
     },
   },
   data() {
@@ -115,7 +109,7 @@ export default {
     /** get all values of an item that are not disabled */
     itemWithoutDisabled(item) {
       const array = [];
-      for (let i = 0; i < item.options.length; i++) {
+      for (let i = 0; i < item.options.length; i += 1) {
         if (!item.options[i].disabled) {
           array.push(item.options[i]);
         }
@@ -124,7 +118,7 @@ export default {
     },
     itemsDisabled(item) {
       const array = [];
-      for (let i = 0; i < item.options.length; i++) {
+      for (let i = 0; i < item.options.length; i += 1) {
         if (item.options[i].disabled) {
           array.push(item.options[i]);
         }

@@ -33,15 +33,15 @@ export default {
     };
   },
   watch: {
-    content(concat_content, old_content) {
-      if (concat_content === '') {
+    content(concatContent, oldContent) {
+      if (concatContent === '') {
         // should never come to that branch; instead component is mounted again
         // when content resets
         console.log('Clearing out content of ansioutput');
         this.lines = [];
       } else {
-        const new_content = concat_content.substring(old_content.length);
-        this.renderContent(new_content);
+        const newContent = concatContent.substring(oldContent.length);
+        this.renderContent(newContent);
       }
     },
   },
@@ -51,6 +51,7 @@ export default {
     this.$el.scrollTop = this.$el.scrollHeight
     }, */
   beforeMount() {
+    // eslint-disable-next-line new-cap
     this.ansi = new AU.default();
   },
   mounted() {
@@ -60,12 +61,12 @@ export default {
   methods: {
     renderContent(content) {
       // console.log(this.lines.length);
-      const new_lines = content.split(/\r?\n/);
-      for (const line_idx in new_lines) {
+      const newLines = content.split(/\r?\n/);
+      Object.values(newLines).forEach((newLine) => {
         this.lines.push(`${this.ansi.ansi_to_html(
-          new_lines[line_idx],
+          newLine,
         )}<br/>`);
-      }
+      });
     },
   },
 };

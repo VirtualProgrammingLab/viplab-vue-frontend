@@ -33,9 +33,10 @@
 
 <script>
 import { Plotly } from '@rleys/vue-plotly-basic';
-import * as LinePlotParser from './LinePlotParser.js';
+import LinePlotParser from './LinePlotParser';
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Plot2d',
   components: {
     Plotly,
@@ -93,12 +94,12 @@ export default {
       };
       const graphs = currentDataset.getAllGraphs();
 
-      for (let t = 0; t < graphs.length; t++) {
+      for (let t = 0; t < graphs.length; t += 1) {
         const currentGraph = graphs[t];
         const lines = currentGraph.getLines();
         const x = [];
         const y = [];
-        for (let i = 0; i < lines.length; i++) {
+        for (let i = 0; i < lines.length; i += 1) {
           const line = lines[i];
           x.push(line[0]);
           y.push(line[1]);
@@ -131,7 +132,7 @@ export default {
     },
     increaseFileIndex() {
       if (this.currentIndex < this.datasetList.length) {
-        this.currentIndex++;
+        this.currentIndex += 1;
       } else {
         this.currentIndex = this.datasetList.length;
       }
@@ -140,7 +141,7 @@ export default {
     },
     decreaseFileIndex() {
       if (this.currentIndex > 1) {
-        this.currentIndex--;
+        this.currentIndex -= 1;
       } else {
         this.currentIndex = 1;
       }

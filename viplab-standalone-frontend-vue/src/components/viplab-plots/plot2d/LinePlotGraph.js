@@ -1,4 +1,4 @@
-export function LinePlotGraph() {
+export default function LinePlotGraph() {
   // The color of this graph, in CSS notation.
   this.color = 'rgb(0, 0, 0)';
 
@@ -22,7 +22,7 @@ export function LinePlotGraph() {
   this.legend = '';
 
   // Add a new line to the graph.
-  this.addLine = function (input) {
+  this.addLine = function addLine(input) {
     this.lines.push(input);
   };
 
