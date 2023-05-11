@@ -1,165 +1,160 @@
 {
-    "identifier": "11483f23-95bf-424a-98a5-ee5868c85c3f",
-    "version": "3.0.0",
-    "metadata": {
-        "displayName": "DuMux Benchmark Case 1",
-        "description": "Case 1: Single Fracture",
-        "output": {
-            "viewer": [
-                "CSV",
-                "ParaView"
-            ],
-            "csv": [
-                {
-                    "basename": "dataovertime",
-                    "xlabel": {
-                        "key": "time",
-                        "label": "Time in years",
-                        "factor": 3.1709792e-8,
-                        "format": ".2f"
-                    },
-                    "plots": [
-                        {
-                            "key": "massBottomLayer",
-                            "label": "Tracer mass in bottom layer in kg",
-                            "factor": 100
-                        },
-                        {
-                            "key": "massFracture",
-                            "label": "Tracer mass in fracture in kg"
-                        },
-                        {
-                            "key": "fluxAcrossOutlet",
-                            "label": "Flux across outlet in mg/(s m^2)",
-                            "factor": 1E6,
-                            "format": ".2f"
-                        }
-                    ]
-                }
-            ],
-            "vtk": [
-                {
-                    "basename": "case1_single_tracer_matrix"
-                },
-                {
-                    "basename": "case1_single_tracer_fracture"
-                },
-                {
-                    "basename": "case1_single_onep_matrix"
-                },
-                {
-                    "basename": "case1_single_onep_fracture"
-                } 
-            ]
-        }
-    },
-    "environment": "Container",
-    "files": [
+  "identifier": "11483f23-95bf-424a-98a5-ee5868c85c3f",
+  "version": "3.0.0",
+  "metadata": {
+    "displayName": "Fracture Benchmark (Case 1): Single Fracture",
+    "description": "In this application, flow and transport through a single fracture in a cubic domain can be simulated with the numerical schemes available in Dumux, which comprise two cell-centered (tpfa, mpfa) and a vertex-centered finite volume scheme (box). Further details can be found in the related publication doi.org/10.1016/j.advwatres.2020.103759 .",
+    "output": {
+      "viewer": [
+        "CSV",
+        "ParaView"
+      ],
+      "ignore": ["results.csv"],
+      "csv": [
         {
-            "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3f",
-            "path": "params.input",
-            "metadata": {
-                "syntaxHighlighting": "ini"
+          "basename": "dataovertime",
+          "xlabel": {
+            "key": "time",
+            "label": "Time in years",
+            "factor": 3.1709792E-8,
+            "format": ".2f"
+          },
+          "plots": [
+            {
+              "key": "massBottomLayer",
+              "label": "Tracer mass in bottom layer in kg",
+              "factor": 100
             },
-            "parts": [
-                {
-                    "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a2",
-                    "access": "template",
-                    "metadata": {
-                        "description": "Parameters for Execution of Case 1"
-                    },
-                    "parameters": [
-                        {
-                            "mode": "fixed",
-                            "identifier": "Discretization",
-                            "metadata": {
-                                "guiType": "dropdown",
-                                "name": "Discretization Method",
-                                "description": "Choose Discretization Method. You can choose between ???three or four??? different finite volume methods implemented in DuMux."
-                            },
-                            "options": [
-                                {
-                                    "value": "Please choose one",
-                                    "disabled": true
-                                },
-                                {
-                                    "value": "tpfa",
-                                    "text": "TPFA (Cell Centered FV Scheme with Two-Point Flux Approximation)",
-                                    "selected": true
-                                },
-                                {
-                                    "value": "mpfa",
-                                    "text": "MPFA-O (Cell-Centered FV Scheme with Multi-Point Flux Approximation)"
-                                },
-                                {
-                                    "value": "box",
-                                    "text": "BOX (Vertex-Centered FV Scheme)"
-                                }
-                            ],
-                            "validation": "oneof"
-                        },
-                        {
-                            "mode": "fixed",
-                            "identifier": "Transport",
-                            "metadata": {
-                                "guiType": "radio",
-                                "name": "Solved Model Equations",
-                                "description": "Choose Solved Model Equations..."
-                            },
-                            "options": [
-                                {
-                                    "value": "false",
-                                    "text": "Only Flow"
-                                },
-                                {
-                                    "value": "true",
-                                    "text": "Flow and Transport",
-                                    "selected": true
-                                }
-                            ],
-                            "validation": "oneof"
-                        },
-                        {
-                            "mode": "fixed",
-                            "identifier": "MeshFile",
-                            "metadata": {
-                                "guiType": "dropdown",
-                                "name": "Computational Grid",
-                                "description": "Select the total Number of Cells in the Computational Grid: Coarse means ~1k Cells, Intermediate ~10k Cells and Fine ~100k Cells."
-                            },
-                            "options": [
-                                {
-                                    "value": "Please choose one",
-                                    "disabled": true
-                                },
-                                {
-                                    "value": "single_1k.msh",
-                                    "text": "Coarse (1k Cells)",
-                                    "selected": true
-                                },
-                                {
-                                    "value": "single_10k.msh",
-                                    "text": "Intermediate (10k Cells)"
-                                },
-                                {
-                                    "value": "single_100k.msh",
-                                    "text": "Fine (100k Cells)"
-                                }
-                            ],
-                            "validation": "oneof"
-                        }
-                    ],
-                    "content": "W1RpbWVMb29wXQ0KVEVuZCA9IDFlOQ0KRHQgPSAxZTcNCg0KW1Byb2JsZW1dDQpFbmFibGVHcmF2aXR5ID0gZmFsc2UNClNvbHZlVHJhbnNwb3J0ID0ge3sgVHJhbnNwb3J0IH19DQoNCltEaXNjcmV0aXphdGlvbl0NClNjaGVtZSA9IHt7IERpc2NyZXRpemF0aW9uIH19DQoNCltHcmlkXQ0KRmlsZSA9IC9kYXRhL2R1bXV4LWJlbmNobWFya3MvYmVycmUyMDIwL2J1aWxkLWNtYWtlL2Nhc2VzL3RyYW5zcG9ydC9jYXNlMV9zaW5nbGVmcmFjdHVyZS9ncmlkcy97eyBNZXNoRmlsZSB9fQ0KDQpbTWF0cml4XQ0KT25lUC5Qcm9ibGVtLk5hbWUgPSBvbmVwX21hdHJpeA0KVHJhY2VyLlByb2JsZW0uTmFtZSA9IHRyYWNlcl9tYXRyaXgNCg0KW0ZyYWN0dXJlXQ0KT25lUC5Qcm9ibGVtLk5hbWUgPSBvbmVwX2ZyYWN0dXJlDQpUcmFjZXIuUHJvYmxlbS5OYW1lID0gdHJhY2VyX2ZyYWN0dXJlDQoNCltDb21wb25lbnRdDQpMaXF1aWREZW5zaXR5ID0gMS4wDQpMaXF1aWRLaW5lbWF0aWNWaXNjb3NpdHkgPSAxLjANCg0KW1Z0a10NCk91dHB1dE5hbWUgPSBjYXNlMV9zaW5nbGUNCg0KW0lPXQ0KQ2xlYXJSZXN1bHRGaWxlID0gdHJ1ZQ0KUmVmaW5lbWVudCA9IDANCg0KW0Fzc2VtYmx5XQ0KTnVtZXJpY0RpZmZlcmVuY2UuQmFzZUVwc2lsb24gPSAxZTEwDQoNCltOZXd0b25dDQpFbmFibGVEeW5hbWljT3V0cHV0ID0gZmFsc2U"
-                }
-            ]
+            {
+              "key": "massFracture",
+              "label": "Tracer mass in fracture in kg"
+            },
+            {
+              "key": "fluxAcrossOutlet",
+              "label": "Flux across outlet in mg/(s m^2)",
+              "factor": 1E6,
+              "format": ".2f"
+            }
+          ]
         }
-    ],
-    "configuration": {
-        "resources.image": "name://git.iws.uni-stuttgart.de:4567/dumux-pub/berre2020/viplab:latest",
-        "resources.volume": "/data/shared",
-        "resources.memory": "4g",
-        "resources.numCPUs": 1,
-        "running.commandLineArguments": "case1 params.input",
-        "running.entrypoint": "/data/bin/run.sh"
+      ],
+      "vtk": [
+        {
+          "basename": "case1_single_tracer_matrix"
+        },
+        {
+          "basename": "case1_single_tracer_fracture"
+        },
+        {
+          "basename": "case1_single_onep_matrix"
+        },
+        {
+          "basename": "case1_single_onep_fracture"
+        }
+      ]
     }
+  },
+  "environment": "Container",
+  "files": [
+    {
+      "identifier": "22483f42-95bf-984a-98a5-ee9485c85c3f",
+      "path": "params.input",
+      "metadata": {
+        "syntaxHighlighting": "ini",
+        "description": "params.input is the main configuration file for DuMux"
+      },
+      "parts": [
+        {
+          "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a2",
+          "access": "template",
+          "metadata": {
+            "description": "Use the form fields to adjust a subset of parameters defined in 'params.input' of DuMux"
+          },
+          "parameters": [
+            {
+              "mode": "fixed",
+              "identifier": "Discretization",
+              "metadata": {
+                "guiType": "dropdown",
+                "name": "Discretization Method",
+                "description": "Choose the discretization method. You can choose between three different finite volume (FV) methods implemented in DuMux."
+              },
+              "options": [
+                {
+                  "value": "tpfa",
+                  "text": "TPFA (Cell Centered FV Scheme with Two-Point Flux Approximation)",
+                  "selected": true
+                },
+                {
+                  "value": "mpfa",
+                  "text": "MPFA-O (Cell-Centered FV Scheme with Multi-Point Flux Approximation)"
+                },
+                {
+                  "value": "box",
+                  "text": "BOX (Vertex-Centered FV Scheme)"
+                }
+              ],
+              "validation": "oneof"
+            },
+            {
+              "mode": "fixed",
+              "identifier": "Transport",
+              "metadata": {
+                "guiType": "radio",
+                "name": "Solved Model Equations",
+                "description": "Choose if the simulation stops after computing a stationary flow field, or if a subsequent transport simulation is carried out."
+              },
+              "options": [
+                {
+                  "value": "false",
+                  "text": "Only Flow"
+                },
+                {
+                  "value": "true",
+                  "text": "Flow and Transport",
+                  "selected": true
+                }
+              ],
+              "validation": "oneof"
+            },
+            {
+              "mode": "fixed",
+              "identifier": "MeshFile",
+              "metadata": {
+                "guiType": "dropdown",
+                "name": "Computational Grid",
+                "description": "Select the total number of cells in the computational grid: coarse means ~1k cells, intermediate ~10k cells and fine ~100k cells."
+              },
+              "options": [
+                {
+                  "value": "single_1k.msh",
+                  "text": "Coarse (1k Cells)",
+                  "selected": true
+                },
+                {
+                  "value": "single_10k.msh",
+                  "text": "Intermediate (10k Cells)"
+                },
+                {
+                  "value": "single_100k.msh",
+                  "text": "Fine (100k Cells)"
+                }
+              ],
+              "validation": "oneof"
+            }
+          ],
+          "content": "W1RpbWVMb29wXQ0KVEVuZCA9IDFlOQ0KRHQgPSAxZTcNCg0KW1Byb2JsZW1dDQpFbmFibGVHcmF2aXR5ID0gZmFsc2UNClNvbHZlVHJhbnNwb3J0ID0ge3sgVHJhbnNwb3J0IH19DQoNCltEaXNjcmV0aXphdGlvbl0NClNjaGVtZSA9IHt7IERpc2NyZXRpemF0aW9uIH19DQoNCltHcmlkXQ0KRmlsZSA9IC9kYXRhL2JlcnJlMjAyMC9idWlsZC1jbWFrZS9jYXNlcy90cmFuc3BvcnQvY2FzZTFfc2luZ2xlZnJhY3R1cmUvZ3JpZHMve3sgTWVzaEZpbGUgfX0NCg0KW01hdHJpeF0NCk9uZVAuUHJvYmxlbS5OYW1lID0gb25lcF9tYXRyaXgNClRyYWNlci5Qcm9ibGVtLk5hbWUgPSB0cmFjZXJfbWF0cml4DQoNCltGcmFjdHVyZV0NCk9uZVAuUHJvYmxlbS5OYW1lID0gb25lcF9mcmFjdHVyZQ0KVHJhY2VyLlByb2JsZW0uTmFtZSA9IHRyYWNlcl9mcmFjdHVyZQ0KDQpbQ29tcG9uZW50XQ0KTGlxdWlkRGVuc2l0eSA9IDEuMA0KTGlxdWlkS2luZW1hdGljVmlzY29zaXR5ID0gMS4wDQoNCltWdGtdDQpPdXRwdXROYW1lID0gY2FzZTFfc2luZ2xlDQoNCltJT10NCkNsZWFyUmVzdWx0RmlsZSA9IHRydWUNClJlZmluZW1lbnQgPSAwDQoNCltBc3NlbWJseV0NCk51bWVyaWNEaWZmZXJlbmNlLkJhc2VFcHNpbG9uID0gMWUxMA0KDQpbTmV3dG9uXQ0KRW5hYmxlRHluYW1pY091dHB1dCA9IGZhbHNl"
+        }
+      ]
+    }
+  ],
+  "configuration": {
+    "resources.image": "name://berre2020",
+    "resources.volume": "/data/shared",
+    "resources.memory": "4g",
+    "resources.numCPUs": 1,
+    "running.commandLineArguments": "case1 params.input",
+    "running.entrypoint": "/data/berre2020/docker/run.sh",
+    "running.intermediateFilesPattern": ["XFtcW1dyb3RlIFthLXpcc10rXF1cXSAoW1x3Li1dKyk="]
+  }
 }
