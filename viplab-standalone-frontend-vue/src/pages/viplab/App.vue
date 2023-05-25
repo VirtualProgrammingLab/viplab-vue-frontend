@@ -489,7 +489,7 @@
                       <h3>Files to Download</h3>
                       <ul>
                         <li
-                          v-for="artifact in returnedUnmodifiedArtifacts.artifacts"
+                          v-for="(artifact) in filteredDownloadArtifacts(returnedUnmodifiedArtifacts.artifacts)"
                           :key="artifact.identifier+'Download'"
                         >
                           <a
@@ -1426,7 +1426,50 @@ export default {
     },
     filteredArtifacts(artifactsArray) {
       const availableMIMEtypes = ['text/plain', 'text/uri-list', 'application/json', 'image/png', 'image/jpeg', 'application/x-vgf', 'application/x-vgf3', 'application/x-vgfc', 'text/csv', 'application/vnd.kitware'];
-      const filtered = artifactsArray.filter((artifact) => (availableMIMEtypes.indexOf(artifact.MIMEtype) > -1));
+      let filenamefilter = [];
+      // TODO replace with es2020 syntax
+      if (typeof this.json.metadata !== 'undefined') {
+        if (typeof this.json.metadata.output !== 'undefined') {
+          if (typeof this.json.metadata.output.ignore !== 'undefined') {
+            if (typeof this.json.metadata.output.ignore.visualization !== 'undefined') {
+              filenamefilter = this.json.metadata.output.ignore.visualization.map(filename => {
+                let w = filename.replace(/[.+^${}()|[\]\\]/g, '\\$&'); // regexp escape
+                return new RegExp(`^${w.replace(/\*/g,'.*').replace(/\?/g,'.')}$`);
+                }
+              );
+            }
+          }
+        }
+      }
+      const filtered = artifactsArray.filter((artifact) => (availableMIMEtypes.indexOf(artifact.MIMEtype) > -1)).filter(artifact => {
+        let valid = true;
+        filenamefilter.forEach(filterregex => (valid = valid && !filterregex.test(artifact.path)));
+        return valid;
+      });
+      return filtered;
+    },
+
+    filteredDownloadArtifacts(artifactsArray) {
+      let filenamefilter = [];
+      // TODO replace with es2020 syntax
+      if (typeof this.json.metadata !== 'undefined') {
+        if (typeof this.json.metadata.output !== 'undefined') {
+          if (typeof this.json.metadata.output.ignore !== 'undefined') {
+            if (typeof this.json.metadata.output.ignore.download !== 'undefined') {
+              filenamefilter = this.json.metadata.output.ignore.download.map(filename => {
+                  let w = filename.replace(/[.+^${}()|[\]\\]/g, '\\$&'); // regexp escape
+                  return new RegExp(`^${w.replace(/\*/g,'.*').replace(/\?/g,'.')}$`);
+                }
+              );
+            }
+          }
+        }
+      }
+      const filtered = artifactsArray.filter(artifact => {
+        let valid = true;
+        filenamefilter.forEach(filterregex => (valid = valid && !filterregex.test(artifact.path)));
+        return valid;
+      });
       return filtered;
     },
   },
