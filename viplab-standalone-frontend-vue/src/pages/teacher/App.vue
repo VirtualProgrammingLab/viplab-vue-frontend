@@ -580,6 +580,37 @@
                                   </div>
                                 </div>
                               </div>
+                              <!-- ignore files -->
+                              <div>
+                                <label class="mr-2" for="computationTemplate.metadata.output.ignore.visualization">Ignore files in visualization</label>
+                                <div class="d-flex form-group">
+                                  <div class="flex-grow-1">
+                                    <ul id="visualizationIgnore" v-if="ignoreVisualizationDefined">
+                                      <li v-for="item in computationTemplate.metadata.output.ignore.visualization" :key="item">
+                                        {{ item }} <b-icon icon="x" @click="removeIgnoreVisualization(item)"></b-icon>
+                                      </li>
+                                    </ul>
+                                    <input type="text" class="form-control" v-model="outputIgnoreVisualization">
+                                    <b-button class="btn mb-3" @click="addIgnoreVisualization()" v-tooltip.top-center="'Add Ignore to Visualization'">
+                                      <b-icon icon="plus" aria-hidden="true"></b-icon>
+                                    </b-button>
+                                  </div>
+                                </div>
+                                <label class="mr-2" for="computationTemplate.metadata.output.ignore.download">Ignore files in download</label>
+                                <div class="d-flex form-group">
+                                  <div class="flex-grow-1">
+                                    <ul id="visualizationIgnore" v-if="ignoreDownloadDefined">
+                                      <li v-for="item in computationTemplate.metadata.output.ignore.download" :key="item">
+                                        {{ item }} <b-icon icon="x" @click="removeIgnoreDownload(item)"></b-icon>
+                                      </li>
+                                    </ul>
+                                    <input type="text" class="form-control" v-model="outputIgnoreDownload">
+                                    <b-button class="btn mb-3" @click="addIgnoreDownload()" v-tooltip.top-center="'Add Ignore to Download'">
+                                      <b-icon icon="plus" aria-hidden="true"></b-icon>
+                                    </b-button>
+                                  </div>
+                                </div>
+                              </div>
                               <!-- csv -->
                               <div>
                                 <div class="d-flex">
@@ -1279,6 +1310,8 @@ export default {
       validationRunning: false,
       classValidity: '',
       signifyChange: true,
+      outputIgnoreVisualization: '',
+      outputIgnoreDownload: '',
     };
   },
   computed: {
@@ -1640,6 +1673,22 @@ export default {
         }
 
         this.$forceUpdate();
+      },
+    },
+    ignoreVisualizationDefined: {
+      get() {
+        return (typeof this.computationTemplate.metadata !== 'undefined') &&
+          (typeof this.computationTemplate.metadata.output !== 'undefined') &&
+          (typeof this.computationTemplate.metadata.output.ignore != 'undefined') &&
+          (typeof this.computationTemplate.metadata.output.ignore.visualization != 'undefined')
+      },
+    },
+    ignoreDownloadDefined: {
+      get() {
+        return (typeof this.computationTemplate.metadata !== 'undefined') &&
+          (typeof this.computationTemplate.metadata.output !== 'undefined') &&
+          (typeof this.computationTemplate.metadata.output.ignore != 'undefined') &&
+          (typeof this.computationTemplate.metadata.output.ignore.download != 'undefined')
       },
     },
   },
@@ -2199,6 +2248,49 @@ export default {
         this.$set(this.computationTemplate.metadata.output, 'csv', []);
       }
       this.computationTemplate.metadata.output.csv.push(outputConfig);
+    },
+    //TODO merge visualization and download
+    addIgnoreVisualization() {
+      //output-ignore-visualization-input
+      if (typeof this.computationTemplate.metadata === 'undefined') {
+        this.$set(this.computationTemplate, 'metadata', { });
+      }
+      if (typeof this.computationTemplate.metadata.output === 'undefined') {
+        this.$set(this.computationTemplate.metadata, 'output', { });
+      }
+      if (typeof this.computationTemplate.metadata.output.ignore === 'undefined') {
+        this.$set(this.computationTemplate.metadata.output, 'ignore', { });
+      }
+      if (typeof this.computationTemplate.metadata.output.ignore.visualization === 'undefined') {
+        this.$set(this.computationTemplate.metadata.output.ignore, 'visualization', []);
+      }
+      this.computationTemplate.metadata.output.ignore.visualization.push(this.outputIgnoreVisualization);
+      this.outputIgnoreVisualization = '';
+    },
+    removeIgnoreVisualization(ignoreItem) {
+      const itemIndex = this.computationTemplate.metadata.output.ignore.visualization.indexOf(ignoreItem);
+      this.computationTemplate.metadata.output.ignore.visualization.splice(itemIndex, 1);
+    },
+    addIgnoreDownload() {
+      //output-ignore-visualization-input
+      if (typeof this.computationTemplate.metadata === 'undefined') {
+        this.$set(this.computationTemplate, 'metadata', { });
+      }
+      if (typeof this.computationTemplate.metadata.output === 'undefined') {
+        this.$set(this.computationTemplate.metadata, 'output', { });
+      }
+      if (typeof this.computationTemplate.metadata.output.ignore === 'undefined') {
+        this.$set(this.computationTemplate.metadata.output, 'ignore', { });
+      }
+      if (typeof this.computationTemplate.metadata.output.ignore.download === 'undefined') {
+        this.$set(this.computationTemplate.metadata.output.ignore, 'download', []);
+      }
+      this.computationTemplate.metadata.output.ignore.download.push(this.outputIgnoreDownload);
+      this.outputIgnoreDownload = '';
+    },
+    removeIgnoreDownload(ignoreItem) {
+      const itemIndex = this.computationTemplate.metadata.output.ignore.download.indexOf(ignoreItem);
+      this.computationTemplate.metadata.output.ignore.download.splice(itemIndex, 1);
     },
     addCsvPlot(csvConfigIndex) {
       const plotConfig = {
