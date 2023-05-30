@@ -984,9 +984,9 @@
                             <div class="ml-4 mr-4 form-group">
                               <!-- set how many values the slider should have -->
                               <label for="selectedParameter.identifier + 'sb-default'">How many values should the slider have?</label>
-                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-default'" placeholder="1" :value="getNumberofFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
+                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-default'" placeholder="1" :value="getNumberOfFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
                               <!-- input slider default-values -->
-                              <div class="border mb-2 p-2" v-for="(field, index) in getNumberofFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
+                              <div class="border mb-2 p-2" v-for="(field, index) in getNumberOfFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
                                 <label>Set default values for slider-value:</label>
                                 <input type="number" class="form-control" id="selectedParameter.default" :value="getSlidervModel(index)" @input="setSlidervModel($event, index)">
                               </div>
@@ -1034,10 +1034,10 @@
                             <div class="ml-4 mr-4">
                               <!-- set how many values the checkbox should have -->
                               <label for="selectedParameter.identifier + 'sb-options'">How many values should the parameter have?</label>
-                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-options'" placeholder="1" :value="getNumberofFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
+                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-options'" placeholder="1" :value="getNumberOfFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
 
                               <!-- input option-values -->
-                              <div class="border form-group p-2" v-for="(field, index) in getNumberofFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
+                              <div class="border form-group p-2" v-for="(field, index) in getNumberOfFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
                                 <!-- value -->
                                 <label>Set value:</label>
                                 <input type="text" class="form-control form-group" id="field.value" :value="getFixedParamvModel(index)" @input="setFixedParamvModel($event, index, 'value')">
@@ -1662,7 +1662,7 @@ export default {
         // update generated CT in Vuex-Store
         this.$store.commit('updateGeneratedComputationTemplate', this.computationTemplate);
 
-        // reset validation as is is no longer up-to-date
+        // reset validation as it is no longer up-to-date
         this.validationResult = null;
         this.validationPartParameterResult = null;
         this.validationArgsResult = null;
@@ -2233,7 +2233,7 @@ export default {
       this.$set(this.selectedParameter.default, 0, event);
       this.$forceUpdate();
     },
-    getNumberofFields(paramId) {
+    getNumberOfFields(paramId) {
       if (this.valueNumbers.get(paramId) == undefined) {
         this.valueNumbers.set(paramId, 1);
         return 1;
@@ -2242,7 +2242,7 @@ export default {
     },
     setNumberOfFields(paramId, newValue) {
       if (this.selectedParameter.metadata.guiType == 'checkbox') {
-        if (newValue < this.getNumberofFields(paramId)) {
+        if (newValue < this.getNumberOfFields(paramId)) {
           this.selectedParameter.options.pop();
           this.$forceUpdate();
         }
