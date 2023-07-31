@@ -554,7 +554,7 @@
                             filteredDownloadArtifacts(returnedUnmodifiedArtifacts.artifacts)"
                           :key="artifact.identifier+'Download'"
                         >
-                          <a
+                          <a v-if="(artifact.type !== 's3file')"
                             href="#"
                             @click="
                               save(
@@ -565,6 +565,10 @@
                             "
                             >{{ artifact.path }}</a
                           >
+                          <a v-else
+                             :href="artifact.url"
+                          >{{ artifact.path }}</a>
+
                         </li>
                       </ul>
                     </div>
