@@ -12,8 +12,7 @@ export default function Parse(viplabFile) {
   };
 
   this.parseFileToJson = function () {
-    const json = JSON.parse(this.file.replace(/\n/g, '\\n'));
-    return json;
+    return JSON.parse(this.file.replace(/\n/g, '\\n'));
   };
 
   this.parseValues = function (json) {
@@ -63,20 +62,12 @@ export default function Parse(viplabFile) {
               [, , height] = splitLine;
               break;
             case 'min-color': {
-              let r1;
-              let g1;
-              let b1;
-              // eslint-disable-next-line prefer-const
-              [, , r1, g1, b1] = splitLine;
+              const [, , r1, g1, b1] = splitLine;
               cmin = `rgb(${r1}, ${g1}, ${b1})`;
               break;
             }
             case 'max-color': {
-              let r2;
-              let g2;
-              let b2;
-              // eslint-disable-next-line prefer-const
-              [, , r2, g2, b2] = splitLine;
+              const [, , r2, g2, b2] = splitLine;
               cmax = `rgb(${r2}, ${g2}, ${b2})`;
               break;
             }
