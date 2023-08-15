@@ -1,51 +1,51 @@
 <template>
   <div class="csvplot-component border">
     <div class="plot-div">
-      <Plotly
+      <div
         ref="plot"
         :data="data"
         :layout="layout"
         :display-mode-bar="true"
         :to-image-button-options="imageConfig"
-      ></Plotly>
+      ></div>
     </div>
     <div v-if="csvs.length > 1" class="file-controller text-center">
       <div class="fixed-row-70 display-flex-center">
         <span> {{ fileIndex + 1 }}/{{ csvs.length }} </span>
       </div>
-      <b-button-group>
-        <b-button btn-variant="white" @click="resetFileIndex">
+      <q-btn-group>
+        <q-btn btn-variant="white" @click="resetFileIndex">
           <font-awesome-icon icon="fast-backward" />
-        </b-button>
-        <b-button btn-variant="white" @click="decreaseFileIndex">
+        </q-btn>
+        <q-btn btn-variant="white" @click="decreaseFileIndex">
           <font-awesome-icon icon="backward" />
-        </b-button>
-        <b-button btn-variant="white" @click="setEnableAutoPlay">
+        </q-btn>
+        <q-btn btn-variant="white" @click="setEnableAutoPlay">
           <font-awesome-icon v-if="enableAutoPlay" icon="pause" />
           <font-awesome-icon v-else icon="play" />
-        </b-button>
-        <b-button btn-variant="white" @click="increaseFileIndex">
+        </q-btn>
+        <q-btn btn-variant="white" @click="increaseFileIndex">
           <font-awesome-icon icon="forward" />
-        </b-button>
-        <b-button btn-variant="white" @click="setMaxFileIndex">
+        </q-btn>
+        <q-btn btn-variant="white" @click="setMaxFileIndex">
           <font-awesome-icon icon="fast-forward" />
-        </b-button>
-      </b-button-group>
+        </q-btn>
+      </q-btn-group>
     </div>
   </div>
 </template>
 
 <script>
 
-import { Plotly } from '@rleys/vue-plotly-basic';
-import plotlyjs from 'plotly.js';
+import Plotly from 'plotly.js-dist';
 
 import base64url from 'base64url';
+
+import { csv } from 'd3';
 
 export default {
   name: 'CsvPlot',
   components: {
-    Plotly,
   },
   props: {
     areUrlsProp: Boolean,
@@ -88,13 +88,14 @@ export default {
     } else {
       this.loadBase64Data(this.csvs[this.fileIndex]);
     }
+    Plotly.newPlot(this.$refs.plot, this.data);
   },
   methods: {
     // "http://localhost:8080/" + inputFile
     loadData(context) {
       // plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){
       // plotlyjs.d3.csv("http://localhost:8080/plotly-test.csv", function(data){
-      plotlyjs.d3.csv(context.csvs[context.fileIndex], (data) => {
+      csv(context.csvs[context.fileIndex], (data) => {
         context.processData(data);
       });
     },
@@ -117,11 +118,17 @@ export default {
       });
       this.processData(data);
     },
-    processData(data) {
+    processData(dataIn) {
       const traces = [];
 
       // create an object, where there is an array for each column name
       const obj = [];
+      let data;
+      if (Array.isArray(dataIn)) {
+        data = dataIn;
+      } else {
+        data = [dataIn];
+      }
       const keys = Object.keys(data[0]);
       keys.forEach((element) => { obj[element] = []; });
       // fill the object with the data depending on the keys (column names)

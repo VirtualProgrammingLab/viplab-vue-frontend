@@ -1,7 +1,7 @@
 <template>
   <div class="checkbox-component" :key="checkbox.identifier">
     <div class="item-name">{{ checkbox.metadata.name }}:</div>
-    <validation-provider :rules="`${onlyone ? 'checkboxOneOf|required' : (minone ? 'checkboxMinOne|required' : '')}`" v-slot="{ errors}">
+    <VForm :rules="`${onlyone ? 'checkboxOneOf|required' : (minone ? 'checkboxMinOne|required' : '')}`" v-slot="{ errors}">
       <div
         class="checkbox form-check custom-control custom-checkbox"
         v-for="(check, index) in checkbox.options"
@@ -19,20 +19,20 @@
         </label>
       </div>
       <span class="error">{{ errors[0] }}</span>
-    </validation-provider>
+    </VForm>
   </div>
 </template>
 
 <script>
-import { ValidationProvider, extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
+import { Form, defineRule } from 'vee-validate';
+import { required } from '@vee-validate/rules';
 
-extend('required', {
-  ...required,
-  message: 'This field is required',
-});
+defineRule(
+  'required',
+  (value) => (required(value) ? true : 'This field is required'),
+);
 
-extend('checkboxOneOf', (value) => {
+defineRule('checkboxOneOf', (value) => {
   // console.log("checkbox oneof " + value);
   if (value.length > 0 && value.length === 1) {
     return true;
@@ -40,7 +40,7 @@ extend('checkboxOneOf', (value) => {
   return 'Only choose one!';
 });
 
-extend('checkboxMinOne', (value) => {
+defineRule('checkboxMinOne', (value) => {
   if (value.length >= 1) {
     return true;
   }
@@ -50,7 +50,7 @@ extend('checkboxMinOne', (value) => {
 export default {
   name: 'CheckBox',
   components: {
-    ValidationProvider,
+    VForm: Form,
   },
   props: {
     item: Object,

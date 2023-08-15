@@ -38,7 +38,8 @@
         <!-- tooltip -->
         <div class="tooltip-icon">
             <!-- v-if="item.metadata.description" -->
-            <b-icon-info-circle v-tooltip.top-center="item.metadata.description"></b-icon-info-circle>
+            <q-tooltip anchor="top middle">{{item.metadata.description}}</q-tooltip>
+            <BIconInfoCircle></BIconInfoCircle>
         </div>
     </div>
   </div>
@@ -46,6 +47,7 @@
 
 <script>
 // own components
+import { BIconInfoCircle } from 'bootstrap-icons-vue';
 import CheckBox from './CheckBox.vue';
 import RadioButton from './RadioButton.vue';
 import DropDown from './DropDown.vue';
@@ -63,6 +65,7 @@ export default {
     SliderElement,
     InputField,
     AceEditorComponent,
+    BIconInfoCircle,
   },
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Parameters',

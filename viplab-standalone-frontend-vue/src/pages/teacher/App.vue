@@ -1238,7 +1238,7 @@ import parameterSchema from './json-schema/parameters.json';
 import commandlineArgumentsSchema from './json-schema/commandline-arguments.json';
 
 export default {
-  name: 'app',
+  name: 'Teacher',
   components: {
     Drag,
     Drop,

@@ -53,30 +53,26 @@
         <div class="fixed-row-70 display-flex-center">
           <span> {{ fileIndex + 1 }}/{{ files.length }} </span>
         </div>
-        <b-button-group>
-          <b-button btn-variant="white" @click="resetFileIndex">
+        <q-btn-group>
+          <q-btn btn-variant="white" @click="resetFileIndex">
             <font-awesome-icon icon="fast-backward" />
-          </b-button>
-          <b-button btn-variant="white" @click="decreaseFileIndex">
+          </q-btn>
+          <q-btn btn-variant="white" @click="decreaseFileIndex">
             <font-awesome-icon icon="backward" />
-          </b-button>
-          <b-button btn-variant="white" @click="setEnableAutoPlay">
+          </q-btn>
+          <q-btn btn-variant="white" @click="setEnableAutoPlay">
             <font-awesome-icon v-if="enableAutoPlay" icon="pause" />
             <font-awesome-icon v-else icon="play" />
-          </b-button>
-          <b-button btn-variant="white" @click="increaseFileIndex">
+          </q-btn>
+          <q-btn btn-variant="white" @click="increaseFileIndex">
             <font-awesome-icon icon="forward" />
-          </b-button>
-          <b-button btn-variant="white" @click="setMaxFileIndex">
+          </q-btn>
+          <q-btn btn-variant="white" @click="setMaxFileIndex">
             <font-awesome-icon icon="fast-forward" />
-          </b-button>
-        </b-button-group>
+          </q-btn>
+        </q-btn-group>
         <div class="fixed-row-70 display-flex-center">
-          <a :href="downloadURL" download>
-            <b-button btn-variant="white">
-              <font-awesome-icon icon="download" />
-            </b-button>
-          </a>
+          <a :href="downloadURL" download>4</a>
         </div>
       </div>
     </div>
@@ -220,8 +216,8 @@ export default {
         const dataArray = this.source[`get${location}`]().getArrayByName(colorByArrayName);
         const newDataRange = dataArray.getRange();
         // console.log(newDataRange);
-        this.dataRange[0] = newDataRange.getRangeAt(0);
-        this.dataRange[1] = newDataRange.getRangeAt(1);
+        this.dataRange[0] = newDataRange.at(0);
+        this.dataRange[1] = newDataRange.at(1);
         colorMode = ColorMode.MAP_SCALARS;
         scalarMode = location === 'PointData'
           ? ScalarMode.USE_POINT_FIELD_DATA

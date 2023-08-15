@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown-component">
     <div class="item-name">{{ dropitem.metadata.name }}:</div>
-    <validation-provider :rules="`${onlyone ? 'dropdownOneOf|required' : (minone ? 'dropdownMinOne|required' : '')}`" v-slot="{ errors }">
+    <VForm :rules="`${onlyone ? 'dropdownOneOf|required' : (minone ? 'dropdownMinOne|required' : '')}`" v-slot="{ errors }">
       <div class="dropdown form-group">
         <select
           class="form-control"
@@ -44,20 +44,20 @@
         </select>
       </div>
       <span class="error">{{ errors[0] }}</span>
-    </validation-provider>
+    </VForm>
   </div>
 </template>
 
 <script>
-import { ValidationProvider, extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
+import { Form, defineRule } from 'vee-validate';
+import { required } from '@vee-validate/rules';
 
-extend('required', {
-  ...required,
-  message: 'This field is required',
-});
+defineRule(
+  'required',
+  (value) => (required(value) ? true : 'This field is required'),
+);
 
-extend('dropdownOneOf', (value) => {
+defineRule('dropdownOneOf', (value) => {
   // console.log("dropdown oneof " + value);
   if (!Array.isArray(value)) {
     return true;
@@ -65,7 +65,7 @@ extend('dropdownOneOf', (value) => {
   return 'Only choose one!';
 });
 
-extend('dropdownMinOne', (value) => {
+defineRule('dropdownMinOne', (value) => {
   // console.log("dropdown minone  " + value);
   if (value.length >= 1) {
     return true;
@@ -76,7 +76,7 @@ extend('dropdownMinOne', (value) => {
 export default {
   name: 'DropDown',
   components: {
-    ValidationProvider,
+    VForm: Form,
   },
   props: {
     item: Object,
@@ -88,8 +88,7 @@ export default {
         return this.item.selected;
       },
       set(val) {
-        this.$set(this.item, 'selected', val);
-        this.$forceUpdate();
+        this.item.selected = val;
         return this.vModel;
       },
     },

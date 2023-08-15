@@ -1,7 +1,7 @@
 <template>
   <div class="togglebutton-component form-item toggle">
     <div class ="item-name">{{toggl.metadata.name}}:</div>
-    <validation-provider :rules="`${onlyone ? 'toggleOneOf|required' : (minone ? 'toggleMinOne|required' : '')}`" v-slot="{ errors}">
+    <VForm :rules="`${onlyone ? 'toggleOneOf|required' : (minone ? 'toggleMinOne|required' : '')}`" v-slot="{ errors}">
       <div v-for="(toggle, index) in toggl.options" :key="'toggle'+ ' ' +index">
         <label>
           <p class="slider-label"> {{ toggle.text || toggle.value }}</p>
@@ -10,20 +10,20 @@
         </label>
       </div>
       <span class="error">{{ errors[0] }}</span>
-    </validation-provider>
+    </VForm>
   </div>
 </template>
 
 <script>
-import { ValidationProvider, extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
+import { Form, defineRule } from 'vee-validate';
+import { required } from '@vee-validate/rules';
 
-extend('required', {
-  ...required,
-  message: 'This field is required',
-});
+defineRule(
+  'required',
+  (value) => (required(value) ? true : 'This field is required'),
+);
 
-extend('toggleOneOf', (value) => {
+defineRule('toggleOneOf', (value) => {
   // console.log("toggle oneof " + value);
   if (value.length > 0 && value.length === 1) {
     return true;
@@ -31,7 +31,7 @@ extend('toggleOneOf', (value) => {
   return 'Only choose one!';
 });
 
-extend('toggleMinOne', (value) => {
+defineRule('toggleMinOne', (value) => {
   // console.log("toggle minone " + value);
   if (value.length >= 1) {
     return true;
@@ -42,7 +42,7 @@ extend('toggleMinOne', (value) => {
 export default {
   name: 'ToggleButton',
   components: {
-    ValidationProvider,
+    VForm: Form,
   },
   props: {
     item: Object,

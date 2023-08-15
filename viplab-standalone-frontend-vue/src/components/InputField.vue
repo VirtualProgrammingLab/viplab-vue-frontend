@@ -1,7 +1,7 @@
 <template>
   <div class="inputfield-component">
     <!-- if validation is set to pattern -->
-    <validation-provider v-if="pattern" :rules="{required: true, inputFieldRegex: input.pattern}" v-slot="{ errors}">
+    <VForm v-if="pattern" :rules="{required: true, inputFieldRegex: input.pattern}" v-slot="{ errors}">
       <div v-if="input.metadata.type=='text'">
           <label class="item-name mr-2" for="input.metadata.name">{{ input.metadata.name }}: </label>
           <input type="text" class="form-control" id="input.metadata.name" :name="input.metadata.name" :maxlength="input.maxlength" v-model="vModel">
@@ -11,9 +11,9 @@
           <input type="number" class="form-control" id="input.metadata.name" :name="input.metadata.name" :max="input.max" :min="input.min" :step="input.step" v-model="vModel" :state="true">
       </div>
       <span class="error">{{ errors[0] }}</span>
-    </validation-provider>
+    </VForm>
     <!-- if validation is set to range -->
-    <validation-provider v-else-if="range" :rules="{required: true, inputFieldRange:[input.min, input.max]}" v-slot="{ errors}">
+    <VForm v-else-if="range" :rules="{required: true, inputFieldRange:[input.min, input.max]}" v-slot="{ errors}">
       <div v-if="input.metadata.type=='text'">
           <label class="item-name mr-2" for="input.metadata.name">{{ input.metadata.name }}: </label>
           <input type="text" class="form-control" id="input.metadata.name" :name="input.metadata.name" :maxlength="input.maxlength" v-model="vModel">
@@ -23,7 +23,7 @@
           <input type="number" class="form-control" id="input.metadata.name" :name="input.metadata.name" :max="input.max" :min="input.min" :step="input.step" v-model="vModel" :state="true">
       </div>
       <span class="error">{{ errors[0] }}</span>
-    </validation-provider>
+    </VForm>
     <!-- if validation is set to none -->
     <div v-else>
       <div v-if="input.metadata.type=='text'">
@@ -39,17 +39,16 @@
 </template>
 
 <script>
-import { ValidationProvider, extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
+import { Form, defineRule } from 'vee-validate';
+import { required } from '@vee-validate/rules';
 
 import base64url from 'base64url';
 
-extend('required', {
-  ...required,
-  message: 'This field is required',
-});
-
-extend('inputFieldRegex', (value, arg) => {
+defineRule(
+  'required',
+  (value) => (required(value) ? true : 'This field is required'),
+);
+defineRule('inputFieldRegex', (value, arg) => {
   // console.log("inputfield oneof " + value + " arg: " + arg);
   const regex = new RegExp(arg);
   if (regex.test(value)) {
@@ -58,7 +57,7 @@ extend('inputFieldRegex', (value, arg) => {
   return `Field format invalid! Has to be: ${arg}`;
 });
 
-extend('inputFieldRange', (value, [min, max]) => {
+defineRule('inputFieldRange', (value, [min, max]) => {
   // console.log("inputfield oneof " + value + " min: " + min + " max: " + max);
   if (value >= min && value <= max) {
     return true;
@@ -69,7 +68,7 @@ extend('inputFieldRange', (value, [min, max]) => {
 export default {
   name: 'InputField',
   components: {
-    ValidationProvider,
+    VForm: Form,
   },
   props: {
     item: Object,

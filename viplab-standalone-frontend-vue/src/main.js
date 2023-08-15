@@ -1,11 +1,4 @@
-import Vue from 'vue';
-import 'bootstrap';
-import VueWait from 'vue-wait';
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
-
-// Import Bootstrap an BootstrapVue CSS files (order is important)
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
+import { createApp } from 'vue';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
@@ -13,58 +6,38 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-import VTooltip from 'v-tooltip';
+// import FloatingVue from 'floating-vue';
+import { createRouter, createWebHistory } from 'vue-router';
 
-import VueRouter from 'vue-router';
+import VueSimpleAlert from 'vue3-simple-alert';
 
-import BlockUI from 'vue-blockui';
+// import VueTour from 'vue-tour';
 
-import VueSimpleAlert from 'vue-simple-alert';
-
-import VueTour from 'vue-tour';
-
-// Setup vue-router
-
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
+import { Quasar } from 'quasar';
 import App from './App.vue';
 import ViPLab from './pages/viplab/App.vue';
 import Teacher from './pages/teacher/App.vue';
+import quasarUserOptions from './quasar-user-options';
 
-// Make BootstrapVue available throughout your project
-Vue.use(BootstrapVue);
-// Optionally install the BootstrapVue icon components plugin
-Vue.use(IconsPlugin);
+// require('vue-tour/dist/vue-tour.css');
 
-library.add(faFastBackward, faBackward, faPause, faPlay, faForward, faFastForward, faDownload, faSave);
-
-Vue.component('font-awesome-icon', FontAwesomeIcon);
-
-Vue.use(VTooltip);
-
-Vue.use(VueRouter);
-
-Vue.config.productionTip = false;
-
-Vue.use(VueWait);
-Vue.use(BlockUI);
-Vue.use(VueSimpleAlert);
-require('vue-tour/dist/vue-tour.css');
-
-Vue.use(VueTour);
+// Setup vue-router
 const routes = [
   { path: '/teacher', component: Teacher },
   { path: '/', component: ViPLab },
 ];
 
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHistory(),
   routes,
 });
-Vue.use(Vuex);
+
 // import createMutationsSharer from "vuex-shared-mutations";
 
 // Create a new store instance.
-const store = new Vuex.Store({
+const store = createStore({
   state: {
     jsonTemplate: {},
     token: '',
@@ -118,16 +91,21 @@ const store = new Vuex.Store({
   ],
 });
 
+library.add(faFastBackward, faBackward, faPause, faPlay, faForward, faFastForward, faDownload, faSave);
+
 fetch(`${process.env.BASE_URL}static/config.json?/t=currentTimestamp`)
   .then((response) => response.json())
   .then((config) => {
-    Vue.prototype.$config = config;
-    new Vue({
-      wait: new VueWait({
-        useVuex: false,
-      }),
-      router,
-      store,
-      render: (h) => h(App),
-    }).$mount('#app');
+    const app = createApp(App);
+    app.config.globalProperties.$config = config;
+    //
+    app.use(store)
+      .use(router)
+      .component('font-awesome-icon', FontAwesomeIcon)
+
+      .use(VueSimpleAlert)
+      .use(Quasar, quasarUserOptions)
+    // .use(VueTour)
+
+      .mount('#app');
   });

@@ -1,11 +1,11 @@
 // vue.config.js
-const vtkChainWebpack = require('vtk.js/Utilities/config/chainWebpack');
 const path = require('path');
+const fs = require('fs');
+const vtkChainWebpack = require('vtk.js/Utilities/config/chainWebpack');
 const CopyPlugin = require('copy-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
-const fs = require('fs');
 const jwkToPem = require('jwk-to-pem');
 const jwt = require('jsonwebtoken');
 const CryptoJS = require('crypto-js');
@@ -18,6 +18,10 @@ let token;
 
 module.exports = {
   chainWebpack: (config) => {
+    config.module
+      .rule('vue')
+      .use('vue-loader');
+
     config
       .plugin('html')
       .tap((args) => {
@@ -44,16 +48,19 @@ module.exports = {
     }
     vtkChainWebpack(config);
   },
+
   // options...
   // the next 2 lines are needed, if you want to use the files in a flask app:
   // assetsDir: './assets',
   // indexPath: './templates/main.html',
   runtimeCompiler: true,
+
   pwa: {
     iconPaths: {
       favicon32: './favicon.png',
     },
   },
+
   configureWebpack: {
     devServer: {
       port: 8081,
@@ -100,13 +107,24 @@ module.exports = {
           ],
         },
       ),
-
     ],
     performance: {
       maxAssetSize: 100000000,
     },
   },
+
   lintOnSave: process.env.NODE_ENV !== 'production',
+
+  pluginOptions: {
+    quasar: {
+      importStrategy: 'kebab',
+      rtlSupport: false,
+    },
+  },
+
+  transpileDependencies: [
+    'quasar',
+  ],
 };
 
 function setParameters(filename) {

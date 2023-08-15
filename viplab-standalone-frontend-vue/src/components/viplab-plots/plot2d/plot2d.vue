@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { Plotly } from '@rleys/vue-plotly-basic';
+import Plotly from 'plotly.js-dist';
 import LinePlotParser from './LinePlotParser';
 
 export default {

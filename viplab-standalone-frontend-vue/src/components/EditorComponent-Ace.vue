@@ -4,7 +4,7 @@
       <div class="item-name">{{ editor.metadata.name }}:</div>
     </div>
     <!-- if validation is set to pattern -->
-    <validation-provider v-if="pattern" :rules="{required: true, editorRegex: editor.pattern}" v-slot="{ validate, errors }">
+    <Field as="div" v-if="pattern" :rules="{required: true, editorRegex: editor.pattern}" v-slot="{ validate, errors }">
       <div class="ace-editor-parent">
         <div
           class="ace-editor-div"
@@ -13,9 +13,9 @@
         </div>
       </div>
       <span class="error">{{ errors[0] }}</span>
-    </validation-provider>
+    </Field>
     <!-- if validation is set to range -->
-    <validation-provider v-else-if="editor.validation === 'range'" :rules="{required: true, editorRange: [editor.min, editor.max]}" v-slot="{ validate, errors }">
+    <Field as="div"  v-else-if="editor.validation === 'range'" :rules="{required: true, editorRange: [editor.min, editor.max]}" v-slot="{ validate, errors }">
       <div class="ace-editor-parent">
         <div
           class="ace-editor-div"
@@ -24,7 +24,7 @@
         </div>
       </div>
       <span class="error">{{ errors[0] }}</span>
-    </validation-provider>
+    </Field>
     <!-- if validation is set to none -->
     <div v-else>
       <div class="ace-editor-parent">
@@ -38,20 +38,20 @@
 </template>
 
 <script>
-import { ValidationProvider, extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
+import { Field, defineRule } from 'vee-validate';
+import { required } from '@vee-validate/rules';
 
 import 'ace-builds';
 import 'ace-builds/webpack-resolver';
 
 import base64url from 'base64url';
 
-extend('required', {
-  ...required,
-  message: 'This field is required',
-});
+defineRule(
+  'required',
+  (value) => (required(value) ? true : 'This field is required'),
+);
 
-extend('editorRegex', (value, arg) => {
+defineRule('editorRegex', (value, arg) => {
   // console.log("editor oneof " + value + " arg: " + arg);
   // console.log("validation: " + value);
   const regex = new RegExp(arg);
@@ -61,7 +61,7 @@ extend('editorRegex', (value, arg) => {
   return `Field format invalid! Has to be: ${arg}`;
 });
 
-extend('editorRange', (value, [min, max]) => {
+defineRule('editorRange', (value, [min, max]) => {
   // console.log("editor oneof " + value + " min: " + min + " max: " + max);
   // console.log("validation: " + value);
   const val = Number(value);
@@ -74,7 +74,7 @@ extend('editorRange', (value, [min, max]) => {
 export default {
   name: 'AceEditorComponent',
   components: {
-    ValidationProvider,
+    Field,
   },
   props: {
     item: Object,

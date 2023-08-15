@@ -12,7 +12,8 @@
 </template>
 
 <script>
-import { Plotly } from '@rleys/vue-plotly-basic';
+
+import Plotly from 'plotly.js-dist';
 import Parse from '../parse';
 
 export default {

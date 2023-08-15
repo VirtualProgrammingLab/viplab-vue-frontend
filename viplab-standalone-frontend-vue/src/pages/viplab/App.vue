@@ -3,208 +3,203 @@
     <div
       id="app"
     >
-
-    <!-- header -->
-    <div class="header m-2 p-5" v-if="showHeader">
-      <div class="header-content">
-        <h1 v-if="json.metadata.displayName">
-          {{ json.metadata.displayName }}
-        </h1>
-        <h4 v-if="json.metadata.description">
-          {{ json.metadata.description }}
-        </h4>
+      <!-- header -->
+      <div class="header m-2 p-5" v-if="showHeader">
+        <div class="header-content">
+          <h1 v-if="json.metadata.displayName">
+            {{ json.metadata.displayName }}
+          </h1>
+          <h4 v-if="json.metadata.description">
+            {{ json.metadata.description }}
+          </h4>
+        </div>
       </div>
-    </div>
 
       <div
-        class="flex-container"
+        class="row"
         :style="[maximized ? { 'flex-direction': 'column !important' } : null]"
       >
+      <div class="col-6">
 
-      <v-wait for="wait for ws response">
-        <BlockUI :message="statusMessage.message" slot="waiting">
-          <!-- TODO: Uncomment if cancel-message is implemented in middleware and backend
-          <b-button class="mb-2" variant="outline-danger" @click="stopComputation">
-            <b-icon-x-circle v-tooltip.top-center="'Cancel Computation.'"></b-icon-x-circle>
-          </b-button>
-          -->
-          <spring-spinner
-            class="wait-spinner"
-            :animation-duration="3000"
-            :size="25"
-            color="#000"
-            />
-        </BlockUI>
-      </v-wait>
+        <VForm v-slot="{ invalid }">
+          <form @submit.prevent="sendData">
+            <div>
 
-      <div class="side-to-side-div flex-left m-2 pt-5 pb-5">
-
-        <validation-observer v-slot="{ invalid }">
-        <form @submit.prevent="sendData">
-          <div class="form-group ml-5 mr-5 ">
-
-            <h2 v-if="parsedFilesJson">Input Files</h2>
-
-            <div class="cards" >
-              <!--
-              Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
-              -->
-              <b-card no-body v-if="numberOfInputFiles > 0 || parsedParametersJson">
-                <b-tabs card class="files" content-class="m-2" fill>
-                  <b-tab
-                    ref="file"
-                    class="file"
-                    v-for="(file, fileIndex) in parsedFilesJson"
-                    :key="file.identifier"
-                    @click="tabClicked"
+              <h2 v-if="parsedFilesJson">Input Files</h2>
+                <!--
+                Aktuell kann man die cards auch sehen, wenn sie leer sind - Wie kann man das ändern?
+                -->
+                <q-card v-if="numberOfInputFiles > 0 || parsedParametersJson">
+                  <q-tabs
+                    v-model="selectedInputTab"
+                    no-caps
+                    align="left"
+                    class="text-grey"
+                    active-color="primary"
+                    indicator-color="primary"
+                    narrow-indicator
                   >
-                  <template slot='title'>
-                   {{ getFilename(file.path) }}
-                      <b-icon-info-circle class="pl-1"
-                                          v-tooltip.top-center="file.metadata.description"
-                                          v-if="file.metadata && file.metadata.description">
-                      </b-icon-info-circle>
-                  </template>
-                    <div
-                      class="part"
-                      v-for="(part, partIndex) in file.parts"
-                      :key="part.identifier"
+                    <q-tab :name="file.identifier"
+                           v-for="file in parsedFilesJson"
+                           :key="file.identifier">{{file.path}}</q-tab>
+
+                  </q-tabs>
+                  <q-tab-panels v-model="selectedInputTab" class="files" content-class="m-2" fill>
+                    <q-tab-panel :name="file.identifier"
+                      ref="file"
+                      class="file"
+                      v-for="(file, fileIndex) in parsedFilesJson"
+                      :key="file.identifier"
+                      @click="tabClicked"
                     >
+                    <template #title>
+                     {{ getFilename(file.path) }}
+                        <q-tooltip anchor="top middle" v-if="file.metadata && file.metadata.description">{{ file.metadata.description }}</q-tooltip>
+                        <BIconInfoCircle class="pl-1">
+                        </BIconInfoCircle>
+                    </template>
                       <div
-                        ref="partcontent"
-                        class="partcontent"
-                        :id="part.identifier+'Part'"
-                        v-if="
-                          part.access !== 'template' && numberOfInputFiles > 0
-                        "
+                        class="part"
+                        v-for="(part, partIndex) in file.parts"
+                        :key="part.identifier"
                       >
-                        <div class="desc-file-part"
-                             v-if="
-                             (part.access != 'invisible') &&
-                             part.metadata &&
-                             part.metadata.description">
+                        <div
+                          ref="partcontent"
+                          class="partcontent"
+                          :id="part.identifier+'Part'"
+                          v-if="
+                            part.access !== 'template' && numberOfInputFiles > 0
+                          "
+                        >
+                          <div class="desc-file-part"
+                               v-if="
+                               (part.access !== 'invisible') &&
+                               part.metadata &&
+                               part.metadata.description">
+                            {{part.metadata.description}}
+                          </div>
+                          <div v-if="part.access === 'visible'">
+                            <ace-editor-component
+                              :isParameter="false"
+                              :isHandlebar="false"
+                              :readonly="true"
+                              :item="part"
+                              :lang="file.metadata.syntaxHighlighting"
+                              :startLineNumber="calculateFirstLineNumber(file.parts, partIndex)"
+                              :key="part.identifier + calculateFirstLineNumber(file.parts, partIndex)"
+                            ></ace-editor-component>
+                          </div>
+                          <div v-else-if="part.access === 'modifiable'">
+                            <ace-editor-component
+                              :isParameter="false"
+                              :isHandlebar="false"
+                              :readonly="false"
+                              :item="part"
+                              :lang="file.metadata.syntaxHighlighting"
+                              :startLineNumber="calculateFirstLineNumber(file.parts, partIndex)"
+                              :key="part.identifier + calculateFirstLineNumber(file.parts, partIndex)"
+                              v-on:update:item="updateContent(fileIndex, partIndex, $event)"
+                            ></ace-editor-component>
+                          </div>
+                        </div>
+                        <div
+                          class="part-parameters"
+                          v-if="part.parameters && part.access === 'template'"
+                        >
+                        <div class="desc-file-part mb-2"
+                             v-if="part.metadata && part.metadata.description">
                           {{part.metadata.description}}
                         </div>
-                        <div v-if="part.access == 'visible'">
-                          <ace-editor-component
-                            :isParameter="false"
-                            :isHandlebar="false"
-                            :readonly="true"
-                            :item="part"
-                            :lang="file.metadata.syntaxHighlighting"
-                            :startLineNumber="calculateFirstLineNumber(file.parts, partIndex)"
-                            :key="part.identifier + calculateFirstLineNumber(file.parts, partIndex)"
-                          ></ace-editor-component>
-                        </div>
-                        <div v-else-if="part.access == 'modifiable'">
-                          <ace-editor-component
-                            :isParameter="false"
-                            :isHandlebar="false"
-                            :readonly="false"
-                            :item="part"
-                            :lang="file.metadata.syntaxHighlighting"
-                            :startLineNumber="calculateFirstLineNumber(file.parts, partIndex)"
-                            :key="part.identifier + calculateFirstLineNumber(file.parts, partIndex)"
-                            v-on:update:item="updateContent(fileIndex, partIndex, $event)"
-                          ></ace-editor-component>
-                        </div>
-                      </div>
-                      <div
-                        class="part-parameters"
-                        v-if="part.parameters && part.access == 'template'"
-                      >
-                      <div class="desc-file-part mb-2"
-                           v-if="part.metadata && part.metadata.description">
-                        {{part.metadata.description}}
-                      </div>
-                        <parameters
-                          :parameters="part.parameters">
-                        </parameters>
+                          <parameters
+                            :parameters="part.parameters">
+                          </parameters>
 
+                        </div>
                       </div>
-                    </div>
-                    <b-button v-if="isPartParameters > 0" class="btn mb-3 float-right"
-                              @click="switchParameterView()"
-                              v-tooltip.top-center="asForm? 'View File' : 'Hide File'">
-                      <b-icon v-if="asForm" icon="file-earmark-code" aria-hidden="true"></b-icon>
-                      <b-icon v-else icon="file-earmark-diff" aria-hidden="true"></b-icon>
-                    </b-button>
-                  </b-tab>
-                  <b-tab v-if="parsedParametersJson" title="Parameters">
-                    <!-- render parameters section of the json -->
-                      <div class="form-group">
-                        <h2 v-if="parsedParametersJson">Commandline Parameters</h2>
-                        <parameters
-                          :parameters="parsedParametersJson"
-                        ></parameters>
-                      </div>
-                  </b-tab>
-                </b-tabs>
-              </b-card>
+                      <q-btn v-if="isPartParameters > 0" class="btn mb-3 float-right"
+                                @click="switchParameterView()">
+                        <BIconFileEarmarkCode v-if="asForm" aria-hidden="true">
+                          <q-tooltip anchor="top middle">View File</q-tooltip>
+                        </BIconFileEarmarkCode>
+                        <BIconFileEarmarkDiff v-else aria-hidden="true">
+                          <q-tooltip anchor="top middle">Hide File</q-tooltip>
+                        </BIconFileEarmarkDiff>
+                      </q-btn>
+                    </q-tab-panel>
+                    <q-tab-panel v-if="parsedParametersJson" title="Parameters">
+                      <!-- render parameters section of the json -->
+                        <div class="form-group">
+                          <h2 v-if="parsedParametersJson">Commandline Parameters</h2>
+                          <parameters
+                            :parameters="parsedParametersJson"
+                          ></parameters>
+                        </div>
+                    </q-tab-panel>
+                  </q-tab-panels>
+                </q-card>
             </div>
-          </div>
-        </form>
-        <!-- sticky buttons -->
-              <div class="sticky-button d-flex flex-row pl-5 pr-5">
-                <div class="mr-auto">
-                  <b-button class="btn mr-2 btn-row"
-                            v-tooltip.top-center="'Download backup of changes'">
-                    <b-icon
-                      icon="download"
-                      aria-hidden="true"
-                      @click="download"
-                    ></b-icon>
-                  </b-button>
-                  <input
-                    type="file"
-                    ref="upload"
-                    style="display: none"
-                    @change="upload"
-                    accept="application/JSON"
+          </form>
+          <!-- sticky buttons -->
+          <div class="sticky-button row justify-between">
+            <q-btn-group>
+              <q-btn class="btn-row">
+                <q-tooltip anchor="top middle">Download backup of changes</q-tooltip>
+                <BIconDownload
+                  aria-hidden="true"
+                  @click="download"
+                ></BIconDownload>
+              </q-btn>
+              <input
+                type="file"
+                ref="upload"
+                style="display: none"
+                @change="upload"
+                accept="application/JSON"
+              />
+              <q-btn
+                class="btn btn-secondary file btn-row"
+                @click="$refs.upload.click()"
+              >
+                <q-tooltip anchor="top middle">Upload of previously downloaded backup</q-tooltip>
+                <BIconUpload aria-hidden="true"></BIconUpload>
+              </q-btn>
+            </q-btn-group>
+            <q-btn-group>
+              <q-btn class="btn-row"
+                      id="maximize  -button"
+                      @click="maximize"
+                      v-if="!asForm || outputFiles !== ''">
+                <q-tooltip anchor="top middle" v-if="maximized">Minimize</q-tooltip>
+                <q-tooltip anchor="top middle" v-else>Maximize</q-tooltip>
+                <BIconFullscreen v-if="!maximized" aria-hidden="true"></BIconFullscreen>
+                <BIconFullscreenExit v-else  aria-hidden="true"></BIconFullscreenExit>
+              </q-btn>
+              <q-btn v-if="$config.IS_STUDENT" class="btn-row"
+                        style="width:62.5px"
+                        variant="success"
+                        btn-variant="white">
+                <q-tooltip anchor="top middle">Save</q-tooltip>
+                <font-awesome-icon icon="save" />
+              </q-btn>
+              <q-btn class="btn btn-row"
+                        id="submit"
+                        variant="primary"
+                        :disabled="invalid"
+                        @click="sendData">
+                <q-tooltip anchor="top middle">Run</q-tooltip>
+                <BIconPlay v-if="!waitingResponse" aria-hidden="true"></BIconPlay>
+                <div v-else>
+                  <spring-spinner
+                    slot="waiting"
+                    :animation-duration="3000"
+                    :size="25"
+                    color="#fff"
                   />
-                  <b-button
-                    class="btn btn-secondary file btn-row"
-                    @click="$refs.upload.click()"
-                    v-tooltip.top-center="'Upload of previously downloaded backup'"
-                  >
-                    <b-icon icon="upload" aria-hidden="true"></b-icon>
-                  </b-button>
                 </div>
-                <div class="buttons">
-                  <b-button class="btn mr-2 btn-row"
-                            id="maximize-button"
-                            @click="maximize"
-                            v-tooltip.top-center="maximized ? 'Minimize' : 'Maximize'"
-                            v-if="!asForm || outputFiles !== ''">
-                    <b-icon v-if="!maximized" icon="fullscreen" aria-hidden="true"></b-icon>
-                    <b-icon v-else icon="fullscreen-exit" aria-hidden="true"></b-icon>
-                  </b-button>
-                  <b-button v-if="$config.IS_STUDENT" class="btn mr-2 btn-row"
-                            style="width:62.5px"
-                            variant="success"
-                            btn-variant="white" v-tooltip.top-center="'Save'">
-                    <font-awesome-icon icon="save" />
-                  </b-button>
-                  <b-button class="btn btn-row"
-                            id="submit"
-                            variant="primary"
-                            :disabled="invalid"
-                            v-tooltip.top-center="'Run'"
-                            @click="sendData">
-                    <b-icon v-if="!waitingResponse" icon="play" aria-hidden="true"></b-icon>
-                    <v-wait for="wait for ws response">
-                      <spring-spinner
-                        slot="waiting"
-                        :animation-duration="3000"
-                        :size="25"
-                        color="#fff"
-                      />
-                    </v-wait>
-                  </b-button>
-                </div>
-              </div>
-
-        </validation-observer>
+              </q-btn>
+            </q-btn-group>
+          </div>
+        </VForm>
       </div>
 
       <div
@@ -220,9 +215,9 @@
 
           <!-- Render Handlebar Templates with the filled in Parameters -->
           <div v-if="!asForm">
-            <b-card no-body v-if="numberOfInputFiles > 0">
-              <b-tabs card class="files" content-class="m-2" fill>
-                <b-tab
+            <q-card no-body v-if="numberOfInputFiles > 0">
+              <q-tabs card class="files" content-class="m-2" fill>
+                <q-tab
                   :title="getFilename(file.path)"
                   ref="file"
                   class="file"
@@ -252,15 +247,14 @@
                       ></ace-editor-component>
                     </div>
                   </div>
-                </b-tab>
-              </b-tabs>
-            </b-card>
+                </q-tab>
+              </q-tabs>
+            </q-card>
           </div>
 
           <div class="mt-2">
-            <v-wait for="wait for ws response">
-
-              <b-card
+            <div v-if="!waitingResponse">
+              <q-card
                 no-body
                 v-if="
                 outputFiles !== '' ||
@@ -268,48 +262,60 @@
                 (returnedOutputJson !== '' && returnedOutputJson.artifacts.length > 0)"
                 fill
               >
-                <b-tabs card class="files" content-class="m-2">
+                <q-tabs v-model='selectedOutputTab' no-caps align="left">
+                  <q-tab name="stdout" v-if="outputFiles !== ''">Stdout</q-tab>
+                  <q-tab name="stderr" v-if="errorFiles !== ''">Stderr</q-tab>
+                  <q-tab name="visualization" v-if="returnedOutputJson.artifacts.length > 0">Visualizations</q-tab>
+                  <q-tab name="download" v-if="returnedUnmodifiedArtifacts.artifacts.length > 0">Downloads</q-tab>
+                </q-tabs>
+                <q-tab-panels v-model='selectedOutputTab' class="files" content-class="m-2">
 
-                  <b-tab
-                    title="Stdout"
-                    ref="artifact"
+                  <q-tab-panel
+                    name="stdout"
                     class="artifact"
                     v-if="outputFiles !== ''"
                   >
-                    <div id="stdout" v-if="outputFiles !== ''">
+                    <div id="stdout">
                       <ansi-output :divId="'stdout-div'" :content="outputFiles"></ansi-output>
                     </div>
-                  </b-tab>
+                  </q-tab-panel>
 
-                  <b-tab
-                    title="Stderr"
-                    ref="artifact"
+                  <q-tab-panel
+                    name="stderr"
                     class="artifact"
+                    v-if="errorFiles !== ''"
                   >
-                    <div id="stderr" v-if="errorFiles !== ''">
+                    <div id="stderr">
                       <ansi-output :divId="'stderr-div'" :content="errorFiles"></ansi-output>
                     </div>
-                  </b-tab>
+                  </q-tab-panel>
                   <!-- TODO: Only show tabs if necessary-->
-                  <b-tab
-                    title="Visualizations"
-                    ref="artifact"
+                  <q-tab-panel
+                    name="visualization"
                     class="artifact"
                     v-if="returnedOutputJson.artifacts.length > 0"
                   >
                     <div id="fileList" class="mt-2" v-if="returnedOutputJson !== ''">
                       <div class="fileViewer">
-                        <b-card
+                        <q-card
                           no-body
                           v-if="returnedOutputJson.artifacts.length > 0"
                           fill
                         >
-                          <b-tabs card class="files" content-class="m-2" lazy>
+                          <q-tabs  no-caps v-model="selectedVisualizationTab">
+                            <q-tab
+                              :name="artifact.identifier"
+                              v-for="(
+                                artifact
+                              ) in filteredArtifacts(returnedOutputJson.artifacts)"
+                              :key="artifact.identifier"
+                            >{{ artifact.basename || artifact.path }}
+                              </q-tab>
+                          </q-tabs>
+                          <q-tab-panels  v-model="selectedVisualizationTab" class="files" content-class="m-2" lazy>
                             <!-- TODO: Filename verwenden -->
-                            <b-tab
-                              :title="artifact.basename || artifact.path"
-                              ref="artifact"
-                              class="artifact"
+                            <q-tab-panel
+                              :name="artifact.identifier"
                               v-for="(
                                 artifact
                               ) in filteredArtifacts(returnedOutputJson.artifacts)"
@@ -350,11 +356,11 @@
                                            :href="link">
                                           {{ link }}
                                         </a>
-                                        <b-button class="float-right"
+                                        <q-btn class="float-right"
                                                   variant="outline-primary"
                                                   @click="downloadFromLink(link)">
-                                          <b-icon icon="download" aria-hidden="true"></b-icon>
-                                        </b-button>
+                                          <BIconDownload aria-hidden="true"></BIconDownload>
+                                        </q-btn>
                                       </div>
                                     </li>
                                   </ul>
@@ -473,7 +479,7 @@
                                   </div>
 
                                 </div>
-                                <div v-else-if="artifact.MIMEtype == 'text/csv'">
+                                <div v-else-if="artifact.MIMEtype === 'text/csv'">
                                   <div v-if="artifact.plots">
                                     <div v-for="plot in artifact.plots"
                                          :key="(typeof plot.key == 'string') ?
@@ -534,14 +540,14 @@
 
                                 </div>
                               </div>
-                            </b-tab>
-                          </b-tabs>
-                        </b-card>
+                            </q-tab-panel>
+                          </q-tab-panels>
+                        </q-card>
                       </div>
                     </div>
-                  </b-tab>
-                  <b-tab
-                    title="Downloads"
+                  </q-tab-panel>
+                  <q-tab-panel
+                    name="download"
                     ref="artifact"
                     class="artifact"
                     v-if="returnedUnmodifiedArtifacts.artifacts.length > 0"
@@ -572,10 +578,10 @@
                         </li>
                       </ul>
                     </div>
-                  </b-tab>
-                </b-tabs>
-              </b-card>
-            </v-wait>
+                  </q-tab-panel>
+                </q-tab-panels>
+              </q-card>
+            </div>
           </div>
         </div>
       </div>
@@ -586,17 +592,18 @@
 <script>
 // import Ace
 import { SpringSpinner } from 'epic-spinners';
-import { ValidationObserver } from 'vee-validate';
+import { Form } from 'vee-validate';
 import base64url from 'base64url';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import {
+  BIconInfoCircle, BIconFileEarmarkDiff, BIconFileEarmarkCode, BIconPlay, BIconDownload, BIconUpload, BIconFullscreen, BIconFullscreenExit,
+} from 'bootstrap-icons-vue';
+import { Loading } from 'quasar';
 import AceEditorComponent from '../../components/EditorComponent-Ace.vue';
 
 // own components
 import Parameters from '../../components/Parameters.vue';
-
 import GridPlot from '../../components/viplab-plots/gridplot/GridPlot.vue';
-
-// import $ from 'jquery';
-
 import VtkComponent from '../../components/vtk-plots/VtkComponent.vue';
 import Plot2d from '../../components/viplab-plots/plot2d/plot2d.vue';
 import CsvPlot from '../../components/csv-plots/CsvPlot.vue';
@@ -608,17 +615,26 @@ const Handlebars = require('handlebars');
 // const Base64 = require('js-base64');
 
 export default {
-  name: 'app',
+  name: 'ViPLab',
   components: {
+    FontAwesomeIcon,
     SpringSpinner,
     Parameters,
     GridPlot,
     VtkComponent,
     Plot2d,
     CsvPlot,
-    ValidationObserver,
+    VForm: Form,
     AceEditorComponent,
     AnsiOutput,
+    BIconInfoCircle,
+    BIconFileEarmarkDiff,
+    BIconFileEarmarkCode,
+    BIconPlay,
+    BIconDownload,
+    BIconUpload,
+    BIconFullscreen,
+    BIconFullscreenExit,
   },
   data() {
     return {
@@ -638,11 +654,15 @@ export default {
       s3Contents: new Map(),
       isLoading: new Map(),
       promiseError: new Map(),
+      selectedInputTab: '',
+      selectedOutputTab: 'stdout',
+      selectedVisualizationTab: '',
     };
   },
   watch: {
     json: {
       handler(val) {
+        console.log(val);
         this.json = val;
         // update Vuex Store
         this.$store.commit('updateJsonTemplate', val);
@@ -654,17 +674,14 @@ export default {
   computed: {
     json: {
       get() {
-        this.$forceUpdate();
         return this.$store.state.jsonTemplate;
       },
       set(newValue) {
         this.$store.commit('updateJsonTemplate', newValue);
-        this.$forceUpdate();
       },
     },
     token: {
       get() {
-        this.$forceUpdate();
         return this.$store.state.token;
       },
       set(newValue) {
@@ -673,7 +690,6 @@ export default {
     },
     dataTemplate: {
       get() {
-        this.$forceUpdate();
         return this.$store.state.dataTemplate;
       },
       set(newValue) {
@@ -682,7 +698,6 @@ export default {
     },
     ws: {
       get() {
-        this.$forceUpdate();
         return this.$store.state.ws;
       },
       set(newValue) {
@@ -822,7 +837,7 @@ export default {
               this.statusMessage = data.content;
               if (this.statusMessage.status !== 'info') {
                 // stop waiting/ progress bar
-                this.$wait.end('wait for ws response');
+                Loading.hide();
                 this.waitingResponse = false;
                 // show error in popup
                 this.$alert(this.statusMessage.message, '', this.statusMessage.status);
@@ -835,7 +850,7 @@ export default {
 
         if (this.outputFiles !== '' || this.errorFiles !== '' || this.returnedOutputJson !== '') {
           // stop waiting
-          this.$wait.end('wait for ws response');
+          Loading.hide();
           this.waitingResponse = false;
         }
       };
@@ -870,6 +885,7 @@ export default {
       this.errorFiles = '';
       this.returnedOutputJson = '';
       this.returnedUnmodifiedArtifacts = '';
+      this.selectedVisualizationTab = '';
 
       console.log(`sendData ${this.outputFiles}`);
 
@@ -885,7 +901,7 @@ export default {
       this.ws.send(JSON.stringify(task));
 
       // start waiting
-      this.$wait.start('wait for ws response');
+      Loading.show();
       this.waitingResponse = true;
 
       return false;
@@ -900,7 +916,7 @@ export default {
       };
       this.ws.send(JSON.stringify(cancel));
       // stop waiting
-      this.$wait.end('wait for ws response');
+      Loading.hide();
       this.waitingResponse = false;
     },
     generateComputationTask() {
@@ -1104,6 +1120,7 @@ export default {
               if (filenamePart.startsWith(currentBasename)) {
                 // console.log(currentBasename + " - " + filenamePart);
                 connectedVtks[currentBasename].type = artifacts[a].type;
+                connectedVtks[currentBasename].identifier = artifacts[a].identifier;
                 connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
                 connectedVtks[currentBasename].basename = currentBasename;
                 if (artifacts[a].url) {
@@ -1159,7 +1176,9 @@ export default {
           }
         }
       });
-
+      if (this.selectedVisualizationTab === '' && this.filteredArtifacts(this.returnedOutputJson.artifacts).length > 0) {
+        this.selectedVisualizationTab = this.filteredArtifacts(this.returnedOutputJson.artifacts)[0].identifier;
+      }
       // TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.outputFiles.concat(base64url.decode(result.result.output.stdout));
       this.errorFiles = this.errorFiles.concat(base64url.decode(result.result.output.stderr));
@@ -1382,9 +1401,9 @@ export default {
           }
         });
         if (currentParameter.metadata.guiType === 'radio' || (currentParameter.metadata.guiType === 'dropdown' && !currentParameter.multiple) || (currentParameter.metadata.guiType === 'input_field')) {
-          this.$set(currentParameter, 'selected', arr[0]);
+          [currentParameter.selected] = arr;
         } else {
-          this.$set(currentParameter, 'selected', arr);
+          currentParameter.selected = arr;
         }
       }
     },
@@ -1530,6 +1549,7 @@ export default {
   },
   mounted() {
     this.executeAfterDomLoaded();
+    this.selectedInputTab = this.json.files[0].identifier;
   },
 };
 </script>
