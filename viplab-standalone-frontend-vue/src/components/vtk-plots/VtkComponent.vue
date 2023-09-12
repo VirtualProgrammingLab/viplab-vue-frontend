@@ -220,8 +220,8 @@ export default {
         const dataArray = this.source[`get${location}`]().getArrayByName(colorByArrayName);
         const newDataRange = dataArray.getRange();
         // console.log(newDataRange);
-        this.dataRange[0] = newDataRange.getRangeAt(0);
-        this.dataRange[1] = newDataRange.getRangeAt(1);
+        this.dataRange[0] = newDataRange.at(0);
+        this.dataRange[1] = newDataRange.at(1);
         colorMode = ColorMode.MAP_SCALARS;
         scalarMode = location === 'PointData'
           ? ScalarMode.USE_POINT_FIELD_DATA
