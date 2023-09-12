@@ -3,27 +3,28 @@
   "version": "3.0.0",
   "metadata": {
     "displayName": "Fracture Benchmark (Case 1): Single Fracture",
-    "description": "In this application, flow and transport through a single fracture in a cubic domain can be simulated with the numerical schemes available in Dumux, which comprise two cell-centered (tpfa, mpfa) and a vertex-centered finite volume scheme (box). Further details can be found in the related publication doi.org/10.1016/j.advwatres.2020.103759 .",
+    "description": "Simulate flow and transport in a cubic domain with a single fracture. A detailed case setup can be found in doi.org/10.48550/arXiv.1809.06926, Section 4.1.",
     "output": {
       "viewer": [
         "CSV",
         "ParaView"
       ],
-      "ignore": ["results.csv"],
+      "ignore": {
+        "visualization": ["results.csv", "dot_refinement*.csv"],
+        "download": ["dataovertime*.csv"]
+      },
       "csv": [
         {
           "basename": "dataovertime",
           "xlabel": {
             "key": "time",
             "label": "Time in years",
-            "factor": 3.1709792E-8,
-            "format": ".2f"
+            "factor": 3.1709792E-8
           },
           "plots": [
             {
               "key": "massBottomLayer",
-              "label": "Tracer mass in bottom layer in kg",
-              "factor": 100
+              "label": "Tracer mass in bottom layer in kg"
             },
             {
               "key": "massFracture",
@@ -31,9 +32,8 @@
             },
             {
               "key": "fluxAcrossOutlet",
-              "label": "Flux across outlet in mg/(s m^2)",
-              "factor": 1E6,
-              "format": ".2f"
+              "label": "Flux across outlet in kg/(s m²)",
+              "format": "~e"
             }
           ]
         }
@@ -61,14 +61,14 @@
       "path": "params.input",
       "metadata": {
         "syntaxHighlighting": "ini",
-        "description": "params.input is the main configuration file for DuMux"
+        "description": "params.input is the main configuration file for DuMuX"
       },
       "parts": [
         {
           "identifier": "f3fc4404-3529-4962-b252-47bc4ddd02a2",
           "access": "template",
           "metadata": {
-            "description": "Use the form fields to adjust a subset of parameters defined in 'params.input' of DuMux"
+            "description": "Use the form fields to adjust a subset of parameters defined in 'params.input' of DuMuX. **Note**, computations with the Fine grid take ~1.5h (TPFA_CIRC), ~3.5h (TPFA) and ~19h (MPFA-O & BOX) to finish."
           },
           "parameters": [
             {
@@ -77,13 +77,17 @@
               "metadata": {
                 "guiType": "dropdown",
                 "name": "Discretization Method",
-                "description": "Choose the discretization method. You can choose between three different finite volume (FV) methods implemented in DuMux."
+                "description": "Choose the discretization method. You can choose between four different finite volume (FV) methods implemented in DuMuX."
               },
               "options": [
                 {
                   "value": "tpfa",
                   "text": "TPFA (Cell Centered FV Scheme with Two-Point Flux Approximation)",
                   "selected": true
+                },
+                {
+                  "value": "",
+                  "text": "TPFA-CIRC (TFPA using Cell Circumcenters Instead of Barycenters)"
                 },
                 {
                   "value": "mpfa",
@@ -119,7 +123,7 @@
             },
             {
               "mode": "fixed",
-              "identifier": "MeshFile",
+              "identifier": "NumCells",
               "metadata": {
                 "guiType": "dropdown",
                 "name": "Computational Grid",
@@ -127,31 +131,31 @@
               },
               "options": [
                 {
-                  "value": "single_1k.msh",
+                  "value": "1k",
                   "text": "Coarse (1k Cells)",
                   "selected": true
                 },
                 {
-                  "value": "single_10k.msh",
+                  "value": "10k",
                   "text": "Intermediate (10k Cells)"
                 },
                 {
-                  "value": "single_100k.msh",
+                  "value": "100k",
                   "text": "Fine (100k Cells)"
                 }
               ],
               "validation": "oneof"
             }
           ],
-          "content": "W1RpbWVMb29wXQ0KVEVuZCA9IDFlOQ0KRHQgPSAxZTcNCg0KW1Byb2JsZW1dDQpFbmFibGVHcmF2aXR5ID0gZmFsc2UNClNvbHZlVHJhbnNwb3J0ID0ge3sgVHJhbnNwb3J0IH19DQoNCltEaXNjcmV0aXphdGlvbl0NClNjaGVtZSA9IHt7IERpc2NyZXRpemF0aW9uIH19DQoNCltHcmlkXQ0KRmlsZSA9IC9kYXRhL2JlcnJlMjAyMC9idWlsZC1jbWFrZS9jYXNlcy90cmFuc3BvcnQvY2FzZTFfc2luZ2xlZnJhY3R1cmUvZ3JpZHMve3sgTWVzaEZpbGUgfX0NCg0KW01hdHJpeF0NCk9uZVAuUHJvYmxlbS5OYW1lID0gb25lcF9tYXRyaXgNClRyYWNlci5Qcm9ibGVtLk5hbWUgPSB0cmFjZXJfbWF0cml4DQoNCltGcmFjdHVyZV0NCk9uZVAuUHJvYmxlbS5OYW1lID0gb25lcF9mcmFjdHVyZQ0KVHJhY2VyLlByb2JsZW0uTmFtZSA9IHRyYWNlcl9mcmFjdHVyZQ0KDQpbQ29tcG9uZW50XQ0KTGlxdWlkRGVuc2l0eSA9IDEuMA0KTGlxdWlkS2luZW1hdGljVmlzY29zaXR5ID0gMS4wDQoNCltWdGtdDQpPdXRwdXROYW1lID0gY2FzZTFfc2luZ2xlDQoNCltJT10NCkNsZWFyUmVzdWx0RmlsZSA9IHRydWUNClJlZmluZW1lbnQgPSAwDQoNCltBc3NlbWJseV0NCk51bWVyaWNEaWZmZXJlbmNlLkJhc2VFcHNpbG9uID0gMWUxMA0KDQpbTmV3dG9uXQ0KRW5hYmxlRHluYW1pY091dHB1dCA9IGZhbHNl"
+          "content": "W1RpbWVMb29wXQpURW5kID0gMWU5CkR0ID0gMWU3CgpbUHJvYmxlbV0KRW5hYmxlR3Jhdml0eSA9IGZhbHNlClNvbHZlVHJhbnNwb3J0ID0ge3sgVHJhbnNwb3J0IH19CgpbRGlzY3JldGl6YXRpb25dClNjaGVtZSA9IHt7I2lmIERpc2NyZXRpemF0aW9uIH19e3sgRGlzY3JldGl6YXRpb24gfX17e2Vsc2V9fXRwZmFjaXJje3svaWZ9fQoKW0dyaWRdCkZpbGUgPSAvZGF0YS9iZXJyZTIwMjAvYnVpbGQtY21ha2UvY2FzZXMvdHJhbnNwb3J0L2Nhc2UxX3NpbmdsZWZyYWN0dXJlL2dyaWRzL3NpbmdsZV97eyBOdW1DZWxscyB9fXt7I3VubGVzcyBEaXNjcmV0aXphdGlvbn19X2NpcmN7ey91bmxlc3N9fS5tc2gKCltNYXRyaXhdCk9uZVAuUHJvYmxlbS5OYW1lID0gb25lcF9tYXRyaXgKVHJhY2VyLlByb2JsZW0uTmFtZSA9IHRyYWNlcl9tYXRyaXgKCltGcmFjdHVyZV0KT25lUC5Qcm9ibGVtLk5hbWUgPSBvbmVwX2ZyYWN0dXJlClRyYWNlci5Qcm9ibGVtLk5hbWUgPSB0cmFjZXJfZnJhY3R1cmUKCltDb21wb25lbnRdCkxpcXVpZERlbnNpdHkgPSAxLjAKTGlxdWlkS2luZW1hdGljVmlzY29zaXR5ID0gMS4wCgpbVnRrXQpPdXRwdXROYW1lID0gY2FzZTFfc2luZ2xlCgpbSU9dCkNsZWFyUmVzdWx0RmlsZSA9IHRydWUKUmVmaW5lbWVudCA9IDAKCltBc3NlbWJseV0KTnVtZXJpY0RpZmZlcmVuY2UuQmFzZUVwc2lsb24gPSAxZTEwCgpbTmV3dG9uXQpFbmFibGVEeW5hbWljT3V0cHV0ID0gZmFsc2UK"
         }
       ]
     }
   ],
   "configuration": {
-    "resources.image": "name://berre2020",
+    "resources.image": "name://darus-berre2020",
     "resources.volume": "/data/shared",
-    "resources.memory": "4g",
+    "resources.memory": "6g",
     "resources.numCPUs": 1,
     "running.commandLineArguments": "case1 params.input",
     "running.entrypoint": "/data/berre2020/docker/run.sh",
