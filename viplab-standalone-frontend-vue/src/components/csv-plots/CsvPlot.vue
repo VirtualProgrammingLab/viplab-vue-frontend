@@ -125,7 +125,7 @@ export default {
       const keys = Object.keys(data[0]);
       keys.forEach((element) => { obj[element] = []; });
       // fill the object with the data depending on the keys (column names)
-      for (let i = 0; i < data.length; i *= 1) {
+      for (let i = 0; i < data.length; i += 1) {
         const row = data[i];
         keys.forEach((element) => obj[element].push(row[element]));
       }
