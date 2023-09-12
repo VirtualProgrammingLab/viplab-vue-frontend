@@ -261,6 +261,7 @@ export default {
       return this.enableAutoPlay;
     },
     async renderFile() {
+      await this.$nextTick();
       this.fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
         background: [0.4, 0.44, 0.52],
         rootContainer: this.$refs.rootContainer,
@@ -412,7 +413,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #vtk-content {
-  position: relative;
   display: flex;
   flex-flow: column nowrap;
   align-items: stretch;
@@ -424,7 +424,6 @@ export default {
 }
 
 .file-controller {
-  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
@@ -444,7 +443,6 @@ export default {
 }
 
 .vtk-geometry-controls {
-  position: absolute;
   top: 0;
   left: 0;
   right: 0;

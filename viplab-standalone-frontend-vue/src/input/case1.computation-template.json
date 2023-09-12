@@ -153,7 +153,7 @@
     }
   ],
   "configuration": {
-    "resources.image": "name://berre2020",
+    "resources.image": "name://darus-berre2020",
     "resources.volume": "/data/shared",
     "resources.memory": "6g",
     "resources.numCPUs": 1,

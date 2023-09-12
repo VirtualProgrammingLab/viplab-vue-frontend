@@ -1070,10 +1070,20 @@ export default {
       // process connected vtu/vtk & csv files
       let connectedVtks = {};
       let { artifacts } = this.returnedOutputJson;
-      // let created = false;
+      // isNew flag to ensure that connected files are only added once
+      artifacts.forEach( (artifact) => {
+        if (artifact.basename) {
+          connectedVtks[artifact.basename] = artifact;
+          connectedVtks[artifact.basename].isNew = false;
+        }
+      });
 
       // sort result artifacts alphabetically to make sure that connected files are in correct order
-      artifacts.sort((a, b) => a.path.localeCompare(b.path));
+      artifacts.sort((a, b) => {
+        let a_path = a.path ?? a.basename;
+        let b_path = b.path ?? b.basename;
+        return a_path.localeCompare(b_path);
+      });
 
       // get basenames for collections of files
       let outputConfig = [];
@@ -1104,12 +1114,14 @@ export default {
             connectedVtks[currentBasename].urlsOrContents = [];
             connectedVtks[currentBasename].plots = currentConfig.plots;
             connectedVtks[currentBasename].xlabel = currentConfig.xlabel;
+            connectedVtks[currentBasename].isConnected = true;
+            connectedVtks[currentBasename].isNew = true;
           }
         }
 
         // group results according to the available basenames
         for (let a = 0; a < artifacts.length; a += 1) {
-          if ((artifacts[a].MIMEtype === 'application/vnd.kitware' || artifacts[a].MIMEtype === 'text/csv') && !artifacts[a].artifacts) {
+          if ((artifacts[a].MIMEtype === 'application/vnd.kitware' || artifacts[a].MIMEtype === 'text/csv') && !artifacts[a].isConnected) {
             const { path } = artifacts[a];
             const lastIndex = path.lastIndexOf('/');
             const filenamePart = path.substr(lastIndex + 1, path.length);
@@ -1118,7 +1130,6 @@ export default {
               const currentBasename = basenames[base];
               // filename has to start with basename
               if (filenamePart.startsWith(currentBasename)) {
-                // console.log(currentBasename + " - " + filenamePart);
                 connectedVtks[currentBasename].type = artifacts[a].type;
                 connectedVtks[currentBasename].identifier = artifacts[a].identifier;
                 connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
@@ -1147,7 +1158,7 @@ export default {
         // delete all vtk and csv artifacts that are part of a collection
         artifacts = this.returnedOutputJson.artifacts;
         let b = artifacts.length - 1;
-        while (b > 0) {
+        while (b >= 0) {
           if (artifacts[b].inCollection) {
             artifacts.splice(b, 1);
           }
@@ -1157,7 +1168,9 @@ export default {
         // add vtk/csv collections
         const connectedFilesKeys = Object.keys(connectedVtks);
         for (let c = 0; c < connectedFilesKeys.length; c += 1) {
-          this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
+          if (connectedVtks[connectedFilesKeys[c]].isNew && connectedVtks[connectedFilesKeys[c]].urlsOrContents.length > 0) {
+            this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
+          }
         }
       }
 
@@ -1182,6 +1195,7 @@ export default {
       // TODO: Vars nicht überschreiben, sondern ergänzen für intermediate
       this.outputFiles = this.outputFiles.concat(base64url.decode(result.result.output.stdout));
       this.errorFiles = this.errorFiles.concat(base64url.decode(result.result.output.stderr));
+      this.$forceUpdate();
     },
     /** get content from s3 */
     async getContentFromS3(url, isViPLabGraphics = false) {
