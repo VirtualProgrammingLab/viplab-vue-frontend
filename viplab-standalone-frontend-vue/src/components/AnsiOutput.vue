@@ -1,6 +1,6 @@
 <template>
     <div class="ansi-output-component">
-        <div class="ansi-editor d-flex flex-row">
+        <div class="ansi-editor row">
             <div class="line-numbers-div text-center" :id="divId+'-lines'">
                 <pre><span v-for="index in lines.length" :key="index">{{index}}<br/></span></pre>
             </div>
@@ -88,6 +88,7 @@ export default {
 
 .ansi-editor {
     align-items: stretch;
+    flex-wrap: nowrap;
 }
 
 .line-numbers-div {

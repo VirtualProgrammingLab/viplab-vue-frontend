@@ -233,7 +233,7 @@
                     v-for="part in file.parts"
                     :key="part.identifier"
                   >
-                    <div v-if="part.parameters && part.access == 'template'">
+                    <div v-if="part.parameters && part.access === 'template'">
                       <ace-editor-component
                         :isParameter="false"
                         :isHandlebar="true"
@@ -295,7 +295,7 @@
                     class="artifact"
                     v-if="returnedOutputJson.artifacts.length > 0"
                   >
-                    <div id="fileList" class="mt-2" v-if="returnedOutputJson !== ''">
+                    <div id="fileList" class="mt-2">
                       <div class="fileViewer">
                         <q-card
                           no-body
@@ -312,7 +312,7 @@
                             >{{ artifact.basename || artifact.path }}
                               </q-tab>
                           </q-tabs>
-                          <q-tab-panels  v-model="selectedVisualizationTab" class="files" content-class="m-2" lazy>
+                          <q-tab-panels  v-model="selectedVisualizationTab" class="files" content-class="m-2">
                             <!-- TODO: Filename verwenden -->
                             <q-tab-panel
                               :name="artifact.identifier"
@@ -324,8 +324,8 @@
                               <div v-if="artifact.type !== 's3file'">
                                 <div
                                   v-if="
-                                    artifact.MIMEtype == 'text/plain' ||
-                                    artifact.MIMEtype == 'application/json'"
+                                    artifact.MIMEtype === 'text/plain' ||
+                                    artifact.MIMEtype === 'application/json'"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
@@ -333,7 +333,7 @@
                                     :isParameter="false"
                                     :isHandlebar="false"
                                     :readonly="true"
-                                    :lang="(artifact.MIMEtype == 'application/json') ?
+                                    :lang="(artifact.MIMEtype === 'application/json') ?
                                       'json' : 'text'"
                                     :item='{
                                       "identifier" : "Editor" + artifact.identifier,
@@ -343,7 +343,7 @@
                                   ></ace-editor-component>
                                 </div>
                                 <div
-                                  v-if="artifact.MIMEtype == 'text/uri-list'"
+                                  v-if="artifact.MIMEtype === 'text/uri-list'"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
@@ -366,7 +366,7 @@
                                   </ul>
                                 </div>
 
-                                <div v-if="artifact.MIMEtype == 'application/vnd.kitware'">
+                                <div v-if="artifact.MIMEtype === 'application/vnd.kitware'">
                                     <vtk-component
                                         v-if="artifact.urlsOrContents"
                                         :propFiles=artifact.urlsOrContents
@@ -437,7 +437,7 @@
                               </div>
                               <!-- Render s3 files that have no content-element-->
                               <div v-else>
-                                <div v-if="artifact.MIMEtype == 'application/vnd.kitware'">
+                                <div v-if="artifact.MIMEtype === 'application/vnd.kitware'">
                                     <vtk-component
                                         v-if="artifact.urlsOrContents"
                                         :propFiles=artifact.urlsOrContents
@@ -451,8 +451,8 @@
                                   v-else-if="
                                     artifact.MIMEtype !== 'image/png' &&
                                     artifact.MIMEtype !== 'image/jpeg' &&
-                                    ( artifact.MIMEtype == 'text/plain' ||
-                                      artifact.MIMEtype == 'application/json')"
+                                    ( artifact.MIMEtype === 'text/plain' ||
+                                      artifact.MIMEtype === 'application/json')"
                                   ref="outPartcontent"
                                   class="outPartcontent"
                                 >
@@ -467,7 +467,7 @@
                                         :isParameter="false"
                                         :isHandlebar="false"
                                         :readonly="true"
-                                        :lang="(artifact.MIMEtype == 'application/json') ?
+                                        :lang="(artifact.MIMEtype === 'application/json') ?
                                           'json' : 'text'"
                                         :item='{
                                           "identifier" : "Editor" + artifact.identifier,
@@ -502,8 +502,8 @@
                                   </div>
                                 </div>
                                 <div v-else-if="
-                                  artifact.MIMEtype == 'image/png' ||
-                                  artifact.MIMEtype == 'image/jpeg'">
+                                  artifact.MIMEtype === 'image/png' ||
+                                  artifact.MIMEtype === 'image/jpeg'">
                                   <img
                                     :src="artifact.url"
                                     :ref="artifact.path"/>
@@ -591,14 +591,21 @@
 
 <script>
 // import Ace
-import { SpringSpinner } from 'epic-spinners';
-import { Form } from 'vee-validate';
+import {SpringSpinner} from 'epic-spinners';
+import {Form} from 'vee-validate';
 import base64url from 'base64url';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import {
-  BIconInfoCircle, BIconFileEarmarkDiff, BIconFileEarmarkCode, BIconPlay, BIconDownload, BIconUpload, BIconFullscreen, BIconFullscreenExit,
+  BIconDownload,
+  BIconFileEarmarkCode,
+  BIconFileEarmarkDiff,
+  BIconFullscreen,
+  BIconFullscreenExit,
+  BIconInfoCircle,
+  BIconPlay,
+  BIconUpload,
 } from 'bootstrap-icons-vue';
-import { Loading } from 'quasar';
+import {Loading} from 'quasar';
 import AceEditorComponent from '../../components/EditorComponent-Ace.vue';
 
 // own components
@@ -1289,7 +1296,7 @@ export default {
       }
       return false;
     },
-    /** Maximize the window, meaning that the two collumns are displayed underneath each other */
+    /** Maximize the window, meaning that the two columns are displayed underneath each other */
     maximize() {
       this.maximized = !this.maximized;
     },
@@ -1370,16 +1377,16 @@ export default {
               if (part.identifier === partId) {
                 // set content of parts
                 // this.json.files[f].parts[oldp].content = obj.parts[p].content;
-                this.$set(part, 'content', currentPart.content);
+                part['content'] = currentPart.content;
                 this.$forceUpdate();
                 // set parameters of parts
                 Object.values(part.parameters).forEach((parameterFromJson) => {
                   Object.values(currentPart.parameters).forEach((parameterFromObj) => {
                     if (parameterFromObj.identifier === parameterFromJson.identifier) {
                       if (parameterFromJson.selected) {
-                        this.$set(parameterFromJson, 'selected', parameterFromObj.selected);
+                       parameterFromJson['selected'] = parameterFromObj.selected;
                       } else {
-                        this.$set(parameterFromJson, 'value', parameterFromObj.value);
+                        parameterFromJson['value'] = parameterFromObj.value;
                       }
                     }
                   });
@@ -1404,7 +1411,7 @@ export default {
       // add value-item to parameters with mode == any
       if (mode === 'any') {
         // create reactive object value in curr with curr.default as content
-        this.$set(currentParameter, 'value', currentParameter.default);
+        currentParameter['value'] = currentParameter.default;
       } else {
         // add selected-item to parameters with mode == fixed
         const arr = [];
@@ -1441,8 +1448,7 @@ export default {
           });
           // Substitute values in handlebars template
           const template = Handlebars.compile(handlebarsTemplate);
-          const output = template(view);
-          return output;
+          return template(view);
         }
       }
       /** Get Content from separate file */

@@ -3,10 +3,6 @@
     <div class="plot-div">
       <div
         ref="plot"
-        :data="data"
-        :layout="layout"
-        :display-mode-bar="true"
-        :to-image-button-options="imageConfig"
       ></div>
     </div>
     <div v-if="csvs.length > 1" class="file-controller text-center">
@@ -82,22 +78,36 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
     if (this.areUrlsProp) {
-      this.loadData(this);
+      await this.loadData(this);
     } else {
       this.loadBase64Data(this.csvs[this.fileIndex]);
     }
-    Plotly.newPlot(this.$refs.plot, this.data);
+    Plotly.newPlot(this.$refs.plot,
+      this.data,
+      this.layout,
+      {
+        displayModeBar: true,
+        toImageButtonOptions: this.imageConfig,
+      }
+    );
   },
   methods: {
     // "http://localhost:8080/" + inputFile
-    loadData(context) {
+    async loadData(context) {
       // plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){
       // plotlyjs.d3.csv("http://localhost:8080/plotly-test.csv", function(data){
-      csv(context.csvs[context.fileIndex], (data) => {
-        context.processData(data);
+      let csvData = []
+      await csv(context.csvs[context.fileIndex], (data) => {
+        Object.keys(data).forEach((element) => {
+          if (!csvData.hasOwnProperty(element)) {
+            csvData[element] = [];
+          }
+          csvData[element].push(data[element]);
+        });
       });
+      context.processData(csvData);
     },
     loadBase64Data(base64Data, delimiter = ',') {
       const decodedData = base64url.decode(base64Data);
@@ -118,24 +128,10 @@ export default {
       });
       this.processData(data);
     },
-    processData(dataIn) {
+    processData(data) {
       const traces = [];
 
-      // create an object, where there is an array for each column name
-      const obj = [];
-      let data;
-      if (Array.isArray(dataIn)) {
-        data = dataIn;
-      } else {
-        data = [dataIn];
-      }
-      const keys = Object.keys(data[0]);
-      keys.forEach((element) => { obj[element] = []; });
-      // fill the object with the data depending on the keys (column names)
-      for (let i = 0; i < data.length; i += 1) {
-        const row = data[i];
-        keys.forEach((element) => obj[element].push(row[element]));
-      }
+      const keys = Object.keys(data);
 
       let xkey = keys[0];
       if (this.labelProp.key !== undefined) {
@@ -146,8 +142,8 @@ export default {
 
       // multiply x-axis by factor if given
       if (this.labelProp.factor !== undefined) {
-        for (let j = 0; j < obj[(xkey)].length; j += 1) {
-          obj[(xkey)][j] *= this.labelProp.factor;
+        for (let j = 0; j < data[(xkey)].length; j += 1) {
+          data[(xkey)][j] *= this.labelProp.factor;
         }
       }
       const xKeyIndex = keys.indexOf(xkey);
@@ -160,21 +156,21 @@ export default {
           // multiply y-axis by factor if given
           if (keys[k] === this.datasetProp.key || this.datasetProp.key.includes(keys[k])) {
             if (this.datasetProp.factor !== undefined) {
-              for (let j = 0; j < obj[(xkey)].length; j += 1) {
-                obj[(keys[k])][j] *= this.datasetProp.factor;
+              for (let j = 0; j < data[(xkey)].length; j += 1) {
+                data[(keys[k])][j] *= this.datasetProp.factor;
               }
             }
             const trace = {
-              x: obj[(xkey)],
-              y: obj[(keys[k])],
+              x: data[(xkey)],
+              y: data[(keys[k])],
               name: (typeof this.datasetProp.key === 'string') ? this.datasetProp.label : keys[k],
             };
             traces.push(trace);
           }
         } else {
           const trace = {
-            x: obj[(xkey)],
-            y: obj[(keys[k])],
+            x: data[(xkey)],
+            y: data[(keys[k])],
             name: keys[k],
           };
           traces.push(trace);

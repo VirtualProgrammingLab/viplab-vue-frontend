@@ -29,7 +29,7 @@ export default {
         return this.item.value;
       },
       set(val) {
-        this.$set(this.item, 'value', val);
+        this.item['value'] = val;
         this.$forceUpdate();
         return this.vModel;
       },

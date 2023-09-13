@@ -54,7 +54,7 @@ export default {
         return this.item.selected;
       },
       set(val) {
-        this.$set(this.item, 'selected', val);
+        this.item['selected'] = val;
         this.$forceUpdate();
         return this.vModel;
       },
