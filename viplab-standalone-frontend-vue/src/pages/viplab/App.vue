@@ -1001,51 +1001,53 @@ export default {
       // if the first result came back, set the whole object, else, only add the new artifacts to the existing object
       // use JSON.parse(JSON.stringify(...)) to make sure a copy of the data is made, such that not only a reference is used
       if (this.returnedOutputJson === '') {
-        this.returnedOutputJson = JSON.parse(JSON.stringify(result.result));
-        this.returnedUnmodifiedArtifacts = JSON.parse(JSON.stringify(result.result));
-      } else {
-        // TODO: Muss eventuell mit this.$set gemacht werden, damit gui auch geupdated wird; nötig erst wenn intermediate results im Backend möglich
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)));
-        this.returnedUnmodifiedArtifacts.artifacts = this.returnedUnmodifiedArtifacts.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)));
+        this.returnedOutputJson = {
+          "identifier": result.result.identifier,
+          "version": result.result.version,
+          "computation": result.result.computation,
+          "status": "final",
+          "timestamp": "",
+          "output" : {
+            "stdout" : "",
+            "stderr" : "",
+          },
+          "artifacts" : []
+        }
+        this.returnedUnmodifiedArtifacts = JSON.parse(JSON.stringify(this.returnedOutputJson));
       }
+      this.returnedUnmodifiedArtifacts.artifacts = this.returnedUnmodifiedArtifacts.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)));
 
       this.returnedUnmodifiedArtifacts.artifacts.sort((a, b) => a.path.localeCompare(b.path));
 
       // filter result such that only specified results are displayed
-      let viewer = [];
-      if (typeof this.json.metadata !== 'undefined') {
-        if (typeof this.json.metadata.output !== 'undefined') {
-          if (typeof this.json.metadata.output.viewer !== 'undefined') {
-            viewer = this.json.metadata.output.viewer;
-          }
-        }
-      }
+      let viewer = this.json?.metadata?.output?.viewer ?? [];
+      let returnedArtifacts = JSON.parse(JSON.stringify(result.result.artifacts));
       if (!viewer.includes('Image')) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+        returnedArtifacts = returnedArtifacts.filter(
           (value) => value.MIMEtype !== 'image/png' || value.MIMEtype !== 'image/jpeg',
         );
       }
       if (!viewer.includes('ParaView')) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+        returnedArtifacts = returnedArtifacts.filter(
           (value) => value.MIMEtype !== 'application/vnd.kitware',
         );
       }
       if (!viewer.includes('ViPLabGraphics')) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+        returnedArtifacts = returnedArtifacts.filter(
           (value) => (value.MIMEtype !== 'application/x-vgf')
             && (value.MIMEtype !== 'application/x-vgf3')
             && (value.MIMEtype !== 'application/x-vgfc'),
         );
       }
       if (!viewer.includes('CSV')) {
-        this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+        returnedArtifacts = returnedArtifacts.filter(
           (value) => value.MIMEtype !== 'text/csv',
         );
       }
 
       /* eslint no-param-reassign: ["error", { "props": false }] */
       // process vtk-files with base64-content
-      this.returnedOutputJson.artifacts.forEach((item) => {
+      returnedArtifacts.forEach((item) => {
         if (item.MIMEtype === 'application/vnd.kitware') {
           if (item.content) {
             // generate Object-URLs of the base64url encoded content
@@ -1085,13 +1087,6 @@ export default {
         }
       });
 
-      // sort result artifacts alphabetically to make sure that connected files are in correct order
-      artifacts.sort((a, b) => {
-        let a_path = a.path ?? a.basename;
-        let b_path = b.path ?? b.basename;
-        return a_path.localeCompare(b_path);
-      });
-
       // get basenames for collections of files
       let outputConfig = [];
       if (typeof this.json.metadata !== 'undefined') {
@@ -1118,6 +1113,7 @@ export default {
             connectedVtks[currentBasename] = {};
             connectedVtks[currentBasename].type = 's3file';
             connectedVtks[currentBasename].basename = currentBasename;
+            connectedVtks[currentBasename].identifier = this.uuid();
             connectedVtks[currentBasename].urlsOrContents = [];
             connectedVtks[currentBasename].plots = currentConfig.plots;
             connectedVtks[currentBasename].xlabel = currentConfig.xlabel;
@@ -1127,9 +1123,10 @@ export default {
         }
 
         // group results according to the available basenames
-        for (let a = 0; a < artifacts.length; a += 1) {
-          if ((artifacts[a].MIMEtype === 'application/vnd.kitware' || artifacts[a].MIMEtype === 'text/csv') && !artifacts[a].isConnected) {
-            const { path } = artifacts[a];
+        for (let a = 0; a < returnedArtifacts.length; a += 1) {
+          if (returnedArtifacts[a].MIMEtype === 'application/vnd.kitware' ||
+              returnedArtifacts[a].MIMEtype === 'text/csv') {
+            const { path } = returnedArtifacts[a];
             const lastIndex = path.lastIndexOf('/');
             const filenamePart = path.substr(lastIndex + 1, path.length);
 
@@ -1137,37 +1134,26 @@ export default {
               const currentBasename = basenames[base];
               // filename has to start with basename
               if (filenamePart.startsWith(currentBasename)) {
-                connectedVtks[currentBasename].type = artifacts[a].type;
-                connectedVtks[currentBasename].identifier = artifacts[a].identifier;
-                connectedVtks[currentBasename].MIMEtype = artifacts[a].MIMEtype;
+                connectedVtks[currentBasename].type = returnedArtifacts[a].type;
+                //connectedVtks[currentBasename].identifier = returnedArtifacts[a].identifier;
+                connectedVtks[currentBasename].MIMEtype = returnedArtifacts[a].MIMEtype;
                 connectedVtks[currentBasename].basename = currentBasename;
-                if (artifacts[a].url) {
-                  connectedVtks[currentBasename].urlsOrContents.push(artifacts[a].url);
+                if (returnedArtifacts[a].url) {
+                  connectedVtks[currentBasename].urlsOrContents.push(returnedArtifacts[a].url);
                 } else {
-                  connectedVtks[currentBasename].urlsOrContents.push(artifacts[a].content);
+                  connectedVtks[currentBasename].urlsOrContents.push(returnedArtifacts[a].content);
                 }
-                artifacts[a].inCollection = true;
+                returnedArtifacts[a].inCollection = true;
               }
             }
           }
         }
 
-        // If config contains output, that wasn't sent: remove from connectedVtks so ot isn't shown in gui
-        const tmpConnectedFiles = {};
-        Object.keys(connectedVtks).forEach((fileGroupKey) => {
-          const value = connectedVtks[fileGroupKey];
-          if (value.urlsOrContents.length > 0) {
-            tmpConnectedFiles[fileGroupKey] = connectedVtks[fileGroupKey];
-          }
-        });
-        connectedVtks = tmpConnectedFiles;
-
         // delete all vtk and csv artifacts that are part of a collection
-        artifacts = this.returnedOutputJson.artifacts;
-        let b = artifacts.length - 1;
+        let b = returnedArtifacts.length - 1;
         while (b >= 0) {
-          if (artifacts[b].inCollection) {
-            artifacts.splice(b, 1);
+          if (returnedArtifacts[b].inCollection) {
+            returnedArtifacts.splice(b, 1);
           }
           b -= 1;
         }
@@ -1178,16 +1164,21 @@ export default {
           if (connectedVtks[connectedFilesKeys[c]].isNew && connectedVtks[connectedFilesKeys[c]].urlsOrContents.length > 0) {
             this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
           }
+          if (connectedVtks[connectedFilesKeys[c]].urlsOrContents.length > 1) {
+            connectedVtks[connectedFilesKeys[c]].urlsOrContents.sort(( a, b ) => {
+              return a.localeCompare(b);
+            });
+          }
         }
       }
 
       // filter returnedOutputJson to only include displayable results
       const displayableMIMEtypes = ['text/plain', 'text/csv', 'text/uri-list', 'image/png', 'image/jpeg', 'application/x-vgf', 'application/x-vgf3', 'application/x-vgfc', 'application/vnd.kitware', 'application/json'];
-      this.returnedOutputJson.artifacts = this.returnedOutputJson.artifacts.filter(
+      returnedArtifacts = returnedArtifacts.filter(
         (value) => displayableMIMEtypes.includes(value.MIMEtype),
       );
 
-      Object.values(this.returnedOutputJson.artifacts).forEach((currentArtifact) => {
+      Object.values(returnedArtifacts).forEach((currentArtifact) => {
         if (currentArtifact.type === 's3file') {
           if (currentArtifact.MIMEtype === 'text/plain' || currentArtifact.MIMEtype === 'application/json') {
             this.getContentFromS3(currentArtifact.url);
@@ -1195,6 +1186,12 @@ export default {
             this.getContentFromS3(currentArtifact.url, true);
           }
         }
+      });
+      returnedArtifacts.forEach((artifact) => this.returnedOutputJson.artifacts.push(artifact));
+      this.returnedOutputJson.artifacts.sort((a, b) => {
+        let a_path = a.path ?? a.basename;
+        let b_path = b.path ?? b.basename;
+        return a_path.localeCompare(b_path);
       });
       if (this.selectedVisualizationTab === '' && this.filteredArtifacts(this.returnedOutputJson.artifacts).length > 0) {
         this.selectedVisualizationTab = this.filteredArtifacts(this.returnedOutputJson.artifacts)[0].identifier;
