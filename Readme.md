@@ -56,15 +56,15 @@ Then open your browser on <http://localhost:8080>
 (or the url specified on the console after successfully running the previous command)
 
 Alternativly, you can use the viplab/npm-container (or build the Dockerfile-dev in this repository).
-Ensure a clean project directory (without node_modules or dist folder) to be in sync with the container while developing. First, run the container with the 'install' command, mounting the working directory to your project directory.
+Ensure a clean project directory (without node_modules or dist folder) to be in sync with the container while developing. First, run the container with the 'install' command, mounting the working directory to your project directory. Lookup avaiable tags [here](https://hub.docker.com/r/viplab/npm/tags).
 ```
-docker run --rm -v <path-to-viplab-standalone-frontend-dir>:/app viplab/npm install
+docker run --rm -v <path-to-viplab-standalone-frontend-dir>:/app viplab/npm:<tag> install
 ```
 Then you can start the container with hot reloading or, use the viplab-docker-dev-env compose-file with profile "vue-mount". To see the frontend go to http://localhost:8081 in the first case, and http://localhost otherwise.
 ```
 docker run -it -p 8081:8081 --rm -v <path-to-viplab-standalone-frontend-dir>:/app --name viplab-vue-frontend-dev viplab/npm run serve -- --host 0.0.0.0
 ```
-When you need install further packages while to container is running (and you named it )viplab-vue-frontend-dev"), use:
+When you need to install further packages while to container is running (and you named it, e.g., "viplab-vue-frontend-dev"), use:
 ```
 docker exec viplab-vue-frontend-dev npm install XXX
 ```
