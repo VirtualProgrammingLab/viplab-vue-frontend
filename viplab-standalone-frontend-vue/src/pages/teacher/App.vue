@@ -11,9 +11,9 @@
           <div class="teacher-header-section">
             <h3>
               This site will help you create a Computation Template
-              <a class="ct-docu-link" href="https://virtualprogramminglab.github.io/documentation/viplab-3.0/computation_template/" title="Go to Documentation for more Info" alt="Documentation" target="_blank"><b-icon-book>Go to Documentation for more Info</b-icon-book></a>
+              <a class="ct-docu-link" href="https://virtualprogramminglab.github.io/documentation/viplab-3.0/computation_template/" title="Go to Documentation for more Info" target="_blank"><BIconBook>Go to Documentation for more Info</BIconBook></a>
             </h3>
-            <b-button id="start-guide" variant="outline-primary" @click="startGuide">Start Guide</b-button>
+            <q-btn id="start-guide" variant="outline-primary" @click="startGuide">Start Guide</q-btn>
 
             <input
                     type="file"
@@ -22,16 +22,16 @@
                     @change="uploadCT"
                     accept="application/JSON"
                   />
-                  <b-button
+                  <q-btn
                     class="btn mt-2"
                     id="start-guide"
                     variant="outline-primary"
                     @click="$refs.upload.click()"
-                    v-tooltip.bottom="'Upload of previously created template'"
                   >
+                    <q-tooltip anchor="top middle">Upload of previously created template</q-tooltip>
                     Modify existing Template
-                    <b-icon icon="upload" aria-hidden="true"></b-icon>
-                  </b-button>
+                    <BIconUpload icon="upload" aria-hidden="true"></BIconUpload>
+                  </q-btn>
           </div>
         </div>
 
@@ -39,19 +39,19 @@
 
       <div class="toggle-controls mt-2">
         <div id="toggle-left-components">
-          <a v-b-toggle="'components-collapse'" href="#" id="about">
+          <q-toggle v-model="showComponents" id="about">
             <div class="toggle-content">
               Toggle Components
             </div>
-          </a>
+          </q-toggle>
         </div>
 
         <div id="toggle-right-config">
-          <a v-b-toggle="'config-collapse'" href="#" id="about">
+          <q-toggle v-model="showConfiguration">
             <div class="toggle-content">
               Toggle Configuration
             </div>
-          </a>
+          </q-toggle>
         </div>
       </div>
 
@@ -59,14 +59,12 @@
       <div class="group">
 
         <!-- Components and Preferences -->
-        <b-collapse class="select-list" id="components-collapse" visible>
-          <b-card no-body>
-                <b-tabs card class="files" id="component-selection" content-class="m-2" fill>
-
-                  <!-- Drag-and-Drop Components -->
-                  <b-tab
-                    title="Components"
-                  >
+        <q-expansion-item class="select-list" v-model="showComponents" id="components-collapse" visible>
+          <q-card no-body>
+            <q-tabs v-model="selectedComponentTab"><q-tab no-caps name="components">Components</q-tab></q-tabs>
+            <q-tab-panels v-model="selectedComponentTab" card class="files" id="component-selection" content-class="m-2" fill>
+              <!-- Drag-and-Drop Components -->
+              <q-tab-panel name="components">
 
                     <!-- TODO: Add tooltips to the components-->
                     <div v-if="showTemplate">
@@ -74,9 +72,15 @@
                       <transition-group name="list" tag="div">
                         <drag v-for="n in componentsFiles" :key="n" class="drag" :data="n">
                           {{n}}
-                          <div class="tooltip-icon pl-2">
-                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'commandline arguments'" v-tooltip.top-center="'Drop this to the middle-section, if you want to let the user set values of commandline arguments.'"></b-icon-info-circle>
+                          <div class="pl-2">
+                            <BIconInfoCircle v-if="n === 'file'">
+                              <q-tooltip anchor="top middle">Drop this to the middle-section, if you want to show the user a file or let the user modify it.</q-tooltip>
+                            </BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'commandline arguments'">
+                              <q-tooltip anchor="top middle">
+                                Drop this to the middle-section, if you want to let the user set values of commandline arguments.
+                              </q-tooltip>
+                            </BIconInfoCircle>
                           </div>
                         </drag>
                       </transition-group>
@@ -87,9 +91,21 @@
                         <drag v-for="n in componentsFiles.concat(componentsFile)" :key="n" class="drag" :data="n">
                           {{n}}
                           <div class="tooltip-icon pl-2">
-                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'commandline arguments'" v-tooltip.top-center="'Drop this to the middle-section, if you want to let the user set values of commandline arguments.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'part'" v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"></b-icon-info-circle>
+                            <BIconInfoCircle v-if="n === 'file'" >
+                              <q-tooltip anchor="top middle">
+                                Drop this to the middle-section, if you want to show the user a file or let the user modify it.
+                              </q-tooltip>
+                            </BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'commandline arguments'">
+                              <q-tooltip anchor="top middle">
+                                Drop this to the middle-section, if you want to let the user set values of commandline arguments.
+                              </q-tooltip>
+                            </BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'part'">
+                              <q-tooltip anchor="top middle">
+                                Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.
+                              </q-tooltip>
+                            </BIconInfoCircle>
                           </div>
                         </drag>
                       </transition-group>
@@ -100,8 +116,12 @@
                         <drag v-for="n in componentsFiles.concat(componentsFile)" :key="n" class="drag" :data="n">
                           {{n}}
                           <div class="tooltip-icon pl-2">
-                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'part'" v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"></b-icon-info-circle>
+                            <BIconInfoCircle v-if="n === 'file'">
+                              v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"
+                            </BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'part'">
+                              v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"
+                            </BIconInfoCircle>
                           </div>
                         </drag>
                       </transition-group>
@@ -112,15 +132,15 @@
                         <drag v-for="n in componentsFiles.concat(componentsPart).concat(availableGuiTypes)" :key="n" class="drag" :data="n">
                           {{n}}
                           <div class="tooltip-icon pl-2">
-                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'part'" v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'checkbox'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a checkox.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'radio'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a radio-button.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'dropdown'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a dropdown.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'toggle'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a toggle-button.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'input_field'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using an input_field.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'editor'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using an editor.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'slider'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a slider.'"></b-icon-info-circle>
+                            <BIconInfoCircle v-if="n === 'file'"> v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'part'"> v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'checkbox'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a checkox.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'radio'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a radio-button.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'dropdown'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a dropdown.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'toggle'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a toggle-button.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'input_field'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using an input_field.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'editor'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using an editor.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'slider'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a parameter using a slider.'"</BIconInfoCircle>
                           </div>
                         </drag>
                       </transition-group>
@@ -131,29 +151,33 @@
                         <drag v-for="n in componentsFiles.concat(componentsCommand)" :key="n" class="drag" :data="n">
                           {{n}}
                           <div class="tooltip-icon pl-2">
-                            <b-icon-info-circle v-if="n === 'file'" v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'part'" v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'checkbox'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a checkox.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'radio'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a radio-button.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'dropdown'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a dropdown.'"></b-icon-info-circle>
-                            <b-icon-info-circle v-if="n === 'toggle'" v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a toggle-button.'"></b-icon-info-circle>
+                            <BIconInfoCircle v-if="n === 'file'">
+                              v-tooltip.top-center="'Drop this to the middle-section, if you want to show the user a file or let the user modify it.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'part'" >
+                              v-tooltip.top-center="'Drop this to the middle-section, if you want to add content to a file. You can also split the content of a file in several parts and decide individually for each file, whether the user will be able to see or even modify it.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'checkbox'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a checkox.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'radio'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a radio-button.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'dropdown'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a dropdown.'"</BIconInfoCircle>
+                            <BIconInfoCircle v-if="n === 'toggle'"> v-tooltip.top-center="'Drop this to the middle-section, if you want the user to be able to modify a commandline argument using a toggle-button.'"</BIconInfoCircle>
                           </div>
                         </drag>
                       </transition-group>
                     </div>
-                  </b-tab>
-
-            </b-tabs>
-          </b-card>
-        </b-collapse>
+                  </q-tab-panel>
+            </q-tab-panels>
+          </q-card>
+        </q-expansion-item>
 
         <!-- Graphical View of Template -->
         <div class="dnd-window" id="drag-components-here" :key="signifyChange">
-          <b-card no-body>
-            <b-tabs card class="files" content-class="m-2" fill>
-
+          <q-card no-body>
+            <q-tabs v-model="selectedContentTab">
+              <q-tab name="structure">Drop Here</q-tab>
+              <q-tab name="preview">JSON Preview</q-tab>
+            </q-tabs>
+            <q-tab-panels v-model="selectedContentTab" card class="files" content-class="m-2" fill>
               <!-- Drag-and-Drop Components -->
-              <b-tab title="Drop Here">
+              <q-tab-panel name="structure">
                 <drop class="top-copy" @drop="onFileDrop($event)" :accepts-data="(file) => ((file  === 'file') || (file === 'commandline arguments'))">
                   <div class="template p-2" @click="openWindow($event, 'template', computationTemplate)">
 
@@ -161,81 +185,90 @@
                       <drop class="copy" @drop="onPartDrop($event,file)" :accepts-data="(part) => part  === 'part'">
                         <div class="file p-2" @click="openWindow($event, 'file', file)">
 
-                          <b-row align-v="stretch">
-                            <b-col cols="8">
+                          <div class="row">
+                            <div class="col-8">
                               File
-                            </b-col>
-                            <b-col cols="4">
+                            </div>
+                            <div class="col-4">
                               <div class="text-right" @click="removeFile($event, file)">
-                                <b-icon icon="x-circle" v-tooltip.top-center="'Delete File'"></b-icon>
+                                <BIconXCircle> v-tooltip.top-center="'Delete File'"</BIconXCircle>
                               </div>
-                            </b-col>
-                          </b-row>
+                            </div>
+                          </div>
 
                           <!--<div v-for="(part, index) in file.parts" :key="index">-->
-                          <drop-list class="part-droplist" v-if="file.parts" :items="file.parts" @insert="onInsert($event, false, file)" @reorder="$event.apply(file.parts)" :accepts-data="(part) => false" :column="true">
+                          <drop-list class="part-droplist"
+                                     v-if="file.parts"
+                                     :items="file.parts"
+                                     @insert="onInsert($event, false, file)"
+                                     @reorder="$event.apply(file.parts)"
+                                     :accepts-data="(part) => false"
+                                     :column="true">
                             <template v-slot:item="{item}">
                               <drag class="item part-drag" :key="item.identifier">
-                                <drop class="part-border" @drop="onParameterDrop($event, item)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && item.parameters">
+                                <drop class="part-border"
+                                      @drop="onParameterDrop($event, item)"
+                                      :accepts-data="(param) => ((availableGuiTypes.includes(param))) && item.parameters">
                                   <div class="part p-2" @click="openWindow($event, 'part', item)">
 
-                                    <b-row align-v="stretch" class="mb-2">
-                                      <b-col cols="8">
+                                    <div class="row mb-2">
+                                      <div class="col-8">
                                         Part
-                                      </b-col>
-                                      <b-col cols="4">
+                                      </div>
+                                      <div class="col-4">
                                         <div class="text-right" @click="removePart($event, item)">
-                                          <b-icon icon="x-circle" v-tooltip.top-center="'Delete Part'"></b-icon>
+                                          <BIconXCircle> v-tooltip.top-center="'Delete Part'"</BIconXCircle>
                                         </div>
-                                      </b-col>
-                                    </b-row>
+                                      </div>
+                                    </div>
 
-                                    <b-card v-if="item.parameters" no-body class="">
-                                      <b-card-header header-tag="header" class="p-1" role="tab">
-                                        <b-button block v-b-toggle:[paramAccordeon(item.identifier)] variant="info">
+                                    <q-card v-if="item.parameters" no-body class="">
+                                      <q-card-section header-tag="header" class="p-1" role="tab">
+                                        <q-btn block v-b-toggle:[paramAccordeon(item.identifier)] variant="info">
                                           Parameters
-                                          <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
-                                          <b-icon class="when-open" icon="caret-up"></b-icon>
-                                        </b-button>
-                                      </b-card-header>
-                                      <b-collapse :id="item.identifier+'param'" visible accordion="my-accordion-1" role="tabpanel">
-                                        <b-card-body>
+                                          <BIconCaretDownFill class="when-closed"></BIconCaretDownFill>
+                                          <BIconCaretUp class="when-open"></BIconCaretUp>
+                                        </q-btn>
+                                      </q-card-section>
+                                      <q-expansion-item :id="item.identifier+'param'" visible accordion="my-accordion-1" role="tabpanel">
+                                        <q-card-section>
                                           <drop-list class="param-droplist" v-if="item.parameters" :items="item.parameters" @insert="onInsert($event, true ,item)" @reorder="$event.apply(item.parameters)" :accepts-data="(param) => false" :column="true">
                                             <template v-slot:item="{item}">
                                               <drag class="item param" :key="item.identifier">
-                                                <b-container class="param-container p-2" @click="openWindow($event, 'parameter', item)">
+                                                <!-- todo fix layout -->
+                                                <div class="param-container p-2" @click="openWindow($event, 'parameter', item)">
 
-                                                  <b-row align-v="stretch">
-                                                    <b-col cols="8">
+                                                  <div class="row">
+                                                    <div class="col-8">
                                                       {{item.metadata.guiType}}
-                                                    </b-col>
-                                                    <b-col cols="4">
+                                                    </div>
+                                                    <div class="col-4">
                                                       <div class="text-right" @click="removeParameter($event, item)">
-                                                        <b-icon icon="x-circle" v-tooltip.top-center="'Delete Parameter'"></b-icon>
+                                                        <BIconXCircle> v-tooltip.top-center="'Delete Parameter'"</BIconXCircle>
                                                       </div>
-                                                    </b-col>
-                                                  </b-row>
-                                                </b-container>
+                                                    </div>
+                                                  </div>
+                                                </div>
                                               </drag>
                                             </template>
                                             <template v-slot:feedback="{data}">
                                               <div class="item feedback" :key="data">{{data}}</div>
                                             </template>
                                           </drop-list>
-                                        </b-card-body>
-                                      </b-collapse>
-                                    </b-card>
+                                        </q-card-section>
+                                      </q-expansion-item>
+                                    </q-card>
 
-                                    <b-card no-body class="">
-                                      <b-card-header header-tag="header" class="p-1" role="tab">
-                                        <b-button block v-b-toggle:[contentAccordeon(item.identifier)] variant="info">
+                                    <q-card no-body class="">
+                                      <q-card-section header-tag="header" class="p-1" role="tab">
+                                        <q-btn block v-b-toggle:[contentAccordeon(item.identifier)] variant="info">
                                           Content
-                                          <b-icon class="when-closed" icon="caret-down-fill"></b-icon>
-                                          <b-icon class="when-open" icon="caret-up"></b-icon>
-                                        </b-button>
-                                      </b-card-header>
-                                      <b-collapse :id="item.identifier +'content'" visible accordion="my-accordion-2" role="tabpanel">
-                                        <b-card-body>
+                                          <BIconCaretDownFill class="when-closed"></BIconCaretDownFill>
+                                          <BIconCaretUp class="when-open"></BIconCaretUp>
+                                        </q-btn>
+                                      </q-card-section>
+                                      <q-expansion-item :id="item.identifier +'content'" visible accordion="my-accordion-2" role="tabpanel">
+                                        <q-card-section>
                                           <div class="part-content-field">
                                             <div class="d-flex">
                                               <div class="flex-grow-1">
@@ -243,7 +276,7 @@
                                               </div>
                                               <!-- tooltip -->
                                               <div class="tooltip-icon pl-2">
-                                                  <b-icon-info-circle v-tooltip.top-center="'Content, that will be base64url-encoded automatically. Can contain Handlebars.js expressions with PARAM_IDs (identifiers) if the access type of this part is template.'"></b-icon-info-circle>
+                                                  <BIconInfoCircle> v-tooltip.top-center="'Content, that will be base64url-encoded automatically. Can contain Handlebars.js expressions with PARAM_IDs (identifiers) if the access type of this part is template.'"</BIconInfoCircle>
                                               </div>
                                             </div>
                                             <ace-editor-component
@@ -257,9 +290,9 @@
                                               v-on:update:item="updateContent(item, $event)"
                                             ></ace-editor-component>
                                           </div>
-                                        </b-card-body>
-                                      </b-collapse>
-                                    </b-card>
+                                        </q-card-section>
+                                      </q-expansion-item>
+                                    </q-card>
                                   </div>
                                 </drop>
                               </drag>
@@ -278,32 +311,32 @@
                       <drop class="copy" @drop="onParameterDrop($event)" :accepts-data="(param) => ((availableGuiTypes.includes(param))) && computationTemplate.parameters">
                         <div class="file p-2" @click="openWindow($event, 'commands', computationTemplate.parameters)">
 
-                          <b-row align-v="stretch">
-                            <b-col cols="10">
+                          <div class="row">
+                            <div class="col-10">
                               Commandline Arguments
-                            </b-col>
-                            <b-col cols="2">
+                            </div>
+                            <div class="col-2">
                               <div class="text-right" @click="removeCommandlineArgs($event)">
-                                <b-icon icon="x-circle" v-tooltip.top-center="'Delete Commandline Arguments'"></b-icon>
+                                <BIconXCircle> v-tooltip.top-center="'Delete Commandline Arguments'"</BIconXCircle>
                               </div>
-                            </b-col>
-                          </b-row>
+                            </div>
+                          </div>
 
                           <drop-list class="param-droplist" v-if="computationTemplate.parameters" :items="computationTemplate.parameters" @insert="onInsert($event, true, item)" @reorder="$event.apply(computationTemplate.parameters)" :accepts-data="(param) => false" :column="true" :key="uuid()">
                             <template v-slot:item="{item}">
                               <drag class="item param" :key="item.identifier">
-                                <b-container class="param-container p-2" @click="openWindow($event, 'parameter', item)">
-                                  <b-row align-v="stretch">
-                                    <b-col cols="8">
+                                <div class="param-container p-2" @click="openWindow($event, 'parameter', item)">
+                                  <div class="row">
+                                    <div class="col-8">
                                       {{item.metadata.guiType}}
-                                    </b-col>
-                                    <b-col cols="4">
+                                    </div>
+                                    <div class="col-4">
                                       <div class="text-right" @click="removeParameter($event, item, false)">
-                                        <b-icon icon="x-circle" v-tooltip.top-center="'Delete Argument'"></b-icon>
+                                        <BIconXCircle> v-tooltip.top-center="'Delete Argument'"</BIconXCircle>
                                       </div>
-                                    </b-col>
-                                  </b-row>
-                                </b-container>
+                                    </div>
+                                  </div>
+                                </div>
                               </drag>
                             </template>
                             <template v-slot:feedback="{data}">
@@ -316,22 +349,25 @@
                     </div>
                   </div>
                 </drop>
-              </b-tab>
-              <b-tab title="JSON Preview">
+              </q-tab-panel>
+              <q-tab-panel name="preview">
                 <pre>{{ computationTemplate }}</pre>
-              </b-tab>
-            </b-tabs>
-          </b-card>
+              </q-tab-panel>
+            </q-tab-panels>
+          </q-card>
         </div>
 
         <!-- TODO: Rename labels to make everything understandable -->
         <!-- Components and Preferences -->
-        <b-collapse class="select-list" id="config-collapse" visible>
-          <b-card no-body>
-                <b-tabs card class="files" content-class="m-2" fill>
+        <q-expansion-item class="select-list" id="config-collapse" v-model="showConfiguration" visible>
+          <q-card no-body>
+            <q-tabs v-model="selectedConfigurationTab">
+              <q-tab name="configuration">Configuration</q-tab>
+            </q-tabs>
+                <q-tab-panels v-model="selectedConfigurationTab" card class="files" content-class="m-2" fill>
 
                   <!-- Configuration -->
-                  <b-tab v-if="preferences" title="Configuration" active>
+                  <q-tab-panel v-if="preferences" name="configuration">
                     <div class="preferences-list">
                       <!-- Template Data -->
                       <div v-if="showTemplate">
@@ -347,40 +383,42 @@
                                 v-model="computationTemplate.environment"
                                 @change="addConfig()"
                               >
-                                <option disabled=true>C</option>
-                                <option disabled=true>C++</option>
-                                <option disabled=true>Java</option>
-                                <option disabled=true>Matlab</option>
-                                <option disabled=true>Octave</option>
+                                <option disabled>C</option>
+                                <option disabled>C++</option>
+                                <option disabled>Java</option>
+                                <option disabled>Matlab</option>
+                                <option disabled>Octave</option>
                                 <option>Container</option>
-                                <option disabled=true>DuMuX</option>
+                                <option disabled>DuMuX</option>
                               </select>
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                                <b-icon-info-circle v-tooltip.top-center="'Specifies the environment used for the Computation. It defines language, runtime, libraries and tools.'"></b-icon-info-circle>
+                                <BIconInfoCircle> v-tooltip.top-center="'Specifies the environment used for the Computation. It defines language, runtime, libraries and tools.'"</BIconInfoCircle>
                             </div>
                           </div>
 
                           <!-- Configuration -->
-                          <div v-if="typeof computationTemplate.configuration != 'undefined' && computationTemplate.environment != ''" class="border mb-2 p-2">
+                          <div v-if="typeof computationTemplate.configuration !== 'undefined' && computationTemplate.environment !== ''" class="border mb-2 p-2">
 
                             <!-- resources.image -->
-                            <div v-if="computationTemplate.environment == 'Container'" id="image">
+                            <div v-if="computationTemplate.environment === 'Container'" id="image">
                               <label class="mr-2">Docker-Image*:</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <input type="text" class="form-control" :value="getConfigvModel('resources.image', null)" @input="setConfigvModel('resources.image', $event, null)">
                                 </div>
                                 <!-- tooltip -->
-                                <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'Location of the image to be executed. Can have one of the following prefixes: name://, file://, id://'"></b-icon-info-circle>
+                                <div>
+                                  <q-icon :name="biInfoCircle">
+                                    <q-tooltip anchor="top middle">Location of the image to be executed. Can have one of the following prefixes: name://, file://, id://</q-tooltip>
+                                  </q-icon>
                                 </div>
                               </div>
                             </div>
 
                             <!-- running.timelimitInSeconds -->
-                            <div v-if="computationTemplate.environment == 'Container'">
+                            <div v-if="computationTemplate.environment === 'Container'">
                               <label class="mr-2">Time Limit for Running the Container (in Seconds):</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
@@ -388,13 +426,13 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'CPU time limit.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'CPU time limit.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
 
                             <!-- running.commandLineArguments -->
-                            <div v-if="computationTemplate.environment == 'Container'">
+                            <div v-if="computationTemplate.environment === 'Container'">
                               <label class="mr-2">Commandline Arguments:</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
@@ -402,13 +440,13 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'For C, C++, Java: arguments given to main() function; For DuMuX, Container: Additional command line arguments.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'For C, C++, Java: arguments given to main() function; For DuMuX, Container: Additional command line arguments.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
 
                             <!-- running.entrypoint -->
-                            <div v-if="computationTemplate.environment == 'Container'">
+                            <div v-if="computationTemplate.environment === 'Container'">
                               <label class="mr-2">Docker Entrypoint:</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
@@ -416,20 +454,20 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'Executable to run inside the Container. For Container: Can contain handlebar template syntax for injecting PARAM_IDs.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'Executable to run inside the Container. For Container: Can contain handlebar template syntax for injecting PARAM_IDs.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
 
                             <!-- running.intermediateFilesPattern -->
-                            <div v-if="computationTemplate.environment == 'Container'">
+                            <div v-if="computationTemplate.environment === 'Container'">
                               <label class="mr-2">RegEx-Pattern for Intermediate Result Files:</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
                                   <div class="ml-4 mr-4">
                                     <!-- set how many values the config should have -->
                                     <label for="'running.intermediateFilesPattern-sb-options'">How many Patterns should there be?</label>
-                                    <b-form-spinbutton :id="'running.intermediateFilesPattern-sb-options'" placeholder="0" min="0" :value="getNumberofConfigFields('running.intermediateFilesPattern')" class="mb-2" @change="setNumberOfConfigFields('running.intermediateFilesPattern', $event)"></b-form-spinbutton>
+                                    <!-- <b-form-spinbutton :id="'running.intermediateFilesPattern-sb-options'" placeholder="0" min="0" :value="getNumberofConfigFields('running.intermediateFilesPattern')" class="mb-2" @change="setNumberOfConfigFields('running.intermediateFilesPattern', $event)"></b-form-spinbutton>-->
                                     <!-- input config-values -->
                                     <div class="border mb-2 p-2" v-for="(field, index) in getNumberofConfigFields('running.intermediateFilesPattern')" :key="'running.intermediateFilesPattern-' + index">
                                       <!-- value -->
@@ -440,13 +478,13 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'If there are result-files, that are generated step by step, the Backend needs to be notified whether a file was written. This is done by using a RegEx-Expression. The Backend searches for those patterns in Stdout, to find files which are ready to be transferred to the Frontend, so that the results can be displayed.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'If there are result-files, that are generated step by step, the Backend needs to be notified whether a file was written. This is done by using a RegEx-Expression. The Backend searches for those patterns in Stdout, to find files which are ready to be transferred to the Frontend, so that the results can be displayed.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
 
                             <!-- running.userId -->
-                            <div v-if="computationTemplate.environment == 'Container'">
+                            <div v-if="computationTemplate.environment === 'Container'">
                               <label class="mr-2">User-Id:</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
@@ -454,13 +492,13 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'User id of the user that writes files inside the Container.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'User id of the user that writes files inside the Container.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
 
                             <!-- resources.volume -->
-                            <div v-if="computationTemplate.environment == 'Container'">
+                            <div v-if="computationTemplate.environment === 'Container'">
                               <label class="mr-2">Volume:</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
@@ -468,13 +506,13 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'Path in the Container where data is placed.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'Path in the Container where data is placed.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
 
                             <!-- resources.memory -->
-                            <div v-if="computationTemplate.environment == 'Container'">
+                            <div v-if="computationTemplate.environment === 'Container'">
                               <label class="mr-2">Memory:</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
@@ -482,13 +520,13 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'Memory limit for the Container.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'Memory limit for the Container.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
 
                             <!-- resources.numCPUs -->
-                            <div v-if="computationTemplate.environment == 'Container'">
+                            <div v-if="computationTemplate.environment === 'Container'">
                               <label class="mr-2">Number of CPUs:</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
@@ -496,13 +534,13 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'Number of CPUs for the Container.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'Number of CPUs for the Container.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
 
                             <!-- resources.diskSpace -->
-                            <div v-if="computationTemplate.environment == 'Container'">
+                            <div v-if="computationTemplate.environment === 'Container'">
                               <label class="mr-2">Limit of Disk Space:</label>
                               <div class="d-flex form-group">
                                 <div class="flex-grow-1">
@@ -510,7 +548,7 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'Disk space limit for the Container.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'Disk space limit for the Container.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
@@ -532,7 +570,7 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'Name of Computation Template shown in Frontend.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'Name of Computation Template shown in Frontend.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
@@ -545,7 +583,7 @@
                                 </div>
                                 <!-- tooltip -->
                                 <div class="tooltip-icon pl-2">
-                                    <b-icon-info-circle v-tooltip.top-center="'Short description of Computation Template shown in Frontend.'"></b-icon-info-circle>
+                                    <BIconInfoCircle> v-tooltip.top-center="'Short description of Computation Template shown in Frontend.'"</BIconInfoCircle>
                                 </div>
                               </div>
                             </div>
@@ -576,7 +614,7 @@
                                   </div>
                                   <!-- tooltip -->
                                   <div class="tooltip-icon pl-2">
-                                      <b-icon-info-circle v-tooltip.top-center="'When given, specific file extension, like .vtu are interpreted by the frontend for displaying results. Otherwise files are only downloadable.'"></b-icon-info-circle>
+                                      <BIconInfoCircle> v-tooltip.top-center="'When given, specific file extension, like .vtu are interpreted by the frontend for displaying results. Otherwise files are only downloadable.'"</BIconInfoCircle>
                                   </div>
                                 </div>
                               </div>
@@ -587,13 +625,13 @@
                                   <div class="flex-grow-1">
                                     <ul id="visualizationIgnore" v-if="ignoreVisualizationDefined">
                                       <li v-for="item in computationTemplate.metadata.output.ignore.visualization" :key="item">
-                                        {{ item }} <b-icon icon="x" @click="removeIgnoreVisualization(item)"></b-icon>
+                                        {{ item }} <BIconPlus @click="removeIgnoreVisualization(item)"></BIconPlus>
                                       </li>
                                     </ul>
                                     <input type="text" class="form-control" v-model="outputIgnoreVisualization">
-                                    <b-button class="btn mb-3" @click="addIgnoreVisualization()" v-tooltip.top-center="'Add Ignore to Visualization'">
-                                      <b-icon icon="plus" aria-hidden="true"></b-icon>
-                                    </b-button>
+                                    <q-btn class="btn mb-3" @click="addIgnoreVisualization()"> v-tooltip.top-center="'Add Ignore to Visualization'"
+                                      <BIconPlus aria-hidden="true"></BIconPlus>
+                                    </q-btn>
                                   </div>
                                 </div>
                                 <label class="mr-2" for="computationTemplate.metadata.output.ignore.download">Ignore files in download</label>
@@ -601,13 +639,13 @@
                                   <div class="flex-grow-1">
                                     <ul id="visualizationIgnore" v-if="ignoreDownloadDefined">
                                       <li v-for="item in computationTemplate.metadata.output.ignore.download" :key="item">
-                                        {{ item }} <b-icon icon="x" @click="removeIgnoreDownload(item)"></b-icon>
+                                        {{ item }} <BIconX @click="removeIgnoreDownload(item)"></BIconX>
                                       </li>
                                     </ul>
                                     <input type="text" class="form-control" v-model="outputIgnoreDownload">
-                                    <b-button class="btn mb-3" @click="addIgnoreDownload()" v-tooltip.top-center="'Add Ignore to Download'">
-                                      <b-icon icon="plus" aria-hidden="true"></b-icon>
-                                    </b-button>
+                                    <q-btn class="btn mb-3" @click="addIgnoreDownload()"> v-tooltip.top-center="'Add Ignore to Download'"
+                                      <BIconPlus aria-hidden="true"></BIconPlus>
+                                    </q-btn>
                                   </div>
                                 </div>
                               </div>
@@ -619,12 +657,12 @@
                                   </div>
                                   <!-- tooltip -->
                                   <div class="tooltip-icon pl-2">
-                                      <b-icon-info-circle v-tooltip.top-center="'Use this object to define connected csv-files, if there are intermediate results.'"></b-icon-info-circle>
+                                      <BIconInfoCircle> v-tooltip.top-center="'Use this object to define connected csv-files, if there are intermediate results.'"</BIconInfoCircle>
                                   </div>
                                 </div>
-                                <b-button class="btn mb-3" @click="addCsvConfig()" v-tooltip.top-center="'Add Config for Group of CSV-Files'">
-                                  <b-icon icon="plus" aria-hidden="true"></b-icon>
-                                </b-button>
+                                <q-btn class="btn mb-3" @click="addCsvConfig()"> v-tooltip.top-center="'Add Config for Group of CSV-Files'"
+                                  <BIconPlus aria-hidden="true"></BIconPlus>
+                                </q-btn>
                                 <div class="ml-4 mr-4 mb-2" v-if="(typeof computationTemplate.metadata != 'undefined') && (typeof computationTemplate.metadata.output != 'undefined') && (typeof computationTemplate.metadata.output.csv != 'undefined')">
                                   <div class="border p-2 mb-2" v-for="(csvConfig, index) in computationTemplate.metadata.output.csv" :key="'csvConfig-'+index">
                                     <!-- basename -->
@@ -635,7 +673,7 @@
                                         </div>
                                         <!-- Delete CSV-Config -->
                                         <div class="tooltip-icon pl-2" @click="removeConfig($event, true, csvConfig)">
-                                            <b-icon-x-circle v-tooltip.top-center="'Delete CSV-Config.'"></b-icon-x-circle>
+                                            <BIconXCircle> v-tooltip.top-center="'Delete CSV-Config.'"</BIconXCircle>
                                         </div>
                                       </div>
                                       <div class="d-flex form-group">
@@ -644,7 +682,7 @@
                                         </div>
                                         <!-- tooltip -->
                                         <div class="tooltip-icon pl-2">
-                                            <b-icon-info-circle v-tooltip.top-center="'Basename defines connected files: Path of file begins with basename.'"></b-icon-info-circle>
+                                            <BIconInfoCircle> v-tooltip.top-center="'Basename defines connected files: Path of file begins with basename.'"</BIconInfoCircle>
                                         </div>
                                       </div>
                                     </div>
@@ -660,7 +698,7 @@
                                           </div>
                                           <!-- tooltip -->
                                           <div class="tooltip-icon pl-2">
-                                              <b-icon-info-circle v-tooltip.top-center="'Key for x-axis given in csv header.'"></b-icon-info-circle>
+                                              <BIconInfoCircle> v-tooltip.top-center="'Key for x-axis given in csv header.'"</BIconInfoCircle>
                                           </div>
                                         </div>
                                         <!-- label -->
@@ -671,7 +709,7 @@
                                           </div>
                                           <!-- tooltip -->
                                           <div class="tooltip-icon pl-2">
-                                              <b-icon-info-circle v-tooltip.top-center="'X-axis label for diagram.'"></b-icon-info-circle>
+                                              <BIconInfoCircle> v-tooltip.top-center="'X-axis label for diagram.'"</BIconInfoCircle>
                                           </div>
                                         </div>
                                         <!-- factor -->
@@ -682,7 +720,7 @@
                                           </div>
                                           <!-- tooltip -->
                                           <div class="tooltip-icon pl-2">
-                                              <b-icon-info-circle v-tooltip.top-center="'Multiply x-values with this factor.'"></b-icon-info-circle>
+                                              <BIconInfoCircle> v-tooltip.top-center="'Multiply x-values with this factor.'"</BIconInfoCircle>
                                           </div>
                                         </div>
                                         <!-- format -->
@@ -693,7 +731,7 @@
                                           </div>
                                           <!-- tooltip -->
                                           <div class="tooltip-icon pl-2">
-                                              <b-icon-info-circle v-tooltip.top-center="'Format the x-axis values according to format string. For information on the avaliable formating take a look at the info given by Plotly (https://github.com/d3/d3-format/blob/main/README.md#locale_format); Example: To format a number to have two decimals, use 0.2f'"></b-icon-info-circle>
+                                              <BIconInfoCircle> v-tooltip.top-center="'Format the x-axis values according to format string. For information on the avaliable formating take a look at the info given by Plotly (https://github.com/d3/d3-format/blob/main/README.md#locale_format); Example: To format a number to have two decimals, use 0.2f'"</BIconInfoCircle>
                                           </div>
                                         </div>
                                       </div>
@@ -706,14 +744,14 @@
                                       </div>
                                       <!-- tooltip -->
                                       <div class="tooltip-icon pl-2">
-                                          <b-icon-info-circle v-tooltip.top-center="'Define datasets: Provide y-axis labels for y-key given in csv. For each dataset one diagram is rendered in the result.'"></b-icon-info-circle>
+                                          <BIconInfoCircle> v-tooltip.top-center="'Define datasets: Provide y-axis labels for y-key given in csv. For each dataset one diagram is rendered in the result.'"</BIconInfoCircle>
                                       </div>
                                     </div>
 
                                     <div class="ml-4 mr-4">
-                                      <b-button class="btn mb-3" @click="addCsvPlot(index)" v-tooltip.top-center="'Add Y-Axis to generate Plot from CSV-Files'">
-                                        <b-icon icon="plus" aria-hidden="true"></b-icon>
-                                      </b-button>
+                                      <q-btn class="btn mb-3" @click="addCsvPlot(index)"> v-tooltip.top-center="'Add Y-Axis to generate Plot from CSV-Files'"
+                                        <BIconPlus aria-hidden="true"></BIconPlus>
+                                      </q-btn>
                                       <div class="border mb-2 p-2" v-for="(csvPlot, plotIndex) in csvConfig.plots" :key="csvConfig.identifier + '-plot-' + plotIndex">
                                         <!-- key -->
                                         <div class="d-flex form-group">
@@ -722,7 +760,7 @@
                                           </div>
                                           <!-- Delete CSV-Config -->
                                           <div class="tooltip-icon pl-2" @click="removePlot($event, csvConfig, csvPlot)">
-                                              <b-icon-x-circle v-tooltip.top-center="'Delete CSV-Config.'"></b-icon-x-circle>
+                                              <BIconXCircle> v-tooltip.top-center="'Delete CSV-Config.'"</BIconXCircle>
                                           </div>
                                         </div>
                                         <div class="d-flex form-group">
@@ -731,7 +769,7 @@
                                           </div>
                                           <!-- tooltip -->
                                           <div class="tooltip-icon pl-2">
-                                              <b-icon-info-circle v-tooltip.top-center="'Key(s) for y-axis given in csv header.'"></b-icon-info-circle>
+                                              <BIconInfoCircle> v-tooltip.top-center="'Key(s) for y-axis given in csv header.'"</BIconInfoCircle>
                                           </div>
                                         </div>
                                         <!-- label -->
@@ -742,7 +780,7 @@
                                           </div>
                                           <!-- tooltip -->
                                           <div class="tooltip-icon pl-2">
-                                              <b-icon-info-circle v-tooltip.top-center="'Y-axis label for diagram.'"></b-icon-info-circle>
+                                              <BIconInfoCircle> v-tooltip.top-center="'Y-axis label for diagram.'"</BIconInfoCircle>
                                           </div>
                                         </div>
                                         <!-- factor -->
@@ -753,7 +791,7 @@
                                           </div>
                                           <!-- tooltip -->
                                           <div class="tooltip-icon pl-2">
-                                              <b-icon-info-circle v-tooltip.top-center="'Multiply y-values with this factor.'"></b-icon-info-circle>
+                                              <BIconInfoCircle> v-tooltip.top-center="'Multiply y-values with this factor.'"</BIconInfoCircle>
                                           </div>
                                         </div>
                                         <!-- format -->
@@ -764,48 +802,8 @@
                                           </div>
                                           <!-- tooltip -->
                                           <div class="tooltip-icon pl-2">
-                                              <b-icon-info-circle v-tooltip.top-center="'Format the y-axis values according to format string. For information on the avaliable formating take a look at the info given by Plotly (https://github.com/d3/d3-format/blob/main/README.md#locale_format); Example: To format a number to have two decimals, use 0.2f'"></b-icon-info-circle>
+                                              <BIconInfoCircle> v-tooltip.top-center="'Format the y-axis values according to format string. For information on the avaliable formating take a look at the info given by Plotly (https://github.com/d3/d3-format/blob/main/README.md#locale_format); Example: To format a number to have two decimals, use 0.2f'"</BIconInfoCircle>
                                           </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <!-- vtk -->
-                              <div>
-                                <div class="d-flex">
-                                  <div class="flex-grow-1">
-                                    <label class="mr-2" for="computationTemplate.metadata.output.vtk">How should VTKs be displayed? </label>
-                                  </div>
-                                  <!-- tooltip -->
-                                  <div class="tooltip-icon pl-2">
-                                      <b-icon-info-circle v-tooltip.top-center="'Details for displaying vtk-files.'"></b-icon-info-circle>
-                                  </div>
-                                </div>
-                                <b-button class="btn mb-3" @click="addVtkConfig()" v-tooltip.top-center="'Add Config for Group of VTK-Files'">
-                                  <b-icon icon="plus" aria-hidden="true"></b-icon>
-                                </b-button>
-                                <div class="ml-4 mr-4" v-if="(typeof computationTemplate.metadata != 'undefined') && (typeof computationTemplate.metadata.output != 'undefined') && (typeof computationTemplate.metadata.output.vtk != 'undefined')">
-                                  <div class="border mb-2 p-2" v-for="vtkConfig in computationTemplate.metadata.output.vtk" :key="vtkConfig.identifier">
-                                    <!-- basename -->
-                                    <div>
-                                      <div class="d-flex">
-                                        <div class="flex-grow-1">
-                                          <label class="mr-2" for="vtkConfig.basename">Basename to identify connected VTKs: </label>
-                                        </div>
-                                        <!-- Delete VTK-Config -->
-                                        <div class="tooltip-icon pl-2" @click="removeConfig($event, false, vtkConfig)">
-                                            <b-icon-x-circle v-tooltip.top-center="'Delete VTK-Config.'"></b-icon-x-circle>
-                                        </div>
-                                      </div>
-                                      <div class="d-flex">
-                                        <div class="flex-grow-1">
-                                          <input type="text" class="form-control" id="vtkConfig.basename" v-model="vtkConfig.basename">
-                                        </div>
-                                        <!-- tooltip -->
-                                        <div class="tooltip-icon pl-2">
-                                            <b-icon-info-circle v-tooltip.top-center="'Basename defines connected files: Path of file begins with basename.'"></b-icon-info-circle>
                                         </div>
                                       </div>
                                     </div>
@@ -828,7 +826,7 @@
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Relative path to file. It is not allowed to start with /. The path is relative to the path you entered in the configurtion under resources.volume.'"></b-icon-info-circle>
+                              <BIconInfoCircle> v-tooltip.top-center="'Relative path to file. It is not allowed to start with /. The path is relative to the path you entered in the configurtion under resources.volume.'"</BIconInfoCircle>
                             </div>
                           </div>
                         </div>
@@ -842,7 +840,7 @@
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Mode of the ace editor. List can be found on github (https://github.com/ajaxorg/ace/tree/master/src/mode). Examples: ini, c_cpp, matlab, java.'"></b-icon-info-circle>
+                              <BIconInfoCircle> v-tooltip.top-center="'Mode of the ace editor. List can be found on github (https://github.com/ajaxorg/ace/tree/master/src/mode). Examples: ini, c_cpp, matlab, java.'"</BIconInfoCircle>
                             </div>
                           </div>
                         </div>
@@ -855,7 +853,7 @@
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Additional information about the file, e.g. what it is used for. It is shown in the Frontend as tooltip behind the filename.'"></b-icon-info-circle>
+                              <BIconInfoCircle> v-tooltip.top-center="'Additional information about the file, e.g. what it is used for. It is shown in the Frontend as tooltip behind the filename.'"</BIconInfoCircle>
                             </div>
                           </div>
                         </div>
@@ -884,7 +882,7 @@
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Defines the access level of this part for the user.'"></b-icon-info-circle>
+                              <BIconInfoCircle> v-tooltip.top-center="'Defines the access level of this part for the user.'"</BIconInfoCircle>
                             </div>
                           </div>
                         </div>
@@ -897,7 +895,7 @@
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Additional description of this part to be shown in the Frontend.'"></b-icon-info-circle>
+                              <BIconInfoCircle> v-tooltip.top-center="'Additional description of this part to be shown in the Frontend.'"</BIconInfoCircle>
                             </div>
                           </div>
                         </div>
@@ -915,7 +913,7 @@
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Unique id for this parameter. This id must be valid Handlebars.js template variable. Example: __BINARY__.'"></b-icon-info-circle>
+                              <BIconInfoCircle> v-tooltip.top-center="'Unique id for this parameter. This id must be valid Handlebars.js template variable. Example: __BINARY__.'"</BIconInfoCircle>
                             </div>
                           </div>
                         </div>
@@ -928,7 +926,7 @@
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Label for the parameter to be shown in Frontend.'"></b-icon-info-circle>
+                              <BIconInfoCircle> v-tooltip.top-center="'Label for the parameter to be shown in Frontend.'"</BIconInfoCircle>
                             </div>
                           </div>
                         </div>
@@ -941,13 +939,13 @@
                             </div>
                             <!-- tooltip -->
                             <div class="tooltip-icon pl-2">
-                              <b-icon-info-circle v-tooltip.top-center="'Description of the parameter. Will be shown in the Frontend as tooltip (just like this one you are hovering over).'"></b-icon-info-circle>
+                              <BIconInfoCircle> v-tooltip.top-center="'Description of the parameter. Will be shown in the Frontend as tooltip (just like this one you are hovering over).'"</BIconInfoCircle>
                             </div>
                           </div>
                         </div>
 
                         <!-- input_field -->
-                        <div v-if="selectedParameter.metadata.guiType=='input_field'">
+                        <div v-if="selectedParameter.metadata.guiType === 'input_field'">
                           <!-- type -->
                           <div>
                             <label class="mr-2" for="selectedParameter.metadata.type">Field Type: </label>
@@ -966,11 +964,11 @@
                             <!-- default value -->
                             <div>
                               <label class="mr-2" for="selectedParameter.default">Default Value: </label>
-                              <input v-if="selectedParameter.metadata.type == 'text'" type="text" class="form-control form-group" id="selectedParameter.default" v-model="vModelInputFieldText">
+                              <input v-if="selectedParameter.metadata.type === 'text'" type="text" class="form-control form-group" id="selectedParameter.default" v-model="vModelInputFieldText">
                               <input v-else class="form-control form-group" id="selectedParameter.default" v-model="vModelInputFieldNumber">
                             </div>
                             <!-- type: number - min, max, step -->
-                            <div v-if="selectedParameter.metadata.type == 'number'">
+                            <div v-if="selectedParameter.metadata.type === 'number'">
                               <div>
                                 <label class="mr-2" for="selectedParameter.min">Minium Value: </label>
                                 <input type="number" class="form-control form-group" id="selectedParameter.min" v-model.number="selectedParameter.min">
@@ -985,7 +983,7 @@
                               </div>
                             </div>
                             <!-- type: text - maxlength -->
-                            <div v-if="selectedParameter.metadata.type == 'text'">
+                            <div v-if="selectedParameter.metadata.type === 'text'">
                               <div>
                                 <label class="mr-2" for="selectedParameter.maxlength">Maximum Text Length: </label>
                                 <input class="form-control form-group" id="selectedParameter.maxlength" v-model="vModelParameterMaxlength">
@@ -995,7 +993,7 @@
                         </div>
 
                         <!-- slider -->
-                        <div v-if="selectedParameter.metadata.guiType=='slider'">
+                        <div v-if="selectedParameter.metadata.guiType === 'slider'">
                           <!-- vertical -->
                           <label class="mr-2" for="selectedParameter.metadata.vertical">How should the Slider be displayed? </label>
                           <div class="radiobutton form-check custom-control custom-radio form-group">
@@ -1015,7 +1013,7 @@
                             <div class="ml-4 mr-4 form-group">
                               <!-- set how many values the slider should have -->
                               <label for="selectedParameter.identifier + 'sb-default'">How many values should the slider have?</label>
-                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-default'" placeholder="1" :value="getNumberOfFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
+                              <!-- <b-form-spinbutton :id="selectedParameter.identifier + 'sb-default'" placeholder="1" :value="getNumberOfFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton> -->
                               <!-- input slider default-values -->
                               <div class="border mb-2 p-2" v-for="(field, index) in getNumberOfFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
                                 <label>Set default values for slider-value:</label>
@@ -1041,7 +1039,7 @@
                         </div>
 
                         <!-- editor -->
-                        <div class="form-group" v-if="selectedParameter.metadata.guiType=='editor'">
+                        <div class="form-group" v-if="selectedParameter.metadata.guiType === 'editor'">
                           <div>
                             <label class="mr-2" for="selectedParameter.default">Value: </label>
                             <ace-editor-component
@@ -1058,14 +1056,14 @@
                         </div>
 
                         <!-- checkbox, dropdown, toggle, radio -->
-                        <div v-if="selectedParameter.metadata.guiType=='checkbox' || selectedParameter.metadata.guiType=='dropdown' || selectedParameter.metadata.guiType=='toggle'|| selectedParameter.metadata.guiType=='radio'">
+                        <div v-if="selectedParameter.metadata.guiType === 'checkbox' || selectedParameter.metadata.guiType === 'dropdown' || selectedParameter.metadata.guiType === 'toggle'|| selectedParameter.metadata.guiType === 'radio'">
                           <!-- options -->
                           <div>
                             <label class="mr-2" for="selectedParameter.options">Value(s): </label>
                             <div class="ml-4 mr-4">
                               <!-- set how many values the checkbox should have -->
                               <label for="selectedParameter.identifier + 'sb-options'">How many values should the parameter have?</label>
-                              <b-form-spinbutton :id="selectedParameter.identifier + 'sb-options'" placeholder="1" :value="getNumberOfFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton>
+                              <!-- <b-form-spinbutton :id="selectedParameter.identifier + 'sb-options'" placeholder="1" :value="getNumberOfFields(selectedParameter.identifier)" class="form-group" @change="setNumberOfFields(selectedParameter.identifier, $event)"></b-form-spinbutton> -->
 
                               <!-- input option-values -->
                               <div class="border form-group p-2" v-for="(field, index) in getNumberOfFields(selectedParameter.identifier)" :key="selectedParameter.identifier + '-' + index">
@@ -1077,24 +1075,24 @@
                                 <input type="text" class="form-control form-group" id="field.text" :value="getFixedParamvModel(index, 'text')" @input="setFixedParamvModel($event, index, 'text')">
                                 <!-- selected - radio -->
                                 <label class="mr-2">Is selected? </label>
-                                <div v-if="selectedParameter.metadata.guiType=='radio'" class="radiobutton form-check custom-control custom-radio form-group">
+                                <div v-if="selectedParameter.metadata.guiType === 'radio'" class="radiobutton form-check custom-control custom-radio form-group">
                                   <div>
-                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'selected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=true @input="setFixedParamvModel($event, index, 'selected')" :checked="getRadioSelected(index) ? true : false" />
+                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'selected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=true @input="setFixedParamvModel($event, index, 'selected')" :checked="!!getRadioSelected(index)" />
                                     <label class="form-check-label custom-control-label" :for="selectedParameter.identifier+'-'+index+ '-'+'selected'">selected</label><br>
                                   </div>
                                   <div>
-                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'unselected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=false @input="setFixedParamvModel($event, index, 'selected')" :checked="getRadioSelected(index) ? false : true" />
+                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'unselected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=false @input="setFixedParamvModel($event, index, 'selected')" :checked="!getRadioSelected(index)" />
                                     <label class="form-check-label custom-control-label" :for="selectedParameter.identifier+'-'+index+ '-'+'unselected'">not selected</label><br>
                                   </div>
                                 </div>
                                 <!-- selected checkbox, dropdown, toggle -->
                                 <div v-else class="radiobutton form-check custom-control custom-radio form-group">
                                   <div>
-                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'selected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=true @input="setFixedParamvModel($event, index, 'selected')" :checked="getFixedParamvModel(index, 'selected')? true : false"/>
+                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'selected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=true @input="setFixedParamvModel($event, index, 'selected')" :checked="!!getFixedParamvModel(index, 'selected')"/>
                                     <label class="form-check-label custom-control-label" :for="selectedParameter.identifier+'-'+index+ '-'+'selected'">selected</label><br>
                                   </div>
                                   <div>
-                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'unselected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=false @input="setFixedParamvModel($event, index, 'selected')" :checked="getFixedParamvModel(index,'selected')? false : true" />
+                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+ '-'+'unselected'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-selected'" :value=false @input="setFixedParamvModel($event, index, 'selected')" :checked="!getFixedParamvModel(index,'selected')" />
                                     <label class="form-check-label custom-control-label" :for="selectedParameter.identifier+'-'+index+ '-'+'unselected'">not selected</label><br>
                                   </div>
                                 </div>
@@ -1102,11 +1100,11 @@
                                 <label class="mr-2">Is disabled? </label>
                                 <div class="radiobutton form-check custom-control custom-radio">
                                   <div>
-                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+'-'+'disabled'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-disabled'" :value=true @input="setFixedParamvModel($event, index, 'disabled')" :checked="getFixedParamvModel(index,'disabled')? true : false"/>
+                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+'-'+'disabled'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-disabled'" :value=true @input="setFixedParamvModel($event, index, 'disabled')" :checked="!!getFixedParamvModel(index,'disabled')"/>
                                     <label class="form-check-label custom-control-label" :for="selectedParameter.identifier+'-'+index+'-'+'disabled'">disabled</label><br>
                                   </div>
                                   <div>
-                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+'-'+'enabled'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-disabled'" :value=false @input="setFixedParamvModel($event, index, 'disabled')" :checked="getFixedParamvModel(index,'disabled')? false : true" />
+                                    <input class="form-check-input custom-control-input" :id="selectedParameter.identifier+'-'+index+'-'+'enabled'" type="radio" :name="selectedParameter.identifier+'-'+index+'-'+'checkbox-disabled'" :value=false @input="setFixedParamvModel($event, index, 'disabled')" :checked="!getFixedParamvModel(index,'disabled')" />
                                     <label class="form-check-label custom-control-label" :for="selectedParameter.identifier+'-'+index+'-'+'enabled'">enabled</label><br>
                                   </div>
                                 </div>
@@ -1138,7 +1136,7 @@
                               </div>
                               <!-- tooltip -->
                               <div class="tooltip-icon pl-2">
-                                <b-icon-info-circle v-tooltip.top-center="'Set if and how the parameter should be validated.'"></b-icon-info-circle>
+                                <BIconInfoCircle> v-tooltip.top-center="'Set if and how the parameter should be validated.'"</BIconInfoCircle>
                               </div>
                             </div>
 
@@ -1167,59 +1165,56 @@
                               </div>
                               <!-- tooltip -->
                               <div class="tooltip-icon pl-2">
-                                <b-icon-info-circle v-tooltip.top-center="'Set if and how the parameter should be validated.'"></b-icon-info-circle>
+                                <BIconInfoCircle> v-tooltip.top-center="'Set if and how the parameter should be validated.'"</BIconInfoCircle>
                               </div>
                             </div>
                           </div>
                       </div>
                     </div>
                 </div>
-              </b-tab>
-            </b-tabs>
-          </b-card>
-        </b-collapse>
+              </q-tab-panel>
+            </q-tab-panels>
+          </q-card>
+        </q-expansion-item>
         </div>
         <div class="validation-div pl-2 pr-2 pb-2">
-          <b-button @click="validateJson">Validate</b-button>
+          <q-btn @click="validateJson">Validate</q-btn>
           <div class="validation-result-div">
 
-            <b-card v-if="validationRunning" class="p-2">
-              <b-skeleton animation="wave" width="85%"></b-skeleton>
-              <b-skeleton animation="wave" width="55%"></b-skeleton>
-              <b-skeleton animation="wave" width="70%"></b-skeleton>
-            </b-card>
-            <b-card :class="classValidity" class="p-2" v-if="!validationRunning && (validationArgsResult != null || validationPartParameterResult != null || validationResult != null)">
+            <q-card v-if="validationRunning" class="p-2">
+              <q-skeleton animation="wave" width="85%"></q-skeleton>
+              <q-skeleton animation="wave" width="55%"></q-skeleton>
+              <q-skeleton animation="wave" width="70%"></q-skeleton>
+            </q-card>
+            <q-card :class="classValidity" class="p-2" v-if="!validationRunning && (validationArgsResult != null || validationPartParameterResult != null || validationResult != null)">
               <pre>{{validationResult}}</pre>
               <pre v-if="validationPartParameterResult != null">{{validationPartParameterResult}}</pre>
               <pre v-if="validationArgsResult != null">{{validationArgsResult}}</pre>
-            </b-card>
+            </q-card>
 
           </div>
         </div>
         <div class="p-2" v-if="isLoggedIn">
-          <b-button
+          <q-btn
             variant="success"
             @click="runTemplate"
-            :disabled="validateJson? false : true">
+            :disabled="!validateJson">
             Execute Template
-            <b-icon icon="play" aria-hidden="true"></b-icon>
-          </b-button>
+            <BIconPlay aria-hidden="true"></BIconPlay>
+          </q-btn>
           <div id="iframe-div"></div>
         </div>
         <div class="pl-2 pr-2 pb-2">
-          <b-button
-            @click="downloadCT"
-            v-tooltip.top-center="'Download Computation Template'">
+          <q-btn
+            @click="downloadCT">
+            <q-tooltip anchor="top middle">Download Computation Template</q-tooltip>
             Download Computation Template
-            <b-icon
-              icon="download"
-              aria-hidden="true"
-            ></b-icon>
-          </b-button>
+            <BIconDownload aria-hidden="true"></BIconDownload>
+          </q-btn>
         </div>
       </div>
     </div>
-    <v-tour name="myTour" :steps="steps" :options="{ highlight: true }"></v-tour>
+    <!-- <v-tour name="myTour" :steps="steps" :options="{ highlight: true }"></v-tour>-->
   </div>
   </div>
 </template>
@@ -1231,6 +1226,21 @@ import { Drag, Drop, DropList } from 'vue-easy-dnd';
 import base64url from 'base64url';
 import Ajv from 'ajv';
 import AceEditorComponent from '../../components/EditorComponent-Ace.vue';
+
+import {biInfoCircle} from '@quasar/extras/bootstrap-icons';
+
+import {
+  BIconBook,
+  BIconDownload,
+  BIconInfoCircle,
+  BIconUpload,
+  BIconXCircle,
+  BIconCaretUp,
+  BIconCaretDownFill,
+  BIconX,
+  BIconPlus,
+  BIconPlay,
+} from 'bootstrap-icons-vue';
 
 // for validation
 import ctSchema from './json-schema/computation-template-container.json';
@@ -1244,6 +1254,16 @@ export default {
     Drop,
     DropList,
     AceEditorComponent,
+    BIconBook,
+    BIconInfoCircle,
+    BIconDownload,
+    BIconUpload,
+    BIconXCircle,
+    BIconCaretUp,
+    BIconCaretDownFill,
+    BIconX,
+    BIconPlus,
+    BIconPlay,
   },
   data() {
     return {
@@ -1261,6 +1281,11 @@ export default {
       showPart: false,
       showParameter: false,
       showCommands: false,
+      showComponents: true,
+      showConfiguration: true,
+      selectedComponentTab: "components",
+      selectedContentTab: "structure",
+      selectedConfigurationTab: "configuration",
       valueNumbers: new Map(),
       schema: ctSchema,
       paramSchema: parameterSchema,
@@ -1317,7 +1342,7 @@ export default {
   computed: {
     json: {
       get() {
-        this.$forceUpdate();
+        //this.$forceUpdate();
         return this.$store.state.jsonTemplate;
       },
       set(newValue) {
@@ -1327,7 +1352,7 @@ export default {
     },
     token: {
       get() {
-        this.$forceUpdate();
+        //this.$forceUpdate();
         return this.$store.state.token;
       },
       set(newValue) {
@@ -1336,7 +1361,7 @@ export default {
     },
     ws: {
       get() {
-        this.$forceUpdate();
+        //this.$forceUpdate();
         return this.$store.state.ws;
       },
       set(newValue) {
@@ -1345,7 +1370,7 @@ export default {
     },
     computationTemplate: {
       get() {
-        this.$forceUpdate();
+        //this.$forceUpdate();
         return this.$store.state.generatedComputationTemplate;
       },
       set(newValue) {
@@ -1562,9 +1587,9 @@ export default {
 
         // if val is empty, remove object from ct
         if (val === '') {
-          this.$delete(this.selectedPart.metadata, 'description');
+          delete this.selectedPart.metadata['description'];
           if (Object.keys(this.selectedPart.metadata).length === 0) {
-            this.$delete(this.selectedPart, 'metadata');
+            delete this.selectedPart['metadata'];
           }
         }
 
@@ -1700,7 +1725,7 @@ export default {
             emptyProperties.push(key);
           }
         });
-        emptyProperties.forEach((key) => this.$delete(this.computationTemplate.configuration, key));
+        emptyProperties.forEach((key) => delete this.computationTemplate.configuration[key]);
 
         // TODO: check if metadata.output is empty and delete
 
@@ -1719,6 +1744,12 @@ export default {
     },
   },
   methods: {
+    biInfoCircle() {
+      return biInfoCircle
+    },
+    biInfoCircleFill() {
+      return biInfoCircleFill
+    },
     // Make the function wait until the connection is made...
     waitForSocketConnection(context, socket, callback) {
       setTimeout(() => {
@@ -2214,10 +2245,8 @@ export default {
     /** Check if property exists in current config, or if it is undefined */
     ifConfigPropertyExists(property) {
       const config = this.computationTemplate.configuration;
-      if (typeof config[property] !== 'undefined') {
-        return true;
-      }
-      return false;
+      return typeof config[property] !== 'undefined';
+
     },
     addCsvConfig() {
       const outputConfig = {
@@ -2782,7 +2811,7 @@ export default {
     },
   },
   created() {
-
+    this.biInfoCircle = biInfoCircle
   },
   mounted() {
     // generate id for ct
@@ -3101,7 +3130,7 @@ body {
 
   .tool-button {
     width: 30%;
-    margin: 0px 0px 0px 0px;
+    margin: 0 0 0 0;
   }
 
   .toggle-controls {

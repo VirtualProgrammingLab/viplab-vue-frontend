@@ -84,9 +84,9 @@ export default {
       },
       set(val) {
         if (this.item.metadata.type === 'number') {
-          this.item['value'] = val;
+          this.item.value = val;
         } else {
-          this.item['value'] = base64url(val);
+          this.item.value = base64url(val);
         }
         this.$forceUpdate();
         return this.vModel;

@@ -591,10 +591,10 @@
 
 <script>
 // import Ace
-import {SpringSpinner} from 'epic-spinners';
-import {Form} from 'vee-validate';
+import { SpringSpinner } from 'epic-spinners';
+import { Form } from 'vee-validate';
 import base64url from 'base64url';
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
   BIconDownload,
   BIconFileEarmarkCode,
@@ -605,7 +605,7 @@ import {
   BIconPlay,
   BIconUpload,
 } from 'bootstrap-icons-vue';
-import {Loading} from 'quasar';
+import { Loading } from 'quasar';
 import AceEditorComponent from '../../components/EditorComponent-Ace.vue';
 
 // own components
@@ -1002,17 +1002,17 @@ export default {
       // use JSON.parse(JSON.stringify(...)) to make sure a copy of the data is made, such that not only a reference is used
       if (this.returnedOutputJson === '') {
         this.returnedOutputJson = {
-          "identifier": result.result.identifier,
-          "version": result.result.version,
-          "computation": result.result.computation,
-          "status": "final",
-          "timestamp": "",
-          "output" : {
-            "stdout" : "",
-            "stderr" : "",
+          identifier: result.result.identifier,
+          version: result.result.version,
+          computation: result.result.computation,
+          status: 'final',
+          timestamp: '',
+          output: {
+            stdout: '',
+            stderr: '',
           },
-          "artifacts" : []
-        }
+          artifacts: [],
+        };
         this.returnedUnmodifiedArtifacts = JSON.parse(JSON.stringify(this.returnedOutputJson));
       }
       this.returnedUnmodifiedArtifacts.artifacts = this.returnedUnmodifiedArtifacts.artifacts.concat(JSON.parse(JSON.stringify(result.result.artifacts)));
@@ -1020,7 +1020,7 @@ export default {
       this.returnedUnmodifiedArtifacts.artifacts.sort((a, b) => a.path.localeCompare(b.path));
 
       // filter result such that only specified results are displayed
-      let viewer = this.json?.metadata?.output?.viewer ?? [];
+      const viewer = this.json?.metadata?.output?.viewer ?? [];
       let returnedArtifacts = JSON.parse(JSON.stringify(result.result.artifacts));
       if (!viewer.includes('Image')) {
         returnedArtifacts = returnedArtifacts.filter(
@@ -1077,10 +1077,10 @@ export default {
       });
 
       // process connected vtu/vtk & csv files
-      let connectedVtks = {};
-      let { artifacts } = this.returnedOutputJson;
+      const connectedVtks = {};
+      const { artifacts } = this.returnedOutputJson;
       // isNew flag to ensure that connected files are only added once
-      artifacts.forEach( (artifact) => {
+      artifacts.forEach((artifact) => {
         if (artifact.basename) {
           connectedVtks[artifact.basename] = artifact;
           connectedVtks[artifact.basename].isNew = false;
@@ -1124,8 +1124,8 @@ export default {
 
         // group results according to the available basenames
         for (let a = 0; a < returnedArtifacts.length; a += 1) {
-          if (returnedArtifacts[a].MIMEtype === 'application/vnd.kitware' ||
-              returnedArtifacts[a].MIMEtype === 'text/csv') {
+          if (returnedArtifacts[a].MIMEtype === 'application/vnd.kitware'
+              || returnedArtifacts[a].MIMEtype === 'text/csv') {
             const { path } = returnedArtifacts[a];
             const lastIndex = path.lastIndexOf('/');
             const filenamePart = path.substr(lastIndex + 1, path.length);
@@ -1135,7 +1135,7 @@ export default {
               // filename has to start with basename
               if (filenamePart.startsWith(currentBasename)) {
                 connectedVtks[currentBasename].type = returnedArtifacts[a].type;
-                //connectedVtks[currentBasename].identifier = returnedArtifacts[a].identifier;
+                // connectedVtks[currentBasename].identifier = returnedArtifacts[a].identifier;
                 connectedVtks[currentBasename].MIMEtype = returnedArtifacts[a].MIMEtype;
                 connectedVtks[currentBasename].basename = currentBasename;
                 if (returnedArtifacts[a].url) {
@@ -1165,9 +1165,7 @@ export default {
             this.returnedOutputJson.artifacts.push(connectedVtks[connectedFilesKeys[c]]);
           }
           if (connectedVtks[connectedFilesKeys[c]].urlsOrContents.length > 1) {
-            connectedVtks[connectedFilesKeys[c]].urlsOrContents.sort(( a, b ) => {
-              return a.localeCompare(b);
-            });
+            connectedVtks[connectedFilesKeys[c]].urlsOrContents.sort((a, b) => a.localeCompare(b));
           }
         }
       }
@@ -1189,8 +1187,8 @@ export default {
       });
       returnedArtifacts.forEach((artifact) => this.returnedOutputJson.artifacts.push(artifact));
       this.returnedOutputJson.artifacts.sort((a, b) => {
-        let a_path = a.path ?? a.basename;
-        let b_path = b.path ?? b.basename;
+        const a_path = a.path ?? a.basename;
+        const b_path = b.path ?? b.basename;
         return a_path.localeCompare(b_path);
       });
       if (this.selectedVisualizationTab === '' && this.filteredArtifacts(this.returnedOutputJson.artifacts).length > 0) {
@@ -1374,16 +1372,16 @@ export default {
               if (part.identifier === partId) {
                 // set content of parts
                 // this.json.files[f].parts[oldp].content = obj.parts[p].content;
-                part['content'] = currentPart.content;
+                part.content = currentPart.content;
                 this.$forceUpdate();
                 // set parameters of parts
                 Object.values(part.parameters).forEach((parameterFromJson) => {
                   Object.values(currentPart.parameters).forEach((parameterFromObj) => {
                     if (parameterFromObj.identifier === parameterFromJson.identifier) {
                       if (parameterFromJson.selected) {
-                       parameterFromJson['selected'] = parameterFromObj.selected;
+                        parameterFromJson.selected = parameterFromObj.selected;
                       } else {
-                        parameterFromJson['value'] = parameterFromObj.value;
+                        parameterFromJson.value = parameterFromObj.value;
                       }
                     }
                   });
@@ -1408,7 +1406,7 @@ export default {
       // add value-item to parameters with mode == any
       if (mode === 'any') {
         // create reactive object value in curr with curr.default as content
-        currentParameter['value'] = currentParameter.default;
+        currentParameter.value = currentParameter.default;
       } else {
         // add selected-item to parameters with mode == fixed
         const arr = [];

@@ -84,13 +84,14 @@ export default {
     } else {
       this.loadBase64Data(this.csvs[this.fileIndex]);
     }
-    Plotly.newPlot(this.$refs.plot,
+    Plotly.newPlot(
+      this.$refs.plot,
       this.data,
       this.layout,
       {
         displayModeBar: true,
         toImageButtonOptions: this.imageConfig,
-      }
+      },
     );
   },
   methods: {
@@ -98,7 +99,7 @@ export default {
     async loadData(context) {
       // plotlyjs.d3.csv("https://raw.githubusercontent.com/plotly/datasets/master/2014_apple_stock.csv", function(data){
       // plotlyjs.d3.csv("http://localhost:8080/plotly-test.csv", function(data){
-      let csvData = []
+      const csvData = [];
       await csv(context.csvs[context.fileIndex], (data) => {
         Object.keys(data).forEach((element) => {
           if (!csvData.hasOwnProperty(element)) {

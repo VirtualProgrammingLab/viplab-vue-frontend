@@ -198,13 +198,13 @@ export default {
         this.vModel = this.aceEditor.getValue();
         if (!this.isSettingContent) {
           if (this.isParameter) {
-            this.editor['value'] = this.vModel;
+            this.editor.value = this.vModel;
             this.editor.value = [base64url(this.vModel)];
           } else if (this.isHandlebar) {
-            this.editor['content'] =  this.vModel;
+            this.editor.content = this.vModel;
             this.editor.content = this.vModel;
           } else {
-            this.editor['content'] = base64url(this.vModel);
+            this.editor.content = base64url(this.vModel);
             this.editor.content = base64url(this.vModel);
           }
           // autoscroll if new input is added to the log (editor readonly, e.g. for stdout and stderr)
