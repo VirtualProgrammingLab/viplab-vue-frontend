@@ -43,6 +43,14 @@ module.exports = {
         argsLocal[0].template = 'src/assets/index.ejs';
         return argsLocal;
       });
+    config.plugin('define').tap((definitions) => {
+      Object.assign(definitions[0], {
+        __VUE_OPTIONS_API__: 'true',
+        __VUE_PROD_DEVTOOLS__: 'false',
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false'
+      })
+      return definitions
+    });
     if (isProd) {
       config.optimization.minimizer('terser').tap((args) => [{ ...args[0], terserOptions: { compress: false }, exclude: /itk\/PolyDataIOs\/.*.js/ }]);
     }
@@ -64,6 +72,9 @@ module.exports = {
   configureWebpack: {
     devServer: {
       port: 8081,
+      client: {
+        webSocketURL: 'wss://localhost/ws',
+      },
       // https://github.com/vuejs-templates/webpack/issues/378
       watchFiles: {
         options: {
